@@ -3,7 +3,7 @@
 # FAQ
 
 #### What is this?
-- A small set of applications created specifically for Cemu, an experimental Wii U emulator.
+- A small set of applications created specifically for Cemu, an experimental Wii U emulator. Designed to make Wii U title management as easy as possible, and mininal intervention.
 
 #### What does it do?
 - It gives you the power to backup Wii U updates, DLC, and titles directly to your PC, as well as launch Cemu with titles.

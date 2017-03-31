@@ -14,7 +14,6 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Windows.Input;
 using System.Xml;
 using libWiiSharp;
 using MapleLib.Collections;
@@ -32,16 +31,14 @@ namespace MapleLib
 {
     public static class Database
     {
+        private static MapleList<Title> _db;
+
         static Database()
         {
-            if (TitleDb == null) {
-                TitleDb = new MapleDictionary(Settings.TitleDirectory);
-            }
+            if (TitleDb == null) TitleDb = new MapleDictionary(Settings.TitleDirectory);
         }
 
         public static MapleDictionary TitleDb { get; }
-
-        private static MapleList<Title> _db;
 
         public static void Load(bool forceLoad = true)
         {
@@ -54,6 +51,8 @@ namespace MapleLib
                 var json = File.ReadAllText(dbFile);
                 _db = JsonConvert.DeserializeObject<MapleList<Title>>(json);
             }
+            
+            LoadLibrary(Settings.TitleDirectory);
         }
 
         private static void Create()
@@ -65,12 +64,14 @@ namespace MapleLib
             var eShopTitleDLC = Resources.eShopTitleDLC; //index 8
 
             _db = new MapleList<Title>();
-            
-            foreach (var wiiutitleKey in WiiUTitleKeys()) {
+
+            var titlekeys = WiiUTitleKeys();
+
+            foreach (var wiiutitleKey in titlekeys) {
                 var id = wiiutitleKey["titleID"].Value<string>()?.ToUpper();
                 var key = wiiutitleKey["titleKey"].Value<string>()?.ToUpper();
-                var name = wiiutitleKey["name"].Value<string>()?.ToUpper();
-                var region = wiiutitleKey["region"].Value<string>()?.ToUpper();
+                var name = wiiutitleKey["name"].Value<string>();
+                var region = wiiutitleKey["region"].Value<string>();
 
                 if (string.IsNullOrEmpty(id) || string.IsNullOrEmpty(key))
                     continue;
@@ -79,7 +80,7 @@ namespace MapleLib
             }
 
             var lines = eShopTitlesStr.Replace("|", "").Split('\n').ToList();
-            for (int i = 11; i < lines.Count; i++) {
+            for (var i = 11; i < lines.Count; i++) {
                 var id = lines[i++].Replace("-", "").Trim().ToUpper();
                 var title = _db.FirstOrDefault(x => x.ID == id) ?? new Title();
 
@@ -91,7 +92,7 @@ namespace MapleLib
                 title.Versions = lines[i++].ToIntList(',');
                 title.Region = lines[i++].Trim();
 
-                int num = i++;
+                var num = i++;
                 var line = lines[num].ToLower().Trim();
 
                 if (!line.Contains("yes") && !line.Contains("no"))
@@ -104,7 +105,7 @@ namespace MapleLib
             }
 
             lines = eShopTitleUpdates.Replace("|", "").Split('\n').ToList();
-            for (int i = 9; i < lines.Count; i++) {
+            for (var i = 9; i < lines.Count; i++) {
                 var line = lines[i].Trim();
 
                 if (!line.Contains("-10"))
@@ -119,18 +120,13 @@ namespace MapleLib
                 if (title != null)
                     title.Versions = versions;
             }
+            
+            foreach (var title in _db.Where(x => x.ContentType == "eShop/Application")) {
+                var id = $"0005000C{title.Lower8Digits().ToUpper()}";
 
-            lines = eShopTitleDLC.Replace("|", "").Split('\n').ToList();
-            for (int i = 9; i < lines.Count; i++) {
-                var line = lines[i].Trim();
-                if (!line.Contains("-10"))
-                    continue;
-
-                var titleId = line.Replace("-", "").ToUpper();
-                var title = _db.ToList().Find(t => t.ID.Contains(titleId.Substring(8)));
-
-                if (title != null)
-                    title.HasDLC = true;
+                JObject _title;
+                if ((_title = WiiUTitleKey(titlekeys, id)) != null)
+                    title.HasDLC = _title.HasValues;
             }
 
             var json = JsonConvert.SerializeObject(_db);
@@ -144,7 +140,7 @@ namespace MapleLib
 
         public static async void Image(this eShopTitle title, bool save = true)
         {
-            if (title.ProductCode.Length <= 6)
+            if (string.IsNullOrEmpty(title.ProductCode) || title.ProductCode.Length <= 6)
                 return;
 
             var code = title.ProductCode.Substring(6);
@@ -380,7 +376,7 @@ namespace MapleLib
                     if (Toolbelt.IsValid(tmd.Contents[i1], contentPath)) {
                         //Toolbelt.AppendLog("   + Using Local File, Skipping...");
                     }
-                    else
+                    else {
                         try {
                             var downloadUrl = $"{titleUrl}/{tmd.Contents[i1].ContentID:x8}";
                             await WebClient.DownloadFileAsync(downloadUrl, contentPath);
@@ -389,6 +385,7 @@ namespace MapleLib
                             Toolbelt.AppendLog($"Downloading Content #{i1 + 1} of {numc} failed...\n{ex.Message}");
                             return 0;
                         }
+                    }
                     return 1;
                 });
                 if (result == 0)
@@ -397,7 +394,7 @@ namespace MapleLib
             return result;
         }
 
-        public static Task LoadLibrary(string titleDirectory)
+        public static void LoadLibrary(string titleDirectory)
         {
             var xmlFiles = Directory.GetFiles(titleDirectory, "meta.xml", SearchOption.AllDirectories);
 
@@ -408,45 +405,19 @@ namespace MapleLib
                 var title = SearchById(title_id);
                 title.FolderLocation = rootDir;
                 title.MetaLocation = xmlFile;
-                TitleDb.Add(title);
+                TitleDb.AddOnUI(title);
             }
-
-            return Task.Delay(0);
         }
 
         private static List<JObject> WiiUTitleKeys()
         {
-            var wLoc = Path.Combine(Settings.ConfigDirectory, "titlekeys");
-
-            string jsonStr;
-            if (File.Exists(wLoc))
-            {
-                jsonStr = File.ReadAllText(wLoc);
-            }
-            else
-            {
-                jsonStr = WebClient.DownloadString("https://wiiu.titlekeys.com/json");
-                File.WriteAllText(wLoc, jsonStr);
-            }
-
+            var jsonStr = WebClient.DownloadString("https://wiiu.titlekeys.com/json");
             var jsonTitles = JsonConvert.DeserializeObject<ICollection<JObject>>(jsonStr);
             return jsonTitles.ToList();
         }
 
-        private static JObject WiiUTitleKey(string id)
+        public static JObject WiiUTitleKey(ICollection<JObject> jsonTitles, string id)
         {
-            var wLoc = Path.Combine(Settings.ConfigDirectory, "titlekeys");
-
-            string jsonStr;
-            if (File.Exists(wLoc)) {
-                jsonStr = File.ReadAllText(wLoc);
-            }
-            else {
-                jsonStr = WebClient.DownloadString("https://wiiu.titlekeys.com/json");
-                File.WriteAllText(wLoc, jsonStr);
-            }
-
-            var jsonTitles = JsonConvert.DeserializeObject<ICollection<JObject>>(jsonStr);
             return jsonTitles.ToList().Find(x => x["titleID"].Value<string>().ToUpper() == id);
         }
     }

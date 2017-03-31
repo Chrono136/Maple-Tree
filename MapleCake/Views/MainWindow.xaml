@@ -7,7 +7,7 @@
         xmlns:ViewModels="clr-namespace:MapleCake.ViewModels"
         x:Class="MapleCake.Views.MainWindow"
         mc:Ignorable="d"
-        Title="{Binding Config.Name}" Height="583" Width="395" MinWidth="395" MaxWidth="395" WindowStartupLocation="CenterScreen" Background="#FF8D8D8D" Icon="/MapleSeedU2;component/Resources/Seed-icon.png" Foreground="#FFDADADA" ResizeMode="NoResize">
+        Title="{Binding Config.Name}" Height="583" Width="395" MinWidth="395" MaxWidth="395" WindowStartupLocation="CenterScreen" Background="White" Icon="/MapleSeedU2;component/Resources/Seed-icon.png" Foreground="#FFBFBFBF" ResizeMode="NoResize">
     <controls:MetroWindow.DataContext>
         <ViewModels:MainWindowViewModel/>
     </controls:MetroWindow.DataContext>
@@ -15,16 +15,16 @@
         <Image HorizontalAlignment="Center" Height="550" Width="395" VerticalAlignment="Top" Stretch="UniformToFill" Source="{Binding Config.BackgroundImage}"/>
         <Rectangle HorizontalAlignment="Center" Height="550" Width="395" VerticalAlignment="Top" Fill="#D8000000"/>
 
-        <TabControl Height="614" Width="389">
+        <TabControl Width="389">
             <TabItem Header="Library">
                 <Grid>
-                    <ListBox ItemsSource="{Binding Config.TitleList}" SelectedItem="{Binding Config.SelectedItem}" Margin="0,10,0,30" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="LightGray">
+                    <ListBox ItemsSource="{Binding Config.TitleList}" SelectedItem="{Binding Config.SelectedItem}" Margin="0,10,0,30" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="White">
                         <ListBox.ContextMenu>
                             <ContextMenu Closed="OnContextMenuClosing" ItemsSource="{Binding Config.ContextItems}" UsesItemContainerTemplate="True"/>
                         </ListBox.ContextMenu>
                     </ListBox>
 
-                    <Button Content="Launch Cemu" Command="{Binding Click.LaunchCemu}" HorizontalAlignment="Center" Margin="5,0,5,65" VerticalAlignment="Bottom" Width="373" Background="{x:Null}" BorderBrush="#FFCCCCCC"/>
+                    <Button Content="{Binding Config.LaunchCemuText}" Command="{Binding Click.LaunchCemu}" HorizontalAlignment="Center" Margin="5,0,5,5" VerticalAlignment="Bottom" Width="373" Background="{x:Null}" BorderBrush="#FFCCCCCC"/>
                 </Grid>
             </TabItem>
 
@@ -33,12 +33,12 @@
                     <TextBox Text="{Binding Config.TitleID, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Center" Height="23" Margin="10,3,10,0" TextAlignment="Center" TextWrapping="Wrap" VerticalAlignment="Top" Width="363" Background="{x:Null}"/>
                     <Button Content="{Binding Config.SelectedItemText}" Command="{Binding Click.Download}" IsEnabled="{Binding Config.DownloadCommandEnabled}" HorizontalAlignment="Center" Margin="10,32,10,0" VerticalAlignment="Top" FontWeight="Bold" Width="363" Background="{x:Null}" Foreground="White"/>
 
-                    <ProgressBar Value="{Binding Config.ProgressValue}" HorizontalAlignment="Center" Margin="10,0,10,65" VerticalAlignment="Bottom" Height="15" Width="363" Background="#A5343434"/>
-                    <TextBlock HorizontalAlignment="Left" Margin="11,0,0,78" TextWrapping="Wrap" Text="{Binding Config.Status}" VerticalAlignment="Bottom" Width="369" TextAlignment="Center" FontWeight="Bold"/>
-
-                    <GroupBox Header="Cemu" HorizontalAlignment="Left" Margin="10,69,0,0" VerticalAlignment="Top" Height="191" Width="363"/>
                     <GroupBox Header="MapleSeed" HorizontalAlignment="Left" Margin="11,286,0,0" VerticalAlignment="Top" Height="191" Width="363"/>
-                    
+                    <GroupBox Header="Cemu" HorizontalAlignment="Left" Margin="10,69,0,0" VerticalAlignment="Top" Height="191" Width="363"/>
+
+                    <ProgressBar Value="{Binding Config.ProgressValue}" HorizontalAlignment="Center" Margin="11,0,9,10" VerticalAlignment="Bottom" Height="15" Width="363" Background="#A5343434"/>
+                    <TextBlock HorizontalAlignment="Left" Margin="12,0,0,23" TextWrapping="Wrap" Text="{Binding Config.Status}" VerticalAlignment="Bottom" Width="369" TextAlignment="Center" FontWeight="Bold"/>
+
                     <CheckBox Content="Dynamic Theme" IsChecked="{Binding Config.DynamicTheme}" Command="{Binding }" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="23,324,0,0"/>
                     <CheckBox Content="Full Screen" IsChecked="{Binding Config.FullScreen}" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="23,105,0,0"/>
 
@@ -47,8 +47,8 @@
 
             <TabItem Header="Log" Background="{x:Null}">
                 <Grid Background="{x:Null}">
-                    <ScrollViewer CanContentScroll="True">
-                        <TextBlock Text="{Binding Config.LogBox, UpdateSourceTrigger=PropertyChanged}" TextWrapping="Wrap" Margin="10" Width="363"/>
+                    <ScrollViewer CanContentScroll="True" Margin="0,0,0,0">
+                        <TextBlock Text="{Binding Config.LogBox, UpdateSourceTrigger=PropertyChanged}" TextWrapping="Wrap"/>
                     </ScrollViewer>
                 </Grid>
             </TabItem>

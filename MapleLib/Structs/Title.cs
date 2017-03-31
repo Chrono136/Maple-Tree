@@ -25,7 +25,30 @@ namespace MapleLib.Structs
 
         public int GetTitleVersion()
         {
+            if (!File.Exists(MetaLocation) || Path.GetExtension(MetaLocation) != ".xml")
+                return 0;
+
+            var versionStr = Helper.XmlGetStringByTag(MetaLocation, "title_version");
+
+            int version;
+            return int.TryParse(versionStr, out version) ? version : Versions[0];
+        }
+
+        public int GetUpdateVersion()
+        {
             var metaLocation = Path.Combine(Settings.BasePatchDir, Lower8Digits(), "meta", "meta.xml");
+            if (!File.Exists(metaLocation) || Path.GetExtension(metaLocation) != ".xml")
+                return 0;
+
+            var versionStr = Helper.XmlGetStringByTag(metaLocation, "title_version");
+
+            int version;
+            return int.TryParse(versionStr, out version) ? version : Versions[0];
+        }
+
+        public int GetDLCVersion()
+        {
+            var metaLocation = Path.Combine(Settings.BasePatchDir, Lower8Digits(), "aoc", "meta", "meta.xml");
             if (!File.Exists(metaLocation))
                 return 0;
 

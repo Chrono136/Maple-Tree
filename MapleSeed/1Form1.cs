@@ -130,7 +130,7 @@ namespace MapleSeed
 
             RegisterEvents();
 
-            await Database.LoadLibrary(Settings.TitleDirectory);
+            await Task.Run(() => Database.LoadLibrary(Settings.TitleDirectory));
 
             RegisterDefaults();
 
@@ -429,7 +429,7 @@ namespace MapleSeed
 
             SetCurrentImage(title);
 
-            var tvs = title.GetTitleVersion();
+            var tvs = title.GetUpdateVersion();
             var l8d = title.Lower8Digits();
             TextLog.StatusLog.WriteLog($"{l8d} | Current Update: v{tvs} | Available Updates: {updatesStr}");
         }

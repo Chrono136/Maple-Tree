@@ -18,6 +18,7 @@ namespace MapleCake.Models
 
         private Title _selectedItem;
         private string _titleId;
+        private string _launchCemuText = "Loading Please wait...";
 
         public ViewModelConfig(ViewModelBase self)
         {
@@ -31,6 +32,16 @@ namespace MapleCake.Models
         public string BackgroundImage { get; set; }
 
         public string LogBox { get; set; }
+
+        public string LaunchCemuText
+        {
+            get { return _launchCemuText; }
+            set
+            {
+                _launchCemuText = value;
+                RaisePropertyChangedEvent("LaunchCemuText");
+            }
+        }
 
         public string SelectedItemText => SelectedItem != null ? $"Download '{SelectedItem.Name}'" : "Download";
 

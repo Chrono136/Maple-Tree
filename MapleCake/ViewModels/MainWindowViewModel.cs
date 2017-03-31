@@ -11,9 +11,7 @@ using System.Net;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Threading;
-using MahApps.Metro;
 using MapleCake.Models;
-using MapleCake.Models.Media;
 using MapleLib;
 using MapleLib.Common;
 using MapleLib.Network.Web;
@@ -163,13 +161,14 @@ namespace MapleCake.ViewModels
 
             CheckUpdate();
 
-            Database.Load();
+            await Task.Run(() => {
+                Database.Load();
 
-            await Database.LoadLibrary(Settings.TitleDirectory);
+                Config.SelectedItem = Config.TitleList.Random();
 
-            Config.SelectedItem = Config.TitleList.Random();
-
-            TextLog.MesgLog.WriteLog($"Game Directory [{Settings.TitleDirectory}]");
+                Config.LaunchCemuText = "Launch Cemu";
+                TextLog.MesgLog.WriteLog($"Game Directory [{Settings.TitleDirectory}]");
+            });
         }
 
         private void InstanceOnProgressChangedEventHandler(object sender, AppUpdate.ProgressChangedEventArgs e) {}

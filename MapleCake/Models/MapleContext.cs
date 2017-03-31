@@ -29,7 +29,7 @@ namespace MapleCake.Models
             {
                 new CommandItem
                 {
-                    Text = SelectedItem.ID,
+                    Text = $"{SelectedItem.Name} v{SelectedItem.GetUpdateVersion()}",
                     ToolTip = "Copy title ID to clipboard",
                     Command = Click.TitleIdToClipboard
                 }

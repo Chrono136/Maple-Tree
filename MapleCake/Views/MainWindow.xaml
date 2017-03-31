@@ -7,7 +7,7 @@
         xmlns:ViewModels="clr-namespace:MapleCake.ViewModels"
         x:Class="MapleCake.Views.MainWindow"
         mc:Ignorable="d"
-        Title="{Binding Config.Name}" Height="583" Width="395" MinWidth="395" MaxWidth="395" WindowStartupLocation="CenterScreen" Background="#FF212121" Icon="/MapleSeedU2;component/Resources/Seed-icon.png" Foreground="#FFDADADA" ResizeMode="NoResize">
+        Title="{Binding Config.Name}" Height="583" Width="395" MinWidth="395" MaxWidth="395" WindowStartupLocation="CenterScreen" Background="#FF8D8D8D" Icon="/MapleSeedU2;component/Resources/Seed-icon.png" Foreground="#FFDADADA" ResizeMode="NoResize">
     <controls:MetroWindow.DataContext>
         <ViewModels:MainWindowViewModel/>
     </controls:MetroWindow.DataContext>
@@ -37,10 +37,11 @@
                     <TextBlock HorizontalAlignment="Left" Margin="11,0,0,78" TextWrapping="Wrap" Text="{Binding Config.Status}" VerticalAlignment="Bottom" Width="369" TextAlignment="Center" FontWeight="Bold"/>
 
                     <GroupBox Header="Cemu" HorizontalAlignment="Left" Margin="10,69,0,0" VerticalAlignment="Top" Height="191" Width="363"/>
+                    <GroupBox Header="MapleSeed" HorizontalAlignment="Left" Margin="11,286,0,0" VerticalAlignment="Top" Height="191" Width="363"/>
+                    
+                    <CheckBox Content="Dynamic Theme" IsChecked="{Binding Config.DynamicTheme}" Command="{Binding }" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="23,324,0,0"/>
+                    <CheckBox Content="Full Screen" IsChecked="{Binding Config.FullScreen}" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="23,105,0,0"/>
 
-                    <GroupBox Header="MapleSeed" HorizontalAlignment="Left" Margin="10,284,0,0" VerticalAlignment="Top" Height="203" Width="363"/>
-                    <CheckBox Content="Dynamic Theme" IsChecked="{Binding Config.FullScreen}" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="23,321,0,0"/>
-                    <CheckBox Content="Full Screen" IsChecked="{Binding Config.FullScreen}" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="23,357,0,0"/>
                 </Grid>
             </TabItem>
 

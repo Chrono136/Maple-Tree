@@ -11,9 +11,10 @@ using System.Net;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Threading;
+using MahApps.Metro;
 using MapleCake.Models;
+using MapleCake.Models.Media;
 using MapleLib;
-using MapleLib.Collections;
 using MapleLib.Common;
 using MapleLib.Network.Web;
 using MapleLib.Structs;
@@ -117,6 +118,9 @@ namespace MapleCake.ViewModels
 
         public async void SetBackgroundImg(Title title)
         {
+            if (!Config.DynamicTheme)
+                return;
+
             if (string.IsNullOrEmpty(title.ImageLocation))
                 await Task.Run(() => title.Image());
 
@@ -140,6 +144,17 @@ namespace MapleCake.ViewModels
         {
             var result = string.Join(", ", title.Versions.ToArray());
             TextLog.StatusLog.WriteLog($"Versions: {result}");
+        }
+
+        public void DynamicTheme(bool enabled)
+        {
+            if (enabled) {
+                SetBackgroundImg(Config.SelectedItem);
+            }
+            else {
+                Config.BackgroundImage = string.Empty;
+                Config.RaisePropertyChangedEvent("BackgroundImage");
+            }
         }
 
         private async void OnLoadComplete(object sender, EventArgs e)

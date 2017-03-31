@@ -55,6 +55,20 @@ namespace MapleLib
             set { WriteKeyValue("FullScreenMode", value.ToString()); }
         }
 
+        public static bool DynamicTheme
+        {
+            get
+            {
+                var value = GetKeyValue("DynamicTheme");
+                if (string.IsNullOrEmpty(value))
+                    WriteKeyValue("DynamicTheme", false.ToString());
+
+                return GetKeyValue("DynamicTheme") == "True";
+            }
+
+            set { WriteKeyValue("DynamicTheme", value.ToString()); }
+        }
+
         public static bool Cemu173Patch {
             get {
                 var value = GetKeyValue("Cemu173Patch");

@@ -4,6 +4,7 @@ Change Log - 2.1.1.9 (03/28/2017)
 - Implemented DeleteTitleButton()
 - Implemented a ticket generator (1 less remote call)
 - Backend code improvements
+- Disable Dynamic Theme function
 
 Change Log - 2.1.1.8 (03/27/2017)
 - Fixed an installer error

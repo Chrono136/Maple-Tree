@@ -9,7 +9,7 @@ using System.Windows;
 using System.Windows.Media;
 using MahApps.Metro;
 
-namespace MapleCake.Models
+namespace MapleCake.Models.Media
 {
     public static class ThemeManagerHelper
     {

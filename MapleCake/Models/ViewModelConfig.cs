@@ -46,6 +46,14 @@ namespace MapleCake.Models
             }
         }
 
+        public bool DynamicTheme {
+            get { return Settings.DynamicTheme; }
+            set {
+                _self.DynamicTheme(Settings.DynamicTheme = value);
+                RaisePropertyChangedEvent("DynamicTheme");
+            }
+        }
+
         public string TitleID {
             get { return _titleId; }
             set { _self.titleIdTextChanged(_titleId = value); }

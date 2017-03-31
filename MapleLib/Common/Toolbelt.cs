@@ -125,6 +125,12 @@ namespace MapleLib.Common
                 var libeay32 = Path.Combine(workingDir, "libeay32.dll");
                 var msvcr120d = Path.Combine(workingDir, "msvcr120d.dll");
 
+                foreach (var process in Process.GetProcessesByName("CDecrypt")) {
+                    var fullpath = Path.GetFullPath(process.MainModule.FileName);
+                    if (fullpath == Path.GetFullPath(cdecrypt))
+                        process.Kill();
+                }
+
                 if (!GZip.Decompress(Resources.CDecrypt, cdecrypt))
                     AppendLog("Error decrypting contents!\r\n       Could not extract CDecrypt.");
 

@@ -47,8 +47,8 @@
 
             <TabItem Header="Log" Background="{x:Null}">
                 <Grid Background="{x:Null}">
-                    <ScrollViewer CanContentScroll="True" Margin="0,0,0,0">
-                        <TextBlock Text="{Binding Config.LogBox, UpdateSourceTrigger=PropertyChanged}" TextWrapping="Wrap"/>
+                    <ScrollViewer Name="_scrollViewer" CanContentScroll="True" Margin="0,0,0,0">
+                        <TextBlock Name="_contentCtrl" Text="{Binding Config.LogBox, UpdateSourceTrigger=PropertyChanged}" TextWrapping="Wrap"/>
                     </ScrollViewer>
                 </Grid>
             </TabItem>

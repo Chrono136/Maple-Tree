@@ -81,6 +81,25 @@ namespace MapleLib.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        public static byte[] DLCPatch {
+            get {
+                object obj = ResourceManager.GetObject("DLCPatch", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 78DA636064106160605803C4220C1036086800312310B780313344F03F01C040630000427521FF.
+        /// </summary>
+        public static string DLCPatchString {
+            get {
+                return ResourceManager.GetString("DLCPatchString", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Edge is a very unstable build, that receives updates often and should be used with caution. Expect errors to be shown, bugs to be present, and program crashes.
         ///
         ///Report errors at http://github.com/Tsume/Maple-Tree..

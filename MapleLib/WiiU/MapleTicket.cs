@@ -3,12 +3,10 @@
 // Updated By: Jared
 // 
 
-using System;
 using System.Collections.Generic;
-using System.IO;
 using MapleLib.Common;
+using MapleLib.Properties;
 using MapleLib.Structs;
-using zlib;
 
 namespace MapleLib.WiiU
 {
@@ -18,11 +16,7 @@ namespace MapleLib.WiiU
 
         private static void PatchDLC(ref List<byte> ticketData)
         {
-            var data = Convert.FromBase64String("eNpjYGQQYWBgWAPEIgwQNghoADEjELeAMTNE8D8BwEBjAABCdSH/");
-            var tmasd = new ZInputStream(new MemoryStream(data));
-            data = tmasd.ReadBytes(data.Length);
-            File.WriteAllBytes("DLCPatch", data);
-            ticketData.InsertRange(TK + 0x164, data);
+            ticketData.InsertRange(TK + 0x164, Resources.DLCPatch);
         }
 
         private static void PatchDemo(ref List<byte> ticketData)

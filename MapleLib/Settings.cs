@@ -96,7 +96,7 @@ namespace MapleLib
             get {
                 var value = GetKeyValue("CacheDatabase");
                 if (string.IsNullOrEmpty(value))
-                    WriteKeyValue("CacheDatabase", true.ToString());
+                    WriteKeyValue("CacheDatabase", false.ToString());
                 return GetKeyValue("CacheDatabase") == "True";
             }
             set { WriteKeyValue("CacheDatabase", value.ToString()); }

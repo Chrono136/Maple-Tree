@@ -7,7 +7,7 @@ using System.IO;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using MapleLib.Common;
-using MapleLib.Network.Web;
+using MapleLib.Network;
 using MapleLib.Properties;
 
 namespace MapleLib.Structs

@@ -17,11 +17,10 @@ using System.Windows.Forms;
 using MapleLib;
 using MapleLib.Collections;
 using MapleLib.Common;
-using MapleLib.Network.Web;
+using MapleLib.Network;
 using MapleLib.Properties;
 using MapleLib.Structs;
 using DownloadProgressChangedEventArgs = System.Net.DownloadProgressChangedEventArgs;
-using WebClient = MapleLib.Network.Web.WebClient;
 
 #endregion
 
@@ -40,8 +39,7 @@ namespace MapleSeed
 
             TextLog.MesgLog.NewLogEntryEventHandler += MesgLog_NewLogEntryEventHandler;
             TextLog.StatusLog.NewLogEntryEventHandler += StatusLog_NewLogEntryEventHandler;
-            WebClient.DownloadProgressChangedEvent += Network_DownloadProgressChangedEvent;
-            AppUpdate.Instance.ProgressChangedEventHandler += Instance_ProgressChangedEventHandler;
+            Web.DownloadProgressChangedEvent += Network_DownloadProgressChangedEvent;
         }
 
         private void RegisterDefaults()
@@ -58,24 +56,7 @@ namespace MapleSeed
             var ver = ApplicationDeployment.CurrentDeployment?.CurrentVersion;
             if (ver != null) Text = $@"Maple Seed - Version: {ver}";
         }
-
-        private static void CheckUpdate()
-        {
-            if (!ApplicationDeployment.IsNetworkDeployed) return;
-            var curVersion = AppUpdate.Instance.Ad.CurrentVersion.ToString();
-
-            if (AppUpdate.Instance.UpdateAvailable) {
-                TextLog.MesgLog.WriteLog($"Current Version: {curVersion}", Color.Chocolate);
-
-                var version = AppUpdate.Instance.Ad.CheckForDetailedUpdate().AvailableVersion.ToString();
-                TextLog.MesgLog.WriteLog($"Latest Version: {version}", Color.Chocolate);
-                TextLog.MesgLog.WriteLog("Update via the Settings tab.", Color.Chocolate);
-            }
-
-            if (!AppUpdate.Instance.UpdateAvailable)
-                TextLog.ChatLog.WriteLog($"Current Version: {curVersion}", Color.Green);
-        }
-
+        
         private static void InitSettings()
         {
             if (string.IsNullOrEmpty(Settings.CemuDirectory) ||
@@ -133,8 +114,6 @@ namespace MapleSeed
             await Task.Run(() => Database.LoadLibrary(Settings.TitleDirectory));
 
             RegisterDefaults();
-
-            CheckUpdate();
 
             AppendLog($"Game Directory [{Settings.TitleDirectory}]");
             AppendLog(@"Welcome to Maple Tree.");
@@ -206,12 +185,6 @@ namespace MapleSeed
             }
 
             btn.Enabled = true;
-        }
-
-        private void Instance_ProgressChangedEventHandler(object sender, AppUpdate.ProgressChangedEventArgs e)
-        {
-            if (e == null) return;
-            UpdateProgressBar(e.ProgressPercentage, e.TotalBytesReceived, e.BytesReceived);
         }
 
         private void Network_DownloadProgressChangedEvent(object sender, DownloadProgressChangedEventArgs e)
@@ -341,19 +314,7 @@ namespace MapleSeed
 
         private void checkUpdateBtn_Click(object sender, EventArgs e)
         {
-            try {
-                if (!AppUpdate.Instance.UpdateAvailable) return;
-
-                var result = MessageBox.Show(@"Would you like to update?", @"Update Available!", MessageBoxButtons.YesNo);
-                if (result != DialogResult.Yes) return;
-
-                AppUpdate.Instance.Update();
-            }
-            catch (DeploymentDownloadException dde) {
-                System.Windows.MessageBox.Show(
-                    "Cannot install the latest version of the application.\n\nPlease check your network connection, or try again later. Error: " +
-                    dde);
-            }
+            
         }
 
         private void pictureBox1_Click(object sender, EventArgs e)

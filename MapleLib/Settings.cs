@@ -81,6 +81,16 @@ namespace MapleLib
             set { WriteKeyValue("Cemu173Patch", value.ToString()); }
         }
 
+        public static bool CacheDatabase {
+            get {
+                var value = GetKeyValue("CacheDatabase");
+                if (string.IsNullOrEmpty(value))
+                    WriteKeyValue("CacheDatabase", true.ToString());
+                return GetKeyValue("CacheDatabase") == "True";
+            }
+            set { WriteKeyValue("CacheDatabase", value.ToString()); }
+        }
+
         public static bool StoreEncryptedContent {
             get {
                 var value = GetKeyValue("StoreEncryptedContent");

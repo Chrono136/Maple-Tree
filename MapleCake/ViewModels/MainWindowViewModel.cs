@@ -14,10 +14,9 @@ using System.Windows.Threading;
 using MapleCake.Models;
 using MapleLib;
 using MapleLib.Common;
-using MapleLib.Network.Web;
+using MapleLib.Network;
 using MapleLib.Structs;
 using Application = System.Windows.Application;
-using WebClient = MapleLib.Network.Web.WebClient;
 
 namespace MapleCake.ViewModels
 {
@@ -63,6 +62,9 @@ namespace MapleCake.ViewModels
         private void SetDefaults()
         {
             Config.LogBox = string.Empty;
+            Config.ProgressMin = 0;
+            Config.ProgressValue = 0;
+            Config.ProgressMax = 100;
         }
 
         private void InitSettings()
@@ -104,8 +106,8 @@ namespace MapleCake.ViewModels
         {
             TextLog.MesgLog.NewLogEntryEventHandler += MesgLogOnNewLogEntryEventHandler;
             TextLog.StatusLog.NewLogEntryEventHandler += StatusLogOnNewLogEntryEventHandler;
-            WebClient.DownloadProgressChangedEvent += WebClientOnDownloadProgressChangedEvent;
-            AppUpdate.Instance.ProgressChangedEventHandler += InstanceOnProgressChangedEventHandler;
+            //Web.DownloadProgressChangedEvent += WebClientOnDownloadProgressChangedEvent;
+            Database.ProgressReport += Database_ProgressReport;
         }
 
         private static void CheckUpdate()
@@ -136,12 +138,13 @@ namespace MapleCake.ViewModels
 
             Config.SelectedItem = title;
             RaisePropertyChangedEvent("TitleID");
-        }
 
-        public void WriteVersions(Title title)
-        {
-            var result = string.Join(", ", title.Versions.ToArray());
-            TextLog.StatusLog.WriteLog($"Versions: {result}");
+            if (string.IsNullOrEmpty(title.ID) || 
+                string.IsNullOrEmpty(title.Region) || 
+                string.IsNullOrEmpty(title.Name))
+                return;
+
+            TextLog.MesgLog.WriteLog($"[{title.Lower8Digits()}][{title.Region}] {title.Name}");
         }
 
         public void DynamicTheme(bool enabled)
@@ -171,11 +174,13 @@ namespace MapleCake.ViewModels
             });
         }
 
-        private void InstanceOnProgressChangedEventHandler(object sender, AppUpdate.ProgressChangedEventArgs e) {}
-
-        private void WebClientOnDownloadProgressChangedEvent(object sender, DownloadProgressChangedEventArgs e)
+        private void Database_ProgressReport(object sender, ProgressReport e)
         {
-            Config.ProgressValue = e?.ProgressPercentage ?? 0;
+            Config.ProgressMin = e.Min;
+            Config.ProgressMax = e.Max;
+            Config.ProgressValue = e.Value;
+            Config.RaisePropertyChangedEvent("ProgressMin");
+            Config.RaisePropertyChangedEvent("ProgressMax");
             Config.RaisePropertyChangedEvent("ProgressValue");
         }
 

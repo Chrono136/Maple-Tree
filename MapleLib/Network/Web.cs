@@ -1,5 +1,5 @@
 ﻿// Project: MapleSeed
-// File: Network.cs
+// File: Web.cs
 // Updated By: Jared
 // 
 
@@ -14,9 +14,9 @@ using MapleLib.Structs;
 
 #endregion
 
-namespace MapleLib.Network.Web
+namespace MapleLib.Network
 {
-    public static class WebClient
+    public static class Web
     {
         private const string WII_USER_AGENT = "wii libnup/1.0";
 

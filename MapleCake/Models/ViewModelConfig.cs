@@ -43,7 +43,9 @@ namespace MapleCake.Models
             }
         }
 
-        public string SelectedItemText => SelectedItem != null ? $"Download '{SelectedItem.Name}'" : "Download";
+        public int ProgressMin { get; set; }
+
+        public int ProgressMax { get; set; }
 
         public int ProgressValue { get; set; }
 
@@ -54,6 +56,23 @@ namespace MapleCake.Models
             set {
                 Settings.FullScreenMode = value;
                 RaisePropertyChangedEvent("FullScreen");
+            }
+        }
+
+        public bool StoreEncryptedContent
+        {
+            get { return Settings.StoreEncryptedContent; }
+            set {
+                Settings.StoreEncryptedContent = value;
+                RaisePropertyChangedEvent("DynamicTheme");
+            }
+        }
+
+        public bool CacheDatabase {
+            get { return Settings.CacheDatabase; }
+            set {
+                Settings.CacheDatabase = value;
+                RaisePropertyChangedEvent("CacheDatabase");
             }
         }
 
@@ -74,11 +93,9 @@ namespace MapleCake.Models
             get { return _selectedItem; }
             set {
                 if (value == null) return;
-                _self.WriteVersions(value);
                 _self.SetBackgroundImg(_selectedItem = value);
                 RaisePropertyChangedEvent("SelectedItem");
                 RaisePropertyChangedEvent("ContextItems");
-                RaisePropertyChangedEvent("SelectedItemText");
             }
         }
 

@@ -18,12 +18,12 @@ using System.Xml;
 using libWiiSharp;
 using MapleLib.Collections;
 using MapleLib.Common;
+using MapleLib.Network;
 using MapleLib.Properties;
 using MapleLib.Structs;
 using MapleLib.WiiU;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using WebClient = MapleLib.Network.Web.WebClient;
 
 #endregion
 
@@ -40,25 +40,25 @@ namespace MapleLib
 
         public static MapleDictionary TitleDb { get; }
 
-        public static void Load(bool forceLoad = true)
+        public static event EventHandler<ProgressReport> ProgressReport;
+
+        public static void Load()
         {
             var dbFile = Path.GetFullPath(Path.Combine(Settings.ConfigDirectory, "database"));
 
-            if (!File.Exists(dbFile) || new FileInfo(dbFile).Length <= 4000 || forceLoad) {
-                Create();
+            if (!File.Exists(dbFile) || new FileInfo(dbFile).Length <= 4000 || !Settings.CacheDatabase) {
+                File.WriteAllText(dbFile, JsonConvert.SerializeObject(_db = Create()));
             }
             else {
                 var json = File.ReadAllText(dbFile);
                 _db = JsonConvert.DeserializeObject<MapleList<Title>>(json);
             }
-            
+
             LoadLibrary(Settings.TitleDirectory);
         }
 
-        private static void Create()
+        private static MapleList<Title> Create()
         {
-            var dbFile = Path.GetFullPath(Path.Combine(Settings.ConfigDirectory, "database"));
-
             var eShopTitlesStr = Resources.eShopAndDiskTitles; //index 12
             var eShopTitleUpdates = Resources.eShopTitleUpdates; //index 9
             var eShopTitleDLC = Resources.eShopTitleDLC; //index 8
@@ -120,7 +120,7 @@ namespace MapleLib
                 if (title != null)
                     title.Versions = versions;
             }
-            
+
             foreach (var title in _db.Where(x => x.ContentType == "eShop/Application")) {
                 var id = $"0005000C{title.Lower8Digits().ToUpper()}";
 
@@ -129,8 +129,7 @@ namespace MapleLib
                     title.HasDLC = _title.HasValues;
             }
 
-            var json = JsonConvert.SerializeObject(_db);
-            File.WriteAllText(dbFile, json);
+            return _db;
         }
 
         public static Title SearchById(string title_id)
@@ -170,11 +169,11 @@ namespace MapleLib
                 try {
                     var url = $"http://art.gametdb.com/wiiu/coverHQ/{langCode}/{imageCode}.jpg";
 
-                    if (WebClient.UrlExists(url)) {
+                    if (Web.UrlExists(url)) {
                         title.ImageLocation = cachedFile;
 
                         if (!save) return;
-                        var data = await WebClient.DownloadDataAsync(url);
+                        var data = await Web.DownloadDataAsync(url);
                         File.WriteAllBytes(title.ImageLocation, data);
                     }
                 }
@@ -210,7 +209,7 @@ namespace MapleLib
             byte[] data = {};
 
             try {
-                data = await WebClient.DownloadDataAsync(url);
+                data = await Web.DownloadDataAsync(url);
             }
             catch (WebException e) {
                 TextLog.MesgLog.AddHistory($"{e.Message}\n{e.StackTrace}");
@@ -357,7 +356,7 @@ namespace MapleLib
 
             #endregion
 
-            WebClient.ResetDownloadProgressChanged();
+            Web.ResetDownloadProgressChanged();
             Toolbelt.AppendLog($"[+] [{contentType}] {name} v{tmd.TitleVersion} Finished.");
             Toolbelt.SetStatus($"[+] [{contentType}] {name} v{tmd.TitleVersion} Finished.");
         }
@@ -373,25 +372,29 @@ namespace MapleLib
                     Toolbelt.AppendLog($"Downloading Content #{i1 + 1} of {numc}... ({size})");
                     var contentPath = Path.Combine(outputDir, tmd.Contents[i1].ContentID.ToString("x8"));
 
-                    if (Toolbelt.IsValid(tmd.Contents[i1], contentPath)) {
-                        //Toolbelt.AppendLog("   + Using Local File, Skipping...");
-                    }
-                    else {
+                    if (!Toolbelt.IsValid(tmd.Contents[i1], contentPath)) {
                         try {
                             var downloadUrl = $"{titleUrl}/{tmd.Contents[i1].ContentID:x8}";
-                            await WebClient.DownloadFileAsync(downloadUrl, contentPath);
+                            await Web.DownloadFileAsync(downloadUrl, contentPath);
                         }
                         catch (Exception ex) {
                             Toolbelt.AppendLog($"Downloading Content #{i1 + 1} of {numc} failed...\n{ex.Message}");
                             return 0;
                         }
                     }
+                    ReportProgress(0, tmd.NumOfContents - 1, i1);
                     return 1;
                 });
                 if (result == 0)
                     break;
             }
+            ReportProgress(0, 100, 0);
             return result;
+        }
+
+        private static void ReportProgress(int min, int max, int value)
+        {
+            ProgressReport?.Invoke(null, new ProgressReport {Min = min, Max = max, Value = value});
         }
 
         public static void LoadLibrary(string titleDirectory)
@@ -411,12 +414,12 @@ namespace MapleLib
 
         private static List<JObject> WiiUTitleKeys()
         {
-            var jsonStr = WebClient.DownloadString("https://wiiu.titlekeys.com/json");
+            var jsonStr = Web.DownloadString("https://wiiu.titlekeys.com/json");
             var jsonTitles = JsonConvert.DeserializeObject<ICollection<JObject>>(jsonStr);
             return jsonTitles.ToList();
         }
 
-        public static JObject WiiUTitleKey(ICollection<JObject> jsonTitles, string id)
+        private static JObject WiiUTitleKey(ICollection<JObject> jsonTitles, string id)
         {
             return jsonTitles.ToList().Find(x => x["titleID"].Value<string>().ToUpper() == id);
         }

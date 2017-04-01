@@ -26,7 +26,7 @@ namespace MapleLib.WiiU
 
         private static int RetryCount { get; set; }
 
-        public static MapleList<GraphicPack> GraphicPacks { get; set; }
+        public static MapleList<GraphicPack> GraphicPacks { get; private set; }
 
         private string GPDirectory => Path.Combine(Settings.CemuDirectory, "graphicPacks", Toolbelt.RIC(Name));
 
@@ -154,7 +154,7 @@ namespace MapleLib.WiiU
 
                 NewGraphicPack?.Invoke(null, pack);
             }
-            catch (Exception e) {
+            catch (Exception) {
                 //MessageBox.Show($"{e.Message}\n{e.StackTrace}");
             }
         }

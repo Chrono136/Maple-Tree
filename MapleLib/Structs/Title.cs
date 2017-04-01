@@ -3,12 +3,16 @@
 // Updated By: Jared
 // 
 
+using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using MapleLib.Common;
 using MapleLib.Network;
 using MapleLib.Properties;
+using MapleLib.WiiU;
 
 namespace MapleLib.Structs
 {
@@ -21,6 +25,15 @@ namespace MapleLib.Structs
         {
             var cType = ContentType.Contains("App") ? "" : $"[{ContentType}]";
             return Toolbelt.RIC($"{cType}[{Region}] {Name}");
+        }
+
+        public BindingList<GraphicPack> GetGraphicPacks()
+        {
+            if (GraphicPack.GraphicPacks == null)
+                return null;
+
+            var packs = GraphicPack.GraphicPacks.Where(x => x?.TitleIds != null && x.TitleIds.Contains(ID.ToUpper())).ToList();
+            return new BindingList<GraphicPack>(packs);
         }
 
         public int GetTitleVersion()

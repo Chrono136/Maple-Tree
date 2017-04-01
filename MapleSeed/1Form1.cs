@@ -230,7 +230,7 @@ namespace MapleSeed
             var title = titleList.SelectedItem as Title;
             if (title == null) return;
 
-            if (!Toolbelt.LaunchCemu(title.MetaLocation)) return;
+            if (!Toolbelt.LaunchCemu(title.MetaLocation, null)) return;
             TextLog.MesgLog.WriteLog($"Started playing {title.Name}");
         }
 

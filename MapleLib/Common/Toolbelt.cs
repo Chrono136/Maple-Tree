@@ -15,6 +15,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using libWiiSharp;
 using MapleLib.Properties;
+using MapleLib.WiiU;
 using NUS_Downloader;
 
 #endregion
@@ -23,7 +24,7 @@ namespace MapleLib.Common
 {
     public static class Toolbelt
     {
-        public static bool LaunchCemu(string game)
+        public static bool LaunchCemu(string game, GraphicPack pack)
         {
             try {
                 string rpx = null;
@@ -32,20 +33,17 @@ namespace MapleLib.Common
                 if (string.IsNullOrEmpty(dir))
                     return false;
 
-                if (game == null) {
-                    RunCemu(Path.Combine(dir, "cemu.exe"), "");
-                    return true;
-                }
-
                 var files = Directory.GetFiles(dir, "*.rpx", SearchOption.AllDirectories);
-
                 if (files.Any())
                     rpx = files.First();
 
                 var cemuPath = Path.Combine(Settings.CemuDirectory, "cemu.exe");
 
-                if (File.Exists(cemuPath) && File.Exists(rpx))
+                if (File.Exists(cemuPath) && File.Exists(rpx)) {
+                    pack.Apply();
                     RunCemu(cemuPath, rpx);
+                    pack.Remove();
+                }
                 else
                     SetStatus("Could not find a valid .rpx");
             }
@@ -57,7 +55,7 @@ namespace MapleLib.Common
             return true;
         }
 
-        private static async void RunCemu(string cemuPath, string rpx)
+        private static void RunCemu(string cemuPath, string rpx)
         {
             try {
                 var workingDir = Path.GetDirectoryName(cemuPath);
@@ -65,7 +63,7 @@ namespace MapleLib.Common
 
                 var o1 = Settings.FullScreenMode ? "-f" : "";
                 using (TextWriter writer = File.CreateText(Path.Combine(Settings.ConfigDirectory, "cemu.log"))) {
-                    await StartProcess(cemuPath, $"{o1} -g \"{rpx}\"", workingDir, null, true, false, writer);
+                    StartProcess(cemuPath, $"{o1} -g \"{rpx}\"", workingDir, null, true, false, writer).Wait();
                 }
             }
             catch (Exception ex) {
@@ -156,7 +154,7 @@ namespace MapleLib.Common
             return 1;
         }
 
-        public static async Task<int> StartProcess(string filename, string arguments, string workingDirectory,
+        private static async Task<int> StartProcess(string filename, string arguments, string workingDirectory,
             int? timeout = null, bool createNoWindow = true, bool shellEx = false, TextWriter outputTextWriter = null,
             TextWriter errorTextWriter = null)
         {
@@ -203,7 +201,7 @@ namespace MapleLib.Common
 
                 var log = TextLog.MesgLog;
                 if (process.ExitCode == 0) log.WriteLog($@"[{Path.GetFileName(filename)}] Exited Successfully!");
-                else log.WriteError($@"[{Path.GetFileName(filename)}] Exited with Exit Code {process.ExitCode}!");
+                else log.WriteError($@"[{Path.GetFileName(filename)}] Exited with Code {process.ExitCode}!");
 
                 return process.ExitCode;
             }

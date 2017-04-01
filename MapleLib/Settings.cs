@@ -55,6 +55,17 @@ namespace MapleLib
             set { WriteKeyValue("FullScreenMode", value.ToString()); }
         }
 
+        public static bool GraphicPacksEnabled {
+            get {
+                var value = GetKeyValue("GraphicPacksEnabled");
+                if (string.IsNullOrEmpty(value))
+                    WriteKeyValue("GraphicPacksEnabled", false.ToString());
+
+                return GetKeyValue("GraphicPacksEnabled") == "True";
+            }
+            set { WriteKeyValue("GraphicPacksEnabled", value.ToString()); }
+        }
+
         public static bool DynamicTheme
         {
             get

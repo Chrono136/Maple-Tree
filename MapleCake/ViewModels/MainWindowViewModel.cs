@@ -6,16 +6,14 @@
 using System;
 using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Net;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Threading;
 using MapleCake.Models;
 using MapleLib;
 using MapleLib.Common;
-using MapleLib.Network;
 using MapleLib.Structs;
+using MapleLib.WiiU;
 using Application = System.Windows.Application;
 
 namespace MapleCake.ViewModels
@@ -108,6 +106,8 @@ namespace MapleCake.ViewModels
             TextLog.StatusLog.NewLogEntryEventHandler += StatusLogOnNewLogEntryEventHandler;
             //Web.DownloadProgressChangedEvent += WebClientOnDownloadProgressChangedEvent;
             Database.ProgressReport += Database_ProgressReport;
+
+            GraphicPack.NewGraphicPack += GraphicPack_NewGraphicPack;
         }
 
         private static void CheckUpdate()
@@ -139,8 +139,8 @@ namespace MapleCake.ViewModels
             Config.SelectedItem = title;
             RaisePropertyChangedEvent("TitleID");
 
-            if (string.IsNullOrEmpty(title.ID) || 
-                string.IsNullOrEmpty(title.Region) || 
+            if (string.IsNullOrEmpty(title.ID) ||
+                string.IsNullOrEmpty(title.Region) ||
                 string.IsNullOrEmpty(title.Name))
                 return;
 
@@ -165,8 +165,10 @@ namespace MapleCake.ViewModels
             CheckUpdate();
 
             await Task.Run(() => {
-                Database.Load();
+                GraphicPack.Init().Wait();
 
+                Database.Load();
+                
                 Config.SelectedItem = Config.TitleList.Random();
 
                 Config.LaunchCemuText = "Launch Cemu";
@@ -182,6 +184,11 @@ namespace MapleCake.ViewModels
             Config.RaisePropertyChangedEvent("ProgressMin");
             Config.RaisePropertyChangedEvent("ProgressMax");
             Config.RaisePropertyChangedEvent("ProgressValue");
+        }
+
+        private void GraphicPack_NewGraphicPack(object sender, GraphicPack e)
+        {
+            //TextLog.MesgLog.WriteLog($"[+] Graphic Pack: {e.Name}");
         }
 
         private void StatusLogOnNewLogEntryEventHandler(object sender, NewLogEntryEvent newLogEntryEvent)

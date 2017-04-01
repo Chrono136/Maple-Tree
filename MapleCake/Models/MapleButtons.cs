@@ -6,12 +6,12 @@
 using System;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Input;
 using MapleCake.ViewModels;
 using MapleLib;
-using MapleLib.Collections;
 using MapleLib.Common;
 using MapleLib.Properties;
 using MapleLib.Structs;
@@ -37,8 +37,12 @@ namespace MapleCake.Models
         {
             if (SelectedItem == null) return;
 
-            if (!Toolbelt.LaunchCemu(SelectedItem.MetaLocation)) return;
-            TextLog.MesgLog.WriteLog($"Now Playing: {SelectedItem.Name}");
+            new Thread(() => {
+                var pack = MainWindowViewModel.Instance.Config.SelectedItemGraphicPack;
+
+                if (!Toolbelt.LaunchCemu(SelectedItem.MetaLocation, pack)) return;
+                TextLog.MesgLog.WriteLog($"Now Playing: {SelectedItem.Name}");
+            }).Start();
         }
 
         private async void DownloadButton()
@@ -100,7 +104,7 @@ namespace MapleCake.Models
             if (result == DialogResult.OK)
                 SelectedItem.DeleteAddOnContent();
         }
-        
+
         private void RemoveTitleButton()
         {
             SelectedItem?.DeleteContent();

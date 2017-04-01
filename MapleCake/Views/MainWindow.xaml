@@ -18,15 +18,17 @@
         <TabControl Width="389">
             <TabItem Header="Library">
                 <Grid>
-                    <ListBox ItemsSource="{Binding Config.TitleList}" SelectedItem="{Binding Config.SelectedItem}" Margin="0,10,0,60" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="White">
+                    <ListBox ItemsSource="{Binding Config.TitleList}" SelectedItem="{Binding Config.SelectedItem}" Margin="0,10,0,65" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="White">
                         <ListBox.ContextMenu>
                             <ContextMenu Closed="OnContextMenuClosing" ItemsSource="{Binding Config.ContextItems}" UsesItemContainerTemplate="True"/>
                         </ListBox.ContextMenu>
                     </ListBox>
 
-                    <ProgressBar Value="{Binding Config.ProgressValue}" Minimum="{Binding Config.ProgressMin}" Maximum="{Binding Config.ProgressMax}" HorizontalAlignment="Center" Margin="11,0,9,10" VerticalAlignment="Bottom" Height="15" Width="363" Background="#A5343434"/>
+                    <ComboBox ItemsSource="{Binding Config.SelectedItemGraphicPacks}" SelectedItem="{Binding Config.SelectedItemGraphicPack, UpdateSourceTrigger=PropertyChanged}" VerticalContentAlignment="Center" HorizontalAlignment="Center" Margin="11,0,9,10" VerticalAlignment="Bottom" Height="15" Width="363" Background="{x:Null}" Foreground="White" HorizontalContentAlignment="Center"/>
 
-                    <Button Content="{Binding Config.LaunchCemuText}" Command="{Binding Click.LaunchCemu}" HorizontalAlignment="Center" Margin="5,0,5,30" VerticalAlignment="Bottom" Width="373" Background="{x:Null}" BorderBrush="#FFCCCCCC"/>
+                    <ProgressBar Visibility="Hidden" Value="{Binding Config.ProgressValue}" Minimum="{Binding Config.ProgressMin}" Maximum="{Binding Config.ProgressMax}" HorizontalAlignment="Center" Margin="11,0,9,10" VerticalAlignment="Bottom" Height="15" Width="363" Background="#A5343434"/>
+                    
+                    <Button Content="{Binding Config.LaunchCemuText}" Command="{Binding Click.LaunchCemu}" HorizontalAlignment="Center" Margin="5,0,5,40" VerticalAlignment="Bottom" Width="373" Background="{x:Null}" BorderBrush="#FFCCCCCC"/>
                 </Grid>
             </TabItem>
 
@@ -44,8 +46,9 @@
                     <CheckBox Content="Dynamic Theme" IsChecked="{Binding Config.DynamicTheme}" ToolTip="Disables dynamic color and backgrounds" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="23,324,0,0"/>
                     <CheckBox Content="Store Encrypted Content" IsChecked="{Binding Config.StoreEncryptedContent}" ToolTip="Retains encrypted files after decrypting" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="23,350,0,0"/>
                     <CheckBox Content="Cache Database" IsChecked="{Binding Config.CacheDatabase}" ToolTip="Disable this to rebuild the database at start up" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="23,375,0,0"/>
-                    
+
                     <CheckBox Content="Full Screen" IsChecked="{Binding Config.FullScreen}" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="23,105,0,0"/>
+                    <CheckBox Content="Graphic Packs" IsChecked="{Binding Config.GraphicPacksEnabled}" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="23,130,0,0"/>
 
                 </Grid>
             </TabItem>

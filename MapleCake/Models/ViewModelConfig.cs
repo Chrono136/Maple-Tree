@@ -4,21 +4,23 @@
 // 
 
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
 using MapleCake.Models.Interfaces;
 using MapleCake.ViewModels;
 using MapleLib;
 using MapleLib.Collections;
 using MapleLib.Structs;
+using MapleLib.WiiU;
 
 namespace MapleCake.Models
 {
     public class ViewModelConfig : ViewModelBase
     {
         private readonly MainWindowViewModel _self;
-
+        private string _launchCemuText = "Loading Please wait...";
         private Title _selectedItem;
         private string _titleId;
-        private string _launchCemuText = "Loading Please wait...";
 
         public ViewModelConfig(ViewModelBase self)
         {
@@ -33,11 +35,9 @@ namespace MapleCake.Models
 
         public string LogBox { get; set; }
 
-        public string LaunchCemuText
-        {
+        public string LaunchCemuText {
             get { return _launchCemuText; }
-            set
-            {
+            set {
                 _launchCemuText = value;
                 RaisePropertyChangedEvent("LaunchCemuText");
             }
@@ -59,8 +59,17 @@ namespace MapleCake.Models
             }
         }
 
-        public bool StoreEncryptedContent
+        public bool GraphicPacksEnabled
         {
+            get { return Settings.GraphicPacksEnabled; }
+            set
+            {
+                Settings.GraphicPacksEnabled = value;
+                RaisePropertyChangedEvent("GraphicPacksEnabled");
+            }
+        }
+
+        public bool StoreEncryptedContent {
             get { return Settings.StoreEncryptedContent; }
             set {
                 Settings.StoreEncryptedContent = value;
@@ -96,8 +105,15 @@ namespace MapleCake.Models
                 _self.SetBackgroundImg(_selectedItem = value);
                 RaisePropertyChangedEvent("SelectedItem");
                 RaisePropertyChangedEvent("ContextItems");
+                RaisePropertyChangedEvent("SelectedItemGraphicPacks");
+                SelectedItemGraphicPack = SelectedItemGraphicPacks.FirstOrDefault();
+                RaisePropertyChangedEvent("SelectedItemGraphicPack");
             }
         }
+
+        public GraphicPack SelectedItemGraphicPack { get; set; }
+
+        public BindingList<GraphicPack> SelectedItemGraphicPacks => SelectedItem?.GetGraphicPacks();
 
         public MapleDictionary TitleList => Database.TitleDb;
 

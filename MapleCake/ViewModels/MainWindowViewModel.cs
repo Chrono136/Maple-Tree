@@ -106,8 +106,6 @@ namespace MapleCake.ViewModels
             TextLog.StatusLog.NewLogEntryEventHandler += StatusLogOnNewLogEntryEventHandler;
             //Web.DownloadProgressChangedEvent += WebClientOnDownloadProgressChangedEvent;
             Database.ProgressReport += Database_ProgressReport;
-
-            GraphicPack.NewGraphicPack += GraphicPack_NewGraphicPack;
         }
 
         private static void CheckUpdate()
@@ -168,7 +166,7 @@ namespace MapleCake.ViewModels
                 GraphicPack.Init().Wait();
 
                 Database.Load();
-                
+
                 Config.SelectedItem = Config.TitleList.Random();
 
                 Config.LaunchCemuText = "Launch Cemu";
@@ -184,11 +182,6 @@ namespace MapleCake.ViewModels
             Config.RaisePropertyChangedEvent("ProgressMin");
             Config.RaisePropertyChangedEvent("ProgressMax");
             Config.RaisePropertyChangedEvent("ProgressValue");
-        }
-
-        private void GraphicPack_NewGraphicPack(object sender, GraphicPack e)
-        {
-            //TextLog.MesgLog.WriteLog($"[+] Graphic Pack: {e.Name}");
         }
 
         private void StatusLogOnNewLogEntryEventHandler(object sender, NewLogEntryEvent newLogEntryEvent)

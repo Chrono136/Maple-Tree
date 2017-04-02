@@ -35,14 +35,6 @@ namespace MapleCake.Models
 
         public string LogBox { get; set; }
 
-        public string LaunchCemuText {
-            get { return _launchCemuText; }
-            set {
-                _launchCemuText = value;
-                RaisePropertyChangedEvent("LaunchCemuText");
-            }
-        }
-
         public int ProgressMin { get; set; }
 
         public int ProgressMax { get; set; }
@@ -50,6 +42,35 @@ namespace MapleCake.Models
         public int ProgressValue { get; set; }
 
         public bool DownloadCommandEnabled { get; set; } = true;
+
+        public string TitleDirectory
+        {
+            get { return Settings.TitleDirectory; }
+            set {
+                Settings.TitleDirectory = value;
+                RaisePropertyChangedEvent("TitleDirectory");
+            }
+        }
+
+        public string CemuDirectory
+        {
+            get { return Settings.CemuDirectory; }
+            set
+            {
+                Settings.CemuDirectory = value;
+                RaisePropertyChangedEvent("CemuDirectory");
+            }
+        }
+
+        public string LaunchCemuText
+        {
+            get { return _launchCemuText; }
+            set
+            {
+                _launchCemuText = value;
+                RaisePropertyChangedEvent("LaunchCemuText");
+            }
+        }
 
         public bool FullScreen {
             get { return Settings.FullScreenMode; }
@@ -59,11 +80,9 @@ namespace MapleCake.Models
             }
         }
 
-        public bool GraphicPacksEnabled
-        {
+        public bool GraphicPacksEnabled {
             get { return Settings.GraphicPacksEnabled; }
-            set
-            {
+            set {
                 Settings.GraphicPacksEnabled = value;
                 RaisePropertyChangedEvent("GraphicPacksEnabled");
             }

@@ -27,7 +27,7 @@
                     <ComboBox ItemsSource="{Binding Config.SelectedItemGraphicPacks}" SelectedItem="{Binding Config.SelectedItemGraphicPack, UpdateSourceTrigger=PropertyChanged}" VerticalContentAlignment="Center" HorizontalAlignment="Center" Margin="11,0,9,10" VerticalAlignment="Bottom" Height="15" Width="363" Background="{x:Null}" Foreground="White" HorizontalContentAlignment="Center"/>
 
                     <ProgressBar Visibility="Hidden" Value="{Binding Config.ProgressValue}" Minimum="{Binding Config.ProgressMin}" Maximum="{Binding Config.ProgressMax}" HorizontalAlignment="Center" Margin="11,0,9,10" VerticalAlignment="Bottom" Height="15" Width="363" Background="#A5343434"/>
-                    
+
                     <Button Content="{Binding Config.LaunchCemuText}" Command="{Binding Click.LaunchCemu}" HorizontalAlignment="Center" Margin="5,0,5,40" VerticalAlignment="Bottom" Width="373" Background="{x:Null}" BorderBrush="#FFCCCCCC"/>
                 </Grid>
             </TabItem>
@@ -37,19 +37,21 @@
                     <TextBox Text="{Binding Config.TitleID, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Center" Height="23" Margin="10,3,10,0" TextAlignment="Center" TextWrapping="Wrap" VerticalAlignment="Top" Width="363" Background="{x:Null}"/>
                     <Button Content="Download" Command="{Binding Click.Download}" IsEnabled="{Binding Config.DownloadCommandEnabled}" HorizontalAlignment="Center" Margin="10,32,10,0" VerticalAlignment="Top" FontWeight="Bold" Width="363" Background="{x:Null}" Foreground="White"/>
 
-                    <GroupBox Header="MapleSeed" HorizontalAlignment="Left" Margin="11,286,0,0" VerticalAlignment="Top" Height="191" Width="363"/>
+                    <GroupBox Header="MapleSeed" HorizontalAlignment="Left" Margin="11,267,0,0" VerticalAlignment="Top" Height="215" Width="363"/>
                     <GroupBox Header="Cemu" HorizontalAlignment="Left" Margin="10,69,0,0" VerticalAlignment="Top" Height="191" Width="363"/>
 
                     <ProgressBar Value="{Binding Config.ProgressValue}" Minimum="{Binding Config.ProgressMin}" Maximum="{Binding Config.ProgressMax}" HorizontalAlignment="Center" Margin="11,0,9,10" VerticalAlignment="Bottom" Height="15" Width="363" Background="#A5343434"/>
-                    <TextBlock HorizontalAlignment="Left" Margin="12,0,0,23" TextWrapping="Wrap" Text="{Binding Config.Status}" VerticalAlignment="Bottom" Width="369" TextAlignment="Center" FontWeight="Bold"/>
+                    <TextBlock HorizontalAlignment="Left" Margin="12,0,0,20" TextWrapping="Wrap" Text="{Binding Config.Status}" VerticalAlignment="Bottom" Width="369" TextAlignment="Center" FontWeight="Bold"/>
 
-                    <CheckBox Content="Dynamic Theme" IsChecked="{Binding Config.DynamicTheme}" ToolTip="Disables dynamic color and backgrounds" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="23,324,0,0"/>
-                    <CheckBox Content="Store Encrypted Content" IsChecked="{Binding Config.StoreEncryptedContent}" ToolTip="Retains encrypted files after decrypting" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="23,350,0,0"/>
-                    <CheckBox Content="Cache Database" IsChecked="{Binding Config.CacheDatabase}" ToolTip="Disable this to rebuild the database at start up" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="23,375,0,0"/>
+                    <CheckBox Content="Dynamic Theme" IsChecked="{Binding Config.DynamicTheme}" ToolTip="Disables dynamic color and backgrounds" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="23,306,0,0"/>
+                    <CheckBox Content="Store Encrypted Content" IsChecked="{Binding Config.StoreEncryptedContent}" ToolTip="Retains encrypted files after decrypting" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="23,332,0,0"/>
+                    <CheckBox Content="Cache Database" IsChecked="{Binding Config.CacheDatabase}" ToolTip="Disable this to rebuild the database at start up" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="23,357,0,0"/>
 
                     <CheckBox Content="Full Screen" IsChecked="{Binding Config.FullScreen}" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="23,105,0,0"/>
                     <CheckBox Content="Graphic Packs" IsChecked="{Binding Config.GraphicPacksEnabled}" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="23,130,0,0"/>
 
+                    <TextBox Text="{Binding Config.TitleDirectory}" TextAlignment="Center" Height="23" TextWrapping="Wrap" VerticalAlignment="Bottom" Margin="25,0,25,95"/>
+                    <TextBox Text="{Binding Config.CemuDirectory}" TextAlignment="Center" Height="23" TextWrapping="Wrap" VerticalAlignment="Bottom" Margin="25,0,25,65"/>
                 </Grid>
             </TabItem>
 

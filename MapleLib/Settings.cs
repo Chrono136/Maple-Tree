@@ -66,10 +66,8 @@ namespace MapleLib
             set { WriteKeyValue("GraphicPacksEnabled", value.ToString()); }
         }
 
-        public static bool DynamicTheme
-        {
-            get
-            {
+        public static bool DynamicTheme {
+            get {
                 var value = GetKeyValue("DynamicTheme");
                 if (string.IsNullOrEmpty(value))
                     WriteKeyValue("DynamicTheme", false.ToString());
@@ -131,7 +129,7 @@ namespace MapleLib
         private static string ConfigName => "MapleTree";
         private static string AppFolder => Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
         public static string ConfigDirectory => Path.Combine(AppFolder, ConfigName);
-        
+
         public static string BasePatchDir => GetBasePatchDir();
 
         private static string GetBasePatchDir()

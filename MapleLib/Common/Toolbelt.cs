@@ -40,9 +40,9 @@ namespace MapleLib.Common
                 var cemuPath = Path.Combine(Settings.CemuDirectory, "cemu.exe");
 
                 if (File.Exists(cemuPath) && File.Exists(rpx)) {
-                    pack.Apply();
+                    pack?.Apply();
                     RunCemu(cemuPath, rpx);
-                    pack.Remove();
+                    pack?.Remove();
                 }
                 else
                     SetStatus("Could not find a valid .rpx");

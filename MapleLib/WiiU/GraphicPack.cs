@@ -6,13 +6,13 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Windows.Forms;
 using IniParser;
-using LibGit2Sharp;
 using MapleLib.Collections;
 using MapleLib.Common;
+using MapleLib.Network;
 using Newtonsoft.Json;
 
 namespace MapleLib.WiiU
@@ -28,9 +28,11 @@ namespace MapleLib.WiiU
 
         public static MapleList<GraphicPack> GraphicPacks { get; private set; }
 
+        private string SaveToLocation => Path.Combine(GPDirectory, "rules.txt");
+
         private string GPDirectory => Path.Combine(Settings.CemuDirectory, "graphicPacks", Toolbelt.RIC(Name));
 
-        private string SaveToLocation => Path.Combine(GPDirectory, "rules.txt");
+        public MapleList<GraphicPack> Includes { get; set; } = new MapleList<GraphicPack>();
 
         public string Name { get; set; }
 
@@ -75,66 +77,56 @@ namespace MapleLib.WiiU
             return GraphicPacks.FirstOrDefault(x => x.TitleIds.ToList().Contains(title_id.ToUpper()));
         }
 
-        public static async Task<MapleList<GraphicPack>> Init()
+        public static async Task<MapleList<GraphicPack>> Init(bool force = false)
         {
-            var gpFile = Path.Combine(Settings.ConfigDirectory, "graphicPacks.db");
+            var databaseFile = Path.Combine(Settings.ConfigDirectory, "graphicPacks");
             GraphicPacks = new MapleList<GraphicPack>();
 
-            if (!File.Exists(gpFile) || !Settings.CacheDatabase) {
+            if (!File.Exists(databaseFile) || Settings.CacheDatabase || force) {
                 TextLog.MesgLog.WriteLog(@"Building graphic pack database...");
 
-                var path = Path.Combine(Settings.ConfigDirectory, "graphicPacks");
-                if (Directory.Exists(path) && Repository.IsValid(path)) {
-                    var logMessage = string.Empty;
-                    using (var repo = new Repository(path)) {
-                        foreach (var remote in repo.Network.Remotes) {
-                            var refSpecs = remote.FetchRefSpecs.Select(x => x.Specification);
-                            Commands.Fetch(repo, remote.Name, refSpecs, null, logMessage);
-                        }
-                    }
-                }
-                else {
-                    Repository.Clone("https://github.com/slashiee/cemu_graphic_packs.git", path);
-                }
-
-                var files = Directory.GetFiles(path, "*.txt", SearchOption.AllDirectories).ToList();
-                await Task.Run(() => Parallel.ForEach(files, Process));
-
-                Save();
+                var data = await Web.DownloadDataAsync("https://github.com/slashiee/cemu_graphic_packs/archive/master.zip");
+                File.WriteAllBytes(databaseFile, data);
             }
 
             try {
-                if (File.Exists(gpFile)) {
+                if (File.Exists(databaseFile)) {
                     TextLog.MesgLog.WriteLog(@"Loading graphic pack database...");
-                    var json = File.ReadAllText(gpFile);
-                    GraphicPacks = JsonConvert.DeserializeObject<MapleList<GraphicPack>>(json);
+                    var data = File.ReadAllBytes(databaseFile);
+
+                    using (var zipArchive = new ZipArchive(new MemoryStream(data))) {
+                        zipArchive.Entries.ToList().ForEach(Process);
+                    }
+
+                    //GraphicPacks = JsonConvert.DeserializeObject<MapleList<GraphicPack>>(json);
                 }
             }
-            catch {
+            catch(Exception e) {
                 if (RetryCount >= 3) {
-                    TextLog.MesgLog.WriteLog(@"GraphicPacks Init() failed too many times, cancelling...");
+                    TextLog.MesgLog.WriteLog($"GraphicPacks Init() failed too many times, cancelling...\n\n{e.Message}\n{e.StackTrace}");
                     return GraphicPacks;
                 }
 
                 RetryCount++;
-                File.Delete(gpFile);
-                await Init();
+                File.Delete(databaseFile);
+                await Init(true);
             }
 
             return GraphicPacks;
         }
 
-        private static void Process(string file)
+        private static async void Process(ZipArchiveEntry entry)
         {
             try {
-                if (!File.Exists(file))
+                if (Path.GetExtension(entry.Name) != ".txt")
                     return;
 
                 var parser = new FileIniDataParser();
                 parser.Parser.Configuration.SkipInvalidLines = true;
                 parser.Parser.Configuration.AllowDuplicateKeys = true;
                 parser.Parser.Configuration.AllowDuplicateSections = true;
-                var data = parser.ReadData(new StreamReader(file));
+                var data = parser.ReadData(new StreamReader(entry.Open()));
+                var text = await new StreamReader(entry.Open()).ReadToEndAsync();
 
                 if (data["Definition"]?["titleIds"] == null || data["Definition"]?["name"] == null)
                     return;
@@ -145,11 +137,9 @@ namespace MapleLib.WiiU
                 var titleIds = value.Split(',');
                 var name = data["Definition"]?["name"].Trim();
 
-                if (name.Contains("Mario Kart 8")) {
-                    Console.Write(0);
-                }
+                if (name.Contains("Mario Kart 8")) Console.Write(0);
 
-                var pack = new GraphicPack {Name = name, FileLocation = file};
+                var pack = new GraphicPack {Name = name, FileLocation = entry.FullName};
                 pack.TitleIds.AddRange(titleIds);
 
                 NewGraphicPack?.Invoke(null, pack);

@@ -46,7 +46,7 @@ namespace MapleLib
         {
             var dbFile = Path.GetFullPath(Path.Combine(Settings.ConfigDirectory, "database"));
 
-            if (!File.Exists(dbFile) || new FileInfo(dbFile).Length <= 4000 || !Settings.CacheDatabase) {
+            if (!File.Exists(dbFile) || new FileInfo(dbFile).Length <= 4000 || Settings.CacheDatabase) {
                 File.WriteAllText(dbFile, JsonConvert.SerializeObject(_db = Create()));
             }
             else {

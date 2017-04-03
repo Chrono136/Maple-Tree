@@ -45,7 +45,7 @@
 
                     <CheckBox Content="Dynamic Theme" IsChecked="{Binding Config.DynamicTheme}" ToolTip="Disables dynamic color and backgrounds" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="23,306,0,0"/>
                     <CheckBox Content="Store Encrypted Content" IsChecked="{Binding Config.StoreEncryptedContent}" ToolTip="Retains encrypted files after decrypting" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="23,332,0,0"/>
-                    <CheckBox Content="Cache Database" IsChecked="{Binding Config.CacheDatabase}" ToolTip="Disable this to rebuild the database at start up" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="23,357,0,0"/>
+                    <CheckBox Content="Force Rebuild Database" IsChecked="{Binding Config.CacheDatabase}" ToolTip="Disable this to rebuild the database at start up" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="23,357,0,0"/>
 
                     <CheckBox Content="Full Screen" IsChecked="{Binding Config.FullScreen}" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="23,105,0,0"/>
                     <CheckBox Content="Graphic Packs" IsChecked="{Binding Config.GraphicPacksEnabled}" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="23,130,0,0"/>

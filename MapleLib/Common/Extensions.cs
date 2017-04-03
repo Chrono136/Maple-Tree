@@ -7,7 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
-using System.Linq;
+using System.IO.Compression;
 using System.Text;
 using System.Windows.Forms;
 using System.Xml;
@@ -19,6 +19,38 @@ namespace MapleLib.Common
 {
     public static class Extensions
     {
+        public static string GetString(this ZipArchiveEntry entry)
+        {
+            return entry.Open().toString();
+        }
+
+        public static byte[] GetBytes(this ZipArchiveEntry entry)
+        {
+            using (var ms = new MemoryStream())
+            {
+                entry.Open().CopyTo(ms);
+                return ms.ToArray();
+            }
+        }
+
+        public static byte[] GetBytes(this Stream stream)
+        {
+            using (var ms = new MemoryStream())
+            {
+                stream.CopyTo(ms);
+                return ms.ToArray();
+            }
+        }
+
+        public static string toString(this Stream stream)
+        {
+            using (var ms = new MemoryStream())
+            {
+                stream.CopyTo(ms);
+                return Encoding.UTF8.GetString(ms.ToArray());
+            }
+        }
+
         public static T[] Slice<T>(this T[] source, int start, int end)
         {
             // Handles negative ends.

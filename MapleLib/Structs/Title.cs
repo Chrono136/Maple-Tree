@@ -86,15 +86,18 @@ namespace MapleLib.Structs
             await this.DownloadContent("DLC", "0");
         }
 
-        public void DeleteContent()
+        public bool DeleteContent()
         {
+            var ret = false;
             var path = Path.GetFullPath(FolderLocation);
 
             var result = MessageBox.Show(string.Format(Resources.ActionWillDeleteAllContent, path),
                 Resources.PleaseConfirmAction, MessageBoxButtons.OKCancel);
 
             if (result == DialogResult.OK)
-                Directory.Delete(path, true);
+                Directory.Delete(path, ret = true);
+
+            return ret;
         }
 
         public void DeleteUpdateContent()

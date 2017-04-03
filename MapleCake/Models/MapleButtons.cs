@@ -107,8 +107,8 @@ namespace MapleCake.Models
 
         private void RemoveTitleButton()
         {
-            SelectedItem?.DeleteContent();
-            MainWindowViewModel.Instance.Config.TitleList.Remove(SelectedItem);
+            if (SelectedItem != null && SelectedItem.DeleteContent())
+                MainWindowViewModel.Instance.Config.TitleList.Remove(SelectedItem);
         }
 
         private static void TitleIdToClipboardButton()

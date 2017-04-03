@@ -25,7 +25,8 @@ namespace MapleLib.Collections
 
         private void OnAddItemEvent(object sender, AddItemEventArgs<T> e)
         {
-            base.Add(e.item);
+            if (!Contains(e.item))
+                base.Add(e.item);
         }
     }
 

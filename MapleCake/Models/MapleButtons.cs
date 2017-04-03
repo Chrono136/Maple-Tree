@@ -4,6 +4,7 @@
 // 
 
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -24,6 +25,7 @@ namespace MapleCake.Models
 
         private static string TitleID => MainWindowViewModel.Instance.Config.TitleID;
 
+        public ICommand Uninstall => new CommandHandler(UninstallButton);
         public ICommand LaunchCemu => new CommandHandler(LaunchCemuButton);
         public ICommand Download => new CommandHandler(DownloadButton);
         public ICommand AddUpdate => new CommandHandler(AddUpdateButton);
@@ -32,6 +34,19 @@ namespace MapleCake.Models
         public ICommand RemoveDLC => new CommandHandler(RemoveDLCButton);
         public ICommand RemoveTitle => new CommandHandler(RemoveTitleButton);
         public ICommand TitleIdToClipboard => new CommandHandler(TitleIdToClipboardButton);
+
+        private void UninstallButton()
+        {
+            var results = MessageBox.Show(@"This will remove all extra files related to MapleSeed", "", MessageBoxButtons.OKCancel);
+
+            if (results != DialogResult.OK) return;
+
+            if (!string.IsNullOrEmpty(Settings.ConfigDirectory))
+                Directory.Delete(Settings.ConfigDirectory, true);
+
+            MessageBox.Show(@"You may now delete this exe");
+            Process.GetCurrentProcess().Kill();
+        }
 
         private void LaunchCemuButton()
         {

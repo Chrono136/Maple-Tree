@@ -7,6 +7,7 @@ Change Log - 2.1.1.10 (04/02/2017)
 - Backend code improvements
 - Disable Dynamic Theme function
 - Various UI Changes
+- Implemented UninstallButton()
 
 Change Log - 2.1.1.8 (03/27/2017)
 - Fixed an installer error

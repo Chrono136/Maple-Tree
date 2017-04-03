@@ -82,8 +82,8 @@ namespace MapleLib.WiiU
             if (!File.Exists(databaseFile) || Settings.CacheDatabase || force) {
                 TextLog.MesgLog.WriteLog(@"Building graphic pack database...");
 
-                var data =
-                    await Web.DownloadDataAsync("https://github.com/slashiee/cemu_graphic_packs/archive/master.zip");
+                var url = "https://github.com/slashiee/cemu_graphic_packs/archive/master.zip";
+                var data = await Web.DownloadDataAsync(url);
                 File.WriteAllBytes(databaseFile, data);
             }
 

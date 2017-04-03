@@ -71,7 +71,7 @@ namespace MapleLib.Common
 
         public static T Random<T>(this IList<T> value)
         {
-            return value[new Random().Next(value.Count - 1)];
+            return value.Count > 0 ? value[new Random().Next(value.Count - 1)] : default(T);
         }
 
         public static byte[] HexToBytes(this string hexEncodedBytes)

@@ -52,6 +52,8 @@
 
                     <TextBox Text="{Binding Config.TitleDirectory}" TextAlignment="Center" Height="23" TextWrapping="Wrap" VerticalAlignment="Bottom" Margin="25,0,25,95"/>
                     <TextBox Text="{Binding Config.CemuDirectory}" TextAlignment="Center" Height="23" TextWrapping="Wrap" VerticalAlignment="Bottom" Margin="25,0,25,65"/>
+
+                    <Button Content="Uninstall" Command="{Binding Click.Uninstall}" HorizontalAlignment="Center" Margin="283,267,10,0" VerticalAlignment="Top" FontWeight="Bold" Width="90" Background="{x:Null}" Foreground="White"/>
                 </Grid>
             </TabItem>
 

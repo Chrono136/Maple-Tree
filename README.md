@@ -40,7 +40,7 @@
  - Dynamic theme
 
 #### MapleSeed Version 2 - Preview
-![MS Version 2](http://pixxy.in/xxK8243.png)
+![MS Version 2](http://pixxy.in/RPg9255.png)
 
 #### MapleSeed Version 1 - Preview
 ![MS Version 1](http://pixxy.in/1Nj3245.png)

@@ -1,5 +1,9 @@
 # MapleTree - Work in Progress
 
+#### Requirements
+- Active internet connection
+- .Net 4.5.2
+
 # FAQ
 
 #### What is this?

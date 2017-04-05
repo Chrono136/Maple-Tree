@@ -39,11 +39,11 @@
  - Title Launching
  - Dynamic theme
 
-#### MapleSeed Version 2 - Preview
+# MapleSeed Version 2 - Preview
 ![MS Version 2](http://pixxy.in/RPg9255.png)
 
-#### MapleSeed Version 1 - Preview
+# MapleSeed Version 1 - Preview
 ![MS Version 1](http://pixxy.in/1Nj3245.png)
 
-#### MapleSeed Lite - Preview
+## MapleSeed Lite - Preview
 ![MS Lite](http://pixxy.in/ISL2199.gif)

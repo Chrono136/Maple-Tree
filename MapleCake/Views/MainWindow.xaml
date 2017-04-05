@@ -50,7 +50,7 @@
                     <CheckBox Content="Full Screen" IsChecked="{Binding Config.FullScreen}" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="23,105,0,0"/>
                     <CheckBox Content="Graphic Packs" IsChecked="{Binding Config.GraphicPacksEnabled}" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="23,130,0,0"/>
 
-                    <TextBox Text="{Binding Config.TitleDirectory}" TextAlignment="Center" Height="23" TextWrapping="Wrap" VerticalAlignment="Bottom" Margin="25,0,25,95"/>
+                    <TextBox Text="{Binding Config.LibraryDirectory}" TextAlignment="Center" Height="23" TextWrapping="Wrap" VerticalAlignment="Bottom" Margin="25,0,25,95"/>
                     <TextBox Text="{Binding Config.CemuDirectory}" TextAlignment="Center" Height="23" TextWrapping="Wrap" VerticalAlignment="Bottom" Margin="25,0,25,65"/>
 
                     <Button Content="Uninstall" Command="{Binding Click.Uninstall}" HorizontalAlignment="Center" Margin="283,267,10,0" VerticalAlignment="Top" FontWeight="Bold" Width="90" Background="{x:Null}" Foreground="White"/>

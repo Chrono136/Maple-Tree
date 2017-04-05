@@ -48,7 +48,7 @@ namespace MapleSeed
             cemu173Patch.Checked = Settings.Cemu173Patch;
             storeEncCont.Checked = Settings.StoreEncryptedContent;
 
-            titleDir.Text = Settings.TitleDirectory;
+            titleDir.Text = Settings.LibraryDirectory;
             cemuDir.Text = Settings.CemuDirectory;
             serverHub.Text = Settings.Hub;
 
@@ -76,7 +76,7 @@ namespace MapleSeed
                 Settings.CemuDirectory = Path.GetDirectoryName(ofd.FileName);
             }
 
-            if (string.IsNullOrEmpty(Settings.TitleDirectory) || !Directory.Exists(Settings.TitleDirectory)) {
+            if (string.IsNullOrEmpty(Settings.LibraryDirectory) || !Directory.Exists(Settings.LibraryDirectory)) {
                 var fbd = new FolderBrowserDialog
                 {
                     Description = @"Cemu Title Directory" + Environment.NewLine + @"(Where you store games)"
@@ -88,7 +88,7 @@ namespace MapleSeed
                     Application.Exit();
                 }
 
-                Settings.TitleDirectory = fbd.SelectedPath;
+                Settings.LibraryDirectory = fbd.SelectedPath;
             }
         }
 
@@ -111,11 +111,11 @@ namespace MapleSeed
 
             RegisterEvents();
 
-            await Task.Run(() => Database.LoadLibrary(Settings.TitleDirectory));
+            await Task.Run(() => Database.LoadLibrary(Settings.LibraryDirectory));
 
             RegisterDefaults();
 
-            AppendLog($"Game Directory [{Settings.TitleDirectory}]");
+            AppendLog($"Game Directory [{Settings.LibraryDirectory}]");
             AppendLog(@"Welcome to Maple Tree.");
             AppendLog(@"Enter /help for a list of possible commands.");
 
@@ -293,7 +293,7 @@ namespace MapleSeed
 
             Title title;
             if ((title = Database.SearchById(titleID)) == null) return;
-            title.FolderLocation = Path.Combine(Settings.TitleDirectory, $"{title}");
+            title.FolderLocation = Path.Combine(Settings.LibraryDirectory, $"{title}");
 
             await title.DownloadContent(titleVersion.Text);
 
@@ -303,7 +303,7 @@ namespace MapleSeed
         private void organizeBtn_Click(object sender, EventArgs e)
         {
             foreach (var value in Database.TitleDb)
-                AppendLog(Path.Combine(Settings.TitleDirectory, value.ToString()));
+                AppendLog(Path.Combine(Settings.LibraryDirectory, value.ToString()));
 
             var result = MessageBox.Show(Resources.OrganizeBtn_Click_, Resources.PleaseConfirmAction,
                 MessageBoxButtons.OKCancel);
@@ -339,7 +339,7 @@ namespace MapleSeed
 
         private void titleDir_TextChanged(object sender, EventArgs e)
         {
-            Settings.TitleDirectory = titleDir.Text;
+            Settings.LibraryDirectory = titleDir.Text;
         }
 
         private void cemuDir_TextChanged(object sender, EventArgs e)

@@ -29,7 +29,7 @@ namespace MapleLib.Network
                     throw new Exception("Can't download content without a valid Title ID.");
 
                 if (string.IsNullOrEmpty(title.FolderLocation))
-                    title.FolderLocation = Path.GetFullPath(Path.Combine(Settings.TitleDirectory, $"{title}"));
+                    title.FolderLocation = Path.GetFullPath(Path.Combine(Settings.LibraryDirectory, $"{title}"));
 
                 await Database.DownloadTitle(title.ID, title.FolderLocation, contentType, version);
             }
@@ -40,7 +40,7 @@ namespace MapleLib.Network
 
         public static async Task DownloadFileAsync(string url, string saveTo)
         {
-            var wc = new System.Net.WebClient {Headers = {[HttpRequestHeader.UserAgent] = WII_USER_AGENT}};
+            var wc = new WebClient {Headers = {[HttpRequestHeader.UserAgent] = WII_USER_AGENT}};
             wc.DownloadProgressChanged += DownloadProgressChanged;
 
             await wc.DownloadFileTaskAsync(new Uri(url), saveTo);
@@ -50,7 +50,7 @@ namespace MapleLib.Network
 
         public static string DownloadString(string url)
         {
-            using (var wc = new System.Net.WebClient()) {
+            using (var wc = new WebClient()) {
                 wc.Headers[HttpRequestHeader.UserAgent] = WII_USER_AGENT;
                 wc.DownloadProgressChanged += DownloadProgressChanged;
                 return wc.DownloadString(url);
@@ -59,7 +59,7 @@ namespace MapleLib.Network
 
         public static byte[] DownloadData(string url)
         {
-            using (var wc = new System.Net.WebClient()) {
+            using (var wc = new WebClient()) {
                 wc.Headers[HttpRequestHeader.UserAgent] = WII_USER_AGENT;
                 wc.DownloadProgressChanged += DownloadProgressChanged;
                 var task = wc.DownloadDataTaskAsync(new Uri(url));
@@ -69,7 +69,7 @@ namespace MapleLib.Network
 
         public static async Task<byte[]> DownloadDataAsync(string url)
         {
-            using (var wc = new System.Net.WebClient()) {
+            using (var wc = new WebClient()) {
                 wc.Headers[HttpRequestHeader.UserAgent] = WII_USER_AGENT;
                 wc.DownloadProgressChanged += DownloadProgressChanged;
                 return await wc.DownloadDataTaskAsync(new Uri(url));

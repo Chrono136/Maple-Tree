@@ -12,7 +12,7 @@
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <TargetFrameworkProfile />
-    <AssemblyVersion>2.1.1.10</AssemblyVersion>
+    <AssemblyVersion>2.1.1.11</AssemblyVersion>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
   </PropertyGroup>
@@ -418,6 +418,7 @@
     <Content Include="Resources\Seed-icon.png" />
     <Content Include="Resources\Seed.ico" />
     <None Include="Resources\wiiutdb.xml" />
+    <None Include="Resources\wiiutitlekey.txt" />
     <Content Include="ThirdParty\AutoUpdater\Resources\clock_go.png" />
     <Content Include="ThirdParty\AutoUpdater\Resources\clock_go1.png" />
     <Content Include="ThirdParty\AutoUpdater\Resources\clock_go_32.png" />

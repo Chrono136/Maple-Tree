@@ -84,7 +84,7 @@ namespace MapleCake.ViewModels
                 Settings.CemuDirectory = Path.GetDirectoryName(ofd.FileName);
             }
 
-            if (string.IsNullOrEmpty(Settings.TitleDirectory) || !Directory.Exists(Settings.TitleDirectory)) {
+            if (string.IsNullOrEmpty(Settings.LibraryDirectory) || !Directory.Exists(Settings.LibraryDirectory)) {
                 var fbd = new FolderBrowserDialog
                 {
                     Description = @"Cemu Title Directory" + Environment.NewLine + @"(Where you store games)"
@@ -96,7 +96,7 @@ namespace MapleCake.ViewModels
                     System.Windows.Forms.Application.Exit();
                 }
 
-                Settings.TitleDirectory = fbd.SelectedPath;
+                Settings.LibraryDirectory = fbd.SelectedPath;
             }
         }
 
@@ -170,7 +170,7 @@ namespace MapleCake.ViewModels
                 Config.SelectedItem = Config.TitleList.Random();
 
                 Config.LaunchCemuText = "Launch Cemu";
-                TextLog.MesgLog.WriteLog($"Game Directory [{Settings.TitleDirectory}]");
+                TextLog.MesgLog.WriteLog($"Game Directory [{Settings.LibraryDirectory}]");
             });
         }
 

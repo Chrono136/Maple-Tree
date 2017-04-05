@@ -45,6 +45,11 @@ namespace MapleLib.Common
             var color = Color.DarkRed;
             NewLine(text + Environment.NewLine, color);
         }
+
+        public static void Write(string text)
+        {
+            MesgLog?.WriteLog(text);
+        }
     }
 
     public class NewLogEntryEvent : EventArgs

@@ -43,11 +43,11 @@ namespace MapleCake.Models
 
         public bool DownloadCommandEnabled { get; set; } = true;
 
-        public string TitleDirectory
+        public string LibraryDirectory
         {
-            get { return Settings.TitleDirectory; }
+            get { return Settings.LibraryDirectory; }
             set {
-                Settings.TitleDirectory = value;
+                Settings.LibraryDirectory = value;
                 RaisePropertyChangedEvent("TitleDirectory");
             }
         }

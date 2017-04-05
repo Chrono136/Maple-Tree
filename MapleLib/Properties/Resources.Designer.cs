@@ -379,6 +379,15 @@ namespace MapleLib.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to [{&quot;titleID&quot;:&quot;000500001010f300&quot;,&quot;titleKey&quot;:&quot;fa37b75fd0de03d2a297471477066c7c&quot;,&quot;name&quot;:&quot;Family Party\n30 Great Games Obstacle Arcade&quot;,&quot;region&quot;:&quot;USA&quot;,&quot;ticket&quot;:&quot;1&quot;},{&quot;titleID&quot;:&quot;0005000010144000&quot;,&quot;titleKey&quot;:&quot;e44b226422eb84923c05ccddc62ad487&quot;,&quot;name&quot;:&quot;Adventure Time: Explore the \nDungeon Because I Don&apos;t Know!&quot;,&quot;region&quot;:&quot;USA&quot;,&quot;ticket&quot;:&quot;1&quot;},{&quot;titleID&quot;:&quot;0005000010145e00&quot;,&quot;titleKey&quot;:&quot;4e330266ba3feba347e186ac499ba64e&quot;,&quot;name&quot;:&quot;Angry Birds Star Wars&quot;,&quot;region&quot;:&quot;USA&quot;,&quot;ticket&quot;:&quot;1&quot;},{&quot;titleID&quot;:&quot;0005000010147b00&quot;,&quot;titleKey&quot;:&quot; [rest of string was truncated]&quot;;.
+        /// </summary>
+        public static string wiiutitlekey {
+            get {
+                return ResourceManager.GetString("wiiutitlekey", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to This action will delete all contents under the directory {0}.
         /// </summary>
         public static string WillDeleteContents {

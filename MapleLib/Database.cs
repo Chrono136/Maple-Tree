@@ -35,7 +35,7 @@ namespace MapleLib
 
         static Database()
         {
-            if (TitleDb == null) TitleDb = new MapleDictionary(Settings.TitleDirectory);
+            if (TitleDb == null) TitleDb = new MapleDictionary(Settings.LibraryDirectory);
         }
 
         public static MapleDictionary TitleDb { get; }
@@ -54,14 +54,13 @@ namespace MapleLib
                 _db = JsonConvert.DeserializeObject<MapleList<Title>>(json);
             }
 
-            LoadLibrary(Settings.TitleDirectory);
+            LoadLibrary(Settings.LibraryDirectory);
         }
 
         private static MapleList<Title> Create()
         {
             var eShopTitlesStr = Resources.eShopAndDiskTitles; //index 12
             var eShopTitleUpdates = Resources.eShopTitleUpdates; //index 9
-            var eShopTitleDLC = Resources.eShopTitleDLC; //index 8
 
             _db = new MapleList<Title>();
 
@@ -414,7 +413,17 @@ namespace MapleLib
 
         private static List<JObject> WiiUTitleKeys()
         {
-            var jsonStr = Web.DownloadString("https://wiiu.titlekeys.com/json");
+            var url = "https://wiiu.titlekeys.com/json";
+
+            string jsonStr;
+            if (Web.UrlExists(url)) {
+                jsonStr = Web.DownloadString(url);
+            }
+            else {
+                TextLog.Write($"Failed to download db from {url}, falling back to embedded option");
+                jsonStr = Resources.wiiutitlekey;
+            }
+
             var jsonTitles = JsonConvert.DeserializeObject<ICollection<JObject>>(jsonStr);
             return jsonTitles.ToList();
         }

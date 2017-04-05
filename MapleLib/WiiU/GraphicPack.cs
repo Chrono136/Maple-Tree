@@ -9,6 +9,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using IniParser.Parser;
 using MapleLib.Collections;
 using MapleLib.Common;
@@ -76,6 +77,9 @@ namespace MapleLib.WiiU
 
         public static async Task<MapleList<GraphicPack>> Init(bool force = false)
         {
+            if (!Settings.GraphicPacksEnabled)
+                return null;
+
             var databaseFile = Path.Combine(Settings.ConfigDirectory, "graphicPacks");
             GraphicPacks = new MapleList<GraphicPack>();
 
@@ -157,8 +161,9 @@ namespace MapleLib.WiiU
 
                 NewGraphicPack?.Invoke(null, pack);
             }
-            catch (Exception) {
-                //MessageBox.Show($"{e.Message}\n{e.StackTrace}");
+            catch (Exception e) {
+                TextLog.MesgLog.WriteLog($"{e.Message}\n{e.StackTrace}");
+                //MessageBox.Show($@"{e.Message}\n{e.StackTrace}");
             }
         }
 

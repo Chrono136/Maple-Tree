@@ -182,4 +182,7 @@ See the log window for sample outputs.</value>
   <data name="DLCPatchString" xml:space="preserve">
     <value>78DA636064106160605803C4220C1036086800312310B780313344F03F01C040630000427521FF</value>
   </data>
+  <data name="wiiutitlekey" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\wiiutitlekey.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
 </root>

@@ -23,7 +23,7 @@ namespace MapleLib.Collections
             await Task.Run(() => {
                 foreach (var value in this) {
                     var fromLocation = value.FolderLocation;
-                    var toLocation = Path.Combine(Settings.TitleDirectory, value.ToString());
+                    var toLocation = Path.Combine(Settings.LibraryDirectory, value.ToString());
 
                     if (!Directory.Exists(fromLocation) || Directory.Exists(toLocation))
                         continue;

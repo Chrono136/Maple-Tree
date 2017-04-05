@@ -8,6 +8,7 @@
 using System;
 using System.IO;
 using System.Reflection;
+using System.Windows.Forms;
 using IniParser;
 using MapleLib.Properties;
 
@@ -17,13 +18,31 @@ namespace MapleLib
 {
     public static class Settings
     {
+        static Settings()
+        {
+            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+            Application.ThreadException += Application_ThreadException;
+        }
+
+        private static void Application_ThreadException(object sender, System.Threading.ThreadExceptionEventArgs e)
+        {
+            File.WriteAllText("error.log", $"{e.Exception.Message}\n{e.Exception.StackTrace}");
+            MessageBox.Show(@"error.log has been created containing details of this error.");
+        }
+
+        private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
+            File.WriteAllText("error.log", $"{e.ExceptionObject}");
+            MessageBox.Show($"{e.ExceptionObject}");
+        }
+
         public static readonly string Version =
             Assembly.GetExecutingAssembly().GetName().Version.ToString();
 
-        public static string TitleDirectory {
-            get { return GetKeyValue("TitleDirectory"); }
+        public static string LibraryDirectory {
+            get { return GetKeyValue("LibraryDirectory"); }
 
-            set { WriteKeyValue("TitleDirectory", Path.GetFullPath(value)); }
+            set { WriteKeyValue("LibraryDirectory", Path.GetFullPath(value)); }
         }
 
         public static string CemuDirectory {

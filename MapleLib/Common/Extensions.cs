@@ -151,7 +151,7 @@ namespace MapleLib.Common
         public static void AddOnUI(this MapleDictionary collection, Title item)
         {
             var add = new Action(()=> collection.Add(item));
-            Application.Current.Dispatcher.BeginInvoke(add);
+            Application.Current?.Dispatcher.BeginInvoke(add);
         }
     }
 }

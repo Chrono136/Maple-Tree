@@ -32,6 +32,8 @@
 - Full Titles
 - Latest Updates
 - DLC
+- Dynamic Background
+- Apply Graphic Packs (https://github.com/slashiee/cemu_graphic_packs)
 
 #### MapleSeed Lite
  - Title Launching

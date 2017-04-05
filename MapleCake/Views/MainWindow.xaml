@@ -7,7 +7,7 @@
         xmlns:ViewModels="clr-namespace:MapleCake.ViewModels"
         x:Class="MapleCake.Views.MainWindow"
         mc:Ignorable="d"
-        Title="{Binding Config.Name}" Height="583" Width="395" MinWidth="395" MaxWidth="395" WindowStartupLocation="CenterScreen" Background="White" Icon="/MapleSeed2;component/Resources/Seed-icon.png" Foreground="#FFBFBFBF" ResizeMode="NoResize">
+        Title="{Binding Config.Name}" Height="583" Width="395" MinWidth="395" MaxWidth="395" WindowStartupLocation="CenterScreen" Background="White" Icon="/MapleSeed2;component/Resources/sprout.ico" Foreground="#FFBFBFBF" ResizeMode="NoResize">
     <controls:MetroWindow.DataContext>
         <ViewModels:MainWindowViewModel/>
     </controls:MetroWindow.DataContext>

@@ -6,6 +6,7 @@
 using System;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Threading;
@@ -162,10 +163,10 @@ namespace MapleCake.ViewModels
 
             CheckUpdate();
 
-            await Task.Run(() => {
-                GraphicPack.Init().Wait();
-
-                Database.Load();
+            await Task.Run(async () =>
+            {
+                await Task.Run(() => GraphicPack.Init());
+                await Task.Run(() => Database.Load());
 
                 Config.SelectedItem = Config.TitleList.Random();
 

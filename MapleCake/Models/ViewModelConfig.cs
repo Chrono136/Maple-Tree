@@ -10,6 +10,7 @@ using MapleCake.Models.Interfaces;
 using MapleCake.ViewModels;
 using MapleLib;
 using MapleLib.Collections;
+using MapleLib.Common;
 using MapleLib.Structs;
 using MapleLib.WiiU;
 
@@ -120,12 +121,12 @@ namespace MapleCake.Models
         public Title SelectedItem {
             get { return _selectedItem; }
             set {
-                if (value == null) return;
+                if (value == null) value = new Title();
                 _self.SetBackgroundImg(_selectedItem = value);
                 RaisePropertyChangedEvent("SelectedItem");
                 RaisePropertyChangedEvent("ContextItems");
                 RaisePropertyChangedEvent("SelectedItemGraphicPacks");
-                SelectedItemGraphicPack = SelectedItemGraphicPacks.FirstOrDefault();
+                SelectedItemGraphicPack = SelectedItemGraphicPacks.Random() ?? new GraphicPack();
                 RaisePropertyChangedEvent("SelectedItemGraphicPack");
             }
         }

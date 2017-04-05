@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.IO.Compression;
+using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.Xml;
@@ -71,7 +72,10 @@ namespace MapleLib.Common
 
         public static T Random<T>(this IList<T> value)
         {
-            return value.Count > 0 ? value[new Random().Next(value.Count - 1)] : default(T);
+            if (value != null && value.Count > 0 && value.Any())
+                return value[new Random().Next(value.Count - 1)];
+
+            return default(T);
         }
 
         public static byte[] HexToBytes(this string hexEncodedBytes)

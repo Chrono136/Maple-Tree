@@ -32,7 +32,8 @@ namespace MapleLib.Structs
             if (GraphicPack.GraphicPacks == null)
                 return null;
 
-            var packs = GraphicPack.GraphicPacks.Where(x => x?.TitleIds != null && x.TitleIds.Contains(ID.ToUpper())).ToList();
+            var packs = GraphicPack.GraphicPacks.Where(x => x?.TitleIds != null && x.TitleIds.Contains(ID?.ToUpper())).ToList();
+            packs.RemoveAll(x => x == null);
             return new BindingList<GraphicPack>(packs);
         }
 

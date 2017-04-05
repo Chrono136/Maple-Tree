@@ -75,10 +75,10 @@ namespace MapleLib.WiiU
             return GraphicPacks.FirstOrDefault(x => x.TitleIds.ToList().Contains(title_id.ToUpper()));
         }
 
-        public static async Task<MapleList<GraphicPack>> Init(bool force = false)
+        public static async void Init(bool force = false)
         {
             if (!Settings.GraphicPacksEnabled)
-                return null;
+                return;
 
             var databaseFile = Path.Combine(Settings.ConfigDirectory, "graphicPacks");
             GraphicPacks = new MapleList<GraphicPack>();
@@ -86,38 +86,33 @@ namespace MapleLib.WiiU
             if (!File.Exists(databaseFile) || Settings.CacheDatabase || force) {
                 TextLog.MesgLog.WriteLog(@"Building graphic pack database...");
 
-                var url = "https://github.com/slashiee/cemu_graphic_packs/archive/master.zip";
+                const string url = "https://github.com/slashiee/cemu_graphic_packs/archive/master.zip";
                 var data = await Web.DownloadDataAsync(url);
                 File.WriteAllBytes(databaseFile, data);
             }
 
             try {
-                if (File.Exists(databaseFile)) {
-                    TextLog.MesgLog.WriteLog(@"Loading graphic pack database...");
-                    var data = File.ReadAllBytes(databaseFile);
+                if (!File.Exists(databaseFile)) return;
+                TextLog.MesgLog.WriteLog(@"Loading graphic pack database...");
+                var data = File.ReadAllBytes(databaseFile);
 
-                    using (var zipArchive = new ZipArchive(new MemoryStream(data))) {
-                        zipArchive.Entries.Where(x => x.Name.Length == 0 && x.FullName.EndsWith("/"))
-                            .ToList()
-                            .ForEach(Process);
-                    }
-
-                    //GraphicPacks = JsonConvert.DeserializeObject<MapleList<GraphicPack>>(json);
+                using (var zipArchive = new ZipArchive(new MemoryStream(data))) {
+                    zipArchive.Entries.Where(x => x.Name.Length == 0 && x.FullName.EndsWith("/"))
+                        .ToList()
+                        .ForEach(Process);
                 }
             }
             catch (Exception e) {
                 if (RetryCount >= 3) {
                     TextLog.MesgLog.WriteLog(
                         $"GraphicPacks Init() failed too many times, cancelling...\n\n{e.Message}\n{e.StackTrace}");
-                    return GraphicPacks;
+                    return;
                 }
 
                 RetryCount++;
                 File.Delete(databaseFile);
-                await Init(true);
+                Init(true);
             }
-
-            return GraphicPacks;
         }
 
         private static void Process(ZipArchiveEntry entry)

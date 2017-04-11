@@ -1,8 +1,11 @@
-# MapleTree - Work in Progress
+# MapleTree - S
 
 #### Requirements
 - Active internet connection
 - .Net 4.5.2
+
+### Download Releases
+https://github.com/Tsume/Maple-Tree/releases
 
 # FAQ
 

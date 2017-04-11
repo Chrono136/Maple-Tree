@@ -20,6 +20,21 @@ namespace MapleLib.Common
 {
     public static class Extensions
     {
+        public static bool FilePathHasInvalidChars(this string path)
+        {
+            if (string.IsNullOrEmpty(path))
+                return false;
+
+            try {
+                var fileName = Path.GetFileName(path);
+                var fileDirectory = Path.GetFullPath(path);
+            }
+            catch (ArgumentException) {
+                return true;
+            }
+            return false;
+        }
+
         public static string GetString(this ZipArchiveEntry entry)
         {
             return entry.Open().toString();

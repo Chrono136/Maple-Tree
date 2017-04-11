@@ -398,13 +398,19 @@ namespace MapleLib
 
         public static void LoadLibrary(string titleDirectory)
         {
+            if (string.IsNullOrEmpty(titleDirectory))
+                throw new DirectoryNotFoundException($"TitleDirectory: '{titleDirectory}' cannot be null or empty");
+
+            if (titleDirectory.FilePathHasInvalidChars())
+                throw new DirectoryNotFoundException($"TitleDirectory: '{titleDirectory}' is an invalid directory path");
+
             var xmlFiles = Directory.GetFiles(titleDirectory, "meta.xml", SearchOption.AllDirectories);
 
             foreach (var xmlFile in xmlFiles) {
                 var rootDir = Path.GetFullPath(Path.Combine(xmlFile, "../../"));
-                var title_id = Helper.XmlGetStringByTag(xmlFile, "title_id");
+                var titleID = Helper.XmlGetStringByTag(xmlFile, "title_id");
 
-                var title = SearchById(title_id);
+                var title = SearchById(titleID);
                 title.FolderLocation = rootDir;
                 title.MetaLocation = xmlFile;
                 TitleDb.AddOnUI(title);

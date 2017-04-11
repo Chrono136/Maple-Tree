@@ -5,7 +5,7 @@
 - .Net 4.5.2
 
 #### Download Releases
-https://github.com/Tsume/Maple-Tree/releases
+- https://github.com/Tsume/Maple-Tree/releases
 # 
 # FAQ
 

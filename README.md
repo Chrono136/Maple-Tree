@@ -6,8 +6,8 @@
 
 #### Download Releases
 https://github.com/Tsume/Maple-Tree/releases
-
-#### FAQ
+# 
+# FAQ
 
 ### What is this?
 - A small set of applications created specifically for Cemu, an experimental Wii U emulator. Designed to make Wii U title management as easy as possible, and mininal intervention.
@@ -22,7 +22,7 @@ https://github.com/Tsume/Maple-Tree/releases
 
 ### I see multiple versions on the releases page. Which one should I use?
 - Each version is described below, look at their feature set and decide which one best fits you.
-
+# 
 # Current Features
 ### MapleSeed Version 1
 - Title Launching
@@ -41,12 +41,12 @@ https://github.com/Tsume/Maple-Tree/releases
 ### MapleSeed Lite
  - Title Launching
  - Dynamic theme
-
-# MapleSeed Version 2 - Preview
+# 
+## MapleSeed Version 2 - Preview
 ![MS Version 2](http://pixxy.in/RPg9255.png)
-
-# MapleSeed Version 1 - Preview
+# 
+## MapleSeed Version 1 - Preview
 ![MS Version 1](http://pixxy.in/1Nj3245.png)
-
+# 
 ## MapleSeed Lite - Preview
 ![MS Lite](http://pixxy.in/ISL2199.gif)

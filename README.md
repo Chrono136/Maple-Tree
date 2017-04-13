@@ -7,6 +7,10 @@
 #### Download Releases
 - https://github.com/Tsume/Maple-Tree/releases
 # 
+### Donations
+If you would like to make a donation to this project, please use the Paypal link below.
+- https://www.paypal.me/tsume
+# 
 # FAQ
 
 ### What is this?

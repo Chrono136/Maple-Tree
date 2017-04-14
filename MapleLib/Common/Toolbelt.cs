@@ -78,6 +78,9 @@ namespace MapleLib.Common
 
         private static string RemoveInvalidCharacters(string str)
         {
+            str = str.Replace("™", "");
+            str = str.Replace("®", "");
+
             return
                 Path.GetInvalidPathChars()
                     .Aggregate(str, (current, c) => current.Replace(c.ToString(), " "))

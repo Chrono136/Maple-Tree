@@ -12,6 +12,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using MapleLib;
@@ -20,7 +21,6 @@ using MapleLib.Common;
 using MapleLib.Network;
 using MapleLib.Properties;
 using MapleLib.Structs;
-using MapleLib.WiiU;
 using DownloadProgressChangedEventArgs = System.Net.DownloadProgressChangedEventArgs;
 
 #endregion
@@ -243,9 +243,7 @@ namespace MapleSeed
             var title = titleList.SelectedItem as Title;
             if (title == null) return;
 
-            new System.Threading.Thread(() => {
-                Toolbelt.LaunchCemu(title.MetaLocation, null);
-            }).Start();
+            new Thread(() => { Toolbelt.LaunchCemu(title.MetaLocation, null); }).Start();
         }
 
         private async void dlcBtn_Click(object sender, EventArgs e)
@@ -489,7 +487,7 @@ namespace MapleSeed
             var title = titleList.SelectedItems[0] as Title;
             if (title == null) return;
 
-             if (title.DeleteContent())
+            if (title.DeleteContent())
                 titleList.Items.Remove(title);
         }
     }

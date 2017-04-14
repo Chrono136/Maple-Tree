@@ -138,9 +138,6 @@ namespace MapleLib.Common
                 if (!GZip.Decompress(Resources.msvcr120d, msvcr120d))
                     AppendLog("Error decrypting contents!\r\n       Could not extract msvcr120d.");
 
-                var processes = Process.GetProcessesByName("CDecrypt");
-                foreach (var proc in processes) proc.Kill();
-
                 using (TextWriter writer = File.CreateText(Path.Combine(Settings.ConfigDirectory, "CDecrypt.log"))) {
                     return await StartProcess(cdecrypt, "tmd cetk", workingDir, null, true, false, writer);
                 }

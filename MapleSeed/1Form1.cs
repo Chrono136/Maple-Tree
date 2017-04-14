@@ -20,6 +20,7 @@ using MapleLib.Common;
 using MapleLib.Network;
 using MapleLib.Properties;
 using MapleLib.Structs;
+using MapleLib.WiiU;
 using DownloadProgressChangedEventArgs = System.Net.DownloadProgressChangedEventArgs;
 
 #endregion
@@ -33,9 +34,32 @@ namespace MapleSeed
             InitializeComponent();
         }
 
+        private async void Form1_Load(object sender, EventArgs e)
+        {
+            Text = $@"MapleSeed {Assembly.GetEntryAssembly().GetName().Version}";
+            MinimumSize = MaximumSize = Size;
+
+            Controls.Cast<Control>().ToList().ForEach(x => x.Enabled = false);
+
+            InitSettings();
+
+            RegisterEvents();
+
+            RegisterDefaults();
+
+            //await Task.Run(() => GraphicPack.Init());
+            await Task.Run(() => Database.Load());
+
+            AppendLog($"Game Directory [{Settings.LibraryDirectory}]");
+            AppendLog(@"Welcome to Maple Tree.");
+            AppendLog(@"Enter /help for a list of possible commands.");
+
+            Controls.Cast<Control>().ToList().ForEach(x => x.Enabled = true);
+        }
+
         private void RegisterEvents()
         {
-            Database.TitleDb.AddItemEvent += OnAddTitleEvent;
+            Database.TitleDb.AddItemEvent += OnAddItemEvent;
 
             TextLog.MesgLog.NewLogEntryEventHandler += MesgLog_NewLogEntryEventHandler;
             TextLog.StatusLog.NewLogEntryEventHandler += StatusLog_NewLogEntryEventHandler;
@@ -56,7 +80,7 @@ namespace MapleSeed
             var ver = ApplicationDeployment.CurrentDeployment?.CurrentVersion;
             if (ver != null) Text = $@"Maple Seed - Version: {ver}";
         }
-        
+
         private static void InitSettings()
         {
             if (string.IsNullOrEmpty(Settings.CemuDirectory) ||
@@ -92,40 +116,17 @@ namespace MapleSeed
             }
         }
 
-        private void SetCurrentImage(eShopTitle title)
+        private async void SetCurrentImage(eShopTitle title)
         {
-            title.Image();
-            pictureBox1.ImageLocation = title.ImageLocation;
+            pictureBox1.ImageLocation = await title.Image();
         }
 
-        private async void Form1_Load(object sender, EventArgs e)
-        {
-            Database.Load();
-
-            Text = $@"MapleSeed {Assembly.GetEntryAssembly().GetName().Version}";
-            MinimumSize = MaximumSize = Size;
-
-            Controls.Cast<Control>().ToList().ForEach(x => x.Enabled = false);
-
-            InitSettings();
-
-            RegisterEvents();
-
-            await Task.Run(() => Database.LoadLibrary(Settings.LibraryDirectory));
-
-            RegisterDefaults();
-
-            AppendLog($"Game Directory [{Settings.LibraryDirectory}]");
-            AppendLog(@"Welcome to Maple Tree.");
-            AppendLog(@"Enter /help for a list of possible commands.");
-
-            Controls.Cast<Control>().ToList().ForEach(x => x.Enabled = true);
-        }
-
-        private void OnAddTitleEvent(object sender, AddItemEventArgs<Title> e)
+        private async void OnAddItemEvent(object sender, AddItemEventArgs<Title> e)
         {
             var title = e.item;
             if (title == null) return;
+
+            await title.Image();
 
             if (pictureBox1.ImageLocation.IsNullOrEmpty())
                 SetCurrentImage(title);
@@ -165,19 +166,26 @@ namespace MapleSeed
                     var title = item as Title;
                     if (title == null) continue;
 
-                    switch (contentType) {
-                        case "DLC":
-                            await title.DownloadDLC();
-                            break;
+                    string id;
 
-                        case "Patch":
-                            await title.DownloadUpdate(version);
-                            break;
-
-                        case "eShop/Application":
-                            await title.DownloadContent(version);
-                            break;
+                    if (contentType == "DLC" && title.HasDLC) {
+                        id = $"0005000C{title.Lower8Digits()}";
+                        title = Database.SearchById(id);
+                        await title.DownloadDLC();
                     }
+
+                    if (contentType == "Patch") {
+                        if (!title.Versions.Any()) {
+                            MessageBox.Show($@"Update for {title.Name} is not available");
+                            return;
+                        }
+
+                        id = $"0005000E{title.Lower8Digits()}";
+                        title = Database.SearchById(id);
+                        await title.DownloadUpdate(version);
+                    }
+
+                    if (contentType == "eShop/Application") await title.DownloadContent(version);
                 }
             }
             catch (Exception ex) {
@@ -225,13 +233,19 @@ namespace MapleSeed
             Application.Exit();
         }
 
+        private void uninstallBtn_Click(object sender, EventArgs e)
+        {
+            Helper.Uninstall();
+        }
+
         private void playBtn_Click(object sender, EventArgs e)
         {
             var title = titleList.SelectedItem as Title;
             if (title == null) return;
 
-            if (!Toolbelt.LaunchCemu(title.MetaLocation, null)) return;
-            TextLog.MesgLog.WriteLog($"Started playing {title.Name}");
+            new System.Threading.Thread(() => {
+                Toolbelt.LaunchCemu(title.MetaLocation, null);
+            }).Start();
         }
 
         private async void dlcBtn_Click(object sender, EventArgs e)
@@ -310,11 +324,6 @@ namespace MapleSeed
 
             if (result == DialogResult.OK)
                 Database.TitleDb.OrganizeTitles();
-        }
-
-        private void checkUpdateBtn_Click(object sender, EventArgs e)
-        {
-            
         }
 
         private void pictureBox1_Click(object sender, EventArgs e)
@@ -477,20 +486,11 @@ namespace MapleSeed
         private void deleteTitleToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (titleList.SelectedItems.Count <= 0) return;
-            var titleListSelectedItem = titleList.SelectedItems[0];
-            var title = titleListSelectedItem as Title;
+            var title = titleList.SelectedItems[0] as Title;
             if (title == null) return;
 
-            var updatePath = Path.GetFullPath(title.FolderLocation);
-
-            var result = MessageBox.Show(string.Format(Resources.ActionWillDeleteAllContent, updatePath),
-                Resources.PleaseConfirmAction, MessageBoxButtons.OKCancel);
-
-            if (result != DialogResult.OK) return;
-
-            title.DeleteContent();
-
-            titleList.Items.Remove(title);
+             if (title.DeleteContent())
+                titleList.Items.Remove(title);
         }
     }
 }

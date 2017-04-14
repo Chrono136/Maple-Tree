@@ -46,7 +46,7 @@
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.clearCache = new System.Windows.Forms.Button();
-            this.checkUpdateBtn = new System.Windows.Forms.Button();
+            this.uninstallBtn = new System.Windows.Forms.Button();
             this.serverHub = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
             this.cemuDir = new System.Windows.Forms.TextBox();
@@ -83,7 +83,7 @@
             // 
             this.progressBar.Location = new System.Drawing.Point(12, 658);
             this.progressBar.Name = "progressBar";
-            this.progressBar.Size = new System.Drawing.Size(1125, 23);
+            this.progressBar.Size = new System.Drawing.Size(1230, 23);
             this.progressBar.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
             this.progressBar.TabIndex = 0;
             // 
@@ -103,7 +103,7 @@
             // 
             this.groupBox2.Location = new System.Drawing.Point(12, 642);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(1125, 10);
+            this.groupBox2.Size = new System.Drawing.Size(1230, 10);
             this.groupBox2.TabIndex = 4;
             this.groupBox2.TabStop = false;
             // 
@@ -193,6 +193,7 @@
             this.titleList.Location = new System.Drawing.Point(6, 6);
             this.titleList.Name = "titleList";
             this.titleList.Size = new System.Drawing.Size(358, 482);
+            this.titleList.Sorted = true;
             this.titleList.TabIndex = 31;
             this.titleList.SelectedValueChanged += new System.EventHandler(this.titleList_SelectedValueChanged);
             this.titleList.MouseUp += new System.Windows.Forms.MouseEventHandler(this.titleList_MouseUp);
@@ -227,7 +228,7 @@
             // groupBox1
             // 
             this.groupBox1.Controls.Add(this.clearCache);
-            this.groupBox1.Controls.Add(this.checkUpdateBtn);
+            this.groupBox1.Controls.Add(this.uninstallBtn);
             this.groupBox1.Location = new System.Drawing.Point(9, 6);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(281, 239);
@@ -237,7 +238,7 @@
             // 
             // clearCache
             // 
-            this.clearCache.Location = new System.Drawing.Point(195, 21);
+            this.clearCache.Location = new System.Drawing.Point(6, 21);
             this.clearCache.Name = "clearCache";
             this.clearCache.Size = new System.Drawing.Size(80, 25);
             this.clearCache.TabIndex = 34;
@@ -245,15 +246,15 @@
             this.clearCache.UseVisualStyleBackColor = true;
             this.clearCache.Click += new System.EventHandler(this.clearCache_Click);
             // 
-            // checkUpdateBtn
+            // uninstallBtn
             // 
-            this.checkUpdateBtn.Location = new System.Drawing.Point(6, 21);
-            this.checkUpdateBtn.Name = "checkUpdateBtn";
-            this.checkUpdateBtn.Size = new System.Drawing.Size(80, 25);
-            this.checkUpdateBtn.TabIndex = 6;
-            this.checkUpdateBtn.Text = "Update";
-            this.checkUpdateBtn.UseVisualStyleBackColor = true;
-            this.checkUpdateBtn.Click += new System.EventHandler(this.checkUpdateBtn_Click);
+            this.uninstallBtn.Location = new System.Drawing.Point(92, 21);
+            this.uninstallBtn.Name = "uninstallBtn";
+            this.uninstallBtn.Size = new System.Drawing.Size(80, 25);
+            this.uninstallBtn.TabIndex = 6;
+            this.uninstallBtn.Text = "Uninstall";
+            this.uninstallBtn.UseVisualStyleBackColor = true;
+            this.uninstallBtn.Click += new System.EventHandler(this.uninstallBtn_Click);
             // 
             // serverHub
             // 
@@ -547,7 +548,6 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TextBox serverHub;
         private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.Button checkUpdateBtn;
         private System.Windows.Forms.CheckBox cemu173Patch;
         private System.Windows.Forms.Button dlcBtn;
         private System.Windows.Forms.Button cleanTitleBtn;
@@ -569,6 +569,7 @@
         private System.Windows.Forms.ToolStripMenuItem deleteTitleToolStripMenuItem;
         private System.Windows.Forms.ListBox titleList;
         private System.Windows.Forms.TextBox titleName;
+        private System.Windows.Forms.Button uninstallBtn;
     }
 }
 

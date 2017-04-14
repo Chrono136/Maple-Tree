@@ -31,7 +31,7 @@ namespace MapleLib.WiiU
         /// <returns></returns>
         public static byte[] Create(Title title)
         {
-            var TIKTEM =
+            var tiktem =
             ("00010004d15ea5ed15abe11ad15ea5ed15abe11ad15ea5ed15abe11ad15ea5ed15abe11a" +
              "d15ea5ed15abe11ad15ea5ed15abe11ad15ea5ed15abe11ad15ea5ed15abe11ad15ea5ed" +
              "15abe11ad15ea5ed15abe11ad15ea5ed15abe11ad15ea5ed15abe11ad15ea5ed15abe11a" +
@@ -57,7 +57,7 @@ namespace MapleLib.WiiU
              "000000000000000000000000000000000000000000000000000000000000000000000000" +
              "0000000000000000000000000000000000000000").HexToBytes();
 
-            var tikdata = new List<byte>(TIKTEM);
+            var tikdata = new List<byte>(tiktem);
 
             if (title.ContentType == "DLC")
                 PatchDLC(ref tikdata);

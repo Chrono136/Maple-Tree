@@ -166,11 +166,12 @@ namespace MapleLib.Common
         {
             return string.IsNullOrEmpty(str);
         }
-        
-        public static void AddOnUI(this MapleDictionary collection, Title item)
+
+        public static object AddOnUI(this MapleDictionary collection, Title item)
         {
-            var add = new Action(()=> collection.Add(item));
-            Application.Current?.Dispatcher.BeginInvoke(add);
+            var add = new Action(() => collection.Add(item));
+
+            return Application.Current?.Dispatcher.BeginInvoke(add) ?? add.DynamicInvoke();
         }
     }
 }

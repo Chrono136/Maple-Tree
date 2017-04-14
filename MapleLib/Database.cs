@@ -136,10 +136,10 @@ namespace MapleLib
             return _db.ToList().Find(x => x.ID.ToUpper() == title_id.ToUpper());
         }
 
-        public static async void Image(this eShopTitle title, bool save = true)
+        public static async Task<string> Image(this eShopTitle title, bool save = true)
         {
             if (string.IsNullOrEmpty(title.ProductCode) || title.ProductCode.Length <= 6)
-                return;
+                return string.Empty;
 
             var code = title.ProductCode.Substring(6);
 
@@ -155,34 +155,31 @@ namespace MapleLib
             if (!Directory.Exists(cacheDir))
                 Directory.CreateDirectory(cacheDir);
 
-            var langCodes = "US,EN,DE,FR,JA".Split(',').ToList();
+            string cachedFile;
+            if (File.Exists(cachedFile = Path.Combine(cacheDir, $"{imageCode}.jpg"))) {
+                return title.ImageLocation = cachedFile;
+            }
 
-            foreach (var langCode in langCodes) {
-                var cachedFile = Path.Combine(cacheDir, $"{imageCode}.jpg");
-
-                if (File.Exists(cachedFile)) {
-                    title.ImageLocation = cachedFile;
-                    break;
-                }
-
+            foreach (var langCode in "US,EN,DE,FR,JA".Split(',')) {
                 try {
                     var url = $"http://art.gametdb.com/wiiu/coverHQ/{langCode}/{imageCode}.jpg";
 
-                    if (Web.UrlExists(url)) {
-                        title.ImageLocation = cachedFile;
+                    if (!Web.UrlExists(url)) continue;
+                    title.ImageLocation = cachedFile;
 
-                        if (!save) return;
-                        var data = await Web.DownloadDataAsync(url);
-                        File.WriteAllBytes(title.ImageLocation, data);
-                    }
+                    if (!save) return string.Empty;
+                    var data = await Web.DownloadDataAsync(url);
+                    File.WriteAllBytes(title.ImageLocation, data);
                 }
                 catch {
                     TextLog.MesgLog.WriteLog($"Could not locate cover image for {title}");
                 }
             }
+
+            return title.ImageLocation;
         }
 
-        private static void CleanUpdate(string outputDir, TMD tmd)
+        private static void CleanUp(string outputDir, TMD tmd)
         {
             try {
                 if (!Settings.StoreEncryptedContent) {
@@ -323,7 +320,8 @@ namespace MapleLib
             #region Ticket
 
             Toolbelt.AppendLog("Generating Ticket...");
-            var ticket = Ticket.Load(MapleTicket.Create(SearchById(id)));
+            var tik = MapleTicket.Create(SearchById(id));
+            var ticket = Ticket.Load(tik);
             ticket.Save(Path.Combine(outputDir, "cetk"));
 
             #endregion
@@ -342,14 +340,14 @@ namespace MapleLib
                 Toolbelt.AppendLog("  - Decrypting Content");
                 Toolbelt.AppendLog("  + This may take a minute. Please wait...");
                 Toolbelt.SetStatus("Decrypting Content. This may take a minute. Please wait...", Color.OrangeRed);
-
-                var code = await Toolbelt.CDecrypt(outputDir);
-                if (code != 0) {
+                
+                if (await Toolbelt.CDecrypt(outputDir) != 0) {
+                    CleanUp(outputDir, tmd);
                     Toolbelt.AppendLog($"Error while decrypting {name}");
                     return;
                 }
 
-                CleanUpdate(outputDir, tmd);
+                CleanUp(outputDir, tmd);
                 break;
             }
 
@@ -396,7 +394,7 @@ namespace MapleLib
             ProgressReport?.Invoke(null, new ProgressReport {Min = min, Max = max, Value = value});
         }
 
-        public static void LoadLibrary(string titleDirectory)
+        private static void LoadLibrary(string titleDirectory)
         {
             if (string.IsNullOrEmpty(titleDirectory))
                 throw new DirectoryNotFoundException($"TitleDirectory: '{titleDirectory}' cannot be null or empty");

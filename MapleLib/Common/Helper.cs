@@ -4,15 +4,30 @@
 // 
 
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Reflection;
-using System.Windows;
+using System.Windows.Forms;
 using System.Xml;
+using MessageBox = System.Windows.MessageBox;
 
 namespace MapleLib.Common
 {
     public static class Helper
     {
+        public static void Uninstall()
+        {
+            var results = System.Windows.Forms.MessageBox.Show(@"This will remove all extra files related to MapleSeed", "", MessageBoxButtons.OKCancel);
+
+            if (results != DialogResult.OK) return;
+
+            if (!string.IsNullOrEmpty(Settings.ConfigDirectory))
+                Directory.Delete(Settings.ConfigDirectory, true);
+
+            System.Windows.Forms.MessageBox.Show(@"You may now delete this exe");
+            Process.GetCurrentProcess().Kill();
+        }
+
         public static void ResolveAssembly()
         {
             AppDomain.CurrentDomain.AssemblyResolve += (sender, args) => {

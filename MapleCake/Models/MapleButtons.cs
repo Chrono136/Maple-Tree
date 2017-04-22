@@ -122,54 +122,55 @@ namespace MapleCake.Models
             Clipboard.SetText(SelectedItem.ID);
         }
 
+        private static void RaisePropertyChangedEvent(string propertyName)
+        {
+            MainWindowViewModel.Instance.RaisePropertyChangedEvent(propertyName);
+        }
+
         private static async Task DownloadContentClick(string contentType, string version = "0")
         {
             try {
                 if (SelectedItem == null)
                     return;
 
-                string id;
+                if (SelectedItem.ID.IsNullOrEmpty())
+                    throw new NullReferenceException("Title ID is null or empty, can't proceed!");
 
-                switch (contentType) {
-                    case "DLC":
-                    {
-                        if (SelectedItem.HasDLC) {
-                            id = $"0005000C{SelectedItem.Lower8Digits()}";
-                            var title = Database.SearchById(id);
-                            await title.DownloadDLC();
-                        }
-                        break;
+                if (SelectedItem.Name.IsNullOrEmpty())
+                    throw new NullReferenceException($"[{SelectedItem}] Title Name is null or empty, can't proceed!");
+                
+                if (contentType == "DLC" && SelectedItem.HasDLC) {
+                    var id = $"0005000C{SelectedItem.Lower8Digits()}";
+                    var title = Database.SearchById(id);
+
+                    if (title == null)
+                        throw new NullReferenceException($"Could not locate content for title ID {id}");
+
+                    await title.DownloadDLC();
+                }
+
+                if (contentType == "Patch") {
+                    if (!SelectedItem.Versions.Any()) {
+                        MessageBox.Show($@"Update for '{SelectedItem.Name}' is not available");
+                        return;
                     }
 
-                    case "Patch":
-                    {
-                        if (!SelectedItem.Versions.Any()) {
-                            MessageBox.Show($@"Update for {SelectedItem.Name} is not available");
-                            break;
-                        }
+                    var id = $"0005000E{SelectedItem.Lower8Digits()}";
+                    var title = Database.SearchById(id);
 
-                        id = $"0005000E{SelectedItem.Lower8Digits()}";
-                        var title = Database.SearchById(id);
-                        await title.DownloadUpdate(version);
+                    if (title == null)
+                        throw new NullReferenceException($"Could not locate content for title ID {id}");
 
-                        break;
-                    }
+                    await title.DownloadUpdate(version);
+                }
 
-                    case "eShop/Application":
-                    {
-                        await SelectedItem.DownloadContent(version);
-                        break;
-                    }
+                if (contentType == "eShop/Application") {
+                    await SelectedItem.DownloadContent(version);
                 }
             }
             catch (Exception ex) {
                 MessageBox.Show(ex.Message + Environment.NewLine + ex.StackTrace);
             }
-        }
-
-        private static void RaisePropertyChangedEvent(string propertyName)
-        {
-            MainWindowViewModel.Instance.RaisePropertyChangedEvent(propertyName);
         }
     }
 }

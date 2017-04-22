@@ -47,12 +47,12 @@ namespace MapleLib.Structs
 
         private string Upper8Digits()
         {
-            return ID?.Substring(0, 8);
+            return ID?.Substring(0, 8).ToUpper();
         }
 
         public string Lower8Digits()
         {
-            return ID?.Substring(8);
+            return ID?.Substring(8).ToUpper();
         }
 
         /// <inheritdoc />

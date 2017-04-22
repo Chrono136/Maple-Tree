@@ -1,11 +1,12 @@
-Change Log - 2.1.1.12 (04/22/2017)
+### Change Log - 2.1.1.12 (04/22/2017)
 - Added exceptions
+- No Graphic Pack option
 - Bug fixes
 
-Change Log - 2.1.1.11 (04/05/2017)
+### Change Log - 2.1.1.11 (04/05/2017)
 - Fixes a null reference that causes crashing
 
-Change Log - 2.1.1.10 (04/05/2017)
+### Change Log - 2.1.1.10 (04/05/2017)
 - Full screen option for cemu
 - Current title version displayed
 - Implemented DeleteTitleButton()
@@ -16,10 +17,10 @@ Change Log - 2.1.1.10 (04/05/2017)
 - Various UI Changes
 - Implemented UninstallButton()
 
-Change Log - 2.1.1.8 (03/27/2017)
+### Change Log - 2.1.1.8 (03/27/2017)
 - Fixed an installer error
 
-Change Log - 2.1.1.2 (03/26/2017)
+### Change Log - 2.1.1.2 (03/26/2017)
 - Added dynamic context menu items 
 - Implemented LaunchCemuButton()
 - Implemented AddUpdateButton()

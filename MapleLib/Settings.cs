@@ -26,14 +26,14 @@ namespace MapleLib
 
         private static void Application_ThreadException(object sender, System.Threading.ThreadExceptionEventArgs e)
         {
-            File.WriteAllText("error.log", $"{e.Exception.Message}\n{e.Exception.StackTrace}");
+            File.WriteAllText("error.log", string.Format(Resources.ThreadException, e.Exception.Message, e.Exception.StackTrace));
             MessageBox.Show(@"error.log has been created containing details of this error.");
         }
 
         private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
-            File.WriteAllText("error.log", $"{e.ExceptionObject}");
-            MessageBox.Show($"{e.ExceptionObject}");
+            File.WriteAllText("error.log", $@"{e.ExceptionObject}");
+            MessageBox.Show($@"{e.ExceptionObject}");
         }
 
         public static readonly string Version =

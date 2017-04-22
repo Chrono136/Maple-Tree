@@ -129,47 +129,42 @@ namespace MapleCake.Models
 
         private static async Task DownloadContentClick(string contentType, string version = "0")
         {
-            try {
-                if (SelectedItem == null)
-                    return;
+            if (SelectedItem == null)
+                throw new NullReferenceException("Title is null or empty, can't proceed!");
 
-                if (SelectedItem.ID.IsNullOrEmpty())
-                    throw new NullReferenceException("Title ID is null or empty, can't proceed!");
+            if (SelectedItem.ID.IsNullOrEmpty())
+                throw new NullReferenceException("Title ID is null or empty, can't proceed!");
 
-                if (SelectedItem.Name.IsNullOrEmpty())
-                    throw new NullReferenceException($"[{SelectedItem}] Title Name is null or empty, can't proceed!");
-                
-                if (contentType == "DLC" && SelectedItem.HasDLC) {
-                    var id = $"0005000C{SelectedItem.Lower8Digits()}";
-                    var title = Database.SearchById(id);
+            if (SelectedItem.Name.IsNullOrEmpty())
+                throw new NullReferenceException($"[{SelectedItem}] Title Name is null or empty, can't proceed!");
 
-                    if (title == null)
-                        throw new NullReferenceException($"Could not locate content for title ID {id}");
+            if (contentType == "DLC" && SelectedItem.HasDLC) {
+                var id = $"0005000C{SelectedItem.Lower8Digits()}";
+                var title = Database.SearchById(id);
 
-                    await title.DownloadDLC();
-                }
+                if (title == null)
+                    throw new NullReferenceException($"Could not locate content for title ID {id}");
 
-                if (contentType == "Patch") {
-                    if (!SelectedItem.Versions.Any()) {
-                        MessageBox.Show($@"Update for '{SelectedItem.Name}' is not available");
-                        return;
-                    }
-
-                    var id = $"0005000E{SelectedItem.Lower8Digits()}";
-                    var title = Database.SearchById(id);
-
-                    if (title == null)
-                        throw new NullReferenceException($"Could not locate content for title ID {id}");
-
-                    await title.DownloadUpdate(version);
-                }
-
-                if (contentType == "eShop/Application") {
-                    await SelectedItem.DownloadContent(version);
-                }
+                await title.DownloadDLC();
             }
-            catch (Exception ex) {
-                MessageBox.Show(ex.Message + Environment.NewLine + ex.StackTrace);
+
+            if (contentType == "Patch") {
+                if (!SelectedItem.Versions.Any()) {
+                    MessageBox.Show($@"Update for '{SelectedItem.Name}' is not available");
+                    return;
+                }
+
+                var id = $"0005000E{SelectedItem.Lower8Digits()}";
+                var title = Database.SearchById(id);
+
+                if (title == null)
+                    throw new NullReferenceException($"Could not locate content for title ID {id}");
+
+                await title.DownloadUpdate(version);
+            }
+
+            if (contentType == "eShop/Application") {
+                await SelectedItem.DownloadContent(version);
             }
         }
     }

@@ -24,18 +24,13 @@ namespace MapleLib.Network
 
         public static async Task DownloadContent(this Title title, string contentType, string version)
         {
-            try {
-                if (string.IsNullOrEmpty(title.ID))
-                    throw new Exception("Can't download content without a valid Title ID.");
+            if (string.IsNullOrEmpty(title.ID))
+                throw new Exception("Can't download content without a valid Title ID.");
 
-                if (string.IsNullOrEmpty(title.FolderLocation))
-                    title.FolderLocation = Path.GetFullPath(Path.Combine(Settings.LibraryDirectory, $"{title}"));
+            if (string.IsNullOrEmpty(title.FolderLocation))
+                title.FolderLocation = Path.GetFullPath(Path.Combine(Settings.LibraryDirectory, $"{title}"));
 
-                await Database.DownloadTitle(title.ID, title.FolderLocation, contentType, version);
-            }
-            catch (Exception ex) {
-                MessageBox.Show($@"{ex.Message}\n{ex.StackTrace}");
-            }
+            await Database.DownloadTitle(title.ID, title.FolderLocation, contentType, version);
         }
 
         public static async Task DownloadFileAsync(string url, string saveTo)

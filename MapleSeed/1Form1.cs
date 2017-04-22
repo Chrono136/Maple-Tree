@@ -161,35 +161,37 @@ namespace MapleSeed
         {
             btn.Enabled = false;
 
-            try {
-                foreach (var item in titleList.SelectedItems) {
-                    var title = item as Title;
-                    if (title == null) continue;
+            foreach (var item in titleList.SelectedItems) {
+                var title = item as Title;
+                if (title == null) continue;
 
-                    string id;
+                if (title.ID.IsNullOrEmpty())
+                    throw new NullReferenceException("Title ID is null or empty, can't proceed!");
 
-                    if (contentType == "DLC" && title.HasDLC) {
-                        id = $"0005000C{title.Lower8Digits()}";
-                        title = Database.SearchById(id);
-                        await title.DownloadDLC();
-                    }
+                if (title.Name.IsNullOrEmpty())
+                    throw new NullReferenceException($"[{title}] Title Name is null or empty, can't proceed!");
 
-                    if (contentType == "Patch") {
-                        if (!title.Versions.Any()) {
-                            MessageBox.Show($@"Update for {title.Name} is not available");
-                            return;
-                        }
+                string id;
 
-                        id = $"0005000E{title.Lower8Digits()}";
-                        title = Database.SearchById(id);
-                        await title.DownloadUpdate(version);
-                    }
-
-                    if (contentType == "eShop/Application") await title.DownloadContent(version);
+                if (contentType == "DLC" && title.HasDLC) {
+                    id = $"0005000C{title.Lower8Digits()}";
+                    title = Database.SearchById(id);
+                    await title.DownloadDLC();
                 }
-            }
-            catch (Exception ex) {
-                MessageBox.Show($@"{ex.Message}\n{ex.StackTrace}");
+
+                if (contentType == "Patch") {
+                    if (!title.Versions.Any()) {
+                        MessageBox.Show($@"Update for {title.Name} is not available");
+                        return;
+                    }
+
+                    id = $"0005000E{title.Lower8Digits()}";
+                    title = Database.SearchById(id);
+                    await title.DownloadUpdate(version);
+                }
+
+                if (contentType == "eShop/Application")
+                    await title.DownloadContent(version);
             }
 
             btn.Enabled = true;
@@ -260,39 +262,35 @@ namespace MapleSeed
 
         private async void cleanTitleBtn_Click(object sender, EventArgs e)
         {
-            try {
-                cleanTitleBtn.Enabled = false;
-                var result = DialogResult.Cancel;
+            cleanTitleBtn.Enabled = false;
+            var result = DialogResult.Cancel;
 
-                foreach (var item in titleList.SelectedItems) {
-                    if (result != DialogResult.OK) {
-                        var msg =
-                            $"WARNING!! WARNING!! WARNING!!\n\nThis task will delete your '{item}' directory and redownload the base title content!";
-                        result = MessageBox.Show(msg, $@"Reinstall {item}", MessageBoxButtons.OKCancel);
+            foreach (var item in titleList.SelectedItems) {
+                if (result != DialogResult.OK) {
+                    var msg = $"This task will delete your '{item}' directory and re-download the base title content!";
+                    result = MessageBox.Show(msg, $@"Reinstall {item}", MessageBoxButtons.OKCancel);
 
-                        if (result != DialogResult.OK)
-                            continue;
-                    }
-
-                    var title = item as Title;
-                    if (title == null) continue;
-
-                    // ReSharper disable once AssignNullToNotNullAttribute
-                    var fullPath = Path.GetFullPath(title.FolderLocation);
-                    if (string.IsNullOrEmpty(fullPath))
-                        return;
-
-                    if (Directory.Exists(Path.Combine(fullPath, "code")))
-                        Directory.Delete(Path.Combine(fullPath, "code"), true);
-
-                    if (Directory.Exists(Path.Combine(fullPath, "content")))
-                        Directory.Delete(Path.Combine(fullPath, "content"), true);
-
-                    await title.DownloadContent();
+                    if (result != DialogResult.OK)
+                        continue;
                 }
-            }
-            catch (Exception ex) {
-                MessageBox.Show(ex.Message + Environment.NewLine + ex.StackTrace);
+
+                var title = item as Title;
+                if (title == null) continue;
+
+                if (title.FolderLocation.IsNullOrEmpty())
+                    throw new Exception($"[{title}] title.FolderLocation can not be empty or null");
+
+                var fullPath = Path.GetFullPath(title.FolderLocation);
+                if (string.IsNullOrEmpty(fullPath))
+                    return;
+
+                if (Directory.Exists(Path.Combine(fullPath, "code")))
+                    Directory.Delete(Path.Combine(fullPath, "code"), true);
+
+                if (Directory.Exists(Path.Combine(fullPath, "content")))
+                    Directory.Delete(Path.Combine(fullPath, "content"), true);
+
+                await title.DownloadContent();
             }
 
             cleanTitleBtn.Enabled = true;

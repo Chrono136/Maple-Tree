@@ -40,7 +40,7 @@ namespace MapleLib.WiiU
 
         public void Apply()
         {
-            if (!Settings.GraphicPacksEnabled || !Rules.IsNullOrEmpty())
+            if (!Settings.GraphicPacksEnabled || Rules.IsNullOrEmpty())
                 return;
 
             var path = Path.Combine(Settings.CemuDirectory, "graphicPacks");

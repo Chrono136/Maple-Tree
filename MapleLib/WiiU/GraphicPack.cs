@@ -8,8 +8,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 using IniParser.Parser;
 using MapleLib.Collections;
 using MapleLib.Common;
@@ -32,7 +30,7 @@ namespace MapleLib.WiiU
 
         private MapleList<GraphicPackSource> Sources { get; } = new MapleList<GraphicPackSource>();
 
-        private string Name { get; set; }
+        public string Name { get; set; }
 
         private string Rules { get; set; }
 
@@ -42,7 +40,7 @@ namespace MapleLib.WiiU
 
         public void Apply()
         {
-            if (!Settings.GraphicPacksEnabled)
+            if (!Settings.GraphicPacksEnabled || !Rules.IsNullOrEmpty())
                 return;
 
             var path = Path.Combine(Settings.CemuDirectory, "graphicPacks");
@@ -77,9 +75,6 @@ namespace MapleLib.WiiU
 
         public static async void Init(bool force = false)
         {
-            if (!Settings.GraphicPacksEnabled)
-                return;
-
             var databaseFile = Path.Combine(Settings.ConfigDirectory, "graphicPacks");
             GraphicPacks = new MapleList<GraphicPack>();
 

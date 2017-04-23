@@ -25,6 +25,7 @@ If you would like to make a donation to this project, please use the Paypal link
 ### I can't launch a title(s). | I'm getting an error when launching titles!
 - Make sure your entire directory path doesn't have any special characters, such as accented characters, such as á, é, í, ó, ú, ü, ñ, ¿, ¡. It's not limited to these characters. But to be safe and avoid issues. Ensure the directory paths only contain alphanumeric characters.
 
+ ### What makes this any different from Wii U USB Helper?
 - Prior to 1.7.3, in order to update titles and add DLC(which didn't always work), you had to overwrite files of the original title. This application removes all the manual work required to get updates and DLC up and running for Cemu 1.7.3 with just a few simple clicks.
 
 ### I see multiple versions on the releases page. Which one should I use?

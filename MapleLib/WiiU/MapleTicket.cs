@@ -31,6 +31,9 @@ namespace MapleLib.WiiU
         /// <returns></returns>
         public static byte[] Create(Title title)
         {
+            if (title == null)
+                return null;
+
             var tiktem =
             ("00010004d15ea5ed15abe11ad15ea5ed15abe11ad15ea5ed15abe11ad15ea5ed15abe11a" +
              "d15ea5ed15abe11ad15ea5ed15abe11ad15ea5ed15abe11ad15ea5ed15abe11ad15ea5ed" +

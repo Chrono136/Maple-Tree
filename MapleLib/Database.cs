@@ -133,7 +133,11 @@ namespace MapleLib
 
         public static Title SearchById(string title_id)
         {
-            return _db.ToList().Find(x => x.ID.ToUpper() == title_id.ToUpper());
+            var db = new List<Title>(_db.ToList());
+
+            var title = !db.Any() ? null : db.Find(x => x.ID.ToUpper() == title_id.ToUpper());
+
+            return title;
         }
 
         public static async Task<string> Image(this eShopTitle title, bool save = true)
@@ -320,8 +324,12 @@ namespace MapleLib
             #region Ticket
 
             Toolbelt.AppendLog("Generating Ticket...");
-            var tik = MapleTicket.Create(SearchById(id));
-            var ticket = Ticket.Load(tik);
+
+            var tikData = MapleTicket.Create(SearchById(id));
+            if (tikData == null)
+                throw new Exception("Invalid ticket data. Verify Title ID.");
+
+            var ticket = Ticket.Load(tikData);
             ticket.Save(Path.Combine(outputDir, "cetk"));
 
             #endregion
@@ -408,7 +416,12 @@ namespace MapleLib
                 var rootDir = Path.GetFullPath(Path.Combine(xmlFile, "../../"));
                 var titleID = Helper.XmlGetStringByTag(xmlFile, "title_id");
 
-                var title = SearchById(titleID);
+                Title title;
+                if ((title = SearchById(titleID)) == null) {
+                    TextLog.Write($"Could not find title using ID {titleID}");
+                    continue;
+                }
+
                 title.FolderLocation = rootDir;
                 title.MetaLocation = xmlFile;
                 TitleDb.AddOnUI(title);

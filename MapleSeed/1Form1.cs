@@ -176,6 +176,7 @@ namespace MapleSeed
                 if (contentType == "DLC" && title.HasDLC) {
                     id = $"0005000C{title.Lower8Digits()}";
                     title = Database.SearchById(id);
+                    if (title == null) continue;
                     await title.DownloadDLC();
                 }
 
@@ -187,6 +188,7 @@ namespace MapleSeed
 
                     id = $"0005000E{title.Lower8Digits()}";
                     title = Database.SearchById(id);
+                    if (title == null) continue;
                     await title.DownloadUpdate(version);
                 }
 

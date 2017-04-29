@@ -4,7 +4,9 @@
 // 
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using Newtonsoft.Json.Utilities;
 
 namespace MapleLib.Collections
 {
@@ -12,8 +14,14 @@ namespace MapleLib.Collections
     {
         public event EventHandler<AddItemEventArgs<T>> AddItemEvent;
 
-        public MapleList()
+        public MapleList() : base(new List<T>())
         {
+            AddItemEvent += OnAddItemEvent;
+        }
+
+        public MapleList(IEnumerable<T> list) : base(new List<T>())
+        {
+            this.AddRange(list);
             AddItemEvent += OnAddItemEvent;
         }
 

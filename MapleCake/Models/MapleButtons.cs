@@ -140,8 +140,8 @@ namespace MapleCake.Models
 
             if (contentType == "DLC" && SelectedItem.HasDLC) {
                 var id = $"0005000C{SelectedItem.Lower8Digits()}";
-                var title = Database.SearchById(id);
 
+                var title = Database.SearchById(id);
                 if (title == null)
                     throw new NullReferenceException($"Could not locate content for title ID {id}");
 
@@ -155,8 +155,8 @@ namespace MapleCake.Models
                 }
 
                 var id = $"0005000E{SelectedItem.Lower8Digits()}";
-                var title = Database.SearchById(id);
 
+                var title = Database.SearchById(id);
                 if (title == null)
                     throw new NullReferenceException($"Could not locate content for title ID {id}");
 

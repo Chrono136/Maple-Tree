@@ -1,4 +1,4 @@
-### Change Log - 2.1.1.13 (05/06/2017)
+### Change Log - 2.1.1.13 (05/08/2017)
 - Selected graphic packs save between sessions
 - Added a small input box for manual update versions
 - Database automatically re-builds every 3 days at startup

@@ -13,6 +13,7 @@ using System.Windows.Threading;
 using MapleCake.Models;
 using MapleLib;
 using MapleLib.Common;
+using MapleLib.Enums;
 using MapleLib.Structs;
 using MapleLib.WiiU;
 using Application = System.Windows.Application;
@@ -111,8 +112,12 @@ namespace MapleCake.ViewModels
 
         private static void CheckUpdate()
         {
-            AutoUpdaterDotNET.AutoUpdater.Start("https://s3.amazonaws.com/mapletree/mapleseed.xml", "MapleSeed");
-            TextLog.MesgLog.WriteLog($"Current Version: {Settings.Version}", Color.Green);
+            var update = new Update(UpdateType.MapleSeed2);
+
+            TextLog.MesgLog.WriteLog($"Current Version: {update.LatestVersion}", Color.Green);
+
+            if (update.IsAvailable)
+            TextLog.MesgLog.WriteLog($"Latest Version: {update.CurrentVersion}", Color.Green);
         }
 
         public async void SetBackgroundImg(Title title)

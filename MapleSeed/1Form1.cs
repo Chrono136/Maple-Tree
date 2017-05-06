@@ -75,10 +75,6 @@ namespace MapleSeed
             titleDir.Text = Settings.LibraryDirectory;
             cemuDir.Text = Settings.CemuDirectory;
             serverHub.Text = Settings.Hub;
-
-            if (!ApplicationDeployment.IsNetworkDeployed) return;
-            var ver = ApplicationDeployment.CurrentDeployment?.CurrentVersion;
-            if (ver != null) Text = $@"Maple Seed - Version: {ver}";
         }
 
         private static void InitSettings()

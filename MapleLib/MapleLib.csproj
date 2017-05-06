@@ -119,6 +119,8 @@
     <Compile Include="Collections\MapleList.cs" />
     <Compile Include="Common\Crypto.cs" />
     <Compile Include="Common\Extensions.cs" />
+    <Compile Include="Common\Update.cs" />
+    <Compile Include="Enums\UpdateType.cs" />
     <Compile Include="WiiU\GraphicPack.cs" />
     <Compile Include="Common\Helper.cs" />
     <Compile Include="Database.cs" />
@@ -135,30 +137,6 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
-    <Compile Include="ThirdParty\AutoUpdater\AutoUpdater.cs" />
-    <Compile Include="ThirdParty\AutoUpdater\DownloadUpdateDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="ThirdParty\AutoUpdater\DownloadUpdateDialog.Designer.cs">
-      <DependentUpon>DownloadUpdateDialog.cs</DependentUpon>
-    </Compile>
-    <Compile Include="ThirdParty\AutoUpdater\Properties\Resources1.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
-    <Compile Include="ThirdParty\AutoUpdater\RemindLaterForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="ThirdParty\AutoUpdater\RemindLaterForm.Designer.cs">
-      <DependentUpon>RemindLaterForm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="ThirdParty\AutoUpdater\UpdateForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="ThirdParty\AutoUpdater\UpdateForm.Designer.cs">
-      <DependentUpon>UpdateForm.cs</DependentUpon>
     </Compile>
     <Compile Include="ThirdParty\IniFileParser\Exceptions\ParsingException.cs" />
     <Compile Include="ThirdParty\IniFileParser\FileIniParser.cs" />
@@ -419,15 +397,6 @@
     <Content Include="Resources\Seed.ico" />
     <None Include="Resources\wiiutdb.xml" />
     <None Include="Resources\wiiutitlekey.txt" />
-    <Content Include="ThirdParty\AutoUpdater\Resources\clock_go.png" />
-    <Content Include="ThirdParty\AutoUpdater\Resources\clock_go1.png" />
-    <Content Include="ThirdParty\AutoUpdater\Resources\clock_go_32.png" />
-    <Content Include="ThirdParty\AutoUpdater\Resources\clock_play.png" />
-    <Content Include="ThirdParty\AutoUpdater\Resources\download.png" />
-    <Content Include="ThirdParty\AutoUpdater\Resources\download1.png" />
-    <Content Include="ThirdParty\AutoUpdater\Resources\download_32.png" />
-    <Content Include="ThirdParty\AutoUpdater\Resources\hand_point.png" />
-    <Content Include="ThirdParty\AutoUpdater\Resources\update.png" />
     <Content Include="ThirdParty\Newtonsoft.Json\Newtonsoft.Json.csproj" />
     <Content Include="ThirdParty\Newtonsoft.Json\Newtonsoft.Json.Net20.csproj" />
     <Content Include="ThirdParty\Newtonsoft.Json\Newtonsoft.Json.Net35.csproj" />
@@ -440,19 +409,6 @@
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="ThirdParty\AutoUpdater\DownloadUpdateDialog.resx">
-      <DependentUpon>DownloadUpdateDialog.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="ThirdParty\AutoUpdater\Properties\Resources.resx">
-      <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources1.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <EmbeddedResource Include="ThirdParty\AutoUpdater\RemindLaterForm.resx">
-      <DependentUpon>RemindLaterForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="ThirdParty\AutoUpdater\UpdateForm.resx">
-      <DependentUpon>UpdateForm.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup />

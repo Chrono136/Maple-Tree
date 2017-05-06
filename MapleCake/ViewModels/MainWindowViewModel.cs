@@ -36,7 +36,7 @@ namespace MapleCake.ViewModels
 
         public MapleButtons Click { get; set; } = new MapleButtons();
 
-        public ViewModelConfig Config { get; }
+        public ViewModelConfig Config { get; set; }
 
         private void Init()
         {

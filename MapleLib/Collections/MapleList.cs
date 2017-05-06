@@ -10,6 +10,7 @@ using Newtonsoft.Json.Utilities;
 
 namespace MapleLib.Collections
 {
+    [Serializable]
     public class MapleList<T> : BindingList<T>
     {
         public event EventHandler<AddItemEventArgs<T>> AddItemEvent;

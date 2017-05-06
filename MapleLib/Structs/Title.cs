@@ -15,6 +15,7 @@ using MapleLib.WiiU;
 
 namespace MapleLib.Structs
 {
+    [System.Serializable]
     public class Title : eShopTitle
     {
         public string FolderLocation { get; set; }

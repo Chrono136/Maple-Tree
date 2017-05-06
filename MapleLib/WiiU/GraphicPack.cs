@@ -15,6 +15,7 @@ using MapleLib.Network;
 
 namespace MapleLib.WiiU
 {
+    [Serializable]
     public class GraphicPack
     {
         static GraphicPack()
@@ -171,6 +172,7 @@ namespace MapleLib.WiiU
 
         #region Nested type: GraphicPackSource
 
+        [Serializable]
         private struct GraphicPackSource
         {
             public string FileName { get; set; }

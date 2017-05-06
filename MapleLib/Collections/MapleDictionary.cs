@@ -9,6 +9,7 @@ using MapleLib.Structs;
 
 namespace MapleLib.Collections
 {
+    [System.Serializable]
     public class MapleDictionary : MapleList<Title>
     {
         public MapleDictionary(string baseDir)

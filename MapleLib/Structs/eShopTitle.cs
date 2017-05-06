@@ -8,6 +8,7 @@ using MapleLib.Interfaces;
 
 namespace MapleLib.Structs
 {
+    [System.Serializable]
     public class eShopTitle : ITitle
     {
         public string ID { get; set; }

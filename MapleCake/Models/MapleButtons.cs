@@ -18,6 +18,7 @@ using MapleLib.Structs;
 
 namespace MapleCake.Models
 {
+    [Serializable]
     public class MapleButtons
     {
         private static Title SelectedItem => MainWindowViewModel.Instance.Config.SelectedItem;

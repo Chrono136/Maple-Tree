@@ -3,29 +3,38 @@
 // Updated By: Jared
 // 
 
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
+using System.Runtime.Serialization.Formatters.Binary;
 using MapleCake.Models.Interfaces;
 using MapleCake.ViewModels;
 using MapleLib;
 using MapleLib.Collections;
+using MapleLib.Common;
 using MapleLib.Structs;
 using MapleLib.WiiU;
 
 namespace MapleCake.Models
 {
+    [Serializable]
     public class ViewModelConfig : ViewModelBase
     {
-        private readonly Dictionary<string, GraphicPack> _graphicPackCache = new Dictionary<string, GraphicPack>();
+        [NonSerialized] private Dictionary<string, GraphicPack> _graphicPackCache =
+            new Dictionary<string, GraphicPack>();
 
-        private readonly Dictionary<string, BindingList<GraphicPack>> _graphicPackCollection =
+        [NonSerialized] private Dictionary<string, BindingList<GraphicPack>> _graphicPackCollection =
             new Dictionary<string, BindingList<GraphicPack>>();
 
-        private readonly MainWindowViewModel _self;
-        private string _launchCemuText = "Loading Please wait...";
-        private Title _selectedItem;
-        private string _titleId;
+        [NonSerialized] private readonly MainWindowViewModel _self;
+
+        [NonSerialized] private string _launchCemuText = "Loading Please wait...";
+
+        [NonSerialized] private Title _selectedItem;
+
+        [NonSerialized] private string _titleId;
 
         public ViewModelConfig(ViewModelBase self)
         {
@@ -151,15 +160,13 @@ namespace MapleCake.Models
         }
 
         public BindingList<GraphicPack> SelectedItemGraphicPacks {
-            get
-            {
-                if (SelectedItem == null)
-                    return null;
-                
-                if (!_graphicPackCollection.ContainsKey(SelectedItem.ID))
-                    _graphicPackCollection[SelectedItem.ID] = SelectedItem?.GetGraphicPacks();
+            get {
+                var col = new BindingList<GraphicPack>();
 
-                return _graphicPackCollection[SelectedItem.ID];
+                if (SelectedItem != null)
+                    col = _graphicPackCollection[SelectedItem.ID];
+
+                return col;
             }
             set {
                 if (value == null || !value.Any())
@@ -173,5 +180,41 @@ namespace MapleCake.Models
         public MapleDictionary TitleList => Database.TitleDb;
 
         public List<ICommandItem> ContextItems => MapleContext.CreateMenu();
+
+        public void SaveState()
+        {
+            using (var stream = File.Open("cstate", FileMode.Create)) {
+                var bformatter = new BinaryFormatter();
+
+                bformatter.Serialize(stream, new List<object> {_graphicPackCache, _graphicPackCollection});
+            }
+        }
+
+        public void LoadState(string statePath = "cstate")
+        {
+            if (!File.Exists("cstate"))
+                return;
+
+            try {
+                List<object> state;
+
+                using (var stream = File.Open(statePath, FileMode.Open)) {
+                    var bformatter = new BinaryFormatter();
+
+                    state = bformatter.Deserialize(stream) as List<object>;
+                }
+
+                if (MainWindowViewModel.Instance == null || state == null || state.Count != 2) return;
+
+                _graphicPackCache = state[0] as Dictionary<string, GraphicPack>;
+                RaisePropertyChangedEvent("SelectedItemGraphicPack");
+
+                _graphicPackCollection = state[1] as Dictionary<string, BindingList<GraphicPack>>;
+                RaisePropertyChangedEvent("SelectedItemGraphicPacks");
+            }
+            catch {
+                // ignored
+            }
+        }
     }
 }

@@ -3,7 +3,6 @@
 // Updated By: Jared
 // 
 
-using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
@@ -13,28 +12,28 @@ using MapleCake.Models.Interfaces;
 using MapleCake.ViewModels;
 using MapleLib;
 using MapleLib.Collections;
-using MapleLib.Common;
 using MapleLib.Structs;
 using MapleLib.WiiU;
 
 namespace MapleCake.Models
 {
-    [Serializable]
     public class ViewModelConfig : ViewModelBase
     {
-        [NonSerialized] private Dictionary<string, GraphicPack> _graphicPackCache =
+        private readonly MainWindowViewModel _self;
+
+        private Dictionary<string, GraphicPack> _graphicPackCache =
             new Dictionary<string, GraphicPack>();
 
-        [NonSerialized] private Dictionary<string, BindingList<GraphicPack>> _graphicPackCollection =
+        private Dictionary<string, BindingList<GraphicPack>> _graphicPackCollection =
             new Dictionary<string, BindingList<GraphicPack>>();
 
-        [NonSerialized] private readonly MainWindowViewModel _self;
+        private string _launchCemuText = "Loading Please wait...";
 
-        [NonSerialized] private string _launchCemuText = "Loading Please wait...";
+        private Title _selectedItem;
 
-        [NonSerialized] private Title _selectedItem;
+        private string _titleId;
 
-        [NonSerialized] private string _titleId;
+        private string _titleVersion = "0";
 
         public ViewModelConfig(ViewModelBase self)
         {
@@ -118,6 +117,14 @@ namespace MapleCake.Models
             set {
                 _self.DynamicTheme(Settings.DynamicTheme = value);
                 RaisePropertyChangedEvent("DynamicTheme");
+            }
+        }
+
+        public string TitleVersion {
+            get { return _titleVersion; }
+            set {
+                _titleVersion = value;
+                RaisePropertyChangedEvent("TitleVersion");
             }
         }
 

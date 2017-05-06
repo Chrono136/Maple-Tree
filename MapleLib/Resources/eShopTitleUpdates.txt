@@ -2012,22 +2012,19 @@
 | EUR
 |-
 | 0005000E-101C9300
-| The Legend of Zelda
-Breath of the Wild
+| The Legend of Zelda Breath of the Wild
 |
 | 16, 32
 | JPN
 |-
 | 0005000E-101C9400
-| The Legend of Zelda
-Breath of the Wild
+| The Legend of Zelda Breath of the Wild
 |
 | 16, 33
 | USA
 |-
 | 0005000E-101C9500
-| The Legend of Zelda
-Breath of the Wild
+| The Legend of Zelda Breath of the Wild
 |
 | 16, 33
 | EUR

@@ -22,7 +22,6 @@ namespace MapleCake.Models
     public class MapleButtons
     {
         private static Title SelectedItem => MainWindowViewModel.Instance.Config.SelectedItem;
-
         private static string TitleID => MainWindowViewModel.Instance.Config.TitleID;
 
         public ICommand Uninstall => new CommandHandler(UninstallButton);
@@ -63,7 +62,11 @@ namespace MapleCake.Models
             MainWindowViewModel.Instance.Config.DownloadCommandEnabled = false;
             RaisePropertyChangedEvent("DownloadCommandEnabled");
 
-            await title.DownloadContent();
+            int result;
+            var vers = MainWindowViewModel.Instance.Config.TitleVersion;
+            var version = int.TryParse(vers, out result) ? result.ToString() : "0";
+
+            await title.DownloadContent(version);
 
             MainWindowViewModel.Instance.Config.TitleList.Add(title);
 
@@ -73,8 +76,9 @@ namespace MapleCake.Models
 
         private async void AddUpdateButton()
         {
-            int ver;
-            var version = int.TryParse("0", out ver) ? ver.ToString() : "0";
+            int result;
+            var vers = MainWindowViewModel.Instance.Config.TitleVersion;
+            var version = int.TryParse(vers, out result) ? result.ToString() : "0";
             await DownloadContentClick("Patch", version);
         }
 

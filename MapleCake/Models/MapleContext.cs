@@ -35,9 +35,6 @@ namespace MapleCake.Models
                 }
             };
 
-            if (SelectedItem.Versions.Any() || SelectedItem.HasDLC)
-                items.Add(new SeparatorCommandItem());
-
             CreateUpdateItems(items);
 
             if (items.Any(x => x.Text.Contains("Update")))
@@ -60,8 +57,19 @@ namespace MapleCake.Models
 
         private static void CreateUpdateItems(ICollection<ICommandItem> items)
         {
-            if (SelectedItem.Versions.Any())
-                items.Add(new CommandItem {Text = "[+] Update", ToolTip = "Add Update", Command = Click.AddUpdate});
+            var title = Database.SearchById($"0005000E{SelectedItem.Lower8Digits()}");
+
+            var hasUpdates = title != null;
+
+            if (hasUpdates || SelectedItem.HasDLC)
+                items.Add(new SeparatorCommandItem());
+
+            if (hasUpdates) {
+                var updatesStr = string.Join(", ", title.Versions.ToArray());
+                items.Add(new CommandItem {Text = updatesStr, ToolTip = "Available Updates"});
+                items.Add(new SeparatorCommandItem());
+                items.Add(new CommandItem { Text = "[+] Update", ToolTip = "Add Update", Command = Click.AddUpdate });
+            }
 
             var dir = Path.Combine(Settings.BasePatchDir, SelectedItem.Lower8Digits());
             var meta = Path.Combine(dir, "meta", "meta.xml");

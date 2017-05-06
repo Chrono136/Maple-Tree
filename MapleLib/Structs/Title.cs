@@ -33,7 +33,7 @@ namespace MapleLib.Structs
 
             var packs =
                 GraphicPack.GraphicPacks.Where(x => x?.TitleIds != null && x.TitleIds.Contains(ID?.ToUpper())).ToList();
-            packs.Insert(0, new GraphicPack {Name = "No Graphic Pack"});
+            packs.Insert(0, new GraphicPack {Name = "No Graphic Pack", TitleIds = {"0000000000000000"}});
 
             packs.RemoveAll(x => x == null);
             return new BindingList<GraphicPack>(packs);

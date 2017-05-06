@@ -5,6 +5,7 @@
 
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using MapleCake.Models.Interfaces;
 using MapleCake.ViewModels;
 using MapleLib;
@@ -17,9 +18,12 @@ namespace MapleCake.Models
     public class ViewModelConfig : ViewModelBase
     {
         private readonly Dictionary<string, GraphicPack> _graphicPackCache = new Dictionary<string, GraphicPack>();
+
+        private readonly Dictionary<string, BindingList<GraphicPack>> _graphicPackCollection =
+            new Dictionary<string, BindingList<GraphicPack>>();
+
         private readonly MainWindowViewModel _self;
         private string _launchCemuText = "Loading Please wait...";
-        private GraphicPack _selectedItemGraphicPack;
         private Title _selectedItem;
         private string _titleId;
 
@@ -120,25 +124,51 @@ namespace MapleCake.Models
                 _self.SetBackgroundImg(_selectedItem = value);
                 RaisePropertyChangedEvent("SelectedItem");
                 RaisePropertyChangedEvent("ContextItems");
+                RaisePropertyChangedEvent("SelectedItemGraphicPack");
                 RaisePropertyChangedEvent("SelectedItemGraphicPacks");
             }
         }
 
         public GraphicPack SelectedItemGraphicPack {
             get {
-                if (SelectedItem != null && _graphicPackCache.ContainsKey(SelectedItem.ID)) {
+                if (SelectedItem == null)
+                    return null;
+
+                if (!_graphicPackCollection.ContainsKey(SelectedItem.ID))
+                    _graphicPackCollection[SelectedItem.ID] = SelectedItem?.GetGraphicPacks();
+
+                if (_graphicPackCache.ContainsKey(SelectedItem.ID))
                     return _graphicPackCache[SelectedItem.ID];
-                }
-                return null;
+
+                return _graphicPackCollection[SelectedItem.ID].First();
             }
             set {
-                if (SelectedItem == null) return;
-                _graphicPackCache[SelectedItem.ID] = _selectedItemGraphicPack = value;
+                if (SelectedItem == null || value == null) return;
+
+                _graphicPackCache[SelectedItem.ID] = value;
                 RaisePropertyChangedEvent("SelectedItemGraphicPack");
             }
         }
 
-        public BindingList<GraphicPack> SelectedItemGraphicPacks => SelectedItem?.GetGraphicPacks();
+        public BindingList<GraphicPack> SelectedItemGraphicPacks {
+            get
+            {
+                if (SelectedItem == null)
+                    return null;
+                
+                if (!_graphicPackCollection.ContainsKey(SelectedItem.ID))
+                    _graphicPackCollection[SelectedItem.ID] = SelectedItem?.GetGraphicPacks();
+
+                return _graphicPackCollection[SelectedItem.ID];
+            }
+            set {
+                if (value == null || !value.Any())
+                    return;
+
+                _graphicPackCollection[value.Last().TitleIds.First()] = value;
+                RaisePropertyChangedEvent("SelectedItemGraphicPacks");
+            }
+        }
 
         public MapleDictionary TitleList => Database.TitleDb;
 

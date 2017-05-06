@@ -24,7 +24,7 @@
                         </ListBox.ContextMenu>
                     </ListBox>
 
-                    <ComboBox ItemsSource="{Binding Config.SelectedItemGraphicPacks}" SelectedItem="{Binding Config.SelectedItemGraphicPack, UpdateSourceTrigger=PropertyChanged}" VerticalContentAlignment="Center" HorizontalAlignment="Center" Margin="11,0,9,10" VerticalAlignment="Bottom" Height="15" Width="363" Background="{x:Null}" Foreground="White" HorizontalContentAlignment="Center"/>
+                    <ComboBox SelectedItem="{Binding Config.SelectedItemGraphicPack, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" ItemsSource="{Binding Config.SelectedItemGraphicPacks}" VerticalContentAlignment="Center" HorizontalAlignment="Center" Margin="11,0,9,10" VerticalAlignment="Bottom" Height="15" Width="363" Background="{x:Null}" Foreground="White" HorizontalContentAlignment="Center"/>
 
                     <ProgressBar Visibility="Hidden" Value="{Binding Config.ProgressValue}" Minimum="{Binding Config.ProgressMin}" Maximum="{Binding Config.ProgressMax}" HorizontalAlignment="Center" Margin="11,0,9,10" VerticalAlignment="Bottom" Height="15" Width="363" Background="#A5343434"/>
 

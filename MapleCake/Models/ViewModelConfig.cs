@@ -9,7 +9,6 @@ using MapleCake.Models.Interfaces;
 using MapleCake.ViewModels;
 using MapleLib;
 using MapleLib.Collections;
-using MapleLib.Common;
 using MapleLib.Structs;
 using MapleLib.WiiU;
 
@@ -17,8 +16,10 @@ namespace MapleCake.Models
 {
     public class ViewModelConfig : ViewModelBase
     {
+        private readonly Dictionary<string, GraphicPack> _graphicPackCache = new Dictionary<string, GraphicPack>();
         private readonly MainWindowViewModel _self;
         private string _launchCemuText = "Loading Please wait...";
+        private GraphicPack _selectedItemGraphicPack;
         private Title _selectedItem;
         private string _titleId;
 
@@ -43,8 +44,7 @@ namespace MapleCake.Models
 
         public bool DownloadCommandEnabled { get; set; } = true;
 
-        public string LibraryDirectory
-        {
+        public string LibraryDirectory {
             get { return Settings.LibraryDirectory; }
             set {
                 Settings.LibraryDirectory = value;
@@ -52,21 +52,17 @@ namespace MapleCake.Models
             }
         }
 
-        public string CemuDirectory
-        {
+        public string CemuDirectory {
             get { return Settings.CemuDirectory; }
-            set
-            {
+            set {
                 Settings.CemuDirectory = value;
                 RaisePropertyChangedEvent("CemuDirectory");
             }
         }
 
-        public string LaunchCemuText
-        {
+        public string LaunchCemuText {
             get { return _launchCemuText; }
-            set
-            {
+            set {
                 _launchCemuText = value;
                 RaisePropertyChangedEvent("LaunchCemuText");
             }
@@ -125,12 +121,22 @@ namespace MapleCake.Models
                 RaisePropertyChangedEvent("SelectedItem");
                 RaisePropertyChangedEvent("ContextItems");
                 RaisePropertyChangedEvent("SelectedItemGraphicPacks");
-                SelectedItemGraphicPack = SelectedItemGraphicPacks.Random() ?? new GraphicPack();
-                RaisePropertyChangedEvent("SelectedItemGraphicPack");
             }
         }
 
-        public GraphicPack SelectedItemGraphicPack { get; set; }
+        public GraphicPack SelectedItemGraphicPack {
+            get {
+                if (SelectedItem != null && _graphicPackCache.ContainsKey(SelectedItem.ID)) {
+                    return _graphicPackCache[SelectedItem.ID];
+                }
+                return null;
+            }
+            set {
+                if (SelectedItem == null) return;
+                _graphicPackCache[SelectedItem.ID] = _selectedItemGraphicPack = value;
+                RaisePropertyChangedEvent("SelectedItemGraphicPack");
+            }
+        }
 
         public BindingList<GraphicPack> SelectedItemGraphicPacks => SelectedItem?.GetGraphicPacks();
 

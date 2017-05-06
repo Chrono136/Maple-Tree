@@ -3,7 +3,6 @@
 // Updated By: Jared
 // 
 
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
@@ -32,8 +31,9 @@ namespace MapleLib.Structs
             if (GraphicPack.GraphicPacks == null)
                 return null;
 
-            var packs = GraphicPack.GraphicPacks.Where(x => x?.TitleIds != null && x.TitleIds.Contains(ID?.ToUpper())).ToList();
-            packs.Insert(0, new GraphicPack { Name = "No Graphic Pack" });
+            var packs =
+                GraphicPack.GraphicPacks.Where(x => x?.TitleIds != null && x.TitleIds.Contains(ID?.ToUpper())).ToList();
+            packs.Insert(0, new GraphicPack {Name = "No Graphic Pack"});
 
             packs.RemoveAll(x => x == null);
             return new BindingList<GraphicPack>(packs);

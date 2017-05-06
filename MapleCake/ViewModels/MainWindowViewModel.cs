@@ -6,7 +6,6 @@
 using System;
 using System.Drawing;
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Threading;
@@ -116,8 +115,12 @@ namespace MapleCake.ViewModels
 
             TextLog.MesgLog.WriteLog($"Current Version: {update.LatestVersion}", Color.Green);
 
-            if (update.IsAvailable)
-            TextLog.MesgLog.WriteLog($"Latest Version: {update.CurrentVersion}", Color.Green);
+            if (update.IsAvailable) {
+                TextLog.MesgLog.WriteLog($"Latest Version: {update.CurrentVersion}", Color.Green);
+
+                MessageBox.Show(@"Please visit https://github.com/Tsume/Maple-Tree/releases for the latest releases.",
+                    $@"Version Mis-Match - Latest: {update.LatestVersion}");
+            }
         }
 
         public async void SetBackgroundImg(Title title)
@@ -168,8 +171,7 @@ namespace MapleCake.ViewModels
 
             CheckUpdate();
 
-            await Task.Run(async () =>
-            {
+            await Task.Run(async () => {
                 await Task.Run(() => GraphicPack.Init());
                 await Task.Run(() => Database.Load());
 

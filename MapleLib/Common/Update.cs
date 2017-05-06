@@ -35,10 +35,10 @@ namespace MapleLib.Common
 
         private static string VersionUrl => "https://raw.githubusercontent.com/Tsume/Maple-Tree/master/version";
 
-        public string LatestVersion { get; private set; }
+        public string LatestVersion { get; }
 
-        public string CurrentVersion { get; private set; }
+        public string CurrentVersion { get; }
 
-        public bool IsAvailable { get; private set; }
+        public bool IsAvailable { get; }
     }
 }

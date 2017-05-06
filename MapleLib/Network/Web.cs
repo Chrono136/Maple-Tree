@@ -47,6 +47,7 @@ namespace MapleLib.Network
         {
             using (var wc = new WebClient()) {
                 wc.Headers[HttpRequestHeader.UserAgent] = WII_USER_AGENT;
+                wc.Headers[HttpRequestHeader.CacheControl] = "no-cache";
                 wc.DownloadProgressChanged += DownloadProgressChanged;
                 return wc.DownloadString(url);
             }
@@ -56,6 +57,7 @@ namespace MapleLib.Network
         {
             using (var wc = new WebClient()) {
                 wc.Headers[HttpRequestHeader.UserAgent] = WII_USER_AGENT;
+                wc.Headers[HttpRequestHeader.CacheControl] = "no-cache";
                 wc.DownloadProgressChanged += DownloadProgressChanged;
                 var task = wc.DownloadDataTaskAsync(new Uri(url));
                 return task.Result;
@@ -66,6 +68,7 @@ namespace MapleLib.Network
         {
             using (var wc = new WebClient()) {
                 wc.Headers[HttpRequestHeader.UserAgent] = WII_USER_AGENT;
+                wc.Headers[HttpRequestHeader.CacheControl] = "no-cache";
                 wc.DownloadProgressChanged += DownloadProgressChanged;
                 return await wc.DownloadDataTaskAsync(new Uri(url));
             }

@@ -31,11 +31,11 @@ namespace MapleLib.WiiU
 
         private MapleList<GraphicPackSource> Sources { get; } = new MapleList<GraphicPackSource>();
 
-        public string Name { get; set; }
+        public List<string> TitleIds { get; } = new List<string>();
+
+        public string Name { private get; set; }
 
         private string Rules { get; set; }
-
-        public List<string> TitleIds { get; } = new List<string>();
 
         public static event EventHandler<GraphicPack> NewGraphicPack;
 
@@ -69,11 +69,6 @@ namespace MapleLib.WiiU
                 GraphicPacks.Add(pack);
         }
 
-        public static GraphicPack FindPack(string title_id)
-        {
-            return GraphicPacks.FirstOrDefault(x => x.TitleIds.ToList().Contains(title_id.ToUpper()));
-        }
-
         public static async void Init(bool force = false)
         {
             var databaseFile = Path.Combine(Settings.ConfigDirectory, "graphicPacks");
@@ -83,13 +78,18 @@ namespace MapleLib.WiiU
                 TextLog.MesgLog.WriteLog(@"Building graphic pack database...");
 
                 const string url = "https://github.com/slashiee/cemu_graphic_packs/archive/master.zip";
-                var data = await Web.DownloadDataAsync(url);
-                File.WriteAllBytes(databaseFile, data);
+
+                if (Web.UrlExists(url)) {
+                    var data = await Web.DownloadDataAsync(url);
+                    File.WriteAllBytes(databaseFile, data);
+                }
             }
 
             try {
-                if (!File.Exists(databaseFile)) return;
                 TextLog.MesgLog.WriteLog(@"Loading graphic pack database...");
+
+                if (!File.Exists(databaseFile)) return;
+
                 var data = File.ReadAllBytes(databaseFile);
 
                 using (var zipArchive = new ZipArchive(new MemoryStream(data))) {
@@ -154,7 +154,6 @@ namespace MapleLib.WiiU
             }
             catch (Exception e) {
                 TextLog.MesgLog.WriteLog($"{e.Message}\n{e.StackTrace}");
-                //MessageBox.Show($@"{e.Message}\n{e.StackTrace}");
             }
         }
 

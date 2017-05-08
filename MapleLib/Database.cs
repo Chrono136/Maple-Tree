@@ -46,13 +46,20 @@ namespace MapleLib
         {
             var dbFile = Path.GetFullPath(Path.Combine(Settings.ConfigDirectory, "database"));
 
-            var fileAge = File.GetLastWriteTime(dbFile) - DateTime.Now;
+            var update = (File.GetLastWriteTime(dbFile) - DateTime.Now).Days > 2;
 
-            if (!File.Exists(dbFile) || new FileInfo(dbFile).Length <= 4000 || fileAge.Days > 2 || Settings.CacheDatabase) {
+            if (!File.Exists(dbFile) || new FileInfo(dbFile).Length <= 4000 || update || Settings.CacheDatabase) {
                 File.WriteAllText(dbFile, JsonConvert.SerializeObject(_db = Create()));
             }
             else {
-                var json = File.ReadAllText(dbFile);
+                byte[] buf;
+
+                using (var fs = File.OpenRead(dbFile)) {
+                    buf = new byte[fs.Length];
+                    fs.Read(buf, 0, buf.Length);
+                }
+
+                var json = Encoding.UTF8.GetString(buf);
                 _db = JsonConvert.DeserializeObject<MapleList<Title>>(json);
             }
 
@@ -133,11 +140,11 @@ namespace MapleLib
             return _db;
         }
 
-        public static Title SearchById(string title_id)
+        public static Title SearchById(string titleID)
         {
             var db = new List<Title>(_db.ToList());
 
-            var title = !db.Any() ? null : db.Find(x => x.ID.ToUpper() == title_id.ToUpper());
+            var title = !db.Any() ? null : db.Find(x => string.Equals(x.ID, titleID, StringComparison.CurrentCultureIgnoreCase));
 
             return title;
         }

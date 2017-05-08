@@ -6,10 +6,10 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Management;
 using System.Reflection;
 using System.Windows.Forms;
 using System.Xml;
-using MessageBox = System.Windows.MessageBox;
 
 namespace MapleLib.Common
 {
@@ -17,15 +17,25 @@ namespace MapleLib.Common
     {
         public static void Uninstall()
         {
-            var results = System.Windows.Forms.MessageBox.Show(@"This will remove all extra files related to MapleSeed", "", MessageBoxButtons.OKCancel);
+            var results = MessageBox.Show(@"This will remove all extra files related to MapleSeed", "",
+                MessageBoxButtons.OKCancel);
 
             if (results != DialogResult.OK) return;
 
             if (!string.IsNullOrEmpty(Settings.ConfigDirectory))
                 Directory.Delete(Settings.ConfigDirectory, true);
 
-            System.Windows.Forms.MessageBox.Show(@"You may now delete this exe");
+            MessageBox.Show(@"You may now delete this exe");
             Process.GetCurrentProcess().Kill();
+        }
+
+        public static string UniqueID()
+        {
+            var drive = DriveInfo.GetDrives()[0].ToString().Replace(":", "").Replace("\\", "");
+            var dsk = new ManagementObject(@"win32_logicaldisk.deviceid=""" + drive + @":""");
+            dsk.Get();
+            var volumeSerial = dsk["VolumeSerialNumber"].ToString();
+            return volumeSerial;
         }
 
         public static void ResolveAssembly()
@@ -52,25 +62,10 @@ namespace MapleLib.Common
                 }
             }
             catch (Exception e) {
-                MessageBox.Show(e.Message);
+                System.Windows.MessageBox.Show(e.Message);
             }
 
             return null;
-        }
-
-        public static bool IsFolder(string file)
-        {
-            return Directory.Exists(file);
-        }
-
-        public static string EncryptStr(string text)
-        {
-            return Crypto.Encrypt(text);
-        }
-
-        public static string DecryptStr(string text)
-        {
-            return Crypto.Decrypt(text);
         }
     }
 }

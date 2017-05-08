@@ -8,6 +8,7 @@
 using System;
 using System.IO;
 using System.Reflection;
+using System.Threading;
 using System.Windows.Forms;
 using IniParser;
 using MapleLib.Properties;
@@ -18,36 +19,22 @@ namespace MapleLib
 {
     public static class Settings
     {
+        public static readonly string Version =
+            Assembly.GetExecutingAssembly().GetName().Version.ToString();
+
         static Settings()
         {
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
             Application.ThreadException += Application_ThreadException;
         }
 
-        private static void Application_ThreadException(object sender, System.Threading.ThreadExceptionEventArgs e)
-        {
-            File.WriteAllText("error.log", string.Format(Resources.ThreadException, e.Exception.Message, e.Exception.StackTrace));
-            MessageBox.Show(@"error.log has been created containing details of this error.");
-        }
-
-        private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
-        {
-            File.WriteAllText("error.log", $@"{e.ExceptionObject}");
-            MessageBox.Show($@"{e.ExceptionObject}");
-        }
-
-        public static readonly string Version =
-            Assembly.GetExecutingAssembly().GetName().Version.ToString();
-
         public static string LibraryDirectory {
             get { return GetKeyValue("LibraryDirectory"); }
-
             set { WriteKeyValue("LibraryDirectory", Path.GetFullPath(value)); }
         }
 
         public static string CemuDirectory {
             get { return GetKeyValue("CemuDirectory"); }
-
             set { WriteKeyValue("CemuDirectory", Path.GetFullPath(value)); }
         }
 
@@ -58,7 +45,6 @@ namespace MapleLib
                     WriteKeyValue("Hub", value = "mapletree.tsumes.com");
                 return value;
             }
-
             set { WriteKeyValue("Hub", value); }
         }
 
@@ -70,7 +56,6 @@ namespace MapleLib
 
                 return GetKeyValue("FullScreenMode") == "True";
             }
-
             set { WriteKeyValue("FullScreenMode", value.ToString()); }
         }
 
@@ -93,7 +78,6 @@ namespace MapleLib
 
                 return GetKeyValue("DynamicTheme") == "True";
             }
-
             set { WriteKeyValue("DynamicTheme", value.ToString()); }
         }
 
@@ -105,7 +89,6 @@ namespace MapleLib
 
                 return GetKeyValue("Cemu173Patch") == "True";
             }
-
             set { WriteKeyValue("Cemu173Patch", value.ToString()); }
         }
 
@@ -127,7 +110,6 @@ namespace MapleLib
 
                 return GetKeyValue("StoreEncryptedContent") == "True";
             }
-
             set { WriteKeyValue("StoreEncryptedContent", value.ToString()); }
         }
 
@@ -150,6 +132,19 @@ namespace MapleLib
         public static string ConfigDirectory => Path.Combine(AppFolder, ConfigName);
 
         public static string BasePatchDir => GetBasePatchDir();
+
+        private static void Application_ThreadException(object sender, ThreadExceptionEventArgs e)
+        {
+            File.WriteAllText("error.log",
+                string.Format(Resources.ThreadException, e.Exception.Message, e.Exception.StackTrace));
+            MessageBox.Show(@"error.log has been created containing details of this error.");
+        }
+
+        private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
+            File.WriteAllText("error.log", $@"{e.ExceptionObject}");
+            MessageBox.Show($@"{e.ExceptionObject}");
+        }
 
         private static string GetBasePatchDir()
         {

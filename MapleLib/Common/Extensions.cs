@@ -58,12 +58,12 @@ namespace MapleLib.Common
             }
         }
 
-        public static string toString(this Stream stream)
+        private static string toString(this Stream stream)
         {
             using (var ms = new MemoryStream())
             {
                 stream.CopyTo(ms);
-                return Encoding.UTF8.GetString(ms.ToArray());
+                return Encoding.Default.GetString(ms.ToArray());
             }
         }
 

@@ -125,7 +125,6 @@
     <Compile Include="Common\Helper.cs" />
     <Compile Include="Database.cs" />
     <Compile Include="Interfaces\ITitle.cs" />
-    <Compile Include="Media\MapleImage.cs" />
     <Compile Include="Network\Web.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="Structs\eShopTitle.cs" />
@@ -363,7 +362,6 @@
     <Compile Include="ThirdParty\Newtonsoft.Json\Utilities\TypeExtensions.cs" />
     <Compile Include="ThirdParty\Newtonsoft.Json\Utilities\ValidationUtils.cs" />
     <Compile Include="ThirdParty\Newtonsoft.Json\WriteState.cs" />
-    <Compile Include="Common\Toolkit.cs" />
     <Compile Include="Common\Toolbelt.cs" />
     <Compile Include="WiiU\MapleTicket.cs" />
   </ItemGroup>

@@ -190,22 +190,29 @@ namespace MapleCake.Models
 
         public void SaveState()
         {
-            using (var stream = File.Open("cstate", FileMode.Create)) {
+            var stateFile = Path.Combine(Settings.ConfigDirectory, "state");
+
+            using (var stream = File.Open(stateFile, FileMode.Create)) {
                 var bformatter = new BinaryFormatter();
 
                 bformatter.Serialize(stream, new List<object> {_graphicPackCache, _graphicPackCollection});
             }
         }
 
-        public void LoadState(string statePath = "cstate")
+        public void LoadState()
         {
-            if (!File.Exists("cstate"))
+            var stateFile = Path.Combine(Settings.ConfigDirectory, "state");
+
+            if (File.Exists("cstate"))
+                File.Move("cstate", stateFile);
+
+            if (!File.Exists(stateFile))
                 return;
 
             try {
                 List<object> state;
 
-                using (var stream = File.Open(statePath, FileMode.Open)) {
+                using (var stream = File.Open(stateFile, FileMode.Open)) {
                     var bformatter = new BinaryFormatter();
 
                     state = bformatter.Deserialize(stream) as List<object>;

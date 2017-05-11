@@ -1,7 +1,6 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Windows;
-using System.Windows.Threading;
-using MapleCake.Models;
 using MapleCake.ViewModels;
 
 namespace MapleCake.Views
@@ -14,16 +13,6 @@ namespace MapleCake.Views
         public MainWindow()
         {
             InitializeComponent();
-            return;
-            var timer = new DispatcherTimer {Interval = new TimeSpan(0, 0, 0, 0, 50)};
-            timer.Tick += (sender, e) => {
-                _contentCtrl.Height += 10;
-                var count = Math.Abs(_scrollViewer.VerticalOffset - _scrollViewer.ScrollableHeight);
-                if (count > 0) {
-                    _scrollViewer.ScrollToEnd();
-                }
-            };
-            timer.Start();
         }
 
         private void OnContextMenuClosing(object sender, RoutedEventArgs e)
@@ -31,14 +20,14 @@ namespace MapleCake.Views
             ((MainWindowViewModel) DataContext)?.Config.RaisePropertyChangedEvent("ContextItems");
         }
 
-        private void MetroWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        private void MetroWindow_Closing(object sender, CancelEventArgs e)
         {
             ((MainWindowViewModel) DataContext)?.Config.SaveState();
         }
 
         private void MetroWindow_Initialized(object sender, EventArgs e)
         {
-            ((MainWindowViewModel)DataContext)?.Config.LoadState();
+            ((MainWindowViewModel) DataContext)?.Config.LoadState();
         }
     }
 }

@@ -16,6 +16,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml;
 using libWiiSharp;
+using LiteDB;
 using MapleLib.Collections;
 using MapleLib.Common;
 using MapleLib.Network;
@@ -31,12 +32,15 @@ namespace MapleLib
 {
     public static class Database
     {
-        private static MapleList<Title> _db;
-
         static Database()
         {
-            if (TitleDb == null) TitleDb = new MapleDictionary(Settings.LibraryDirectory);
+            if (TitleDb == null)
+                TitleDb = new MapleDictionary(Settings.LibraryDirectory);
         }
+
+        private static LiteDatabase _titleDb => InitDatabase();
+
+        private static LiteCollection<Title> _titleCol => _titleDb.GetCollection<Title>("titles");
 
         public static MapleDictionary TitleDb { get; }
 
@@ -44,37 +48,42 @@ namespace MapleLib
 
         public static void Load()
         {
-            var dbFile = Path.GetFullPath(Path.Combine(Settings.ConfigDirectory, "database"));
-
-            var update = (File.GetLastWriteTime(dbFile) - DateTime.Now).Days > 2;
-
-            if (!File.Exists(dbFile) || new FileInfo(dbFile).Length <= 4000 || update || Settings.CacheDatabase) {
-                File.WriteAllText(dbFile, JsonConvert.SerializeObject(_db = Create()));
-            }
-            else {
-                byte[] buf;
-
-                using (var fs = File.OpenRead(dbFile)) {
-                    buf = new byte[fs.Length];
-                    fs.Read(buf, 0, buf.Length);
-                }
-
-                var json = Encoding.UTF8.GetString(buf);
-                _db = JsonConvert.DeserializeObject<MapleList<Title>>(json);
-            }
-
             LoadLibrary(Settings.LibraryDirectory);
+        }
+
+        private static LiteDatabase InitDatabase()
+        {
+            var dbFile = Path.GetFullPath(Path.Combine(Settings.ConfigDirectory, "titledb"));
+
+            if (File.Exists(dbFile))
+                return new LiteDatabase(File.OpenRead(dbFile));
+
+            using (var tdb = new LiteDatabase(dbFile)) {
+                var col = tdb.GetCollection<Title>("titles");
+
+                var db = Create();
+                for (var i = 0; i < db.Count; i++) {
+                    var item = db[i];
+                    col.Insert(item);
+                    col.EnsureIndex(x => x.Name);
+                }
+            }
+
+            TextLog.Write("Building title database complete.");
+
+            return new LiteDatabase(File.OpenRead(dbFile));
         }
 
         private static MapleList<Title> Create()
         {
+            TextLog.Write("Building title database...");
+
             var eShopTitlesStr = Resources.eShopAndDiskTitles; //index 12
             var eShopTitleUpdates = Resources.eShopTitleUpdates; //index 9
 
-            _db = new MapleList<Title>();
+            var _db = new MapleList<Title>();
 
             var titlekeys = WiiUTitleKeys();
-
             foreach (var wiiutitleKey in titlekeys) {
                 var id = wiiutitleKey["titleID"].Value<string>()?.ToUpper();
                 var key = wiiutitleKey["titleKey"].Value<string>()?.ToUpper();
@@ -142,9 +151,7 @@ namespace MapleLib
 
         public static Title SearchById(string titleID)
         {
-            var db = new List<Title>(_db.ToList());
-
-            var title = !db.Any() ? null : db.Find(x => string.Equals(x.ID, titleID, StringComparison.CurrentCultureIgnoreCase));
+            var title = _titleCol.FindOne(x => x.ID.StartsWith(titleID));
 
             return title;
         }
@@ -169,11 +176,10 @@ namespace MapleLib
                 Directory.CreateDirectory(cacheDir);
 
             string cachedFile;
-            if (File.Exists(cachedFile = Path.Combine(cacheDir, $"{imageCode}.jpg"))) {
+            if (File.Exists(cachedFile = Path.Combine(cacheDir, $"{imageCode}.jpg")))
                 return title.ImageLocation = cachedFile;
-            }
 
-            foreach (var langCode in "US,EN,DE,FR,JA".Split(',')) {
+            foreach (var langCode in "US,EN,DE,FR,JA".Split(','))
                 try {
                     var url = $"http://art.gametdb.com/wiiu/coverHQ/{langCode}/{imageCode}.jpg";
 
@@ -187,7 +193,6 @@ namespace MapleLib
                 catch {
                     TextLog.MesgLog.WriteLog($"Could not locate cover image for {title}");
                 }
-            }
 
             return title.ImageLocation;
         }
@@ -357,7 +362,7 @@ namespace MapleLib
                 Toolbelt.AppendLog("  - Decrypting Content");
                 Toolbelt.AppendLog("  + This may take a minute. Please wait...");
                 Toolbelt.SetStatus("Decrypting Content. This may take a minute. Please wait...", Color.OrangeRed);
-                
+
                 if (await Toolbelt.CDecrypt(outputDir) != 0) {
                     CleanUp(outputDir, tmd);
                     Toolbelt.AppendLog($"Error while decrypting {name}");
@@ -386,7 +391,7 @@ namespace MapleLib
                     Toolbelt.AppendLog($"Downloading Content #{i1 + 1} of {numc}... ({size})");
                     var contentPath = Path.Combine(outputDir, tmd.Contents[i1].ContentID.ToString("x8"));
 
-                    if (!Toolbelt.IsValid(tmd.Contents[i1], contentPath)) {
+                    if (!Toolbelt.IsValid(tmd.Contents[i1], contentPath))
                         try {
                             var downloadUrl = $"{titleUrl}/{tmd.Contents[i1].ContentID:x8}";
                             await Web.DownloadFileAsync(downloadUrl, contentPath);
@@ -395,7 +400,6 @@ namespace MapleLib
                             Toolbelt.AppendLog($"Downloading Content #{i1 + 1} of {numc} failed...\n{ex.Message}");
                             return 0;
                         }
-                    }
                     ReportProgress(0, tmd.NumOfContents - 1, i1);
                     return 1;
                 });
@@ -439,13 +443,21 @@ namespace MapleLib
 
         private static List<JObject> WiiUTitleKeys()
         {
-            var url = "https://wiiu.titlekeys.com/json";
+            var url_1 = "http://wiiu.titlekeys.gq/json";
+            var url_2 = "https://wiiu.titlekeys.com/json";
 
-            string jsonStr;
-            if (Web.UrlExists(url)) {
-                jsonStr = Web.DownloadString(url);
-            }
-            else {
+            var urls = new[] {url_1, url_2};
+
+            var jsonStr = string.Empty;
+
+            for (var i = 0; i < urls.Length; i++) {
+                var url = urls[i];
+
+                if (Web.UrlExists(url)) {
+                    jsonStr = Web.DownloadString(url);
+                    break;
+                }
+
                 TextLog.Write($"Failed to download db from {url}, falling back to embedded option");
                 jsonStr = Resources.wiiutitlekey;
             }

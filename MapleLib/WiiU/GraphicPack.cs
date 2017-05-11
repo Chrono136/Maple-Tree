@@ -71,32 +71,33 @@ namespace MapleLib.WiiU
 
         public static async void Init(bool force = false)
         {
-            var databaseFile = Path.Combine(Settings.ConfigDirectory, "graphicPacks");
+            var dbFile = Path.Combine(Settings.ConfigDirectory, "graphicPacks");
             GraphicPacks = new MapleList<GraphicPack>();
 
-            if (!File.Exists(databaseFile) || Settings.CacheDatabase || force) {
-                TextLog.MesgLog.WriteLog(@"Building graphic pack database...");
+            if (!File.Exists(dbFile) || Settings.CacheDatabase || force) {
+                TextLog.Write("Building graphic pack database...");
 
                 const string url = "https://github.com/slashiee/cemu_graphic_packs/archive/master.zip";
 
                 if (Web.UrlExists(url)) {
                     var data = await Web.DownloadDataAsync(url);
-                    File.WriteAllBytes(databaseFile, data);
+                    File.WriteAllBytes(dbFile, data);
                 }
             }
 
             try {
-                TextLog.MesgLog.WriteLog(@"Loading graphic pack database...");
+                if (!File.Exists(dbFile)) return;
 
-                if (!File.Exists(databaseFile)) return;
+                var update = (File.GetLastWriteTime(dbFile) - DateTime.Now).Days > 2;
+                if (update) Init(true);
 
-                var data = File.ReadAllBytes(databaseFile);
+                using (var zipArchive = new ZipArchive(File.OpenRead(dbFile))) {
+                    var list = zipArchive.Entries.Where(x => x.Name.Length == 0 && x.FullName.EndsWith("/")).ToList();
 
-                using (var zipArchive = new ZipArchive(new MemoryStream(data))) {
-                    zipArchive.Entries.Where(x => x.Name.Length == 0 && x.FullName.EndsWith("/"))
-                        .ToList()
-                        .ForEach(Process);
+                    list.ForEach(Process);
                 }
+
+                TextLog.Write("Building graphic pack database complete.");
             }
             catch (Exception e) {
                 if (RetryCount >= 3) {
@@ -106,7 +107,7 @@ namespace MapleLib.WiiU
                 }
 
                 RetryCount++;
-                File.Delete(databaseFile);
+                File.Delete(dbFile);
                 Init(true);
             }
         }

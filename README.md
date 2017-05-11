@@ -54,10 +54,10 @@ If you would like to make a donation to this project, please use the Paypal link
  - Dynamic theme
 # 
 ## MapleSeed Version 2 - Preview
-![MS Version 2](http://pixxy.in/RPg9255.png)
+![MS Version 2](https://u.pixxy.in/Y6ejiL.png)
 # 
 ## MapleSeed Version 1 - Preview
-![MS Version 1](http://pixxy.in/1Nj3245.png)
+![MS Version 1](https://u.pixxy.in/66TWZU.png)
 # 
 ## MapleSeed Lite - Preview
-![MS Lite](http://pixxy.in/ISL2199.gif)
+![MS Lite](https://u.pixxy.in/WAjCN.gif)

@@ -125,6 +125,7 @@
     <Compile Include="Common\Extensions.cs" />
     <Compile Include="Common\Update.cs" />
     <Compile Include="Enums\UpdateType.cs" />
+    <Compile Include="PackDatabase.cs" />
     <Compile Include="WiiU\GraphicPack.cs" />
     <Compile Include="Common\Helper.cs" />
     <Compile Include="Database.cs" />

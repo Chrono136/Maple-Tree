@@ -150,13 +150,10 @@ namespace MapleCake.Models
                 if (SelectedItem == null)
                     return null;
 
-                if (!_graphicPackCollection.ContainsKey(SelectedItem.ID))
-                    _graphicPackCollection[SelectedItem.ID] = SelectedItem?.GetGraphicPacks();
-
                 if (_graphicPackCache.ContainsKey(SelectedItem.ID))
                     return _graphicPackCache[SelectedItem.ID];
 
-                return _graphicPackCollection[SelectedItem.ID].First();
+                return (_graphicPackCollection[SelectedItem.ID] = SelectedItem?.GetGraphicPacks()).First();
             }
             set {
                 if (SelectedItem == null || value == null) return;
@@ -202,6 +199,9 @@ namespace MapleCake.Models
         public void LoadState()
         {
             var stateFile = Path.Combine(Settings.ConfigDirectory, "state");
+
+            if (Settings.CacheDatabase)
+                File.Delete(stateFile);
 
             if (File.Exists("cstate"))
                 File.Move("cstate", stateFile);

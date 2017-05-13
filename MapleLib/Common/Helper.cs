@@ -15,6 +15,11 @@ namespace MapleLib.Common
 {
     public static class Helper
     {
+        public static Stream FileOpenStream(string path)
+        {
+            return File.Open(path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.Read);
+        }
+
         public static void Uninstall()
         {
             var results = MessageBox.Show(@"This will remove all extra files related to MapleSeed", "",

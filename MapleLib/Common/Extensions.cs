@@ -87,7 +87,7 @@ namespace MapleLib.Common
 
         public static T Random<T>(this IList<T> value)
         {
-            if (value != null && value.Count > 0 && value.Any())
+            if (value != null && value.Any())
                 return value[new Random().Next(value.Count - 1)];
 
             return default(T);

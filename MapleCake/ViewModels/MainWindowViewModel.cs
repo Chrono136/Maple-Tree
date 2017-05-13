@@ -7,6 +7,7 @@ using System;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Threading;
@@ -15,7 +16,6 @@ using MapleLib;
 using MapleLib.Common;
 using MapleLib.Enums;
 using MapleLib.Structs;
-using MapleLib.WiiU;
 using Application = System.Windows.Application;
 
 namespace MapleCake.ViewModels
@@ -173,17 +173,20 @@ namespace MapleCake.ViewModels
             CheckUpdate();
 
             await Task.Run(async () => {
-                await Task.Run(() => GraphicPack.Init());
+                await Task.Run(() => PackDatabase.Load());
                 await Task.Run(() => Database.Load());
 
                 var path = Path.Combine(Settings.ConfigDirectory, "lastUpdate");
                 File.WriteAllText(path, DateTime.Now.ToString(CultureInfo.InvariantCulture));
 
-                Config.SelectedItem = Config.TitleList.Random();
+                if (Config.TitleList.Any())
+                    Config.SelectedItem = Config.TitleList.First();
 
                 Config.LaunchCemuText = "Launch Cemu";
                 TextLog.MesgLog.WriteLog($"Game Directory [{Settings.LibraryDirectory}]");
             });
+
+            Config.CacheDatabase = false;
         }
 
         private void Database_ProgressReport(object sender, ProgressReport e)

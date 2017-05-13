@@ -3,9 +3,9 @@
 // Updated By: Jared
 // 
 
+using System;
 using System.ComponentModel;
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using MapleLib.Common;
@@ -15,7 +15,7 @@ using MapleLib.WiiU;
 
 namespace MapleLib.Structs
 {
-    [System.Serializable]
+    [Serializable]
     public class Title : eShopTitle
     {
         public string FolderLocation { get; set; }
@@ -29,14 +29,9 @@ namespace MapleLib.Structs
 
         public BindingList<GraphicPack> GetGraphicPacks()
         {
-            if (GraphicPack.GraphicPacks == null)
-                return null;
-
-            var packs =
-                GraphicPack.GraphicPacks.Where(x => x?.TitleIds != null && x.TitleIds.Contains(ID?.ToUpper())).ToList();
+            var packs = PackDatabase.Find(ID?.ToUpper());
             packs.Insert(0, new GraphicPack {Name = "No Graphic Pack", TitleIds = {"0000000000000000"}});
 
-            packs.RemoveAll(x => x == null);
             return new BindingList<GraphicPack>(packs);
         }
 

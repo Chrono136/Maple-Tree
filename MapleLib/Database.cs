@@ -40,7 +40,8 @@ namespace MapleLib
 
         private static string CollectionName => "titles";
 
-        private static LiteDatabase TitlesDb => InitDatabase();
+        private static LiteDatabase _titlesDb;
+        private static LiteDatabase TitlesDb => _titlesDb ?? (_titlesDb = InitDatabase());
 
         private static LiteCollection<Title> TitleCol => TitlesDb.GetCollection<Title>(CollectionName);
 
@@ -60,9 +61,9 @@ namespace MapleLib
 
             var text = File.ReadAllText(path);
             var lastUpdate = DateTime.Parse(text);
-            var update = (lastUpdate - DateTime.Now).Days > 2 || Settings.CacheDatabase;
+            var update = (lastUpdate - DateTime.Now).Days > 14 || Settings.CacheDatabase;
 
-            if (update & func != null)
+            if (update & (func != null))
                 func();
 
             return update;
@@ -72,27 +73,30 @@ namespace MapleLib
         {
             var dbFile = Path.GetFullPath(Path.Combine(Settings.ConfigDirectory, $"{CollectionName}.db"));
 
-            if (File.Exists(dbFile))
-                return new LiteDatabase(File.OpenRead(dbFile));
+            if (!UpdateCheck() && File.Exists(dbFile))
+                return new LiteDatabase(Helper.FileOpenStream(dbFile));
 
-            if (UpdateCheck()) {
-                TextLog.Write("Building title database...");
+            TextLog.Write("Building title database...");
+                
+            using (var tdb = new LiteDatabase(dbFile)) {
+                tdb.DropCollection(CollectionName);
+                var col = tdb.GetCollection<Title>(CollectionName);
 
-                using (var tdb = new LiteDatabase(dbFile)) {
-                    var col = tdb.GetCollection<Title>(CollectionName);
+                var db = Create();
+                for (var i = 0; i < db.Count; i++) {
+                    var item = db[i];
 
-                    var db = Create();
-                    for (var i = 0; i < db.Count; i++) {
-                        var item = db[i];
-                        col.Insert(item);
-                        col.EnsureIndex(x => x.Name);
-                    }
+                    if (col.Find(x => x.ID == item.ID).Any())
+                        continue;
+
+                    col.Insert(item);
+                    col.EnsureIndex(x => x.Name);
                 }
-
-                TextLog.Write("Building title database complete.");
             }
 
-            return new LiteDatabase(File.OpenRead(dbFile));
+            TextLog.Write("Building title database complete.");
+
+            return new LiteDatabase(Helper.FileOpenStream(dbFile));
         }
 
         private static MapleList<Title> Create()

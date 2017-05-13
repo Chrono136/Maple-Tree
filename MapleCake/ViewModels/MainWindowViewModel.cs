@@ -5,6 +5,7 @@
 
 using System;
 using System.Drawing;
+using System.Globalization;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -174,6 +175,9 @@ namespace MapleCake.ViewModels
             await Task.Run(async () => {
                 await Task.Run(() => GraphicPack.Init());
                 await Task.Run(() => Database.Load());
+
+                var path = Path.Combine(Settings.ConfigDirectory, "lastUpdate");
+                File.WriteAllText(path, DateTime.Now.ToString(CultureInfo.InvariantCulture));
 
                 Config.SelectedItem = Config.TitleList.Random();
 

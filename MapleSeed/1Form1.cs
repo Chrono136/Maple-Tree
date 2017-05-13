@@ -59,7 +59,7 @@ namespace MapleSeed
 
         private void RegisterEvents()
         {
-            Database.TitleDb.AddItemEvent += OnAddItemEvent;
+            Database.TitleLibrary.AddItemEvent += OnAddItemEvent;
 
             TextLog.MesgLog.NewLogEntryEventHandler += MesgLog_NewLogEntryEventHandler;
             TextLog.StatusLog.NewLogEntryEventHandler += StatusLog_NewLogEntryEventHandler;
@@ -305,19 +305,19 @@ namespace MapleSeed
 
             await title.DownloadContent(titleVersion.Text);
 
-            Database.TitleDb.Add(title);
+            Database.TitleLibrary.Add(title);
         }
 
         private void organizeBtn_Click(object sender, EventArgs e)
         {
-            foreach (var value in Database.TitleDb)
+            foreach (var value in Database.TitleLibrary)
                 AppendLog(Path.Combine(Settings.LibraryDirectory, value.ToString()));
 
             var result = MessageBox.Show(Resources.OrganizeBtn_Click_, Resources.PleaseConfirmAction,
                 MessageBoxButtons.OKCancel);
 
             if (result == DialogResult.OK)
-                Database.TitleDb.OrganizeTitles();
+                Database.TitleLibrary.OrganizeTitles();
         }
 
         private void pictureBox1_Click(object sender, EventArgs e)

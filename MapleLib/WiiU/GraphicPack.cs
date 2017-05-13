@@ -74,8 +74,8 @@ namespace MapleLib.WiiU
             var dbFile = Path.Combine(Settings.ConfigDirectory, "graphicPacks");
             GraphicPacks = new MapleList<GraphicPack>();
 
-            if (!File.Exists(dbFile) || Settings.CacheDatabase || force) {
-                TextLog.Write("Building graphic pack database...");
+            if (!File.Exists(dbFile) || Database.UpdateCheck() || force) {
+                TextLog.Write("Downloading graphic packs...");
 
                 const string url = "https://github.com/slashiee/cemu_graphic_packs/archive/master.zip";
 
@@ -83,21 +83,17 @@ namespace MapleLib.WiiU
                     var data = await Web.DownloadDataAsync(url);
                     File.WriteAllBytes(dbFile, data);
                 }
+                
+                TextLog.Write("Downloading graphic packs complete.");
             }
 
             try {
-                if (!File.Exists(dbFile)) return;
-
-                var update = (File.GetLastWriteTime(dbFile) - DateTime.Now).Days > 2;
-                if (update) Init(true);
-
                 using (var zipArchive = new ZipArchive(File.OpenRead(dbFile))) {
-                    var list = zipArchive.Entries.Where(x => x.Name.Length == 0 && x.FullName.EndsWith("/")).ToList();
+                    var list =
+                        zipArchive.Entries.Where(x => x.Name.Length == 0 && x.FullName.EndsWith("/")).ToList();
 
                     list.ForEach(Process);
                 }
-
-                TextLog.Write("Building graphic pack database complete.");
             }
             catch (Exception e) {
                 if (RetryCount >= 3) {

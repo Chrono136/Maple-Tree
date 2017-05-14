@@ -17,6 +17,10 @@ namespace MapleLib.Common
     {
         public static Stream FileOpenStream(string path)
         {
+            var directory = Path.GetDirectoryName(path);
+            if (!Directory.Exists(directory) && !string.IsNullOrEmpty(directory))
+                Directory.CreateDirectory(directory);
+
             return File.Open(path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.Read);
         }
 

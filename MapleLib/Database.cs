@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using LiteDB;
 using MapleLib.BaseClasses;
 using MapleLib.Collections;
+using MapleLib.Common;
 using MapleLib.Databases;
 using MapleLib.Structs;
 using MapleLib.WiiU;
@@ -23,7 +24,7 @@ namespace MapleLib
             var dbFile = Path.GetFullPath(Path.Combine(Settings.ConfigDirectory, "mapleseed.db"));
 
             if (LiteDatabase == null) {
-                LiteDatabase = new LiteDatabase(dbFile);
+                LiteDatabase = new LiteDatabase(Helper.FileOpenStream(dbFile));
                 SettingsCollection = LiteDatabase.GetCollection<Config>("Settings");
             }
 

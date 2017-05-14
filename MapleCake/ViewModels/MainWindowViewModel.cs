@@ -39,7 +39,11 @@ namespace MapleCake.ViewModels
 
         private void Init()
         {
+#if DEBUG
+            SetTitle($"MapleSeed {Settings.Version} - DEBUG VERSION");
+#else
             SetTitle($"MapleSeed {Settings.Version}");
+#endif
 
             SetDefaults();
 

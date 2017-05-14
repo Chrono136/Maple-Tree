@@ -5,18 +5,16 @@
 
 using System;
 using System.Drawing;
-using System.Globalization;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Windows.Forms;
+using System.Windows;
 using System.Windows.Threading;
 using MapleCake.Models;
 using MapleLib;
 using MapleLib.Common;
 using MapleLib.Enums;
 using MapleLib.Structs;
-using Application = System.Windows.Application;
+using MessageBox = System.Windows.Forms.MessageBox;
 
 namespace MapleCake.ViewModels
 {
@@ -45,8 +43,6 @@ namespace MapleCake.ViewModels
 
             SetDefaults();
 
-            InitSettings();
-
             RegisterEvents();
 
             new DispatcherTimer(TimeSpan.Zero, DispatcherPriority.ApplicationIdle, OnLoadComplete,
@@ -67,61 +63,26 @@ namespace MapleCake.ViewModels
             Config.ProgressMax = 100;
         }
 
-        private void InitSettings()
-        {
-            if (string.IsNullOrEmpty(Settings.CemuDirectory) ||
-                !File.Exists(Path.Combine(Settings.CemuDirectory, "cemu.exe"))) {
-                var ofd = new OpenFileDialog
-                {
-                    CheckFileExists = true,
-                    Filter = @"Cemu Excutable |cemu.exe"
-                };
-
-                var result = ofd.ShowDialog();
-                if (string.IsNullOrWhiteSpace(ofd.FileName) || result != DialogResult.OK) {
-                    MessageBox.Show(@"Cemu Directory is required to launch titles.");
-                    Settings.CemuDirectory = string.Empty;
-                }
-
-                Settings.CemuDirectory = Path.GetDirectoryName(ofd.FileName);
-            }
-
-            if (string.IsNullOrEmpty(Settings.LibraryDirectory) || !Directory.Exists(Settings.LibraryDirectory)) {
-                var fbd = new FolderBrowserDialog
-                {
-                    Description = @"Cemu Title Directory" + Environment.NewLine + @"(Where you store games)"
-                };
-
-                var result = fbd.ShowDialog();
-                if (string.IsNullOrWhiteSpace(fbd.SelectedPath) || result == DialogResult.Cancel) {
-                    MessageBox.Show(@"Title Directory is required. Shutting down.");
-                    System.Windows.Forms.Application.Exit();
-                }
-
-                Settings.LibraryDirectory = fbd.SelectedPath;
-            }
-        }
-
         private void RegisterEvents()
         {
             TextLog.MesgLog.NewLogEntryEventHandler += MesgLogOnNewLogEntryEventHandler;
             TextLog.StatusLog.NewLogEntryEventHandler += StatusLogOnNewLogEntryEventHandler;
+
             //Web.DownloadProgressChangedEvent += WebClientOnDownloadProgressChangedEvent;
-            Database.ProgressReport += Database_ProgressReport;
+
+            Database.RegisterEvent(Database_ProgressReport);
+            Database.DatabaseLoaded += Database_DatabasesLoaded;
         }
 
         private static void CheckUpdate()
         {
             var update = new Update(UpdateType.MapleSeed2);
+            if (!update.IsAvailable) return;
 
-            TextLog.MesgLog.WriteLog($"Current Version: {update.LatestVersion}", Color.Green);
+            TextLog.MesgLog.WriteLog($"MapleSeed Latest Version: {update.CurrentVersion}", Color.Green);
 
-            if (update.IsAvailable) {
-                TextLog.MesgLog.WriteLog($"Latest Version: {update.CurrentVersion}", Color.Green);
-
-                MessageBox.Show(@"Please visit https://github.com/Tsume/Maple-Tree/releases for the latest releases.",
-                    $@"Version Mis-Match - Latest: {update.LatestVersion}");
-            }
+            MessageBox.Show(@"Please visit https://github.com/Tsume/Maple-Tree/releases for the latest releases.",
+                $@"Version Mis-Match - Latest: {update.LatestVersion}");
         }
 
         public async void SetBackgroundImg(Title title)
@@ -141,7 +102,7 @@ namespace MapleCake.ViewModels
             if (tid.Length != 16)
                 return;
 
-            var title = Database.SearchById(tid);
+            var title = Database.FindTitle(tid);
             if (title == null) return;
 
             Config.SelectedItem = title;
@@ -166,29 +127,21 @@ namespace MapleCake.ViewModels
             }
         }
 
-        private async void OnLoadComplete(object sender, EventArgs e)
+        private void OnLoadComplete(object sender, EventArgs e)
         {
             (sender as DispatcherTimer)?.Stop();
 
             CheckUpdate();
 
-            await Task.Run(async () => {
-                await Task.Run(() => PackDatabase.Load());
-                TextLog.Write($"[Graphic Packs] Loaded {PackDatabase.Count} entries");
+            if (Config.TitleList.Any())
+                Config.SelectedItem = Config.TitleList.First();
 
-                await Task.Run(() => Database.Load());
-                TextLog.Write($"[Title Database] Loaded {Database.Count} entries");
+            Config.LaunchCemuText = "Launch Cemu";
+            TextLog.MesgLog.WriteLog($"Game Directory [{Settings.LibraryDirectory}]");
+        }
 
-                var path = Path.Combine(Settings.ConfigDirectory, "lastUpdate");
-                File.WriteAllText(path, DateTime.Now.ToString(CultureInfo.InvariantCulture));
-
-                if (Config.TitleList.Any())
-                    Config.SelectedItem = Config.TitleList.First();
-
-                Config.LaunchCemuText = "Launch Cemu";
-                TextLog.MesgLog.WriteLog($"Game Directory [{Settings.LibraryDirectory}]");
-            });
-
+        private void Database_DatabasesLoaded(object sender, EventArgs e)
+        {
             Config.CacheDatabase = false;
         }
 

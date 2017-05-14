@@ -181,7 +181,7 @@ namespace MapleCake.Models
             }
         }
 
-        public MapleDictionary TitleList => Database.TitleLibrary;
+        public MapleDictionary TitleList => Database.GetLibrary();
 
         public List<ICommandItem> ContextItems => MapleContext.CreateMenu();
 

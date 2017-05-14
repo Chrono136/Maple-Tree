@@ -29,7 +29,7 @@ namespace MapleLib.Structs
 
         public BindingList<GraphicPack> GetGraphicPacks()
         {
-            var packs = PackDatabase.Find(ID?.ToUpper());
+            var packs = Database.FindGraphicPacks(ID?.ToUpper());
             packs.Insert(0, new GraphicPack {Name = "No Graphic Pack", TitleIds = {"0000000000000000"}});
 
             return new BindingList<GraphicPack>(packs);

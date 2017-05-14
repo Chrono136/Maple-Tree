@@ -57,7 +57,7 @@ namespace MapleCake.Models
 
         private static void CreateUpdateItems(ICollection<ICommandItem> items)
         {
-            var title = Database.SearchById($"0005000E{SelectedItem.Lower8Digits()}");
+            var title = Database.FindTitle($"0005000E{SelectedItem.Lower8Digits()}");
 
             var hasUpdates = title != null;
 
@@ -68,7 +68,7 @@ namespace MapleCake.Models
                 var updatesStr = string.Join(", ", title.Versions.ToArray());
                 items.Add(new CommandItem {Text = updatesStr, ToolTip = "Available Updates"});
                 items.Add(new SeparatorCommandItem());
-                items.Add(new CommandItem { Text = "[+] Update", ToolTip = "Add Update", Command = Click.AddUpdate });
+                items.Add(new CommandItem {Text = "[+] Update", ToolTip = "Add Update", Command = Click.AddUpdate});
             }
 
             var dir = Path.Combine(Settings.BasePatchDir, SelectedItem.Lower8Digits());

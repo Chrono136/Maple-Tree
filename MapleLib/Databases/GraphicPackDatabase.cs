@@ -1,5 +1,5 @@
 ﻿// Project: MapleLib
-// File: GraphicPackDatabase.cs
+// File: GraphicPacks.cs
 // Updated By: Jared
 // 
 
@@ -12,28 +12,67 @@ using IniParser.Parser;
 using LiteDB;
 using MapleLib.Collections;
 using MapleLib.Common;
+using MapleLib.Interfaces;
 using MapleLib.Network;
 using MapleLib.WiiU;
 
-namespace MapleLib
+namespace MapleLib.Databases
 {
-    public static class PackDatabase
+    public class GraphicPackDatabase : IDatabase<GraphicPack>
     {
-        public static int Count => GetCount();
-
-        private static int RetryCount { get; set; }
-
-        private static LiteDatabase LiteDatabase { get; set; }
-
-        private static string CollectionName => "graphicpacks";
-
-        public static async void Load()
+        public GraphicPackDatabase(LiteDatabase db)
         {
-            if (LiteDatabase == null)
-                LiteDatabase = await InitDatabase();
+            LiteDatabase = db;
+            Load();
         }
 
-        public static MapleList<GraphicPack> Find(string id)
+        private int RetryCount { get; set; }
+
+        private LiteCollection<GraphicPack> Col => LiteDatabase?.GetCollection<GraphicPack>(CollectionName);
+
+        #region IDatabase<GraphicPack> Members
+
+        /// <inheritdoc />
+        public LiteDatabase LiteDatabase { get; }
+
+        /// <inheritdoc />
+        public string CollectionName => "graphicpacks";
+
+        /// <inheritdoc />
+        public int Count => Col?.Count(Query.All()) ?? 0;
+
+        /// <inheritdoc />
+        public void Load()
+        {
+            Task.Run(() => InitDatabase());
+        }
+
+        /// <inheritdoc />
+        public async void InitDatabase()
+        {
+            if (Database.Time2Update(Settings.LastPackDBUpdate) || Count < 1) {
+                TextLog.Write("[Graphic Packs] Building database...");
+
+                LiteDatabase.DropCollection(CollectionName);
+
+                var db = await Create();
+                for (var i = 0; i < db.Count; i++) {
+                    var item = db[i];
+
+                    if (Col.Find(x => x.Name == item.Name).Any())
+                        continue;
+
+                    Col.Insert(item);
+                    Col.EnsureIndex(x => x.Name);
+                }
+
+                Settings.LastPackDBUpdate = DateTime.Now;
+            }
+
+            TextLog.Write($"[Graphic Packs] Loaded {Count} entries");
+        }
+
+        public MapleList<GraphicPack> Find(string id)
         {
             var col = LiteDatabase.GetCollection<GraphicPack>(CollectionName);
 
@@ -41,43 +80,14 @@ namespace MapleLib
             return new MapleList<GraphicPack>(title);
         }
 
-        private static async Task<LiteDatabase> InitDatabase()
-        {
-            var dbFile = Path.GetFullPath(Path.Combine(Settings.ConfigDirectory, $"{CollectionName}.db"));
+        #endregion
 
-            if (!Settings.CacheDatabase && File.Exists(dbFile))
-                return new LiteDatabase(Helper.FileOpenStream(dbFile));
-
-            TextLog.Write("[Graphic Packs] Building database...");
-
-            using (var tdb = new LiteDatabase(dbFile)) {
-                tdb.DropCollection(CollectionName);
-
-                var col = tdb.GetCollection<GraphicPack>(CollectionName);
-
-                var db = await Create();
-                for (var i = 0; i < db.Count; i++) {
-                    var item = db[i];
-
-                    if (col.Find(x => x.Name == item.Name).Any())
-                        continue;
-
-                    col.Insert(item);
-                    col.EnsureIndex(x => x.Name);
-                }
-
-                TextLog.Write("[Graphic Packs] Database complete...");
-            }
-
-            return new LiteDatabase(Helper.FileOpenStream(dbFile));
-        }
-
-        private static async Task<MapleList<GraphicPack>> Create(bool force = false)
+        private async Task<MapleList<GraphicPack>> Create(bool force = false)
         {
             var dbFile = Path.Combine(Settings.ConfigDirectory, "graphicPacks");
             var graphicPacks = new MapleList<GraphicPack>();
 
-            if (!File.Exists(dbFile) || Database.UpdateCheck() || force) {
+            if (!File.Exists(dbFile) || Database.Time2Update(Settings.LastPackDBUpdate) || force) {
                 const string url = "https://github.com/slashiee/cemu_graphic_packs/archive/master.zip";
 
                 if (Web.UrlExists(url)) {
@@ -168,11 +178,6 @@ namespace MapleLib
         {
             return Path.GetFullPath($"{Path.GetDirectoryName(x.FullName)}/") == Path.GetFullPath(entry.FullName) &&
                    !string.IsNullOrEmpty(x.Name);
-        }
-
-        private static int GetCount()
-        {
-            return LiteDatabase.GetCollection<GraphicPack>(CollectionName).Count(Query.All());
         }
     }
 }

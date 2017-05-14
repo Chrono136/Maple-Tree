@@ -6,11 +6,11 @@
 #region usings
 
 using System;
-using System.Deployment.Application;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
@@ -21,7 +21,6 @@ using MapleLib.Common;
 using MapleLib.Network;
 using MapleLib.Properties;
 using MapleLib.Structs;
-using DownloadProgressChangedEventArgs = System.Net.DownloadProgressChangedEventArgs;
 
 #endregion
 
@@ -47,8 +46,7 @@ namespace MapleSeed
 
             RegisterDefaults();
 
-            //await Task.Run(() => GraphicPack.Init());
-            await Task.Run(() => Database.Load());
+            //await Task.Run(() => Database.Load());
 
             AppendLog($"Game Directory [{Settings.LibraryDirectory}]");
             AppendLog(@"Welcome to Maple Tree.");
@@ -59,7 +57,7 @@ namespace MapleSeed
 
         private void RegisterEvents()
         {
-            Database.TitleLibrary.AddItemEvent += OnAddItemEvent;
+            Database.RegisterEvent(OnAddItemEvent);
 
             TextLog.MesgLog.NewLogEntryEventHandler += MesgLog_NewLogEntryEventHandler;
             TextLog.StatusLog.NewLogEntryEventHandler += StatusLog_NewLogEntryEventHandler;
@@ -171,7 +169,7 @@ namespace MapleSeed
 
                 if (contentType == "DLC" && title.HasDLC) {
                     id = $"0005000C{title.Lower8Digits()}";
-                    title = Database.SearchById(id);
+                    title = Database.FindTitle(id);
                     if (title == null) continue;
                     await title.DownloadDLC();
                 }
@@ -183,7 +181,7 @@ namespace MapleSeed
                     }
 
                     id = $"0005000E{title.Lower8Digits()}";
-                    title = Database.SearchById(id);
+                    title = Database.FindTitle(id);
                     if (title == null) continue;
                     await title.DownloadUpdate(version);
                 }
@@ -300,24 +298,24 @@ namespace MapleSeed
             if (string.IsNullOrEmpty(titleID)) return;
 
             Title title;
-            if ((title = Database.SearchById(titleID)) == null) return;
+            if ((title = Database.FindTitle(titleID)) == null) return;
             title.FolderLocation = Path.Combine(Settings.LibraryDirectory, $"{title}");
 
             await title.DownloadContent(titleVersion.Text);
 
-            Database.TitleLibrary.Add(title);
+            Database.AddTitle(title);
         }
 
         private void organizeBtn_Click(object sender, EventArgs e)
         {
-            foreach (var value in Database.TitleLibrary)
+            foreach (var value in Database.GetLibrary())
                 AppendLog(Path.Combine(Settings.LibraryDirectory, value.ToString()));
 
             var result = MessageBox.Show(Resources.OrganizeBtn_Click_, Resources.PleaseConfirmAction,
                 MessageBoxButtons.OKCancel);
 
             if (result == DialogResult.OK)
-                Database.TitleLibrary.OrganizeTitles();
+                Database.GetLibrary().OrganizeTitles();
         }
 
         private void pictureBox1_Click(object sender, EventArgs e)
@@ -370,7 +368,7 @@ namespace MapleSeed
             if (titleIdTextBox.Text.Length != 16)
                 return;
 
-            var title = Database.SearchById(titleIdTextBox.Text);
+            var title = Database.FindTitle(titleIdTextBox.Text);
             if (title == null) return;
 
             titleName.Text = Toolbelt.RIC(title.Name);

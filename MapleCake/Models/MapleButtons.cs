@@ -36,10 +36,13 @@ namespace MapleCake.Models
 
         private void UninstallButton()
         {
+            MainWindowViewModel.Instance.Config.BackgroundImage = string.Empty;
+            MainWindowViewModel.Instance.Config.RaisePropertyChangedEvent("BackgroundImage");
+
             Helper.Uninstall();
         }
 
-        private void LaunchCemuButton()
+        private static void LaunchCemuButton()
         {
             if (SelectedItem == null) return;
 
@@ -51,12 +54,12 @@ namespace MapleCake.Models
             }).Start();
         }
 
-        private async void DownloadButton()
+        private static async void DownloadButton()
         {
             if (string.IsNullOrEmpty(TitleID))
                 return;
 
-            var title = Database.SearchById(TitleID);
+            var title = Database.FindTitle(TitleID);
             if (title == null) return;
 
             MainWindowViewModel.Instance.Config.DownloadCommandEnabled = false;
@@ -74,7 +77,7 @@ namespace MapleCake.Models
             RaisePropertyChangedEvent("DownloadCommandEnabled");
         }
 
-        private async void AddUpdateButton()
+        private static async void AddUpdateButton()
         {
             int result;
             var vers = MainWindowViewModel.Instance.Config.TitleVersion;
@@ -82,7 +85,7 @@ namespace MapleCake.Models
             await DownloadContentClick("Patch", version);
         }
 
-        private async void RemoveUpdateButton()
+        private static async void RemoveUpdateButton()
         {
             if (SelectedItem == null) return;
 
@@ -98,12 +101,12 @@ namespace MapleCake.Models
             });
         }
 
-        private async void AddDLCButton()
+        private static async void AddDLCButton()
         {
             await DownloadContentClick("DLC");
         }
 
-        private void RemoveDLCButton()
+        private static void RemoveDLCButton()
         {
             if (SelectedItem == null) return;
 
@@ -116,7 +119,7 @@ namespace MapleCake.Models
                 SelectedItem.DeleteAddOnContent();
         }
 
-        private void RemoveTitleButton()
+        private static void RemoveTitleButton()
         {
             if (SelectedItem != null && SelectedItem.DeleteContent())
                 MainWindowViewModel.Instance.Config.TitleList.Remove(SelectedItem);
@@ -146,7 +149,7 @@ namespace MapleCake.Models
             if (contentType == "DLC" && SelectedItem.HasDLC) {
                 var id = $"0005000C{SelectedItem.Lower8Digits()}";
 
-                var title = Database.SearchById(id);
+                var title = Database.FindTitle(id);
                 if (title == null)
                     throw new NullReferenceException($"Could not locate content for title ID {id}");
 
@@ -161,16 +164,14 @@ namespace MapleCake.Models
 
                 var id = $"0005000E{SelectedItem.Lower8Digits()}";
 
-                var title = Database.SearchById(id);
+                var title = Database.FindTitle(id);
                 if (title == null)
                     throw new NullReferenceException($"Could not locate content for title ID {id}");
 
                 await title.DownloadUpdate(version);
             }
 
-            if (contentType == "eShop/Application") {
-                await SelectedItem.DownloadContent(version);
-            }
+            if (contentType == "eShop/Application") await SelectedItem.DownloadContent(version);
         }
     }
 }

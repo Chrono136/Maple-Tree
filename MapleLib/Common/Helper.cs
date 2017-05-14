@@ -27,6 +27,8 @@ namespace MapleLib.Common
 
             if (results != DialogResult.OK) return;
 
+            Database.Dispose();
+
             if (!string.IsNullOrEmpty(Settings.ConfigDirectory))
                 Directory.Delete(Settings.ConfigDirectory, true);
 

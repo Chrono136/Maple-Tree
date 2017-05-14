@@ -10,9 +10,12 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml;
 using MapleLib.Collections;
+using MapleLib.Network;
+using MapleLib.Properties;
 using MapleLib.Structs;
 using Application = System.Windows.Application;
 
@@ -20,6 +23,47 @@ namespace MapleLib.Common
 {
     public static class Extensions
     {
+        public static async Task<string> Image(this eShopTitle title, bool save = true)
+        {
+            if (string.IsNullOrEmpty(title.ProductCode) || title.ProductCode.Length <= 6)
+                return string.Empty;
+
+            var code = title.ProductCode.Substring(6);
+
+            var doc = new XmlDocument();
+            doc.Load(new MemoryStream(Encoding.UTF8.GetBytes(Resources.wiiutdb)));
+
+            var values = doc.GetElementsByTagName("id").Cast<XmlNode>().ToList();
+            var value = values.Find(x => x.InnerText.Contains(code));
+            var imageCode = value.InnerText;
+
+            var cacheDir = Path.Combine(Settings.ConfigDirectory, "cache");
+
+            if (!Directory.Exists(cacheDir))
+                Directory.CreateDirectory(cacheDir);
+
+            string cachedFile;
+            if (File.Exists(cachedFile = Path.Combine(cacheDir, $"{imageCode}.jpg")))
+                return title.ImageLocation = cachedFile;
+
+            foreach (var langCode in "US,EN,DE,FR,JA".Split(','))
+                try {
+                    var url = $"http://art.gametdb.com/wiiu/coverHQ/{langCode}/{imageCode}.jpg";
+
+                    if (!Web.UrlExists(url)) continue;
+                    title.ImageLocation = cachedFile;
+
+                    if (!save) return string.Empty;
+                    var data = await Web.DownloadDataAsync(url);
+                    File.WriteAllBytes(title.ImageLocation, data);
+                }
+                catch {
+                    TextLog.MesgLog.WriteLog($"Could not locate cover image for {title}");
+                }
+
+            return title.ImageLocation;
+        }
+
         public static bool FilePathHasInvalidChars(this string path)
         {
             if (string.IsNullOrEmpty(path))
@@ -42,8 +86,7 @@ namespace MapleLib.Common
 
         public static byte[] GetBytes(this ZipArchiveEntry entry)
         {
-            using (var ms = new MemoryStream())
-            {
+            using (var ms = new MemoryStream()) {
                 entry.Open().CopyTo(ms);
                 return ms.ToArray();
             }
@@ -51,8 +94,7 @@ namespace MapleLib.Common
 
         public static byte[] GetBytes(this Stream stream)
         {
-            using (var ms = new MemoryStream())
-            {
+            using (var ms = new MemoryStream()) {
                 stream.CopyTo(ms);
                 return ms.ToArray();
             }
@@ -60,8 +102,7 @@ namespace MapleLib.Common
 
         private static string toString(this Stream stream)
         {
-            using (var ms = new MemoryStream())
-            {
+            using (var ms = new MemoryStream()) {
                 stream.CopyTo(ms);
                 return Encoding.Default.GetString(ms.ToArray());
             }
@@ -71,17 +112,13 @@ namespace MapleLib.Common
         {
             // Handles negative ends.
             if (end < 0)
-            {
                 end = source.Length + end;
-            }
-            int len = end - start;
+            var len = end - start;
 
             // Return new array.
-            T[] res = new T[len];
-            for (int i = 0; i < len; i++)
-            {
+            var res = new T[len];
+            for (var i = 0; i < len; i++)
                 res[i] = source[i + start];
-            }
             return res;
         }
 
@@ -95,16 +132,16 @@ namespace MapleLib.Common
 
         public static byte[] HexToBytes(this string hexEncodedBytes)
         {
-            int start = 0;
-            int end = hexEncodedBytes.Length;
+            var start = 0;
+            var end = hexEncodedBytes.Length;
 
-            int length = end - start;
+            var length = end - start;
             const string tagName = "hex";
-            string fakeXmlDocument = String.Format("<{1}>{0}</{1}>", hexEncodedBytes.Substring(start, length), tagName);
+            var fakeXmlDocument = string.Format("<{1}>{0}</{1}>", hexEncodedBytes.Substring(start, length), tagName);
             var stream = new MemoryStream(Encoding.ASCII.GetBytes(fakeXmlDocument));
-            XmlReader reader = XmlReader.Create(stream, new XmlReaderSettings());
-            int hexLength = length / 2;
-            byte[] result = new byte[hexLength];
+            var reader = XmlReader.Create(stream, new XmlReaderSettings());
+            var hexLength = length / 2;
+            var result = new byte[hexLength];
             reader.ReadStartElement(tagName);
             reader.ReadContentAsBinHex(result, 0, hexLength);
             return result;
@@ -120,10 +157,8 @@ namespace MapleLib.Common
             var list = value.Split(delimiter);
             var vers = new int[list.Length];
 
-            for (int i = 0; i < list.Length; i++)
-            {
+            for (var i = 0; i < list.Length; i++)
                 int.TryParse(list[i].Replace("v", "").Trim(), out vers[i]);
-            }
 
             return vers;
         }
@@ -152,9 +187,7 @@ namespace MapleLib.Common
                     box.ScrollToCaret();
                 }
             }
-            catch (Exception) {
-                
-            }
+            catch (Exception) {}
         }
 
         public static string TimeStamp(this DateTime dateTime)
@@ -167,11 +200,38 @@ namespace MapleLib.Common
             return string.IsNullOrEmpty(str);
         }
 
-        public static object AddOnUI(this MapleDictionary collection, Title item)
+        public static async void AddOnUI(this MapleDictionary collection, Title item)
         {
-            var add = new Action(() => collection.Add(item));
+            var action = new Action(() => collection.Add(item));
 
-            return Application.Current?.Dispatcher.BeginInvoke(add) ?? add.DynamicInvoke();
+            if (Application.Current == null) {
+                action.DynamicInvoke();
+            }
+            else {
+                await Application.Current.Dispatcher.BeginInvoke(action);
+            }
+        }
+
+        public static DialogResult STAShowDialog(this CommonDialog dialog)
+        {
+            var state = new DialogState {dialog = dialog};
+            System.Threading.Thread t = new System.Threading.Thread(state.ThreadProcShowDialog);
+            t.SetApartmentState(System.Threading.ApartmentState.STA);
+            t.Start();
+            t.Join();
+            return state.result;
+        }
+
+        private class DialogState
+        {
+            public DialogResult result;
+            public CommonDialog dialog;
+
+
+            public void ThreadProcShowDialog()
+            {
+                result = dialog.ShowDialog();
+            }
         }
     }
 }

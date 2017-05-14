@@ -48,7 +48,7 @@ namespace MapleLib
             if (!Settings.CacheDatabase && File.Exists(dbFile))
                 return new LiteDatabase(Helper.FileOpenStream(dbFile));
 
-            TextLog.Write("Building graphic packs database...");
+            TextLog.Write("[Graphic Packs] Building database...");
 
             using (var tdb = new LiteDatabase(dbFile)) {
                 tdb.DropCollection(CollectionName);
@@ -66,7 +66,7 @@ namespace MapleLib
                     col.EnsureIndex(x => x.Name);
                 }
 
-                TextLog.Write("Building graphic packs database complete.");
+                TextLog.Write("[Graphic Packs] Database complete...");
             }
 
             return new LiteDatabase(Helper.FileOpenStream(dbFile));

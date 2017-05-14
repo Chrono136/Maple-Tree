@@ -71,8 +71,8 @@ namespace MapleLib
 
             if (!UpdateCheck() && File.Exists(dbFile))
                 return new LiteDatabase(Helper.FileOpenStream(dbFile));
-
-            TextLog.Write("Building title database...");
+            
+            TextLog.Write("[Title Database] Building database...");
 
             using (var tdb = new LiteDatabase(dbFile)) {
                 tdb.DropCollection(CollectionName);
@@ -89,8 +89,8 @@ namespace MapleLib
                     col.EnsureIndex(x => x.Name);
                 }
             }
-
-            TextLog.Write("Building title database complete.");
+            
+            TextLog.Write("[Title Database] Database complete...");
 
             return new LiteDatabase(Helper.FileOpenStream(dbFile));
         }
@@ -179,7 +179,7 @@ namespace MapleLib
 
         private static int GetCount()
         {
-            return LiteDatabase.GetCollection<GraphicPack>(CollectionName).Count(Query.All());
+            return LiteDatabase.GetCollection<Title>(CollectionName).Count(Query.All());
         }
 
         public static async Task<string> Image(this eShopTitle title, bool save = true)

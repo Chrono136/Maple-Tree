@@ -5,13 +5,9 @@
 
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Net;
 using System.Threading.Tasks;
-using System.Windows.Forms;
-using libWiiSharp;
 using LiteDB;
 using MapleLib.Collections;
 using MapleLib.Common;
@@ -19,7 +15,6 @@ using MapleLib.Interfaces;
 using MapleLib.Network;
 using MapleLib.Properties;
 using MapleLib.Structs;
-using MapleLib.WiiU;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -154,10 +149,9 @@ namespace MapleLib.Databases
                     var titleId = line.Replace("-", "").ToUpper();
                     var titles = db.ToList().FindAll(t => t.ID.Contains(titleId.Substring(8)));
 
-                    foreach (var title in titles) {
+                    foreach (var title in titles)
                         if (title.ContentType.Contains("eShop"))
                             title.Versions = versions;
-                    }
                 }
 
                 foreach (var title in db.Where(x => x.ContentType == "eShop/Application")) {

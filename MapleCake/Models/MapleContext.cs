@@ -57,7 +57,7 @@ namespace MapleCake.Models
 
         private static void CreateUpdateItems(ICollection<ICommandItem> items)
         {
-            var title = Database.FindTitle($"0005000E{SelectedItem.Lower8Digits()}");
+            var title = Database.FindTitle($"00050000{SelectedItem.Lower8Digits()}");
 
             var hasUpdates = title != null;
 

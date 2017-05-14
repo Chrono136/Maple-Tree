@@ -12,6 +12,7 @@ using MapleLib.BaseClasses;
 using MapleLib.Collections;
 using MapleLib.Common;
 using MapleLib.Databases;
+using MapleLib.Network;
 using MapleLib.Structs;
 using MapleLib.WiiU;
 
@@ -22,7 +23,7 @@ namespace MapleLib
         static Database()
         {
             var dbFile = Path.GetFullPath(Path.Combine(Settings.ConfigDirectory, "mapleseed.db"));
-
+            
             if (LiteDatabase == null) {
                 LiteDatabase = new LiteDatabase(Helper.FileOpenStream(dbFile));
                 SettingsCollection = LiteDatabase.GetCollection<Config>("Settings");
@@ -85,17 +86,12 @@ namespace MapleLib
 
         public static Title FindTitle(string id)
         {
-            return WiiuTitles.Find(id)?.First();
+            return WiiuTitles.Find(id).FirstOrDefault();
         }
 
         public static MapleList<Title> FindTitles(string id)
         {
             return WiiuTitles.Find(id);
-        }
-
-        public static GraphicPack FindGraphicPack(string id)
-        {
-            return GraphicPacks.Find(id)?.First();
         }
 
         public static MapleList<GraphicPack> FindGraphicPacks(string id)
@@ -110,12 +106,12 @@ namespace MapleLib
 
         public static Task DownloadTitle(string titleID, string titleFolderLocation, string contentType, string version)
         {
-            return WiiuTitles.DownloadTitle(titleID, titleFolderLocation, contentType, version);
+            return WiiuClient.DownloadTitle(titleID, titleFolderLocation, contentType, version);
         }
 
         public static void RegisterEvent(EventHandler<ProgressReport> onEvent)
         {
-            WiiuTitles.ProgressReport += onEvent;
+            WiiuClient.ProgressReport += onEvent;
         }
 
         public static void RegisterEvent(EventHandler<AddItemEventArgs<Title>> onEvent)

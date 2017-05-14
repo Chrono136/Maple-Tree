@@ -32,25 +32,21 @@ namespace MapleLib
 {
     public static class Database
     {
-        static Database()
-        {
-            if (TitleLibrary == null)
-                TitleLibrary = new MapleDictionary(Settings.LibraryDirectory);
-        }
-
         private static string CollectionName => "titles";
 
-        private static LiteDatabase _titlesDb;
-        private static LiteDatabase TitlesDb => _titlesDb ?? (_titlesDb = InitDatabase());
-
-        private static LiteCollection<Title> TitleCol => TitlesDb.GetCollection<Title>(CollectionName);
+        private static LiteDatabase LiteDatabase { get; set; }
 
         public static MapleDictionary TitleLibrary { get; }
+            = new MapleDictionary(Settings.LibraryDirectory);
+
+        public static int Count => GetCount();
 
         public static event EventHandler<ProgressReport> ProgressReport;
 
         public static void Load()
         {
+            LiteDatabase = InitDatabase();
+
             LoadLibrary(Settings.LibraryDirectory);
         }
 
@@ -77,7 +73,7 @@ namespace MapleLib
                 return new LiteDatabase(Helper.FileOpenStream(dbFile));
 
             TextLog.Write("Building title database...");
-                
+
             using (var tdb = new LiteDatabase(dbFile)) {
                 tdb.DropCollection(CollectionName);
                 var col = tdb.GetCollection<Title>(CollectionName);
@@ -174,9 +170,16 @@ namespace MapleLib
 
         public static Title SearchById(string titleID)
         {
-            var title = TitleCol.FindOne(x => x.ID.StartsWith(titleID));
+            var col = LiteDatabase.GetCollection<Title>(CollectionName);
+
+            var title = col.FindOne(x => x.ID.StartsWith(titleID));
 
             return title;
+        }
+
+        private static int GetCount()
+        {
+            return LiteDatabase.GetCollection<GraphicPack>(CollectionName).Count(Query.All());
         }
 
         public static async Task<string> Image(this eShopTitle title, bool save = true)

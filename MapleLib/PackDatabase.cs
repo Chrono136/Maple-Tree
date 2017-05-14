@@ -19,6 +19,8 @@ namespace MapleLib
 {
     public static class PackDatabase
     {
+        public static int Count => GetCount();
+
         private static int RetryCount { get; set; }
 
         private static LiteDatabase LiteDatabase { get; set; }
@@ -166,6 +168,11 @@ namespace MapleLib
         {
             return Path.GetFullPath($"{Path.GetDirectoryName(x.FullName)}/") == Path.GetFullPath(entry.FullName) &&
                    !string.IsNullOrEmpty(x.Name);
+        }
+
+        private static int GetCount()
+        {
+            return LiteDatabase.GetCollection<GraphicPack>(CollectionName).Count(Query.All());
         }
     }
 }

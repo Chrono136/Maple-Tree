@@ -174,7 +174,10 @@ namespace MapleCake.ViewModels
 
             await Task.Run(async () => {
                 await Task.Run(() => PackDatabase.Load());
+                TextLog.Write($"[Graphic Packs] Loaded {PackDatabase.Count} entries");
+
                 await Task.Run(() => Database.Load());
+                TextLog.Write($"[Title Database] Loaded {Database.Count} entries");
 
                 var path = Path.Combine(Settings.ConfigDirectory, "lastUpdate");
                 File.WriteAllText(path, DateTime.Now.ToString(CultureInfo.InvariantCulture));

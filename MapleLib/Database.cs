@@ -23,7 +23,7 @@ namespace MapleLib
         static Database()
         {
             var dbFile = Path.GetFullPath(Path.Combine(Settings.ConfigDirectory, "mapleseed.db"));
-            
+
             if (LiteDatabase == null) {
                 LiteDatabase = new LiteDatabase(Helper.FileOpenStream(dbFile));
                 SettingsCollection = LiteDatabase.GetCollection<Config>("Settings");
@@ -49,11 +49,6 @@ namespace MapleLib
         private static LiteDatabase LiteDatabase { get; }
 
         private static LiteCollection<Config> SettingsCollection { get; }
-
-        public static void Dispose()
-        {
-            LiteDatabase?.Dispose();
-        }
 
         public static event EventHandler<EventArgs> DatabaseLoaded;
 
@@ -89,11 +84,6 @@ namespace MapleLib
             return WiiuTitles.Find(id).FirstOrDefault();
         }
 
-        public static MapleList<Title> FindTitles(string id)
-        {
-            return WiiuTitles.Find(id);
-        }
-
         public static MapleList<GraphicPack> FindGraphicPacks(string id)
         {
             return GraphicPacks.Find(id);
@@ -102,6 +92,11 @@ namespace MapleLib
         public static MapleDictionary GetLibrary()
         {
             return WiiuTitles.TitleLibrary;
+        }
+
+        public static void Dispose()
+        {
+            LiteDatabase?.Dispose();
         }
 
         public static Task DownloadTitle(string titleID, string titleFolderLocation, string contentType, string version)

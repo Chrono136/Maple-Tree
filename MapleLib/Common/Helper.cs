@@ -15,6 +15,17 @@ namespace MapleLib.Common
 {
     public static class Helper
     {
+        public static uint GenerateHashFromRawRpxData(byte[] rpxData, int size)
+        {
+            uint h = 0x3416DCBF;
+            for (var i = 0; i < size; i++) {
+                uint c = rpxData[i];
+                h = (h << 3) | (h >> 29);
+                h += c;
+            }
+            return h;
+        }
+
         public static Stream FileOpenStream(string path)
         {
             var directory = Path.GetDirectoryName(path);

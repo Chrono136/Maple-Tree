@@ -58,9 +58,7 @@ namespace MapleLib.Databases
                 LiteDatabase.DropCollection(CollectionName);
 
                 var db = await Create();
-                for (var i = 0; i < db.Count; i++) {
-                    var item = db[i];
-
+                foreach (var item in db) {
                     if (Col.Find(x => x.ID == item.ID).Any())
                         continue;
 

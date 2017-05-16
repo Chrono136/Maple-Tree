@@ -3,7 +3,7 @@
 // Updated By: Jared
 // 
 
-using System.Linq;
+using System.Reflection;
 using MapleLib.Enums;
 using MapleLib.Network;
 
@@ -16,7 +16,7 @@ namespace MapleLib.Common
             var versionStrs = Web.DownloadString(VersionUrl).Split('\n');
 
             if (build == UpdateType.MapleSeed) {
-                CurrentVersion = System.Reflection.Assembly.GetEntryAssembly().GetName().Version.ToString();
+                CurrentVersion = Assembly.GetEntryAssembly().GetName().Version.ToString();
 
                 if (versionStrs.Length == 2)
                     LatestVersion = versionStrs[0];

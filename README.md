@@ -1,5 +1,9 @@
 # MapleTree - Stable
 
+#### MapleSeed Development Discord
+- Pre-released debug builds will be posted to the #releases channel periodically.
+- https://discord.gg/3CZhJj6
+
 #### Requirements
 - Active internet connection
 - .Net 4.5.2

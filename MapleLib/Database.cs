@@ -81,11 +81,13 @@ namespace MapleLib
 
         public static Title FindTitle(string id)
         {
+            id = id.ToUpperInvariant();
             return WiiuTitles.Find(id).FirstOrDefault();
         }
 
         public static MapleList<GraphicPack> FindGraphicPacks(string id)
         {
+            id = id.ToUpperInvariant();
             return GraphicPacks.Find(id);
         }
 

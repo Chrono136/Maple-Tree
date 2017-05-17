@@ -88,7 +88,7 @@ namespace MapleLib.Databases
 
         #endregion
 
-        private async Task<MapleList<Title>> Create()
+        private static async Task<MapleList<Title>> Create()
         {
             var eShopTitlesStr = Resources.eShopAndDiskTitles; //index 12
             var eShopTitleUpdates = Resources.eShopTitleUpdates; //index 9

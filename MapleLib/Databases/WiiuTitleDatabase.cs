@@ -77,6 +77,7 @@ namespace MapleLib.Databases
         /// <inheritdoc />
         public MapleList<Title> Find(string id)
         {
+            id = id.ToUpperInvariant();
             var col = LiteDatabase.GetCollection<Title>(CollectionName);
 
             if (!col.Exists(x => x.ID == id))

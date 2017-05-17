@@ -48,7 +48,7 @@ namespace MapleLib.Common
                 $@"Version Mis-Match - Latest: {LatestVersion}");
         }
 
-        private static string VersionUrl => "https://raw.githubusercontent.com/Tsume/Maple-Tree/master/version";
+        private static string VersionUrl => "http://raw.githubusercontent.com/Tsume/Maple-Tree/master/version";
 
         private UpdateType UpdateType { get; }
 

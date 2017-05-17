@@ -34,19 +34,20 @@ namespace MapleLib.Network
 
         public static async Task DownloadFileAsync(string url, string saveTo)
         {
-            var wc = new WebClient {Headers = {[HttpRequestHeader.UserAgent] = WII_USER_AGENT}};
-            wc.DownloadProgressChanged += DownloadProgressChanged;
-
-            await wc.DownloadFileTaskAsync(new Uri(url), saveTo);
-            while (wc.IsBusy) await Task.Delay(100);
-            wc.Dispose();
+            using (var wc = new WebClient()) {
+                wc.Headers[HttpRequestHeader.UserAgent] = WII_USER_AGENT;
+                wc.Headers[HttpRequestHeader.CacheControl] = "max-age=0, no-cache, no-store";
+                wc.DownloadProgressChanged += DownloadProgressChanged;
+                await wc.DownloadFileTaskAsync(new Uri(url), saveTo);
+                while (wc.IsBusy) await Task.Delay(100);
+            }
         }
 
         public static string DownloadString(string url)
         {
             using (var wc = new WebClient()) {
                 wc.Headers[HttpRequestHeader.UserAgent] = WII_USER_AGENT;
-                wc.Headers[HttpRequestHeader.CacheControl] = "no-cache";
+                wc.Headers[HttpRequestHeader.CacheControl] = "max-age=0, no-cache, no-store";
                 wc.DownloadProgressChanged += DownloadProgressChanged;
                 return wc.DownloadString(url);
             }
@@ -56,7 +57,7 @@ namespace MapleLib.Network
         {
             using (var wc = new WebClient()) {
                 wc.Headers[HttpRequestHeader.UserAgent] = WII_USER_AGENT;
-                wc.Headers[HttpRequestHeader.CacheControl] = "no-cache";
+                wc.Headers[HttpRequestHeader.CacheControl] = "max-age=0, no-cache, no-store";
                 wc.DownloadProgressChanged += DownloadProgressChanged;
                 var task = wc.DownloadDataTaskAsync(new Uri(url));
                 return task.Result;
@@ -67,7 +68,7 @@ namespace MapleLib.Network
         {
             using (var wc = new WebClient()) {
                 wc.Headers[HttpRequestHeader.UserAgent] = WII_USER_AGENT;
-                wc.Headers[HttpRequestHeader.CacheControl] = "no-cache";
+                wc.Headers[HttpRequestHeader.CacheControl] = "max-age=0, no-cache, no-store";
                 wc.DownloadProgressChanged += DownloadProgressChanged;
                 return await wc.DownloadDataTaskAsync(new Uri(url));
             }

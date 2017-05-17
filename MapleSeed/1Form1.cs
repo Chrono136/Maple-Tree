@@ -18,6 +18,7 @@ using System.Windows.Forms;
 using MapleLib;
 using MapleLib.Collections;
 using MapleLib.Common;
+using MapleLib.Enums;
 using MapleLib.Network;
 using MapleLib.Properties;
 using MapleLib.Structs;
@@ -33,7 +34,7 @@ namespace MapleSeed
             InitializeComponent();
         }
 
-        private async void Form1_Load(object sender, EventArgs e)
+        private void Form1_Load(object sender, EventArgs e)
         {
             Text = $@"MapleSeed {Assembly.GetEntryAssembly().GetName().Version}";
             MinimumSize = MaximumSize = Size;
@@ -46,7 +47,7 @@ namespace MapleSeed
 
             RegisterDefaults();
 
-            //await Task.Run(() => Database.Load());
+            new Update(UpdateType.MapleSeed).CheckForUpdate();
 
             AppendLog($"Game Directory [{Settings.LibraryDirectory}]");
             AppendLog(@"Welcome to Maple Tree.");

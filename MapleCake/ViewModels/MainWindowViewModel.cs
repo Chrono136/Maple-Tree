@@ -49,6 +49,8 @@ namespace MapleCake.ViewModels
 
             RegisterEvents();
 
+            new Update(UpdateType.MapleSeed2).CheckForUpdate();
+
             new DispatcherTimer(TimeSpan.Zero, DispatcherPriority.ApplicationIdle, OnLoadComplete,
                 Application.Current.Dispatcher);
         }
@@ -76,17 +78,6 @@ namespace MapleCake.ViewModels
 
             Database.RegisterEvent(Database_ProgressReport);
             Database.DatabaseLoaded += Database_DatabasesLoaded;
-        }
-
-        private static void CheckUpdate()
-        {
-            var update = new Update(UpdateType.MapleSeed2);
-            if (!update.IsAvailable) return;
-
-            TextLog.MesgLog.WriteLog($"MapleSeed Latest Version: {update.CurrentVersion}", Color.Green);
-
-            MessageBox.Show(@"Please visit https://github.com/Tsume/Maple-Tree/releases for the latest releases.",
-                $@"Version Mis-Match - Latest: {update.LatestVersion}");
         }
 
         public async void SetBackgroundImg(Title title)
@@ -134,8 +125,6 @@ namespace MapleCake.ViewModels
         private void OnLoadComplete(object sender, EventArgs e)
         {
             (sender as DispatcherTimer)?.Stop();
-
-            CheckUpdate();
 
             if (Config.TitleList.Any())
                 Config.SelectedItem = Config.TitleList.First();

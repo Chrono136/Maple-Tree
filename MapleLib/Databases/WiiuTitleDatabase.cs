@@ -52,7 +52,7 @@ namespace MapleLib.Databases
         /// <inheritdoc />
         public async void InitDatabase()
         {
-            if (Database.Time2Update(Settings.LastTitleDBUpdate) || Count < 1) {
+            if (Database.Time2Update(Settings.LastTitleDbUpdate) || Count < 1) {
                 TextLog.Write("[Title Database] Building database...");
 
                 LiteDatabase.DropCollection(CollectionName);
@@ -66,7 +66,7 @@ namespace MapleLib.Databases
                     Col.EnsureIndex(x => x.Name);
                 }
 
-                Settings.LastTitleDBUpdate = DateTime.Now;
+                Settings.LastTitleDbUpdate = DateTime.Now;
             }
 
             LoadLibrary(Settings.LibraryDirectory);

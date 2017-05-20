@@ -50,15 +50,13 @@ namespace MapleLib.Databases
         /// <inheritdoc />
         public async void InitDatabase()
         {
-            if (Database.Time2Update(Settings.LastPackDBUpdate) || Count < 1) {
+            if (Database.Time2Update(Settings.LastPackDbUpdate) || Count < 1) {
                 TextLog.Write("[Graphic Packs] Building database...");
 
                 LiteDatabase.DropCollection(CollectionName);
 
                 var db = await Create();
-                for (var i = 0; i < db.Count; i++) {
-                    var item = db[i];
-
+                foreach (var item in db) {
                     if (Col.Find(x => x.Name == item.Name).Any())
                         continue;
 
@@ -66,7 +64,7 @@ namespace MapleLib.Databases
                     Col.EnsureIndex(x => x.Name);
                 }
 
-                Settings.LastPackDBUpdate = DateTime.Now;
+                Settings.LastPackDbUpdate = DateTime.Now;
             }
 
             TextLog.Write($"[Graphic Packs] Loaded {Count} entries");
@@ -87,7 +85,7 @@ namespace MapleLib.Databases
             var dbFile = Path.Combine(Settings.ConfigDirectory, "graphicPacks");
             var graphicPacks = new MapleList<GraphicPack>();
 
-            if (!File.Exists(dbFile) || Database.Time2Update(Settings.LastPackDBUpdate) || force) {
+            if (!File.Exists(dbFile) || Database.Time2Update(Settings.LastPackDbUpdate) || force) {
                 const string url = "https://github.com/slashiee/cemu_graphic_packs/archive/master.zip";
 
                 if (Web.UrlExists(url)) {

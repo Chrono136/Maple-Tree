@@ -85,22 +85,18 @@ namespace MapleLib
 
         public static string Hub { get; set; }
 
-        public static DateTime LastTitleDBUpdate
-        {
-            get { return Config.LastTitleDBUpdate; }
-            set
-            {
-                Config.LastTitleDBUpdate = value;
+        public static DateTime LastTitleDbUpdate {
+            get { return Config.LastTitleDbUpdate; }
+            set {
+                Config.LastTitleDbUpdate = value;
                 Database.SaveConfig();
             }
         }
 
-        public static DateTime LastPackDBUpdate
-        {
-            get { return Config.LastPackDBUpdate; }
-            set
-            {
-                Config.LastPackDBUpdate = value;
+        public static DateTime LastPackDbUpdate {
+            get { return Config.LastPackDbUpdate; }
+            set {
+                Config.LastPackDbUpdate = value;
                 Database.SaveConfig();
             }
         }

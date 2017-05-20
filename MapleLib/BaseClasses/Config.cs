@@ -27,8 +27,8 @@ namespace MapleLib.BaseClasses
 
         public bool StoreEncryptedContent { get; set; } = true;
 
-        public DateTime LastTitleDBUpdate { get; set; } = DateTime.Now.AddDays(-30);
+        public DateTime LastTitleDbUpdate { get; set; } = DateTime.Now.AddDays(-30);
 
-        public DateTime LastPackDBUpdate { get; set; } = DateTime.Now.AddDays(-30);
+        public DateTime LastPackDbUpdate { get; set; } = DateTime.Now.AddDays(-30);
     }
 }

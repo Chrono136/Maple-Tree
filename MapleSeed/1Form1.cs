@@ -118,7 +118,7 @@ namespace MapleSeed
 
         private async void OnAddItemEvent(object sender, AddItemEventArgs<Title> e)
         {
-            var title = e.item;
+            var title = e.Item;
             if (title == null) return;
 
             await title.Image();

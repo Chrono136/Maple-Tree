@@ -13,8 +13,6 @@ namespace MapleLib.Collections
     [Serializable]
     public class MapleList<T> : BindingList<T>
     {
-        public event EventHandler<AddItemEventArgs<T>> AddItemEvent;
-
         public MapleList() : base(new List<T>())
         {
             AddItemEvent += OnAddItemEvent;
@@ -26,6 +24,8 @@ namespace MapleLib.Collections
             AddItemEvent += OnAddItemEvent;
         }
 
+        public event EventHandler<AddItemEventArgs<T>> AddItemEvent;
+
         /// <inheritdoc />
         public new void Add(T item)
         {
@@ -34,20 +34,20 @@ namespace MapleLib.Collections
 
         private void OnAddItemEvent(object sender, AddItemEventArgs<T> e)
         {
-            if (!Contains(e.item))
-                base.Add(e.item);
+            if (!Contains(e.Item))
+                base.Add(e.Item);
         }
     }
 
     public class AddItemEventArgs<T> : EventArgs
     {
-        public object sender;
-        public readonly T item;
+        public readonly T Item;
+        private object _sender;
 
         public AddItemEventArgs(object sender, T item)
         {
-            this.sender = sender;
-            this.item = item;
+            _sender = sender;
+            Item = item;
         }
     }
 }

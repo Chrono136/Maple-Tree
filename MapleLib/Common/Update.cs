@@ -52,11 +52,11 @@ namespace MapleLib.Common
 
         private UpdateType UpdateType { get; }
 
-        public string LatestVersion { get; }
+        private string LatestVersion { get; }
 
-        public string CurrentVersion { get; }
+        private string CurrentVersion { get; }
 
-        public bool IsAvailable { get; }
+        private bool IsAvailable { get; }
 
         public void Dispose() {}
     }

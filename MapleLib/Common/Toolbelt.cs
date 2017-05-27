@@ -29,7 +29,7 @@ namespace MapleLib.Common
             try {
                 string rpx = null;
                 var dir = Path.GetDirectoryName(Path.GetDirectoryName(game));
-                
+
                 if (string.IsNullOrEmpty(dir))
                     return false;
 
@@ -44,8 +44,9 @@ namespace MapleLib.Common
                     RunCemu(cemuPath, rpx);
                     pack?.Remove();
                 }
-                else
+                else {
                     SetStatus("Could not find a valid .rpx");
+                }
             }
             catch (Exception e) {
                 AppendLog($"{e.Message}\n{e.StackTrace}", Color.DarkRed);
@@ -78,6 +79,9 @@ namespace MapleLib.Common
 
         private static string RemoveInvalidCharacters(string str)
         {
+            if (string.IsNullOrEmpty(str))
+                return string.Empty;
+
             str = str.Replace("™", "");
             str = str.Replace("®", "");
 
@@ -241,7 +245,7 @@ namespace MapleLib.Common
         }
 
         /// <summary>
-        ///     Reads the data from the specified data recieved event and writes it to the
+        ///     Reads the data from the specified data received event and writes it to the
         ///     <paramref name="textWriter" />.
         /// </summary>
         /// <param name="addHandler">Adds the event handler.</param>

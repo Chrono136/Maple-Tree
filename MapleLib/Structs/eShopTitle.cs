@@ -3,17 +3,17 @@
 // Updated By: Jared
 // 
 
+using System;
+using System.Text.RegularExpressions;
 using MapleLib.Common;
 using MapleLib.Interfaces;
 
 namespace MapleLib.Structs
 {
-    [System.Serializable]
+    [Serializable]
     public class eShopTitle : ITitle
     {
-        public string ID { get; set; }
-        public string Key { get; set; }
-        public string Name { get; set; }
+        private string _name;
         public string ProductCode { get; set; }
         public string CompanyCode { get; set; }
         public string Notes { get; set; }
@@ -46,6 +46,21 @@ namespace MapleLib.Structs
             }
         }
 
+        #region ITitle Members
+
+        public string ID { get; set; }
+        public string Key { get; set; }
+
+        public string Name {
+            get {
+                var name = Toolbelt.RIC(_name);
+                return Regex.Replace(name, @"\s+", " ");
+            }
+            set { _name = value; }
+        }
+
+        #endregion
+
         private string Upper8Digits()
         {
             return ID?.Substring(0, 8).ToUpper();
@@ -59,7 +74,7 @@ namespace MapleLib.Structs
         /// <inheritdoc />
         public override string ToString()
         {
-            return Toolbelt.RIC(Name);
+            return Name;
         }
     }
 }

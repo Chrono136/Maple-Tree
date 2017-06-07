@@ -4,7 +4,6 @@
 // 
 
 using System;
-using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
@@ -14,7 +13,6 @@ using MapleLib;
 using MapleLib.Common;
 using MapleLib.Enums;
 using MapleLib.Structs;
-using MessageBox = System.Windows.Forms.MessageBox;
 
 namespace MapleCake.ViewModels
 {
@@ -48,11 +46,6 @@ namespace MapleCake.ViewModels
             SetDefaults();
 
             RegisterEvents();
-
-            new Update(UpdateType.MapleSeed2).CheckForUpdate();
-
-            new DispatcherTimer(TimeSpan.Zero, DispatcherPriority.ApplicationIdle, OnLoadComplete,
-                Application.Current.Dispatcher);
         }
 
         private void SetTitle(string title)
@@ -63,6 +56,7 @@ namespace MapleCake.ViewModels
 
         private void SetDefaults()
         {
+            Config.LaunchCemuText = "Loading...";
             Config.LogBox = string.Empty;
             Config.ProgressMin = 0;
             Config.ProgressValue = 0;
@@ -73,8 +67,6 @@ namespace MapleCake.ViewModels
         {
             TextLog.MesgLog.NewLogEntryEventHandler += MesgLogOnNewLogEntryEventHandler;
             TextLog.StatusLog.NewLogEntryEventHandler += StatusLogOnNewLogEntryEventHandler;
-
-            //Web.DownloadProgressChangedEvent += WebClientOnDownloadProgressChangedEvent;
 
             Database.RegisterEvent(Database_ProgressReport);
             Database.DatabaseLoaded += Database_DatabasesLoaded;
@@ -122,20 +114,28 @@ namespace MapleCake.ViewModels
             }
         }
 
-        private void OnLoadComplete(object sender, EventArgs e)
+        private async void OnLoadComplete(object sender, EventArgs e)
         {
             (sender as DispatcherTimer)?.Stop();
+
+            Config.LaunchCemuText = "Launch Cemu";
+
+            await Task.Delay(250);
 
             if (Config.TitleList.Any())
                 Config.SelectedItem = Config.TitleList.First();
 
-            Config.LaunchCemuText = "Launch Cemu";
             TextLog.MesgLog.WriteLog($"Game Directory [{Settings.LibraryDirectory}]");
+
+            new Update(UpdateType.MapleSeed2).CheckForUpdate();
         }
 
         private void Database_DatabasesLoaded(object sender, EventArgs e)
         {
             Config.CacheDatabase = false;
+
+            new DispatcherTimer(TimeSpan.Zero, DispatcherPriority.ApplicationIdle, OnLoadComplete,
+                Application.Current.Dispatcher);
         }
 
         private void Database_ProgressReport(object sender, ProgressReport e)

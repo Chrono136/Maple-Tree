@@ -75,6 +75,7 @@ namespace MapleLib.Databases
             }
 
             TextLog.Write($"[Graphic Packs] Loaded {Count} entries");
+            Database.DatabaseCount++;
         }
 
         public MapleList<GraphicPack> Find(string id)

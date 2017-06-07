@@ -36,8 +36,8 @@ namespace MapleLib
                 WiiuTitles = new WiiuTitleDatabase(LiteDatabase);
 
             Task.Run(async () => {
-                while (DatabaseLoaded == null && GraphicPacks.Count < 1 && WiiuTitles.Count < 1)
-                    await Task.Delay(5);
+                while (DatabaseLoaded == null || DatabaseCount < MaxDatabaseCount)
+                    await Task.Delay(250);
 
                 DatabaseLoaded?.Invoke(new object[] {GraphicPacks, WiiuTitles}, EventArgs.Empty);
             });
@@ -49,6 +49,10 @@ namespace MapleLib
         private static LiteDatabase LiteDatabase { get; }
 
         private static LiteCollection<Config> SettingsCollection { get; }
+
+        private static int MaxDatabaseCount => 2;
+
+        public static int DatabaseCount { get; set; }
 
         public static event EventHandler<EventArgs> DatabaseLoaded;
 

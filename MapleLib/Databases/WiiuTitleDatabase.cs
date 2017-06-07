@@ -72,6 +72,7 @@ namespace MapleLib.Databases
             LoadLibrary(Settings.LibraryDirectory);
 
             TextLog.Write($"[Title Database] Loaded {Count} entries");
+            Database.DatabaseCount++;
         }
 
         /// <inheritdoc />

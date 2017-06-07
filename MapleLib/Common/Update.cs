@@ -57,7 +57,7 @@ namespace MapleLib.Common
         {
             if (!IsAvailable) return;
 
-            TextLog.MesgLog.WriteLog($"[Update] New Update Version: {LatestVersion}", Color.Green);
+            TextLog.MesgLog.WriteLog($"[New Update] Latest Released Version: {LatestVersion}", Color.Green);
 
 #if !DEBUG
             MessageBox.Show(@"Please visit https://github.com/Tsume/Maple-Tree/releases for the latest release.",

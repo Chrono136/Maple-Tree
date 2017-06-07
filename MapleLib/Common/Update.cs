@@ -6,7 +6,6 @@
 using System;
 using System.Drawing;
 using System.Reflection;
-using System.Windows.Forms;
 using MapleLib.Enums;
 using MapleLib.Network;
 
@@ -38,16 +37,6 @@ namespace MapleLib.Common
                 IsAvailable = true;
         }
 
-        public void CheckForUpdate()
-        {
-            if (!IsAvailable) return;
-
-            TextLog.MesgLog.WriteLog($"Update Available!! Latest Version: {LatestVersion}", Color.Green);
-
-            MessageBox.Show(@"Please visit https://github.com/Tsume/Maple-Tree/releases for the latest release.",
-                $@"Version Mis-Match - Latest: {LatestVersion}");
-        }
-
         private static string VersionUrl => "http://raw.githubusercontent.com/Tsume/Maple-Tree/master/version";
 
         private UpdateType UpdateType { get; }
@@ -58,6 +47,22 @@ namespace MapleLib.Common
 
         private bool IsAvailable { get; }
 
+        #region IDisposable Members
+
         public void Dispose() {}
+
+        #endregion
+
+        public void CheckForUpdate()
+        {
+            if (!IsAvailable) return;
+
+            TextLog.MesgLog.WriteLog($"[Update] New Update Version: {LatestVersion}", Color.Green);
+
+#if !DEBUG
+            MessageBox.Show(@"Please visit https://github.com/Tsume/Maple-Tree/releases for the latest release.",
+                $@"Version Mis-Match - Latest: {LatestVersion}");
+#endif
+        }
     }
 }

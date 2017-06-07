@@ -50,7 +50,7 @@ namespace MapleLib.Databases
         /// <inheritdoc />
         public async void InitDatabase()
         {
-            if (Database.Time2Update(Settings.LastPackDbUpdate) || Count < 1) {
+            if (Count < 1) {
                 TextLog.Write("[Graphic Packs] Building database...");
 
                 LiteDatabase.DropCollection(CollectionName);
@@ -68,8 +68,6 @@ namespace MapleLib.Databases
                     Col.Insert(item);
                     Col.EnsureIndex(x => x.Name);
                 }
-
-                Settings.LastPackDbUpdate = DateTime.Now;
             }
 
             TextLog.Write($"[Graphic Packs] Loaded {Count} entries");
@@ -85,19 +83,16 @@ namespace MapleLib.Databases
 
         #endregion
 
-        private async Task<MapleList<GraphicPack>> Create(bool force = false)
+        private async Task<MapleList<GraphicPack>> Create()
         {
             var graphicPacks = new MapleList<GraphicPack>();
             byte[] graphicPackBytes = {0};
 
-            if (Database.Time2Update(Settings.LastPackDbUpdate) || force) {
+            try {
                 const string url = "https://github.com/slashiee/cemu_graphic_packs/archive/master.zip";
-
                 if (Web.UrlExists(url))
                     graphicPackBytes = await Web.DownloadDataAsync(url);
-            }
 
-            try {
                 if (graphicPackBytes.Length <= 1)
                     return null;
 
@@ -119,13 +114,12 @@ namespace MapleLib.Databases
             }
             catch (Exception e) {
                 if (RetryCount >= 3) {
-                    TextLog.MesgLog.WriteLog(
-                        $"GraphicPacks Init() failed too many times, cancelling...\n\n{e.Message}\n{e.StackTrace}");
+                    TextLog.MesgLog.WriteLog($"GraphicPacks Init() failed, cancelling...\n\n{e.Message}\n{e.StackTrace}");
                     return null;
                 }
 
                 RetryCount++;
-                return await Create(true);
+                return await Create();
             }
         }
 

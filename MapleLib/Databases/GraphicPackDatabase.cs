@@ -56,6 +56,11 @@ namespace MapleLib.Databases
                 LiteDatabase.DropCollection(CollectionName);
 
                 var db = await Create();
+                if (db == null) {
+                    TextLog.Write("[Graphic Packs] Error: Not available");
+                    return;
+                }
+
                 foreach (var item in db) {
                     if (Col.Find(x => x.Name == item.Name).Any())
                         continue;
@@ -82,21 +87,25 @@ namespace MapleLib.Databases
 
         private async Task<MapleList<GraphicPack>> Create(bool force = false)
         {
-            var dbFile = Path.Combine(Settings.ConfigDirectory, "graphicPacks");
             var graphicPacks = new MapleList<GraphicPack>();
+            byte[] graphicPackBytes = {0};
 
-            if (!File.Exists(dbFile) || Database.Time2Update(Settings.LastPackDbUpdate) || force) {
+            if (Database.Time2Update(Settings.LastPackDbUpdate) || force) {
                 const string url = "https://github.com/slashiee/cemu_graphic_packs/archive/master.zip";
 
-                if (Web.UrlExists(url)) {
-                    var data = await Web.DownloadDataAsync(url);
-                    File.WriteAllBytes(dbFile, data);
-                }
+                if (Web.UrlExists(url))
+                    graphicPackBytes = await Web.DownloadDataAsync(url);
             }
 
             try {
-                using (var zipArchive = new ZipArchive(File.OpenRead(dbFile))) {
-                    var list = zipArchive.Entries.Where(x => x.Name.Length == 0 && x.FullName.EndsWith("/")).ToList();
+                if (graphicPackBytes.Length <= 1)
+                    return null;
+
+                using (var zipArchive = new ZipArchive(new MemoryStream(graphicPackBytes))) {
+                    var list = zipArchive.Entries?.Where(x => x.Name.Length == 0 && x.FullName.EndsWith("/")).ToList();
+
+                    if (list == null)
+                        return null;
 
                     foreach (var zipArchiveEntry in list) {
                         var pack = Process(zipArchiveEntry);
@@ -116,7 +125,6 @@ namespace MapleLib.Databases
                 }
 
                 RetryCount++;
-                File.Delete(dbFile);
                 return await Create(true);
             }
         }

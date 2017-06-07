@@ -50,7 +50,9 @@ namespace MapleLib.Databases
         /// <inheritdoc />
         public async void InitDatabase()
         {
-            if (Count < 1) {
+            var doUpdate = Settings.LastPackDbUpdate < DateTime.Now.AddDays(-7);
+
+            if (doUpdate || Settings.CacheDatabase || Count < 1) {
                 TextLog.Write("[Graphic Packs] Building database...");
 
                 LiteDatabase.DropCollection(CollectionName);
@@ -68,6 +70,8 @@ namespace MapleLib.Databases
                     Col.Insert(item);
                     Col.EnsureIndex(x => x.Name);
                 }
+
+                Settings.LastPackDbUpdate = DateTime.Now;
             }
 
             TextLog.Write($"[Graphic Packs] Loaded {Count} entries");

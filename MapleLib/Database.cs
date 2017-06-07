@@ -37,7 +37,7 @@ namespace MapleLib
 
             Task.Run(async () => {
                 while (DatabaseLoaded == null && GraphicPacks.Count < 1 && WiiuTitles.Count < 1)
-                    await Task.Delay(1);
+                    await Task.Delay(5);
 
                 DatabaseLoaded?.Invoke(new object[] {GraphicPacks, WiiuTitles}, EventArgs.Empty);
             });

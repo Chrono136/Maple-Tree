@@ -60,7 +60,7 @@ namespace MapleLib.Common
             TextLog.MesgLog.WriteLog($"[New Update] Latest Released Version: {LatestVersion}", Color.Green);
 
 #if !DEBUG
-            MessageBox.Show(@"Please visit https://github.com/Tsume/Maple-Tree/releases for the latest release.",
+            System.Windows.Forms.MessageBox.Show(@"Please visit https://github.com/Tsume/Maple-Tree/releases for the latest release.",
                 $@"Version Mis-Match - Latest: {LatestVersion}");
 #endif
         }

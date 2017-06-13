@@ -37,7 +37,9 @@ namespace MapleLib.Common
                 foreach (var directory in Directory.GetDirectories(path))
                     files.AddRange(GetFiles(directory, pattern));
             }
-            catch (UnauthorizedAccessException) {}
+            catch (UnauthorizedAccessException) {
+                TextLog.Write($"UnauthorizedAccessException: {path}");
+            }
 
             return files;
         }

@@ -4,6 +4,7 @@
 // 
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Management;
@@ -24,6 +25,21 @@ namespace MapleLib.Common
                 h += c;
             }
             return h;
+        }
+
+        public static IEnumerable<string> GetFiles(string path, string pattern)
+        {
+            var files = new List<string>();
+
+            try {
+                files.AddRange(Directory.GetFiles(path, pattern, SearchOption.TopDirectoryOnly));
+
+                foreach (var directory in Directory.GetDirectories(path))
+                    files.AddRange(GetFiles(directory, pattern));
+            }
+            catch (UnauthorizedAccessException) {}
+
+            return files;
         }
 
         public static Stream FileOpenStream(string path)

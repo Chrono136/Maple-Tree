@@ -175,9 +175,10 @@ namespace MapleLib.Databases
                 throw new DirectoryNotFoundException($"TitleDirectory: '{titleDirectory}' cannot be null or empty");
 
             if (titleDirectory.FilePathHasInvalidChars())
-                throw new DirectoryNotFoundException($"TitleDirectory: '{titleDirectory}' is an invalid directory path");
+                throw new DirectoryNotFoundException(
+                    $"TitleDirectory: '{titleDirectory}' is an invalid directory path");
 
-            var xmlFiles = Directory.GetFiles(titleDirectory, "meta.xml", SearchOption.AllDirectories);
+            var xmlFiles = Helper.GetFiles(titleDirectory, "meta.xml");
 
             foreach (var xmlFile in xmlFiles) {
                 var rootDir = Path.GetFullPath(Path.Combine(xmlFile, "../../"));

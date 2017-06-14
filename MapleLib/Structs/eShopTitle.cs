@@ -21,6 +21,7 @@ namespace MapleLib.Structs
         public string Region { get; set; }
         public string ImageLocation { get; set; }
         public bool HasDLC { get; set; }
+        public bool HasPatch => Versions.Length > 1;
         public bool AvailableOnCDN { get; set; }
 
         public string ContentType {

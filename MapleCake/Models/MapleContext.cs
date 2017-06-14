@@ -58,13 +58,11 @@ namespace MapleCake.Models
         private static void CreateUpdateItems(ICollection<ICommandItem> items)
         {
             var title = Database.FindTitle($"00050000{SelectedItem.Lower8Digits()}");
-
-            var hasUpdates = title != null;
-
-            if (hasUpdates || SelectedItem.HasDLC)
+            
+            if (SelectedItem.HasPatch || SelectedItem.HasDLC)
                 items.Add(new SeparatorCommandItem());
 
-            if (hasUpdates) {
+            if (SelectedItem.HasPatch) {
                 var updatesStr = string.Join(", ", title.Versions.ToArray());
                 items.Add(new CommandItem {Text = updatesStr, ToolTip = "Available Updates"});
                 items.Add(new SeparatorCommandItem());
@@ -72,9 +70,7 @@ namespace MapleCake.Models
             }
 
             var dir = Path.Combine(Settings.BasePatchDir, SelectedItem.Lower8Digits());
-            var meta = Path.Combine(dir, "meta", "meta.xml");
-
-            if (File.Exists(meta))
+            if (File.Exists(Path.Combine(dir, "meta", "meta.xml")))
                 items.Add(new CommandItem {Text = "[-] Update", ToolTip = "Remove Update", Command = Click.RemoveUpdate});
         }
 

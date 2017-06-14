@@ -5,7 +5,6 @@
 
 using System;
 using System.IO;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -135,28 +134,6 @@ namespace MapleCake.Models
             MainWindowViewModel.Instance.RaisePropertyChangedEvent(propertyName);
         }
 
-        private static async void TryDownloadDlc()
-        {
-            var id = $"0005000C{SelectedItem.Lower8Digits()}";
-            var title = Database.FindTitle(id);
-
-            if (title == null)
-                throw new NullReferenceException($"Could not locate dlc for title ID {id}");
-
-            await title.DownloadDLC();
-        }
-
-        private static async void TryDownloadPatch(string version)
-        {
-            var id = $"0005000E{SelectedItem.Lower8Digits()}";
-            var title = Database.FindTitle(id);
-
-            if (title == null)
-                throw new NullReferenceException($"Could not locate patch content for title ID {id}");
-
-            await title.DownloadUpdate(version);
-        }
-
         private static async Task DownloadContentClick(string contentType, string version = "0")
         {
             if (SelectedItem == null)
@@ -168,13 +145,30 @@ namespace MapleCake.Models
             if (SelectedItem.Name.IsNullOrEmpty())
                 throw new NullReferenceException($"[{SelectedItem}] Title Name is null or empty, can't proceed!");
 
-            if (contentType == "DLC" && SelectedItem.HasDLC)
-                TryDownloadDlc();
+            //download dlc is applicable
+            if (contentType == "DLC" && SelectedItem.HasDLC) {
+                var id = $"0005000C{SelectedItem.Lower8Digits()}";
+                var title = Database.FindTitle(id);
 
-            if (contentType == "Patch" && SelectedItem.HasPatch)
-                TryDownloadPatch(version);
+                if (title == null)
+                    throw new NullReferenceException($"Could not locate dlc for title ID {id}");
 
-            if (contentType == "eShop/Application") await SelectedItem.DownloadContent(version);
+                await title.DownloadDLC();
+            }
+
+            //download patch is applicable
+            if (contentType == "Patch" && SelectedItem.HasPatch) {
+                var id = $"0005000E{SelectedItem.Lower8Digits()}";
+                var title = Database.FindTitle(id);
+
+                if (title == null)
+                    throw new NullReferenceException($"Could not locate patch content for title ID {id}");
+
+                await title.DownloadUpdate(version);
+            }
+
+            if (contentType == "eShop/Application")
+                await SelectedItem.DownloadContent(version);
         }
     }
 }

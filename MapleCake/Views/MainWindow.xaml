@@ -44,9 +44,9 @@
                     <ProgressBar Value="{Binding Config.ProgressValue}" Minimum="{Binding Config.ProgressMin}" Maximum="{Binding Config.ProgressMax}" HorizontalAlignment="Center" Margin="11,0,9,10" VerticalAlignment="Bottom" Height="15" Width="363" Background="#A5343434"/>
                     <TextBlock HorizontalAlignment="Left" Margin="12,0,0,20" TextWrapping="Wrap" Text="{Binding Config.Status}" VerticalAlignment="Bottom" Width="369" TextAlignment="Center" FontWeight="Bold"/>
 
-                    <CheckBox Content="Dynamic Theme" IsChecked="{Binding Config.DynamicTheme}" ToolTip="Disables dynamic color and backgrounds" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="23,306,0,0"/>
+                    <CheckBox Content="Dynamic Theme" IsChecked="{Binding Config.DynamicTheme}" ToolTip="Controls dynamic backgrounds" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="23,306,0,0"/>
                     <CheckBox Content="Store Encrypted Content" IsChecked="{Binding Config.StoreEncryptedContent}" ToolTip="Retains encrypted files after decrypting" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="23,332,0,0"/>
-                    <CheckBox Content="Force Rebuild Database" IsChecked="{Binding Config.CacheDatabase}" ToolTip="Disable this to rebuild the database at start up" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="23,357,0,0"/>
+                    <CheckBox Content="Force Rebuild Database" IsChecked="{Binding Config.CacheDatabase}" ToolTip="Enable to force rebuild the database at start up" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="23,357,0,0"/>
 
                     <CheckBox Content="Full Screen" IsChecked="{Binding Config.FullScreen}" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="23,105,0,0"/>
                     <CheckBox Content="Graphic Packs" IsChecked="{Binding Config.GraphicPacksEnabled}" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="23,130,0,0"/>

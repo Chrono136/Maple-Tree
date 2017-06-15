@@ -2,7 +2,7 @@
 - general bug fixes
 - Improved processing
 - LoadLibrary should ignore unauthorized paths
-- DownloadContentClick should no longer force close for unavailable content
+- Program should no longer force close for unavailable content
 - Context menu no longer displays an update option if a patch is detected as non-existent
 
 ### Change Log - 2.1.1.14 (05/25/2017)

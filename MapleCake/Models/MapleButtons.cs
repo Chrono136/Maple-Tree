@@ -145,26 +145,18 @@ namespace MapleCake.Models
             if (SelectedItem.Name.IsNullOrEmpty())
                 throw new NullReferenceException($"[{SelectedItem}] Title Name is null or empty, can't proceed!");
 
-            //download dlc is applicable
+            Title title;
+
+            //download dlc if applicable
             if (contentType == "DLC" && SelectedItem.HasDLC) {
-                var id = $"0005000C{SelectedItem.Lower8Digits()}";
-                var title = Database.FindTitle(id);
-
-                if (title == null)
-                    throw new NullReferenceException($"Could not locate dlc for title ID {id}");
-
-                await title.DownloadDLC();
+                if ((title = Database.FindTitle($"0005000C{SelectedItem.Lower8Digits()}")) != null)
+                    await title.DownloadDLC();
             }
 
-            //download patch is applicable
+            //download patch if applicable
             if (contentType == "Patch" && SelectedItem.HasPatch) {
-                var id = $"0005000E{SelectedItem.Lower8Digits()}";
-                var title = Database.FindTitle(id);
-
-                if (title == null)
-                    throw new NullReferenceException($"Could not locate patch content for title ID {id}");
-
-                await title.DownloadUpdate(version);
+                if ((title = Database.FindTitle($"0005000E{SelectedItem.Lower8Digits()}")) != null)
+                    await title.DownloadUpdate(version);
             }
 
             if (contentType == "eShop/Application")

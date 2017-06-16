@@ -172,11 +172,10 @@ namespace MapleLib.Databases
                 throw new DirectoryNotFoundException("Title Database is empty. This should not happen!!!");
 
             if (string.IsNullOrEmpty(titleDirectory))
-                throw new DirectoryNotFoundException($"TitleDirectory: '{titleDirectory}' cannot be null or empty");
+                throw new DirectoryNotFoundException($"TitleDir: '{titleDirectory}' cannot be null or empty");
 
             if (titleDirectory.FilePathHasInvalidChars())
-                throw new DirectoryNotFoundException(
-                    $"TitleDirectory: '{titleDirectory}' is an invalid directory path");
+                throw new DirectoryNotFoundException($"TitleDir: '{titleDirectory}' is an invalid directory path");
 
             var xmlFiles = Helper.GetFiles(titleDirectory, "meta.xml");
 

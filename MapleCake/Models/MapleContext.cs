@@ -58,20 +58,22 @@ namespace MapleCake.Models
         private static void CreateUpdateItems(ICollection<ICommandItem> items)
         {
             var title = Database.FindTitle($"00050000{SelectedItem.Lower8Digits()}");
-            
+
             if (SelectedItem.HasPatch || SelectedItem.HasDLC)
                 items.Add(new SeparatorCommandItem());
 
-            if (SelectedItem.HasPatch) {
-                var updatesStr = string.Join(", ", title.Versions.ToArray());
-                items.Add(new CommandItem {Text = updatesStr, ToolTip = "Available Updates"});
-                items.Add(new SeparatorCommandItem());
-                items.Add(new CommandItem {Text = "[+] Update", ToolTip = "Add Update", Command = Click.AddUpdate});
-            }
+            if (SelectedItem.HasPatch)
+                foreach (var version in title.Versions) {
+                    items.Add(new CommandItem
+                    {
+                        Text = $"[+] Update -> v{version}",
+                        Command = new CommandHandler(() => { DownloadContent("Patch", version); })
+                    });
+                }
 
             var dir = Path.Combine(Settings.BasePatchDir, SelectedItem.Lower8Digits());
             if (File.Exists(Path.Combine(dir, "meta", "meta.xml")))
-                items.Add(new CommandItem {Text = "[-] Update", ToolTip = "Remove Update", Command = Click.RemoveUpdate});
+                items.Add(new CommandItem {Text = "[-] Remove Update", ToolTip = "Remove Update", Command = Click.RemoveUpdate});
         }
 
         private static void CreateDlcItems(ICollection<ICommandItem> items)
@@ -84,6 +86,11 @@ namespace MapleCake.Models
 
             if (File.Exists(meta))
                 items.Add(new CommandItem {Text = "[-] DLC", ToolTip = "Remove DLC", Command = Click.RemoveDLC});
+        }
+
+        private static async void DownloadContent(string type, int version)
+        {
+            await MapleButtons.DownloadContentClick(type, version.ToString());
         }
     }
 }

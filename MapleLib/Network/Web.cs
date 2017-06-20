@@ -9,6 +9,7 @@ using System;
 using System.IO;
 using System.Net;
 using System.Threading.Tasks;
+using MapleLib.Common;
 using MapleLib.Structs;
 
 #endregion
@@ -17,7 +18,7 @@ namespace MapleLib.Network
 {
     public static class Web
     {
-        private const string WII_USER_AGENT = "wii libnup/1.0";
+        private const string WII_USER_AGENT = "wii libnup/1.1";
 
         public static event EventHandler<DownloadProgressChangedEventArgs> DownloadProgressChangedEvent;
 
@@ -34,6 +35,9 @@ namespace MapleLib.Network
 
         public static async Task DownloadFileAsync(string url, string saveTo)
         {
+            if (!Helper.InternetActive())
+                return;
+
             using (var wc = new WebClient()) {
                 wc.Headers[HttpRequestHeader.UserAgent] = WII_USER_AGENT;
                 wc.Headers[HttpRequestHeader.CacheControl] = "max-age=0, no-cache, no-store";
@@ -45,6 +49,9 @@ namespace MapleLib.Network
 
         public static string DownloadString(string url)
         {
+            if (!Helper.InternetActive())
+                return string.Empty;
+
             using (var wc = new WebClient()) {
                 wc.Headers[HttpRequestHeader.UserAgent] = WII_USER_AGENT;
                 wc.Headers[HttpRequestHeader.CacheControl] = "max-age=0, no-cache, no-store";
@@ -53,19 +60,11 @@ namespace MapleLib.Network
             }
         }
 
-        public static byte[] DownloadData(string url)
-        {
-            using (var wc = new WebClient()) {
-                wc.Headers[HttpRequestHeader.UserAgent] = WII_USER_AGENT;
-                wc.Headers[HttpRequestHeader.CacheControl] = "max-age=0, no-cache, no-store";
-                wc.DownloadProgressChanged += DownloadProgressChanged;
-                var task = wc.DownloadDataTaskAsync(new Uri(url));
-                return task.Result;
-            }
-        }
-
         public static async Task<byte[]> DownloadDataAsync(string url)
         {
+            if (!Helper.InternetActive())
+                return new byte[0];
+
             using (var wc = new WebClient()) {
                 wc.Headers[HttpRequestHeader.UserAgent] = WII_USER_AGENT;
                 wc.Headers[HttpRequestHeader.CacheControl] = "max-age=0, no-cache, no-store";

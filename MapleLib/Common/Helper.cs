@@ -27,6 +27,20 @@ namespace MapleLib.Common
             return h;
         }
 
+        public static bool InternetActive()
+        {
+            try {
+                using (var client = new System.Net.WebClient())
+                using (client.OpenRead("http://www.google.com")) {
+                    return true;
+                }
+            }
+            catch {
+                MessageBox.Show(@"This tool requires an Internet connection for network features.");
+                return false;
+            }
+        }
+
         public static IEnumerable<string> GetFiles(string path, string pattern)
         {
             var files = new List<string>();

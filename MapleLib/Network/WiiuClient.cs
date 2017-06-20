@@ -26,7 +26,8 @@ namespace MapleLib.Network
             byte[] data = {};
 
             try {
-                data = await Web.DownloadDataAsync(url);
+                if (Helper.InternetActive())
+                    data = await Web.DownloadDataAsync(url);
             }
             catch (WebException e) {
                 TextLog.MesgLog.AddHistory($"{e.Message}\n{e.StackTrace}");

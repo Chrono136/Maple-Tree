@@ -134,7 +134,7 @@ namespace MapleCake.Models
             MainWindowViewModel.Instance.RaisePropertyChangedEvent(propertyName);
         }
 
-        private static async Task DownloadContentClick(string contentType, string version = "0")
+        public static async Task DownloadContentClick(string contentType, string version = "0")
         {
             if (SelectedItem == null)
                 throw new NullReferenceException("Title is null or empty, can't proceed!");

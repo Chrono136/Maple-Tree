@@ -1,4 +1,7 @@
-### Change Log - 2.1.1.15 (06/XX/2017)
+### Change Log - 2.1.1.16
+- general fixes & improvements
+
+### Change Log - 2.1.1.15 (07/07/2017)
 - general bug fixes
 - Improved processing
 - LoadLibrary should ignore unauthorized paths

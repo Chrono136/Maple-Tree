@@ -58,18 +58,27 @@ namespace MapleCake.Models
         private static void CreateUpdateItems(ICollection<ICommandItem> items)
         {
             var title = Database.FindTitle($"00050000{SelectedItem.Lower8Digits()}");
+            var titleVersion = int.Parse(MainWindowViewModel.Instance.Config.TitleVersion);
 
             if (SelectedItem.HasPatch || SelectedItem.HasDLC)
                 items.Add(new SeparatorCommandItem());
 
-            if (SelectedItem.HasPatch)
-                foreach (var version in title.Versions) {
+            if (SelectedItem.HasPatch) {
+                foreach (var version in title.Versions)
+                {
                     items.Add(new CommandItem
                     {
                         Text = $"[+] Update -> v{version}",
                         Command = new CommandHandler(() => { DownloadContent("Patch", version); })
                     });
                 }
+
+                items.Add(new CommandItem
+                {
+                    Text = $"[+] Update -> v{titleVersion} (Custom)",
+                    Command = new CommandHandler(() => { DownloadContent("Patch", titleVersion); })
+                });
+            }
 
             var dir = Path.Combine(Settings.BasePatchDir, SelectedItem.Lower8Digits());
             if (File.Exists(Path.Combine(dir, "meta", "meta.xml")))

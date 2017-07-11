@@ -1,6 +1,8 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Windows;
+using System.Windows.Input;
+using MapleCake.Models;
 using MapleCake.ViewModels;
 
 namespace MapleCake.Views
@@ -28,6 +30,14 @@ namespace MapleCake.Views
         private void MetroWindow_Initialized(object sender, EventArgs e)
         {
             ((MainWindowViewModel) DataContext)?.Config.LoadState();
+        }
+
+        private void UIElement_OnPreviewMouseRightButtonDown(object sender, MouseEventArgs e)
+        {
+            var dataContext = (MainWindowViewModel)DataContext;
+
+            if (dataContext != null)
+                dataContext.Config.ContextItems = MapleContext.CreateMenu();
         }
     }
 }

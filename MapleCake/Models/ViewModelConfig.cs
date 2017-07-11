@@ -138,6 +138,7 @@ namespace MapleCake.Models
             set {
                 if (value == null) value = new Title();
                 _self.SetBackgroundImg(_selectedItem = value);
+                ContextItems = MapleContext.CreateMenu();
                 RaisePropertyChangedEvent("SelectedItem");
                 RaisePropertyChangedEvent("ContextItems");
                 RaisePropertyChangedEvent("SelectedItemGraphicPack");
@@ -183,7 +184,17 @@ namespace MapleCake.Models
 
         public MapleDictionary TitleList => Database.GetLibrary();
 
-        public List<ICommandItem> ContextItems => MapleContext.CreateMenu();
+        private List<ICommandItem> _contextItems;
+        public List<ICommandItem> ContextItems
+        {
+            get { return _contextItems; }
+            set
+            {
+                _contextItems = MapleContext.CreateMenu();
+                RaisePropertyChangedEvent("SelectedItem");
+                RaisePropertyChangedEvent("ContextItems");
+            }
+        }
 
         public void SaveState()
         {

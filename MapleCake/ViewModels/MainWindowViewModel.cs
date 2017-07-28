@@ -77,10 +77,16 @@ namespace MapleCake.ViewModels
             if (!Config.DynamicTheme)
                 return;
 
-            if (string.IsNullOrEmpty(title.ImageLocation))
-                await Task.Run(() => title.Image());
+            if (title == null) {
+                Config.BackgroundImage = string.Empty;
+            }
+            else {
+                if (string.IsNullOrEmpty(title.ImageLocation))
+                    await Task.Run(() => title.Image());
 
-            Config.BackgroundImage = title.ImageLocation;
+                Config.BackgroundImage = title.ImageLocation;
+            }
+            
             Config.RaisePropertyChangedEvent("BackgroundImage");
         }
 

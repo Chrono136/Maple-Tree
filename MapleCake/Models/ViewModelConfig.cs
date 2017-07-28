@@ -136,7 +136,6 @@ namespace MapleCake.Models
         public Title SelectedItem {
             get { return _selectedItem; }
             set {
-                if (value == null) value = new Title();
                 _self.SetBackgroundImg(_selectedItem = value);
                 ContextItems = MapleContext.CreateMenu();
                 RaisePropertyChangedEvent("SelectedItem");

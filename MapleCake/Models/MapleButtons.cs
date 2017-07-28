@@ -43,11 +43,13 @@ namespace MapleCake.Models
 
         private static void LaunchCemuButton()
         {
-            if (SelectedItem == null) return;
-
             new Thread(() => {
-                var pack = MainWindowViewModel.Instance.Config.SelectedItemGraphicPack;
+                if (SelectedItem == null) {
+                    Toolbelt.LaunchCemu(string.Empty, null);
+                    return;
+                }
 
+                var pack = MainWindowViewModel.Instance.Config.SelectedItemGraphicPack;
                 if (!Toolbelt.LaunchCemu(SelectedItem.MetaLocation, pack)) return;
                 TextLog.MesgLog.WriteLog($"Now Playing: {SelectedItem.Name}");
             }).Start();

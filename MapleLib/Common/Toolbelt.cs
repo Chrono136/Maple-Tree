@@ -27,25 +27,30 @@ namespace MapleLib.Common
         public static bool LaunchCemu(string game, GraphicPack pack)
         {
             try {
-                string rpx = null;
-                var dir = Path.GetDirectoryName(Path.GetDirectoryName(game));
-
-                if (string.IsNullOrEmpty(dir))
-                    return false;
-
-                var files = Directory.GetFiles(dir, "*.rpx", SearchOption.AllDirectories);
-                if (files.Any())
-                    rpx = files.First();
-
                 var cemuPath = Path.Combine(Settings.CemuDirectory, "cemu.exe");
 
-                if (File.Exists(cemuPath) && File.Exists(rpx)) {
-                    pack?.Apply();
-                    RunCemu(cemuPath, rpx);
-                    pack?.Remove();
+                if (game.IsNullOrEmpty() && File.Exists(cemuPath)) {
+                    RunCemu(Path.Combine(Settings.CemuDirectory, "cemu.exe"), string.Empty);
                 }
                 else {
-                    SetStatus("Could not find a valid .rpx");
+                    string rpx = null;
+                    var dir = Path.GetDirectoryName(Path.GetDirectoryName(game));
+
+                    if (string.IsNullOrEmpty(dir))
+                        return false;
+
+                    var files = Directory.GetFiles(dir, "*.rpx", SearchOption.AllDirectories);
+                    if (files.Any())
+                        rpx = files.First();
+
+                    if (File.Exists(cemuPath) && File.Exists(rpx)) {
+                        pack?.Apply();
+                        RunCemu(cemuPath, rpx);
+                        pack?.Remove();
+                    }
+                    else {
+                        SetStatus("Could not find a valid .rpx");
+                    }
                 }
             }
             catch (Exception e) {

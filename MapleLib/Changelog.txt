@@ -1,6 +1,7 @@
 ### Change Log - 2.1.1.16
 - general fixes & improvements
 - Start Cemu without a title (CTRL + Click)
+- Change title selection using controller input (A to start)
 
 ### Change Log - 2.1.1.15 (07/07/2017)
 - general bug fixes

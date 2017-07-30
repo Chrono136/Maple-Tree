@@ -11,6 +11,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 using MapleCake.Models.Interfaces;
 using MapleCake.ViewModels;
 using MapleLib;
+using MapleLib.Abstract;
 using MapleLib.Collections;
 using MapleLib.Structs;
 using MapleLib.WiiU;
@@ -20,6 +21,8 @@ namespace MapleCake.Models
     public class ViewModelConfig : ViewModelBase
     {
         private readonly MainWindowViewModel _self;
+
+        private List<ICommandItem> _contextItems;
 
         private Dictionary<string, GraphicPack> _graphicPackCache =
             new Dictionary<string, GraphicPack>();
@@ -158,6 +161,7 @@ namespace MapleCake.Models
             set {
                 if (SelectedItem == null || value == null) return;
 
+                SelectedItem.SelectedGraphicPack = value;
                 _graphicPackCache[SelectedItem.ID] = value;
                 RaisePropertyChangedEvent("SelectedItemGraphicPack");
             }
@@ -183,12 +187,9 @@ namespace MapleCake.Models
 
         public MapleDictionary TitleList => Database.GetLibrary();
 
-        private List<ICommandItem> _contextItems;
-        public List<ICommandItem> ContextItems
-        {
+        public List<ICommandItem> ContextItems {
             get { return _contextItems; }
-            set
-            {
+            set {
                 _contextItems = MapleContext.CreateMenu();
                 RaisePropertyChangedEvent("SelectedItem");
                 RaisePropertyChangedEvent("ContextItems");

@@ -11,6 +11,7 @@ using System.Windows.Forms;
 using System.Windows.Input;
 using MapleCake.ViewModels;
 using MapleLib;
+using MapleLib.Abstract;
 using MapleLib.Common;
 using MapleLib.Properties;
 using MapleLib.Structs;
@@ -48,10 +49,7 @@ namespace MapleCake.Models
                     Toolbelt.LaunchCemu(string.Empty, null);
                     return;
                 }
-
-                var pack = MainWindowViewModel.Instance.Config.SelectedItemGraphicPack;
-                if (!Toolbelt.LaunchCemu(SelectedItem.MetaLocation, pack)) return;
-                TextLog.MesgLog.WriteLog($"Now Playing: {SelectedItem.Name}");
+                SelectedItem.PlayTitle();
             }).Start();
         }
 
@@ -150,16 +148,14 @@ namespace MapleCake.Models
             Title title;
 
             //download dlc if applicable
-            if (contentType == "DLC" && SelectedItem.HasDLC) {
+            if (contentType == "DLC" && SelectedItem.HasDLC)
                 if ((title = Database.FindTitle($"0005000C{SelectedItem.Lower8Digits()}")) != null)
                     await title.DownloadDLC();
-            }
 
             //download patch if applicable
-            if (contentType == "Patch" && SelectedItem.HasPatch) {
+            if (contentType == "Patch" && SelectedItem.HasPatch)
                 if ((title = Database.FindTitle($"0005000E{SelectedItem.Lower8Digits()}")) != null)
                     await title.DownloadUpdate(version);
-            }
 
             if (contentType == "eShop/Application")
                 await SelectedItem.DownloadContent(version);

@@ -10,6 +10,7 @@ using MapleCake.Models.ContextMenu;
 using MapleCake.Models.Interfaces;
 using MapleCake.ViewModels;
 using MapleLib;
+using MapleLib.Abstract;
 using MapleLib.Structs;
 
 namespace MapleCake.Models
@@ -65,13 +66,11 @@ namespace MapleCake.Models
 
             if (SelectedItem.HasPatch) {
                 foreach (var version in title.Versions)
-                {
                     items.Add(new CommandItem
                     {
                         Text = $"[+] Update -> v{version}",
                         Command = new CommandHandler(() => { DownloadContent("Patch", version); })
                     });
-                }
 
                 items.Add(new CommandItem
                 {
@@ -82,7 +81,12 @@ namespace MapleCake.Models
 
             var dir = Path.Combine(Settings.BasePatchDir, SelectedItem.Lower8Digits());
             if (File.Exists(Path.Combine(dir, "meta", "meta.xml")))
-                items.Add(new CommandItem {Text = "[-] Remove Update", ToolTip = "Remove Update", Command = Click.RemoveUpdate});
+                items.Add(new CommandItem
+                {
+                    Text = "[-] Remove Update",
+                    ToolTip = "Remove Update",
+                    Command = Click.RemoveUpdate
+                });
         }
 
         private static void CreateDlcItems(ICollection<ICommandItem> items)

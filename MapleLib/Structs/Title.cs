@@ -6,6 +6,7 @@
 using System;
 using System.ComponentModel;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using MapleLib.Common;
@@ -20,11 +21,23 @@ namespace MapleLib.Structs
     {
         public string FolderLocation { get; set; }
         public string MetaLocation { get; set; }
+        public GraphicPack SelectedGraphicPack { private get; set; }
 
         public override string ToString()
         {
             var cType = ContentType.Contains("App") ? "" : $"[{ContentType}]";
             return Toolbelt.RIC($"{cType}[{Region}] {Name}");
+        }
+
+        public void PlayTitle()
+        {
+            if (MetaLocation.IsNullOrEmpty())
+                return;
+
+            new Thread(() => {
+                if (!Toolbelt.LaunchCemu(MetaLocation, SelectedGraphicPack)) return;
+                TextLog.MesgLog.WriteLog($"Now Playing: {Name}");
+            }).Start();
         }
 
         public BindingList<GraphicPack> GetGraphicPacks()

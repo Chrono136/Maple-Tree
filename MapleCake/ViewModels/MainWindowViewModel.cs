@@ -10,9 +10,11 @@ using System.Windows;
 using System.Windows.Threading;
 using MapleCake.Models;
 using MapleLib;
+using MapleLib.Abstract;
 using MapleLib.Common;
 using MapleLib.Enums;
 using MapleLib.Structs;
+using MapleLib.XInput;
 
 namespace MapleCake.ViewModels
 {
@@ -28,6 +30,8 @@ namespace MapleCake.ViewModels
 
             Init();
         }
+
+        private static XInputController xInputController { get; set; }
 
         public static MainWindowViewModel Instance { get; private set; }
 
@@ -134,6 +138,9 @@ namespace MapleCake.ViewModels
             TextLog.MesgLog.WriteLog($"Game Directory [{Settings.LibraryDirectory}]");
 
             new Update(UpdateType.MapleSeed2).CheckForUpdate();
+
+            xInputController = new XInputController();
+            xInputController.Start(Config);
         }
 
         private void Database_DatabasesLoaded(object sender, EventArgs e)

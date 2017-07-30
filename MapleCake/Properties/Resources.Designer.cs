@@ -22,7 +22,7 @@ namespace MapleCake.Properties {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class Resources {
+    public class Resources {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
@@ -36,7 +36,7 @@ namespace MapleCake.Properties {
         ///   Returns the cached ResourceManager instance used by this class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Resources.ResourceManager ResourceManager {
+        public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
                     global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("MapleCake.Properties.Resources", typeof(Resources).Assembly);
@@ -51,7 +51,7 @@ namespace MapleCake.Properties {
         ///   resource lookups using this strongly typed resource class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Globalization.CultureInfo Culture {
+        public static global::System.Globalization.CultureInfo Culture {
             get {
                 return resourceCulture;
             }
@@ -63,7 +63,7 @@ namespace MapleCake.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Confirmation.
         /// </summary>
-        internal static string Confirmation {
+        public static string Confirmation {
             get {
                 return ResourceManager.GetString("Confirmation", resourceCulture);
             }
@@ -73,7 +73,7 @@ namespace MapleCake.Properties {
         ///   Looks up a localized string similar to Would you like to download &quot;{0}&quot; to the following location?
         ///&quot;{1}&quot;.
         /// </summary>
-        internal static string ConfirmDownload {
+        public static string ConfirmDownload {
             get {
                 return ResourceManager.GetString("ConfirmDownload", resourceCulture);
             }

@@ -15,9 +15,9 @@
         <Image HorizontalAlignment="Center" Height="550" Width="395" VerticalAlignment="Top" Stretch="UniformToFill" Source="{Binding Config.BackgroundImage}"/>
         <Rectangle HorizontalAlignment="Center" Height="550" Width="395" VerticalAlignment="Top" Fill="#D8000000"/>
 
-        <TabControl Width="389">
-            <TabItem Header="Library">
-                <Grid>
+        <TabControl Width="389" Background="{x:Null}">
+            <TabItem Header="Library" Background="{x:Null}">
+                <Grid Background="{x:Null}">
                     <ListBox ItemsSource="{Binding Config.TitleList}" SelectedItem="{Binding Config.SelectedItem}" PreviewMouseRightButtonDown="UIElement_OnPreviewMouseRightButtonDown" Margin="0,10,0,65" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="White">
                         <ListBox.ContextMenu>
                             <ContextMenu Closed="OnContextMenuClosing" ItemsSource="{Binding Config.ContextItems}" UsesItemContainerTemplate="True"/>

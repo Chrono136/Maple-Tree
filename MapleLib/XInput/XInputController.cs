@@ -43,14 +43,20 @@ namespace MapleLib.XInput
                     var previousState = controller.GetState();
                     while (!Process.GetCurrentProcess().HasExited) {
                         var state = controller.GetState();
+                        state.Gamepad.LeftThumbX = 0;
+                        state.Gamepad.LeftThumbY = 0;
+                        state.Gamepad.RightThumbX = 0;
+                        state.Gamepad.RightThumbY = 0;
+                        state.Gamepad.LeftTrigger = 0;
+                        state.Gamepad.RightTrigger = 0;
 
-                        if (previousState.PacketNumber != state.PacketNumber)
+                        if (!previousState.Gamepad.Equals(state.Gamepad))
                             if (state.Gamepad.Buttons != 0) {
                                 DPadButtonPress(state.Gamepad);
                                 FaceButtonPress(state.Gamepad);
                             }
 
-                        await Task.Delay(50);
+                        await Task.Delay(1);
                         previousState = state;
                     }
                 }

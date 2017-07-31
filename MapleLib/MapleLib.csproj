@@ -387,6 +387,7 @@
     <Compile Include="ThirdParty\Newtonsoft.Json\WriteState.cs" />
     <Compile Include="Common\Toolbelt.cs" />
     <Compile Include="WiiU\MapleTicket.cs" />
+    <Compile Include="XInput\MController.cs" />
     <Compile Include="XInput\XInputController.cs" />
   </ItemGroup>
   <ItemGroup>

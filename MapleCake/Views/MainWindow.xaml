@@ -65,6 +65,24 @@
                     </ScrollViewer>
                 </Grid>
             </TabItem>
+
+            <TabItem Header="Help" Background="{x:Null}">
+                <Grid Background="{x:Null}">
+                    <TextBlock Text="General" HorizontalAlignment="Left" Height="23" Margin="10,10,0,0" VerticalAlignment="Top" Width="120" Background="{x:Null}" Foreground="White" TextAlignment="Center" FontWeight="Bold" TextDecorations="Underline" FontSize="16"/>
+                    <TextBlock Text="No Title Launch: Hold CTRL and click the current title." HorizontalAlignment="Left" Height="30" Margin="10,40,0,0" VerticalAlignment="Top" Width="363" Background="{x:Null}" Foreground="White" TextWrapping="Wrap"/>
+                    <TextBlock Text="Update Version: Right click the desired title and click a version." HorizontalAlignment="Left" Height="30" Margin="10,70,0,0" VerticalAlignment="Top" Width="363" Background="{x:Null}" Foreground="White" TextWrapping="Wrap"/>
+
+                    <TextBlock Text="Control Panel" HorizontalAlignment="Left" Height="23" Margin="10,140,0,0" VerticalAlignment="Top" Width="120" Background="{x:Null}" Foreground="White" TextAlignment="Center" FontWeight="Bold" TextDecorations="Underline" FontSize="16"/>
+                    <TextBlock Text="Download: Input the Title ID in the long textbox. Click Download." HorizontalAlignment="Left" Height="30" Margin="10,170,0,0" VerticalAlignment="Top" Width="363" Background="{x:Null}" Foreground="White" TextWrapping="Wrap"/>
+                    <TextBlock Text="Custom Version: Modify the default 0, to the desired version." HorizontalAlignment="Left" Height="30" Margin="10,200,0,0" VerticalAlignment="Top" Width="363" Background="{x:Null}" Foreground="White" TextWrapping="Wrap"/>
+
+                    <TextBlock Text="Controllers" HorizontalAlignment="Left" Height="23" Margin="10,269,0,0" VerticalAlignment="Top" Width="120" Background="{x:Null}" Foreground="White" TextAlignment="Center" FontWeight="Bold" TextDecorations="Underline" FontSize="16"/>
+                    <TextBlock Text="Next Game: D-Pad Down" HorizontalAlignment="Left" Height="23" Margin="10,299,0,0" VerticalAlignment="Top" Width="150" Background="{x:Null}" Foreground="White"/>
+                    <TextBlock Text="Previous Game: D-Pad Up" HorizontalAlignment="Left" Height="23" Margin="10,329,0,0" VerticalAlignment="Top" Width="150" Background="{x:Null}" Foreground="White"/>
+                    <TextBlock Text="Start Game: A Button" HorizontalAlignment="Left" Height="23" Margin="10,359,0,0" VerticalAlignment="Top" Width="150" Background="{x:Null}" Foreground="White"/>
+                    <TextBlock Text="Exit Cmeu: Back + Start" HorizontalAlignment="Left" Height="23" Margin="10,389,0,0" VerticalAlignment="Top" Width="150" Background="{x:Null}" Foreground="White"/>
+                </Grid>
+            </TabItem>
         </TabControl>
 
     </Grid>

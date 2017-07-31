@@ -10,6 +10,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml;
@@ -18,6 +19,8 @@ using MapleLib.Network;
 using MapleLib.Properties;
 using MapleLib.Structs;
 using Application = System.Windows.Application;
+
+// ReSharper disable UnusedMember.Global
 
 namespace MapleLib.Common
 {
@@ -35,12 +38,13 @@ namespace MapleLib.Common
 
             var values = doc.GetElementsByTagName("id").Cast<XmlNode>().ToList();
             var value = values.Find(x => x.InnerText.Contains(code));
-            var imageCode = value.InnerText;
+            var imageCode = value?.InnerText;
+
+            if (imageCode.IsNullOrEmpty())
+                return string.Empty;
 
             var cacheDir = Path.Combine(Settings.ConfigDirectory, "cache");
-
-            if (!Directory.Exists(cacheDir))
-                Directory.CreateDirectory(cacheDir);
+            if (!Directory.Exists(cacheDir)) Directory.CreateDirectory(cacheDir);
 
             string cachedFile;
             if (File.Exists(cachedFile = Path.Combine(cacheDir, $"{imageCode}.jpg")))
@@ -70,7 +74,10 @@ namespace MapleLib.Common
                 return false;
 
             try {
+                // ReSharper disable once UnusedVariable
                 var fileName = Path.GetFileName(path);
+
+                // ReSharper disable once UnusedVariable
                 var fileDirectory = Path.GetFullPath(path);
             }
             catch (ArgumentException) {
@@ -187,7 +194,10 @@ namespace MapleLib.Common
                     box.ScrollToCaret();
                 }
             }
-            catch (Exception) {}
+            catch (Exception e) {
+                TextLog.Write(e.Message);
+                TextLog.Write(e.StackTrace);
+            }
         }
 
         public static string TimeStamp(this DateTime dateTime)
@@ -204,28 +214,26 @@ namespace MapleLib.Common
         {
             var action = new Action(() => collection.Add(item));
 
-            if (Application.Current == null) {
-                action.DynamicInvoke();
-            }
-            else {
-                await Application.Current.Dispatcher.BeginInvoke(action);
-            }
+            if (Application.Current == null) action.DynamicInvoke();
+            else await Application.Current.Dispatcher.BeginInvoke(action);
         }
 
         public static DialogResult STAShowDialog(this CommonDialog dialog)
         {
             var state = new DialogState {dialog = dialog};
-            System.Threading.Thread t = new System.Threading.Thread(state.ThreadProcShowDialog);
-            t.SetApartmentState(System.Threading.ApartmentState.STA);
+            var t = new Thread(state.ThreadProcShowDialog);
+            t.SetApartmentState(ApartmentState.STA);
             t.Start();
             t.Join();
             return state.result;
         }
 
+        #region Nested type: DialogState
+
         private class DialogState
         {
-            public DialogResult result;
             public CommonDialog dialog;
+            public DialogResult result;
 
 
             public void ThreadProcShowDialog()
@@ -233,5 +241,7 @@ namespace MapleLib.Common
                 result = dialog.ShowDialog();
             }
         }
+
+        #endregion
     }
 }

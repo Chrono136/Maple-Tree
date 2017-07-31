@@ -52,16 +52,14 @@ If you would like to make a donation to this project, please use the Paypal link
 - DLC
 - Dynamic Background
 - Auto Apply Graphic Packs (Credits: https://github.com/slashiee/cemu_graphic_packs)
+- Controller Input
 
-### MapleSeed Lite
+### MapleSeed Lite - Discontinued / Unsupported
  - Title Launching
  - Dynamic theme
 # 
 ## MapleSeed Version 2 - Preview
-![MS Version 2](https://u.pixxy.in/Y6ejiL.png)
+![MS Version 2](https://u.pixxy.in/7Vizh3.png)
 # 
 ## MapleSeed Version 1 - Preview
-![MS Version 1](https://u.pixxy.in/66TWZU.png)
-# 
-## MapleSeed Lite - Preview
-![MS Lite](https://u.pixxy.in/WAjCN.gif)
+![MS Version 1](https://u.pixxy.in/2iOi3V.png)

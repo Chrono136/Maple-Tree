@@ -144,6 +144,8 @@
     <Compile Include="Enums\UpdateType.cs" />
     <Compile Include="Interfaces\IDatabase.cs" />
     <Compile Include="Database.cs" />
+    <Compile Include="Network\Downloader.cs" />
+    <Compile Include="Network\DownloadQueue.cs" />
     <Compile Include="Network\WiiuClient.cs" />
     <Compile Include="ThirdParty\IniFileParser\Exceptions\ParsingException.cs" />
     <Compile Include="ThirdParty\IniFileParser\FileIniParser.cs" />

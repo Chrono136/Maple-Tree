@@ -30,6 +30,26 @@ namespace MapleLib.Network
             if (string.IsNullOrEmpty(title.FolderLocation))
                 title.FolderLocation = Path.GetFullPath(Path.Combine(Settings.LibraryDirectory, $"{title}"));
 
+            #region Output Directory
+
+            var workingId = title.ID.ToUpper();
+
+            if (contentType == "Patch") {
+                workingId = $"0005000E{workingId.Substring(8)}";
+
+                if (Settings.Cemu173Patch)
+                    title.FolderLocation = Path.Combine(Settings.BasePatchDir, workingId.Substring(8));
+            }
+
+            if (contentType == "DLC") {
+                workingId = $"0005000C{workingId.Substring(8)}";
+
+                if (Settings.Cemu173Patch)
+                    title.FolderLocation = Path.Combine(Settings.BasePatchDir, workingId.Substring(8), "aoc");
+            }
+
+            #endregion
+
             await Database.DownloadTitle(title.ID, title.FolderLocation, contentType, version);
         }
 

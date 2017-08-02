@@ -35,6 +35,9 @@ namespace MapleLib
             if (WiiuTitles == null)
                 WiiuTitles = new WiiuTitleDatabase(LiteDatabase);
 
+            if (Downloader == null)
+                Downloader = new Downloader();
+
             Task.Run(async () => {
                 while (DatabaseLoaded == null || DatabaseCount < MaxDatabaseCount)
                     await Task.Delay(250);
@@ -44,11 +47,14 @@ namespace MapleLib
         }
 
         private static GraphicPackDatabase GraphicPacks { get; }
+
         private static WiiuTitleDatabase WiiuTitles { get; }
 
         private static LiteDatabase LiteDatabase { get; }
 
         private static LiteCollection<Config> SettingsCollection { get; }
+
+        private static Downloader Downloader { get; }
 
         private static int MaxDatabaseCount => 2;
 
@@ -105,7 +111,8 @@ namespace MapleLib
 
         public static Task DownloadTitle(string titleID, string titleFolderLocation, string contentType, string version)
         {
-            return WiiuClient.DownloadTitle(titleID, titleFolderLocation, contentType, version);
+            return Task.Run(() => Downloader.AddToQueue(titleID, titleFolderLocation, contentType, version));
+            //return WiiuClient.DownloadTitle(titleID, titleFolderLocation, contentType, version);
         }
 
         public static void RegisterEvent(EventHandler<ProgressReport> onEvent)

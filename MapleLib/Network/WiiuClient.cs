@@ -60,7 +60,6 @@ namespace MapleLib.Network
 
             version = int.Parse(version) == 0 ? "" : $".{version}";
             if (await DownloadTmd(titleUrl + $"tmd{version}", tmdFile) == null) {
-                //var url = $"https://pixxy.in/tmd/?key={key.ToLower()}&title={id.ToLower()}&type=tmd";
                 var url = $"http://ccs.cdn.wup.shop.nintendo.net/ccs/download/{id.ToLower()}/tmd";
 
                 await DownloadTmd(url, tmdFile);
@@ -78,20 +77,6 @@ namespace MapleLib.Network
             #region Setup
 
             var workingId = id.ToUpper();
-
-            if (contentType == "Patch") {
-                workingId = $"0005000E{workingId.Substring(8)}";
-
-                if (Settings.Cemu173Patch)
-                    outputDir = Path.Combine(Settings.BasePatchDir, workingId.Substring(8));
-            }
-
-            if (contentType == "DLC") {
-                workingId = $"0005000C{workingId.Substring(8)}";
-
-                if (Settings.Cemu173Patch)
-                    outputDir = Path.Combine(Settings.BasePatchDir, workingId.Substring(8), "aoc");
-            }
 
             Title title;
             if ((title = Database.FindTitle(workingId)) == null)

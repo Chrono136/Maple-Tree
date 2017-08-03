@@ -415,10 +415,9 @@
     <None Include="Resources\eShopAndDiskTitles.txt" />
     <None Include="Resources\eShopTitleUpdates.txt" />
     <None Include="Resources\eShopTitleDLC.txt" />
-    <Content Include="Resources\images\Green_Light.ico" />
-    <Content Include="Resources\images\Red_Light.ico" />
     <None Include="Resources\libeay32.dll" />
     <None Include="Resources\msvcr120d.dll" />
+    <Content Include="Resources\images\CEMU.jpg" />
     <Content Include="Resources\Seed-icon.png" />
     <Content Include="Resources\Seed.ico" />
     <None Include="Resources\wiiutdb.xml" />

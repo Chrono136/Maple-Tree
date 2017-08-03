@@ -4,6 +4,7 @@
 // 
 
 using System;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
@@ -82,7 +83,12 @@ namespace MapleCake.ViewModels
                 return;
 
             if (title == null) {
-                Config.BackgroundImage = string.Empty;
+                var path = Path.Combine(Settings.ConfigDirectory, "cache", "cemu.jpg");
+
+                if (!File.Exists(path))
+                    MapleLib.Properties.Resources.CEMU.Save(path);
+
+                Config.BackgroundImage = path;
             }
             else {
                 if (string.IsNullOrEmpty(title.ImageLocation))

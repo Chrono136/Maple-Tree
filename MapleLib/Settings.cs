@@ -157,8 +157,8 @@ namespace MapleLib
 
         private static void Application_ThreadException(object sender, ThreadExceptionEventArgs e)
         {
-            File.WriteAllText("error.log",
-                string.Format(Resources.ThreadException, e.Exception.Message, e.Exception.StackTrace));
+            var ex = e.Exception;
+            File.WriteAllText("error.log", string.Format(Resources.ThreadException, ex.Message, ex.StackTrace));
             MessageBox.Show(@"error.log has been created containing details of this error.");
         }
 

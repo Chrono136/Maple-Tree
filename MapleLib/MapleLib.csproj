@@ -139,6 +139,7 @@
     <Compile Include="Common\Extensions.cs" />
     <Compile Include="Common\Update.cs" />
     <Compile Include="BaseClasses\Config.cs" />
+    <Compile Include="Databases\DatabaseEditor.cs" />
     <Compile Include="Databases\GraphicPackDatabase.cs" />
     <Compile Include="Databases\WiiuTitleDatabase.cs" />
     <Compile Include="Enums\UpdateType.cs" />

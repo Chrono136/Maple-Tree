@@ -59,7 +59,7 @@ If you would like to make a donation to this project, please use the Paypal link
  - Dynamic theme
 # 
 ## MapleSeed Version 2 - Preview
-![MS Version 2](https://u.pixxy.in/7Vizh3.png)
+![MS Version 2](http://u.pixxy.in/BM7t29.png)
 # 
 ## MapleSeed Version 1 - Preview
-![MS Version 1](https://u.pixxy.in/2iOi3V.png)
+![MS Version 1](http://u.pixxy.in/qZTqZa.png)

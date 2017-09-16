@@ -15,6 +15,7 @@ namespace MapleLib.Databases
         public void Dispose()
         {
             DatabaseState = null;
+
         }
     }
 }

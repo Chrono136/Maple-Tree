@@ -140,6 +140,13 @@
     <Compile Include="Common\Update.cs" />
     <Compile Include="BaseClasses\Config.cs" />
     <Compile Include="Databases\DatabaseEditor.cs" />
+    <Compile Include="Databases\Editor\UI\EditorForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Databases\Editor\UI\EditorForm.Designer.cs">
+      <DependentUpon>EditorForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Databases\Editor\UserInterfaceManager.cs" />
     <Compile Include="Databases\GraphicPackDatabase.cs" />
     <Compile Include="Databases\WiiuTitleDatabase.cs" />
     <Compile Include="Enums\UpdateType.cs" />
@@ -431,6 +438,9 @@
     <Content Include="ThirdParty\Newtonsoft.Json\Newtonsoft.Json.Portable40.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Databases\Editor\UI\EditorForm.resx">
+      <DependentUpon>EditorForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>

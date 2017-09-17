@@ -1,19 +1,37 @@
 ﻿using MapleLib.Collections;
+using MapleLib.Databases.Editor.UI;
 using MapleLib.Structs;
-using MapleLib.Databases.Editor;
+using System;
 
 namespace MapleLib.Databases
 {
-    public class DatabaseEditor
+    public class DatabaseEditor : IDisposable
     {
+        public EditorForm Form;
+
         private MapleList<Title> DatabaseState;
-        private UserInterfaceManager UIManager;
 
         public DatabaseEditor()
         {
             DatabaseState = new MapleList<Title>(Database.GetLibrary());
+            InitializeForm();
+        }
 
-            UIManager.Activate();
+        private void InitializeForm()
+        {
+            Form = new EditorForm();
+            Form.dataGridView1.DataSource = Database.GetTitles();
+        }
+
+        public void ToggleUI()
+        {
+            if (Form.Disposing || Form.IsDisposed)
+                InitializeForm();
+
+            if (Form.Visible)
+                Form.Hide();
+            else
+                Form.Show();
         }
 
         public void AddEntry(Title title)
@@ -27,9 +45,31 @@ namespace MapleLib.Databases
             return DatabaseState.Remove(title);
         }
 
+        #region IDisposable Support
+        private bool disposedValue = false; // To detect redundant calls
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    Form.Hide();
+                    Form.Dispose();
+                    Form = null;
+                }
+
+                // TODO: free unmanaged resources (unmanaged objects) and override a finalizer below.
+                // TODO: set large fields to null.
+
+                disposedValue = true;
+            }
+        }
+
         public void Dispose()
         {
-            DatabaseState = null;
+            Dispose(true);
         }
+        #endregion
     }
 }

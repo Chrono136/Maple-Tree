@@ -146,7 +146,6 @@
     <Compile Include="Databases\Editor\UI\EditorForm.Designer.cs">
       <DependentUpon>EditorForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Databases\Editor\UserInterfaceManager.cs" />
     <Compile Include="Databases\GraphicPackDatabase.cs" />
     <Compile Include="Databases\WiiuTitleDatabase.cs" />
     <Compile Include="Enums\UpdateType.cs" />

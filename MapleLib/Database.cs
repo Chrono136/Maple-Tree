@@ -94,6 +94,11 @@ namespace MapleLib
             return WiiuTitles.Find(id.ToUpperInvariant()).FirstOrDefault();
         }
 
+        public static System.Collections.Generic.IEnumerable<Title> GetTitles()
+        {
+            return WiiuTitles.All();
+        }
+
         public static MapleList<GraphicPack> FindGraphicPacks(string id)
         {
             return GraphicPacks.Find(id.ToUpperInvariant());

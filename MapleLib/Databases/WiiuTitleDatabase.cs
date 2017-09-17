@@ -89,6 +89,14 @@ namespace MapleLib.Databases
         }
 
         #endregion
+        
+        public IEnumerable<Title> All()
+        {
+            var col = LiteDatabase.GetCollection<Title>(CollectionName);
+            var items = col.Find(x => x.Name != null);
+            items = items.Where(x => x.AvailableOnCDN);
+            return new MapleList<Title>(items);
+        }
 
         private static async Task<MapleList<Title>> Create()
         {

@@ -19,8 +19,13 @@ namespace MapleLib.Structs
     [Serializable]
     public class Title : eShopTitle
     {
+        [Browsable(false)]
         public string FolderLocation { get; set; }
+
+        [Browsable(false)]
         public string MetaLocation { get; set; }
+
+        [Browsable(false)]
         public GraphicPack SelectedGraphicPack { private get; set; }
 
         public override string ToString()

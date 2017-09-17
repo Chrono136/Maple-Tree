@@ -15,6 +15,7 @@ using MapleLib.Abstract;
 using MapleLib.Common;
 using MapleLib.Properties;
 using MapleLib.Structs;
+using MapleLib.Databases;
 
 namespace MapleCake.Models
 {
@@ -23,7 +24,9 @@ namespace MapleCake.Models
     {
         private static Title SelectedItem => MainWindowViewModel.Instance.Config.SelectedItem;
         private static string TitleID => MainWindowViewModel.Instance.Config.TitleID;
+        private static DatabaseEditor dbEditor { get; set; }
 
+        public ICommand EditorUI => new CommandHandler(EditorUIButton);
         public ICommand Uninstall => new CommandHandler(UninstallButton);
         public ICommand LaunchCemu => new CommandHandler(LaunchCemuButton);
         public ICommand Download => new CommandHandler(DownloadButton);
@@ -33,6 +36,13 @@ namespace MapleCake.Models
         public ICommand RemoveDLC => new CommandHandler(RemoveDLCButton);
         public ICommand RemoveTitle => new CommandHandler(RemoveTitleButton);
         public ICommand TitleIdToClipboard => new CommandHandler(TitleIdToClipboardButton);
+
+        private static void EditorUIButton()
+        {
+            if (dbEditor == null)
+                dbEditor = new DatabaseEditor();
+            dbEditor.ToggleUI();
+        }
 
         private void UninstallButton()
         {

@@ -54,7 +54,8 @@
                     <TextBox Text="{Binding Config.LibraryDirectory}" TextAlignment="Center" Height="23" TextWrapping="Wrap" VerticalAlignment="Bottom" Margin="25,0,25,95"/>
                     <TextBox Text="{Binding Config.CemuDirectory}" TextAlignment="Center" Height="23" TextWrapping="Wrap" VerticalAlignment="Bottom" Margin="25,0,25,65"/>
 
-                    <Button Content="Uninstall" Command="{Binding Click.Uninstall}" HorizontalAlignment="Center" Margin="283,267,10,0" VerticalAlignment="Top" FontWeight="Bold" Width="90" Background="{x:Null}" Foreground="White"/>
+                    <Button Content="Uninstall" Command="{Binding Click.Uninstall}" HorizontalAlignment="Center" Margin="281,267,12,0" VerticalAlignment="Top" FontWeight="Bold" Width="90" Background="{x:Null}" Foreground="White"/>
+                    <Button Content="DB Editor" Command="{Binding Click.EditorUI}" HorizontalAlignment="Center" Margin="281,300,12,0" VerticalAlignment="Top" FontWeight="Bold" Width="90" Background="{x:Null}" Foreground="White"/>
                 </Grid>
             </TabItem>
 

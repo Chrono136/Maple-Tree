@@ -165,9 +165,9 @@ namespace MapleLib.Databases
                 foreach (var title in db.Where(x => x.ContentType == "eShop/Application")) {
                     var id = $"0005000C{title.Lower8Digits().ToUpper()}";
 
-                    JObject _title;
-                    if ((_title = WiiUTitleKey(titlekeys, id)) != null)
-                        title.HasDLC = _title.HasValues;
+                    JObject jtitle;
+                    if ((jtitle = WiiUTitleKey(titlekeys, id)) != null)
+                        title.HasDLC = jtitle.HasValues;
                 }
             });
 
@@ -189,11 +189,11 @@ namespace MapleLib.Databases
 
             foreach (var xmlFile in xmlFiles) {
                 var rootDir = Path.GetFullPath(Path.Combine(xmlFile, "../../"));
-                var titleID = Helper.XmlGetStringByTag(xmlFile, "title_id");
+                var titleId = Helper.XmlGetStringByTag(xmlFile, "title_id");
 
                 Title title;
-                if ((title = Database.FindTitle(titleID)) == null) {
-                    TextLog.Write($"Could not find title using ID {titleID}");
+                if ((title = Database.FindTitle(titleId)) == null) {
+                    TextLog.Write($"Could not find title using ID {titleId}");
                     continue;
                 }
 

@@ -12,27 +12,28 @@ namespace MapleLib.Databases.Managers
 
         public EditorForm Form;
 
-        private MapleList<Title> DatabaseState;
-        private BindingSource BindingSource;
+        private readonly MapleList<Title> _databaseState;
+        private readonly BindingSource _bindingSource;
 
         public WiiUManager()
         {
-            DatabaseState = new MapleList<Title>(Database.GetTitles());
-            
-            BindingSource = new BindingSource();
-            BindingSource.DataSource = DatabaseState;
+            _databaseState = new MapleList<Title>(Database.GetTitles());
+
+            _bindingSource = new BindingSource {DataSource = _databaseState};
 
             InitializeForm();
         }
 
         private void InitializeForm()
         {
-            Form = new EditorForm();
-            Form.dataGridView1.DataSource = BindingSource;
-            Form.bindingNavigator1.BindingSource = BindingSource;
+            Form = new EditorForm
+            {
+                dataGridView1 = {DataSource = _bindingSource},
+                bindingNavigator1 = {BindingSource = _bindingSource}
+            };
         }
 
-        public void ToggleUI()
+        public void ToggleUi()
         {
             if (Form.Disposing || Form.IsDisposed)
                 InitializeForm();
@@ -45,21 +46,21 @@ namespace MapleLib.Databases.Managers
 
         public void AddEntry(Title title)
         {
-            if (!DatabaseState.Contains(title))
-                DatabaseState.Add(title);
+            if (!_databaseState.Contains(title))
+                _databaseState.Add(title);
         }
 
         public bool RemoveEntry(Title title)
         {
-            return DatabaseState.Remove(title);
+            return _databaseState.Remove(title);
         }
 
         #region IDisposable Support
-        private bool disposedValue = false; // To detect redundant calls
+        private bool _disposedValue;
 
         protected virtual void Dispose(bool disposing)
         {
-            if (!disposedValue)
+            if (!_disposedValue)
             {
                 if (disposing)
                 {
@@ -71,7 +72,7 @@ namespace MapleLib.Databases.Managers
                 // TODO: free unmanaged resources (unmanaged objects) and override a finalizer below.
                 // TODO: set large fields to null.
 
-                disposedValue = true;
+                _disposedValue = true;
             }
         }
 

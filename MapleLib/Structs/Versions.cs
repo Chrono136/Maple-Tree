@@ -5,10 +5,14 @@ namespace MapleLib.Structs
 {
     public class Versions : List<int>
     {
-        public Versions() { }
+        public Versions()
+        {
+        }
 
-        public Versions(int[] collection) : base(collection) { }
-        
+        public Versions(IEnumerable<int> collection) : base(collection)
+        {
+        }
+
         public string GetString()
         {
             return this.Aggregate(string.Empty, (current, update) => current + $"{update} ");
@@ -30,11 +34,9 @@ namespace MapleLib.Structs
             var intList = new List<int>();
             foreach (var s in strList)
             {
-                var i = 0;
+                int i;
                 if (int.TryParse(s, out i))
-                {
                     intList.Add(i);
-                }
             }
             return new Versions(intList.ToArray());
         }
@@ -44,7 +46,7 @@ namespace MapleLib.Structs
             return f.GetString();
         }
 
-        public static explicit operator int[] (Versions f)
+        public static explicit operator int[](Versions f)
         {
             return f.ToArray();
         }

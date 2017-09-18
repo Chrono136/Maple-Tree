@@ -15,6 +15,7 @@ using MapleLib.Abstract;
 using MapleLib.Common;
 using MapleLib.Properties;
 using MapleLib.Structs;
+using MapleLib.Databases.Managers;
 
 namespace MapleCake.Models
 {
@@ -33,7 +34,7 @@ namespace MapleCake.Models
         public ICommand RemoveDLC => new CommandHandler(RemoveDLCButton);
         public ICommand RemoveTitle => new CommandHandler(RemoveTitleButton);
         public ICommand TitleIdToClipboard => new CommandHandler(TitleIdToClipboardButton);
-        public ICommand EditorUI => new CommandHandler(MapleLib.Databases.Managers.WiiUManager.Instance.ToggleUI);
+        public ICommand EditorUI => new CommandHandler(WiiUManager.Instance.ToggleUi);
         
         private void UninstallButton()
         {
@@ -79,7 +80,7 @@ namespace MapleCake.Models
 
         private static async void AddUpdateButton()
         {
-            int version = 0;
+            int version;
             if (int.TryParse(MainWindowViewModel.Instance.Config.TitleVersion, out version))
                 await DownloadContentClick("Patch", version);
         }

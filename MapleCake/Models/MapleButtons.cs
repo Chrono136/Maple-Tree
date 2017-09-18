@@ -33,7 +33,7 @@ namespace MapleCake.Models
         public ICommand RemoveDLC => new CommandHandler(RemoveDLCButton);
         public ICommand RemoveTitle => new CommandHandler(RemoveTitleButton);
         public ICommand TitleIdToClipboard => new CommandHandler(TitleIdToClipboardButton);
-        public ICommand EditorUI => new CommandHandler(MapleLib.Databases.Managers.DatabaseEditor.Instance.ToggleUI);
+        public ICommand EditorUI => new CommandHandler(MapleLib.Databases.Managers.WiiUManager.Instance.ToggleUI);
         
         private void UninstallButton()
         {

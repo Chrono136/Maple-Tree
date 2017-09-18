@@ -63,7 +63,7 @@ namespace MapleCake.Models
 
             if (SelectedItem.HasPatch || SelectedItem.HasDLC)
                 items.Add(new SeparatorCommandItem());
-
+            
             if (SelectedItem.HasPatch) {
                 foreach (var version in title.Versions)
                     items.Add(new CommandItem
@@ -103,7 +103,7 @@ namespace MapleCake.Models
 
         private static async void DownloadContent(string type, int version)
         {
-            await MapleButtons.DownloadContentClick(type, version.ToString());
+            await MapleButtons.DownloadContentClick(type, version);
         }
     }
 }

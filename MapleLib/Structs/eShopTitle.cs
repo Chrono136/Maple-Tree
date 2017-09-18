@@ -3,20 +3,16 @@
 // Updated By: Jared
 // 
 
+using MapleLib.Common;
 using System;
 using System.Text.RegularExpressions;
-using MapleLib.Common;
-using MapleLib.Interfaces;
-using System.Collections.Generic;
 
 namespace MapleLib.Structs
 {
     [Serializable]
-    public class eShopTitle : ITitle
+    public class eShopTitle
     {
-
-        #region ITitle Members
-
+        private string _name;
         public string Name
         {
             get
@@ -28,19 +24,28 @@ namespace MapleLib.Structs
         }
 
         public string ID { get; set; }
+
         public string Key { get; set; }
 
-        #endregion
-        private string _name;
         public string ProductCode { get; set; }
+
         public string CompanyCode { get; set; }
+
         public string Region { get; set; }
-        public int[] Versions { get; set; } = {0};
-        public IEnumerable<int> Versions2 { get; set; } = new[] { 1,2,3,4 };
+
+        public Versions Versions { get; set; } = "0";
+
         public bool HasDLC { get; set; }
-        public bool HasPatch => Versions.Length > 1;
+
+        public bool HasPatch => Versions.Count > 1;
+
+        [System.ComponentModel.Browsable(false)]
         public bool AvailableOnCDN { get; set; }
+
+        [System.ComponentModel.Browsable(false)]
         public string ImageLocation { get; set; }
+
+        [System.ComponentModel.Browsable(false)]
         public string Notes { get; set; }
 
         public string ContentType {

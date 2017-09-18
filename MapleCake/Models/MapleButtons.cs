@@ -88,10 +88,9 @@ namespace MapleCake.Models
 
         private static async void AddUpdateButton()
         {
-            int result;
-            var vers = MainWindowViewModel.Instance.Config.TitleVersion;
-            var version = int.TryParse(vers, out result) ? result.ToString() : "0";
-            await DownloadContentClick("Patch", version);
+            int version = 0;
+            if (int.TryParse(MainWindowViewModel.Instance.Config.TitleVersion, out version))
+                await DownloadContentClick("Patch", version);
         }
 
         private static async void RemoveUpdateButton()
@@ -144,7 +143,7 @@ namespace MapleCake.Models
             MainWindowViewModel.Instance.RaisePropertyChangedEvent(propertyName);
         }
 
-        public static async Task DownloadContentClick(string contentType, string version = "0")
+        public static async Task DownloadContentClick(string contentType, int version = 0)
         {
             if (SelectedItem == null)
                 throw new NullReferenceException("Title is null or empty, can't proceed!");
@@ -165,10 +164,10 @@ namespace MapleCake.Models
             //download patch if applicable
             if (contentType == "Patch" && SelectedItem.HasPatch)
                 if ((title = Database.FindTitle($"0005000E{SelectedItem.Lower8Digits()}")) != null)
-                    await title.DownloadUpdate(version);
+                    await title.DownloadUpdate(version.ToString());
 
             if (contentType == "eShop/Application")
-                await SelectedItem.DownloadContent(version);
+                await SelectedItem.DownloadContent(version.ToString());
         }
     }
 }

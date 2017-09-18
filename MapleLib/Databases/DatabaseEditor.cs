@@ -2,6 +2,7 @@
 using MapleLib.Databases.Editor.UI;
 using MapleLib.Structs;
 using System;
+using System.Windows.Forms;
 
 namespace MapleLib.Databases
 {
@@ -10,17 +11,23 @@ namespace MapleLib.Databases
         public EditorForm Form;
 
         private MapleList<Title> DatabaseState;
+        private BindingSource BindingSource;
 
         public DatabaseEditor()
         {
-            DatabaseState = new MapleList<Title>(Database.GetLibrary());
+            DatabaseState = new MapleList<Title>(Database.GetTitles());
+            
+            BindingSource = new BindingSource();
+            BindingSource.DataSource = DatabaseState;
+
             InitializeForm();
         }
 
         private void InitializeForm()
         {
             Form = new EditorForm();
-            Form.dataGridView1.DataSource = Database.GetTitles();
+            Form.dataGridView1.DataSource = BindingSource;
+            Form.bindingNavigator1.BindingSource = BindingSource;
         }
 
         public void ToggleUI()

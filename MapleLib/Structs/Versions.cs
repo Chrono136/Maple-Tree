@@ -1,17 +1,20 @@
-﻿using System.Collections.Generic;
+﻿// Created: 2017/09/17 10:25 PM
+// Updated: 2017/09/29 1:51 AM
+// 
+// Project: MapleLib
+// Filename: Versions.cs
+// Created By: Jared T
+
+using System.Collections.Generic;
 using System.Linq;
 
 namespace MapleLib.Structs
 {
     public class Versions : List<int>
     {
-        public Versions()
-        {
-        }
+        public Versions() { }
 
-        public Versions(IEnumerable<int> collection) : base(collection)
-        {
-        }
+        public Versions(IEnumerable<int> collection) : base(collection) { }
 
         public string GetString()
         {

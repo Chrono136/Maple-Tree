@@ -1,7 +1,9 @@
-﻿// Project: MapleLib
-// File: GraphicPacks.cs
-// Updated By: Jared
+﻿// Created: 2017/05/14 5:33 AM
+// Updated: 2017/09/29 1:51 AM
 // 
+// Project: MapleLib
+// Filename: GraphicPackDatabase.cs
+// Created By: Jared T
 
 using System;
 using System.IO;
@@ -30,84 +32,29 @@ namespace MapleLib.Databases
 
         private LiteCollection<GraphicPack> Col => LiteDatabase?.GetCollection<GraphicPack>(CollectionName);
 
-        #region IDatabase<GraphicPack> Members
-
-        /// <inheritdoc />
-        public LiteDatabase LiteDatabase { get; }
-
-        /// <inheritdoc />
-        public string CollectionName => "graphicpacks";
-
-        /// <inheritdoc />
-        public int Count => Col?.Count(Query.All()) ?? 0;
-
-        /// <inheritdoc />
-        public void Load()
-        {
-            Task.Run(() => InitDatabase());
-        }
-
-        /// <inheritdoc />
-        public async void InitDatabase()
-        {
-            var doUpdate = Settings.LastPackDbUpdate < DateTime.Now.AddDays(-7);
-
-            if (doUpdate || Settings.CacheDatabase || Count < 1) {
-                TextLog.Write("[Graphic Packs] Building database...");
-
-                LiteDatabase.DropCollection(CollectionName);
-
-                var db = await Create();
-                if (db == null) {
-                    TextLog.Write("[Graphic Packs] Error: Not available");
-                    return;
-                }
-
-                foreach (var item in db) {
-                    if (Col.Find(x => x.Name == item.Name).Any())
-                        continue;
-
-                    Col.Insert(item);
-                    Col.EnsureIndex(x => x.Name);
-                }
-
-                Settings.LastPackDbUpdate = DateTime.Now;
-            }
-
-            TextLog.Write($"[Graphic Packs] Loaded {Count} entries");
-            Database.DatabaseCount++;
-        }
-
-        public MapleList<GraphicPack> Find(string id)
-        {
-            var col = LiteDatabase.GetCollection<GraphicPack>(CollectionName);
-
-            var title = col.Find(x => x.TitleIdString.Contains(id));
-            return new MapleList<GraphicPack>(title);
-        }
-
-        #endregion
-
         private async Task<MapleList<GraphicPack>> Create()
         {
             var graphicPacks = new MapleList<GraphicPack>();
             byte[] graphicPackBytes = {0};
 
-            try {
+            try
+            {
                 const string url = "https://github.com/slashiee/cemu_graphic_packs/archive/master.zip";
-                if (Web.UrlExists(url))
-                    graphicPackBytes = await Web.DownloadDataAsync(url);
+                if (Web.UrlExists(url) && (graphicPackBytes = await Web.DownloadDataAsync(url)) == null)
+                    return null;
 
                 if (graphicPackBytes.Length <= 1)
                     return null;
 
-                using (var zipArchive = new ZipArchive(new MemoryStream(graphicPackBytes))) {
+                using (var zipArchive = new ZipArchive(new MemoryStream(graphicPackBytes)))
+                {
                     var list = zipArchive.Entries?.Where(x => x.Name.Length == 0 && x.FullName.EndsWith("/")).ToList();
 
                     if (list == null)
                         return null;
 
-                    foreach (var zipArchiveEntry in list) {
+                    foreach (var zipArchiveEntry in list)
+                    {
                         var pack = Process(zipArchiveEntry);
 
                         if (pack != null && !graphicPacks.Contains(pack))
@@ -117,9 +64,11 @@ namespace MapleLib.Databases
 
                 return graphicPacks;
             }
-            catch (Exception e) {
-                if (RetryCount >= 3) {
-                    TextLog.MesgLog.WriteLog($"GraphicPacks Init() failed, cancelling...\n\n{e.Message}\n{e.StackTrace}");
+            catch (Exception e)
+            {
+                if (RetryCount >= 3)
+                {
+                    TextLog.Write($"GraphicPacks Init() failed, cancelling...\n\n{e.Message}\n{e.StackTrace}");
                     return null;
                 }
 
@@ -130,7 +79,8 @@ namespace MapleLib.Databases
 
         private static GraphicPack Process(ZipArchiveEntry entry)
         {
-            try {
+            try
+            {
                 var entries = entry.Archive.Entries;
                 var files = entries.Where(x => Match(x, entry)).ToList();
 
@@ -162,7 +112,8 @@ namespace MapleLib.Databases
 
                 var pack = new GraphicPack {Name = name, Rules = rules};
                 pack.TitleIds.AddRange(titleIds);
-                foreach (var source in sources) {
+                foreach (var source in sources)
+                {
                     var graphicPackSource = new GraphicPack.GraphicPackSource
                     {
                         FileName = source.Name,
@@ -173,7 +124,8 @@ namespace MapleLib.Databases
 
                 return pack;
             }
-            catch (Exception e) {
+            catch (Exception e)
+            {
                 TextLog.MesgLog.WriteLog($"{e.Message}\n{e.StackTrace}");
                 return null;
             }
@@ -184,5 +136,66 @@ namespace MapleLib.Databases
             return Path.GetFullPath($"{Path.GetDirectoryName(x.FullName)}/") == Path.GetFullPath(entry.FullName) &&
                    !string.IsNullOrEmpty(x.Name);
         }
+
+        #region IDatabase<GraphicPack> Members
+
+        /// <inheritdoc />
+        public LiteDatabase LiteDatabase { get; }
+
+        /// <inheritdoc />
+        public string CollectionName => "graphicpacks";
+
+        /// <inheritdoc />
+        public int Count => Col?.Count(Query.All()) ?? 0;
+
+        /// <inheritdoc />
+        public void Load()
+        {
+            Task.Run(() => InitDatabase());
+        }
+
+        /// <inheritdoc />
+        public async void InitDatabase()
+        {
+            var doUpdate = Settings.LastPackDbUpdate < DateTime.Now.AddDays(-7);
+
+            if (doUpdate || Settings.CacheDatabase || Count < 1)
+            {
+                TextLog.Write("[Graphic Packs] Building database...");
+
+                LiteDatabase.DropCollection(CollectionName);
+
+                MapleList<GraphicPack> db;
+                if ((db = await Create()) == null || db.Count <= 0)
+                {
+                    TextLog.Write("[Graphic Packs] Error: Not available");
+                    return;
+                }
+
+                foreach (var item in db)
+                {
+                    if (Col.Find(x => x.Name == item.Name).Any())
+                        continue;
+
+                    Col.Insert(item);
+                    Col.EnsureIndex(x => x.Name);
+                }
+
+                Settings.LastPackDbUpdate = DateTime.Now;
+            }
+
+            TextLog.Write($"[Graphic Packs] Loaded {Count} entries");
+            Database.DatabaseCount++;
+        }
+
+        public MapleList<GraphicPack> Find(string id)
+        {
+            var col = LiteDatabase.GetCollection<GraphicPack>(CollectionName);
+
+            var title = col.Find(x => x.TitleIdString.Contains(id));
+            return new MapleList<GraphicPack>(title);
+        }
+
+        #endregion
     }
 }

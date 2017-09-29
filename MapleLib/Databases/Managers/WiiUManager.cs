@@ -1,19 +1,25 @@
-﻿using MapleLib.Collections;
-using MapleLib.Structs;
-using MapleLib.UserInterface;
+﻿// Created: 2017/09/18 11:55 AM
+// Updated: 2017/09/29 1:51 AM
+// 
+// Project: MapleLib
+// Filename: WiiUManager.cs
+// Created By: Jared T
+
 using System;
 using System.Windows.Forms;
+using MapleLib.Collections;
+using MapleLib.Structs;
+using MapleLib.UserInterface;
 
 namespace MapleLib.Databases.Managers
 {
     public class WiiUManager : IDisposable
     {
-        public static WiiUManager Instance { get; } = new WiiUManager();
-
-        public EditorForm Form;
+        private readonly BindingSource _bindingSource;
 
         private readonly MapleList<Title> _databaseState;
-        private readonly BindingSource _bindingSource;
+
+        public EditorForm Form;
 
         public WiiUManager()
         {
@@ -23,6 +29,8 @@ namespace MapleLib.Databases.Managers
 
             InitializeForm();
         }
+
+        public static WiiUManager Instance { get; } = new WiiUManager();
 
         private void InitializeForm()
         {
@@ -56,6 +64,7 @@ namespace MapleLib.Databases.Managers
         }
 
         #region IDisposable Support
+
         private bool _disposedValue;
 
         protected virtual void Dispose(bool disposing)
@@ -80,6 +89,7 @@ namespace MapleLib.Databases.Managers
         {
             Dispose(true);
         }
+
         #endregion
     }
 }

@@ -1,7 +1,9 @@
-﻿// Project: MapleLib
-// File: WiiuClient.cs
-// Updated By: Jared
+﻿// Created: 2017/05/14 4:32 PM
+// Updated: 2017/09/29 2:06 AM
 // 
+// Project: MapleLib
+// Filename: WiiuClient.cs
+// Created By: Jared T
 
 using System;
 using System.Collections.Generic;
@@ -23,13 +25,15 @@ namespace MapleLib.Network
 
         private static async Task<byte[]> DownloadData(string url)
         {
-            byte[] data = {};
+            byte[] data = { };
 
-            try {
+            try
+            {
                 if (Helper.InternetActive())
                     data = await Web.DownloadDataAsync(url);
             }
-            catch (WebException e) {
+            catch (WebException e)
+            {
                 TextLog.MesgLog.AddHistory($"{e.Message}\n{e.StackTrace}");
             }
 
@@ -59,7 +63,8 @@ namespace MapleLib.Network
                 return null;
 
             version = int.Parse(version) == 0 ? "" : $".{version}";
-            if (await DownloadTmd(titleUrl + $"tmd{version}", tmdFile) == null) {
+            if (await DownloadTmd(titleUrl + $"tmd{version}", tmdFile) == null)
+            {
                 var url = $"http://ccs.cdn.wup.shop.nintendo.net/ccs/download/{id.ToLower()}/tmd";
 
                 await DownloadTmd(url, tmdFile);
@@ -111,15 +116,17 @@ namespace MapleLib.Network
                 "http://ccs.cdn.c.shop.nintendowifi.net/ccs/download/"
             };
 
-            foreach (var nusUrl in nusUrls) {
-                string titleUrl = $"{nusUrl}{workingId}/";
+            foreach (var nusUrl in nusUrls)
+            {
+                var titleUrl = $"{nusUrl}{workingId}/";
                 tmd = await LoadTmd(id, key, outputDir, titleUrl, version);
 
                 if (tmd != null)
                     break;
             }
 
-            if (tmd == null) {
+            if (tmd == null)
+            {
                 TextLog.MesgLog.WriteError("Could not locate TMD. Is this content request valid?");
                 return;
             }
@@ -144,7 +151,8 @@ namespace MapleLib.Network
             Toolbelt.AppendLog($"[+] [{contentType}] {name} v{tmd.TitleVersion}");
             Toolbelt.SetStatus($"Output Directory: {outputDir}");
 
-            foreach (var nusUrl in nusUrls) {
+            foreach (var nusUrl in nusUrls)
+            {
                 var url = nusUrl + workingId;
                 if (await DownloadContent(tmd, outputDir, url) != 1)
                     continue;
@@ -154,7 +162,8 @@ namespace MapleLib.Network
                 Toolbelt.AppendLog("  + This may take a minute. Please wait...");
                 Toolbelt.SetStatus("Decrypting Content. This may take a minute. Please wait...", Color.OrangeRed);
 
-                if (await Toolbelt.CDecrypt(outputDir) != 0) {
+                if (await Toolbelt.CDecrypt(outputDir) != 0)
+                {
                     CleanUp(outputDir, tmd);
                     Toolbelt.AppendLog($"Error while decrypting {name}");
                     return;
@@ -174,20 +183,24 @@ namespace MapleLib.Network
         private static async Task<int> DownloadContent(TMD tmd, string outputDir, string titleUrl)
         {
             var result = 0;
-            for (var i = 0; i < tmd.NumOfContents; i++) {
+            for (var i = 0; i < tmd.NumOfContents; i++)
+            {
                 var i1 = i;
-                result = await Task.Run(async () => {
+                result = await Task.Run(async () =>
+                {
                     var numc = tmd.NumOfContents;
                     var size = Toolbelt.SizeSuffix((long) tmd.Contents[i1].Size);
                     Toolbelt.AppendLog($"Downloading Content #{i1 + 1} of {numc}... ({size})");
                     var contentPath = Path.Combine(outputDir, tmd.Contents[i1].ContentID.ToString("x8"));
 
                     if (!Toolbelt.IsValid(tmd.Contents[i1], contentPath))
-                        try {
+                        try
+                        {
                             var downloadUrl = $"{titleUrl}/{tmd.Contents[i1].ContentID:x8}";
                             await Web.DownloadFileAsync(downloadUrl, contentPath);
                         }
-                        catch (Exception ex) {
+                        catch (Exception ex)
+                        {
                             Toolbelt.AppendLog($"Downloading Content #{i1 + 1} of {numc} failed...\n{ex.Message}");
                             return 0;
                         }
@@ -208,10 +221,13 @@ namespace MapleLib.Network
 
         private static void CleanUp(string outputDir, TMD tmd)
         {
-            try {
-                if (!Settings.StoreEncryptedContent) {
+            try
+            {
+                if (!Settings.StoreEncryptedContent)
+                {
                     Toolbelt.AppendLog("  - Deleting Encrypted Contents...");
-                    foreach (var t in tmd.Contents) {
+                    foreach (var t in tmd.Contents)
+                    {
                         if (!File.Exists(Path.Combine(outputDir, t.ContentID.ToString("x8")))) continue;
                         File.Delete(Path.Combine(outputDir, t.ContentID.ToString("x8")));
                     }
@@ -222,7 +238,8 @@ namespace MapleLib.Network
                 File.Delete(Path.Combine(outputDir, "libeay32.dll"));
                 File.Delete(Path.Combine(outputDir, "msvcr120d.dll"));
             }
-            catch {
+            catch
+            {
                 // ignored
             }
         }

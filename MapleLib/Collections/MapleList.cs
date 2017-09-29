@@ -1,7 +1,9 @@
-﻿// Project: MapleLib
-// File: MapleList.cs
-// Updated By: Jared
+﻿// Created: 2017/03/27 11:20 AM
+// Updated: 2017/09/29 1:56 AM
 // 
+// Project: MapleLib
+// Filename: MapleList.cs
+// Created By: Jared T
 
 using System;
 using System.Collections.Generic;
@@ -26,7 +28,6 @@ namespace MapleLib.Collections
 
         public event EventHandler<AddItemEventArgs<T>> AddItemEvent;
 
-        /// <inheritdoc />
         public new void Add(T item)
         {
             AddItemEvent?.Invoke(this, new AddItemEventArgs<T>(this, item));

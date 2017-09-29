@@ -1,7 +1,9 @@
-﻿// Project: MapleSeed
-// File: Settings.cs
-// Updated By: Jared
+﻿// Created: 2017/03/27 11:19 AM
+// Updated: 2017/09/29 1:52 AM
 // 
+// Project: MapleLib
+// Filename: Settings.cs
+// Created By: Jared T
 
 #region usings
 
@@ -34,7 +36,8 @@ namespace MapleLib
 
         public static Config Config => _config ?? (_config = Database.GetConfig());
 
-        public static string LibraryDirectory {
+        public static string LibraryDirectory
+        {
             get {
                 if (!string.IsNullOrEmpty(Config.LibraryDirectory) && Directory.Exists(Config.LibraryDirectory))
                     return Config.LibraryDirectory;
@@ -58,7 +61,8 @@ namespace MapleLib
             }
         }
 
-        public static string CemuDirectory {
+        public static string CemuDirectory
+        {
             get {
                 if (!string.IsNullOrEmpty(Config.CemuDirectory) &&
                     File.Exists(Path.Combine(Config.CemuDirectory, "cemu.exe")))
@@ -85,7 +89,8 @@ namespace MapleLib
 
         public static string Hub { get; set; }
 
-        public static DateTime LastTitleDbUpdate {
+        public static DateTime LastTitleDbUpdate
+        {
             get { return Config.LastTitleDbUpdate; }
             set {
                 Config.LastTitleDbUpdate = value;
@@ -93,7 +98,8 @@ namespace MapleLib
             }
         }
 
-        public static DateTime LastPackDbUpdate {
+        public static DateTime LastPackDbUpdate
+        {
             get { return Config.LastPackDbUpdate; }
             set {
                 Config.LastPackDbUpdate = value;
@@ -101,7 +107,8 @@ namespace MapleLib
             }
         }
 
-        public static bool FullScreenMode {
+        public static bool FullScreenMode
+        {
             get { return Config.FullScreenMode; }
             set {
                 Config.FullScreenMode = value;
@@ -109,7 +116,8 @@ namespace MapleLib
             }
         }
 
-        public static bool GraphicPacksEnabled {
+        public static bool GraphicPacksEnabled
+        {
             get { return Config.GraphicPacksEnabled; }
             set {
                 Config.GraphicPacksEnabled = value;
@@ -117,7 +125,8 @@ namespace MapleLib
             }
         }
 
-        public static bool DynamicTheme {
+        public static bool DynamicTheme
+        {
             get { return Config.DynamicTheme; }
             set {
                 Config.DynamicTheme = value;
@@ -125,7 +134,8 @@ namespace MapleLib
             }
         }
 
-        public static bool Cemu173Patch {
+        public static bool Cemu173Patch
+        {
             get { return Config.Cemu173Patch; }
             set {
                 Config.Cemu173Patch = value;
@@ -133,7 +143,8 @@ namespace MapleLib
             }
         }
 
-        public static bool CacheDatabase {
+        public static bool CacheDatabase
+        {
             get { return Config.CacheDatabase; }
             set {
                 Config.CacheDatabase = value;
@@ -141,7 +152,8 @@ namespace MapleLib
             }
         }
 
-        public static bool StoreEncryptedContent {
+        public static bool StoreEncryptedContent
+        {
             get { return Config.StoreEncryptedContent; }
             set {
                 Config.StoreEncryptedContent = value;

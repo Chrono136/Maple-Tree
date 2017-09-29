@@ -1,7 +1,9 @@
-﻿// Project: MapleSeed
-// File: 1Form1.cs
-// Updated By: Jared
+﻿// Created: 2017/03/27 11:29 AM
+// Updated: 2017/09/29 2:03 AM
 // 
+// Project: MapleSeed
+// Filename: 1Form1.cs
+// Created By: Jared T
 
 #region usings
 
@@ -37,6 +39,7 @@ namespace MapleSeed
         private void Form1_Load(object sender, EventArgs e)
         {
             Text = $@"MapleSeed {Assembly.GetEntryAssembly().GetName().Version}";
+            Text = $@"MapleSeed 1{Settings.Version.TrimStart('2')}";
             MinimumSize = MaximumSize = Size;
 
             Controls.Cast<Control>().ToList().ForEach(x => x.Enabled = false);
@@ -79,15 +82,17 @@ namespace MapleSeed
         private static void InitSettings()
         {
             if (string.IsNullOrEmpty(Settings.CemuDirectory) ||
-                !File.Exists(Path.Combine(Settings.CemuDirectory, "cemu.exe"))) {
+                !File.Exists(Path.Combine(Settings.CemuDirectory, "cemu.exe")))
+            {
                 var ofd = new OpenFileDialog
                 {
                     CheckFileExists = true,
-                    Filter = @"Cemu Excutable |cemu.exe"
+                    Filter = @"Cemu Executable |cemu.exe"
                 };
 
                 var result = ofd.ShowDialog();
-                if (string.IsNullOrWhiteSpace(ofd.FileName) || result != DialogResult.OK) {
+                if (string.IsNullOrWhiteSpace(ofd.FileName) || result != DialogResult.OK)
+                {
                     MessageBox.Show(@"Cemu Directory is required to launch titles.");
                     Settings.CemuDirectory = string.Empty;
                 }
@@ -95,14 +100,16 @@ namespace MapleSeed
                 Settings.CemuDirectory = Path.GetDirectoryName(ofd.FileName);
             }
 
-            if (string.IsNullOrEmpty(Settings.LibraryDirectory) || !Directory.Exists(Settings.LibraryDirectory)) {
+            if (string.IsNullOrEmpty(Settings.LibraryDirectory) || !Directory.Exists(Settings.LibraryDirectory))
+            {
                 var fbd = new FolderBrowserDialog
                 {
                     Description = @"Cemu Title Directory" + Environment.NewLine + @"(Where you store games)"
                 };
 
                 var result = fbd.ShowDialog();
-                if (string.IsNullOrWhiteSpace(fbd.SelectedPath) || result == DialogResult.Cancel) {
+                if (string.IsNullOrWhiteSpace(fbd.SelectedPath) || result == DialogResult.Cancel)
+                {
                     MessageBox.Show(@"Title Directory is required. Shutting down.");
                     Application.Exit();
                 }
@@ -129,20 +136,22 @@ namespace MapleSeed
             titleList.BeginInvoke(new Action(() => { titleList.Items.Add(title); }));
         }
 
-        private void UpdateProgressBar(int percent, long _toReceive, long _received)
+        private void UpdateProgressBar(int percent, long toReceive, long received)
         {
-            if (percent <= 0 || _toReceive <= 0 || _received <= 0)
+            if (percent <= 0 || toReceive <= 0 || received <= 0)
                 return;
 
-            try {
+            try
+            {
                 Invoke(new Action(() => progressBar.Value = percent));
 
-                var toReceive = Toolbelt.SizeSuffix(_toReceive);
-                var received = Toolbelt.SizeSuffix(_received);
+                var stoReceive = Toolbelt.SizeSuffix(toReceive);
+                var sreceived = Toolbelt.SizeSuffix(received);
 
-                progressOverlay.Invoke(new Action(() => { progressOverlay.Text = $@"{received} / {toReceive}"; }));
+                progressOverlay.Invoke(new Action(() => { progressOverlay.Text = $@"{sreceived} / {stoReceive}"; }));
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 TextLog.MesgLog.WriteError($"{ex.Message}\n{ex.StackTrace}");
             }
         }
@@ -156,7 +165,8 @@ namespace MapleSeed
         {
             btn.Enabled = false;
 
-            foreach (var item in titleList.SelectedItems) {
+            foreach (var item in titleList.SelectedItems)
+            {
                 var title = item as Title;
                 if (title == null) continue;
 
@@ -168,15 +178,18 @@ namespace MapleSeed
 
                 string id;
 
-                if (contentType == "DLC" && title.HasDLC) {
+                if (contentType == "DLC" && title.HasDLC)
+                {
                     id = $"0005000C{title.Lower8Digits()}";
                     title = Database.FindTitle(id);
                     if (title == null) continue;
                     await title.DownloadDLC();
                 }
 
-                if (contentType == "Patch") {
-                    if (!title.Versions.Any()) {
+                if (contentType == "Patch")
+                {
+                    if (!title.Versions.Any())
+                    {
                         MessageBox.Show($@"Update for {title.Name} is not available");
                         return;
                     }
@@ -207,13 +220,16 @@ namespace MapleSeed
 
         private void StatusLog_NewLogEntryEventHandler(object sender, NewLogEntryEvent e)
         {
-            if (status.InvokeRequired) {
-                status.Invoke(new Action(() => {
+            if (status.InvokeRequired)
+            {
+                status.Invoke(new Action(() =>
+                {
                     status.Text = e.Entry;
                     status.ForeColor = e.Color;
                 }));
             }
-            else {
+            else
+            {
                 status.Text = e.Entry;
                 status.ForeColor = e.Color;
             }
@@ -222,10 +238,12 @@ namespace MapleSeed
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
             foreach (var proc in Process.GetProcessesByName("CDecrypt"))
-                try {
+                try
+                {
                     proc.Kill();
                 }
-                catch {
+                catch
+                {
                     // ignored
                 }
 
@@ -262,8 +280,10 @@ namespace MapleSeed
             cleanTitleBtn.Enabled = false;
             var result = DialogResult.Cancel;
 
-            foreach (var item in titleList.SelectedItems) {
-                if (result != DialogResult.OK) {
+            foreach (var item in titleList.SelectedItems)
+            {
+                if (result != DialogResult.OK)
+                {
                     var msg = $"This task will delete your '{item}' directory and re-download the base title content!";
                     result = MessageBox.Show(msg, $@"Reinstall {item}", MessageBoxButtons.OKCancel);
 
@@ -295,11 +315,11 @@ namespace MapleSeed
 
         private async void newdlbtn_Click(object sender, EventArgs e)
         {
-            var titleID = titleIdTextBox.Text;
-            if (string.IsNullOrEmpty(titleID)) return;
+            var titleId = titleIdTextBox.Text;
+            if (string.IsNullOrEmpty(titleId)) return;
 
             Title title;
-            if ((title = Database.FindTitle(titleID)) == null) return;
+            if ((title = Database.FindTitle(titleId)) == null) return;
             title.FolderLocation = Path.Combine(Settings.LibraryDirectory, $"{title}");
 
             await title.DownloadContent(titleVersion.Text);
@@ -372,7 +392,7 @@ namespace MapleSeed
             var title = Database.FindTitle(titleIdTextBox.Text);
             if (title == null) return;
 
-            titleName.Text = Toolbelt.RIC(title.Name);
+            titleName.Text = Toolbelt.Ric(title.Name);
 
             SetCurrentImage(title);
         }
@@ -393,8 +413,8 @@ namespace MapleSeed
             SetCurrentImage(title);
 
             var tvs = title.GetUpdateVersion();
-            var l8d = title.Lower8Digits();
-            TextLog.StatusLog.WriteLog($"{l8d} | Current Update: v{tvs} | Available Updates: {updatesStr}");
+            var l8D = title.Lower8Digits();
+            TextLog.StatusLog.WriteLog($"{l8D} | Current Update: v{tvs} | Available Updates: {updatesStr}");
         }
 
         private void titleList_MouseUp(object sender, MouseEventArgs e)
@@ -433,7 +453,8 @@ namespace MapleSeed
         {
             if (titleList.SelectedItems.Count <= 0) return;
 
-            foreach (var titleListSelectedItem in titleList.SelectedItems) {
+            foreach (var titleListSelectedItem in titleList.SelectedItems)
+            {
                 var title = titleListSelectedItem as Title;
                 if (title == null) continue;
 
@@ -460,7 +481,8 @@ namespace MapleSeed
         {
             if (titleList.SelectedItems.Count <= 0) return;
 
-            foreach (var titleListSelectedItem in titleList.SelectedItems) {
+            foreach (var titleListSelectedItem in titleList.SelectedItems)
+            {
                 var title = titleListSelectedItem as Title;
                 if (title == null) continue;
 

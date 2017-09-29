@@ -1,4 +1,11 @@
-﻿using System;
+﻿// Created: 2017/08/02 8:21 AM
+// Updated: 2017/09/29 2:05 AM
+// 
+// Project: MapleLib
+// Filename: Downloader.cs
+// Created By: Jared T
+
+using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using MapleLib.Common;
@@ -13,7 +20,7 @@ namespace MapleLib.Network
             DownloadQueueWorkerTask = Task.Run(() => DownloadQueueTask());
         }
 
-        private Task DownloadQueueWorkerTask { get; set; }
+        private Task DownloadQueueWorkerTask { get; }
 
         private DownloadQueue DownloadQueue { get; } = new DownloadQueue();
 
@@ -31,20 +38,24 @@ namespace MapleLib.Network
 
         private async void DownloadQueueTask()
         {
-            while (!Process.GetCurrentProcess().HasExited) {
-                if (DownloadQueue.Count <= 0) {
+            while (!Process.GetCurrentProcess().HasExited)
+            {
+                if (DownloadQueue.Count <= 0)
+                {
                     await Task.Delay(250);
                     continue;
                 }
 
                 var itemInfo = DownloadQueue[0];
 
-                try {
+                try
+                {
                     TextLog.Write($"[DLQ] '{itemInfo.Name}' starting download.");
                     await DownloadProcess(itemInfo);
                     DownloadQueue.Remove(itemInfo);
                 }
-                catch (Exception e) {
+                catch (Exception e)
+                {
                     TextLog.Write(e.Message);
                     TextLog.Write(e.StackTrace);
                     TextLog.Write($"[DLQ] '{itemInfo.Name}' failed download.");
@@ -54,7 +65,8 @@ namespace MapleLib.Network
 
         private Task DownloadProcess(ItemInfo itemInfo)
         {
-            return WiiuClient.DownloadTitle(itemInfo.TitleID, itemInfo.Location, itemInfo.ContentType, itemInfo.Version);
+            return WiiuClient.DownloadTitle(itemInfo.TitleID, itemInfo.Location, itemInfo.ContentType,
+                itemInfo.Version);
         }
 
         private void DownloadQueue_AddDownload(object sender, ItemInfo e)

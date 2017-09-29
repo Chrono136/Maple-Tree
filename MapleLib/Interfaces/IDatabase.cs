@@ -1,9 +1,10 @@
-﻿// Project: MapleLib
-// File: IBaseCollection.cs
-// Updated By: Jared
+﻿// Created: 2017/05/14 5:25 AM
+// Updated: 2017/09/29 2:05 AM
 // 
+// Project: MapleLib
+// Filename: IDatabase.cs
+// Created By: Jared T
 
-using System.Threading.Tasks;
 using LiteDB;
 using MapleLib.Collections;
 

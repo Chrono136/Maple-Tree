@@ -1,7 +1,9 @@
-﻿// Project: MapleCake
-// File: GraphicsPack.cs
-// Updated By: Jared
+﻿// Created: 2017/04/01 12:46 PM
+// Updated: 2017/09/29 2:04 AM
 // 
+// Project: MapleLib
+// Filename: GraphicPack.cs
+// Created By: Jared T
 
 using System;
 using System.Collections.Generic;
@@ -15,7 +17,7 @@ namespace MapleLib.WiiU
     [Serializable]
     public class GraphicPack
     {
-        private string GPDirectory => Path.Combine(Settings.CemuDirectory, "graphicPacks", Toolbelt.RIC(Name));
+        private string GPDirectory => Path.Combine(Settings.CemuDirectory, "graphicPacks", Toolbelt.Ric(Name));
 
         public MapleList<GraphicPackSource> Sources { get; } = new MapleList<GraphicPackSource>();
 
@@ -33,7 +35,8 @@ namespace MapleLib.WiiU
                 return;
 
             var path = Path.Combine(Settings.CemuDirectory, "graphicPacks");
-            if (Directory.GetFileSystemEntries(path).Any()) {
+            if (Directory.GetFileSystemEntries(path).Any())
+            {
                 var moveTo = $"graphicPacks.{Path.GetRandomFileName()}";
                 Directory.Move(path, Path.Combine(Settings.CemuDirectory, moveTo));
             }

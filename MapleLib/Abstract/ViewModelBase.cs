@@ -1,7 +1,9 @@
-﻿// Project: MapleUI
-// File: ViewModelBase.cs
-// Updated By: Jared
+﻿// Created: 2017/07/29 12:15 PM
+// Updated: 2017/09/29 1:54 AM
 // 
+// Project: MapleLib
+// Filename: ViewModelBase.cs
+// Created By: Jared T
 
 using System;
 using System.ComponentModel;
@@ -23,6 +25,7 @@ namespace MapleLib.Abstract
             handler?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
+
     public class CommandHandler : ICommand
     {
         private readonly Action _action;

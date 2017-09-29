@@ -1,7 +1,9 @@
-﻿// Project: MapleLib
-// File: TitleEntry.cs
-// Updated By: Jared
+﻿// Created: 2017/03/27 11:20 AM
+// Updated: 2017/09/29 2:04 AM
 // 
+// Project: MapleLib
+// Filename: Title.cs
+// Created By: Jared T
 
 using System;
 using System.ComponentModel;
@@ -31,7 +33,7 @@ namespace MapleLib.Structs
         public override string ToString()
         {
             var cType = ContentType.Contains("App") ? "" : $"[{ContentType}]";
-            return Toolbelt.RIC($"{cType}[{Region}] {Name}");
+            return Toolbelt.Ric($"{cType}[{Region}] {Name}");
         }
 
         public void PlayTitle()
@@ -39,7 +41,8 @@ namespace MapleLib.Structs
             if (MetaLocation.IsNullOrEmpty())
                 return;
 
-            new Thread(() => {
+            new Thread(() =>
+            {
                 if (!Toolbelt.LaunchCemu(MetaLocation, SelectedGraphicPack)) return;
                 TextLog.MesgLog.WriteLog($"Now Playing: {Name}");
             }).Start();

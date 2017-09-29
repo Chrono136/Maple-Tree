@@ -1,7 +1,9 @@
-﻿// Project: MapleLib
-// File: TextLog.cs
-// Updated By: Jared
+﻿// Created: 2017/03/27 11:20 AM
+// Updated: 2017/09/29 1:56 AM
 // 
+// Project: MapleLib
+// Filename: TextLog.cs
+// Created By: Jared T
 
 using System;
 using System.Drawing;
@@ -18,13 +20,13 @@ namespace MapleLib.Common
 
         private MapleList<string> LogHistory { get; } = new MapleList<string>();
 
-        private int index { get; set; }
-        
+        private int Index { get; set; }
+
         public event EventHandler<NewLogEntryEvent> NewLogEntryEventHandler;
 
         public void AddHistory(string text, Color color = default(Color))
         {
-            index = LogHistory.Count;
+            Index = LogHistory.Count;
             LogHistory.Add(text);
         }
 
@@ -61,8 +63,8 @@ namespace MapleLib.Common
             Color = color;
         }
 
-        public string Entry { get; private set; }
+        public string Entry { get; }
 
-        public Color Color { get; private set; }
+        public Color Color { get; }
     }
 }

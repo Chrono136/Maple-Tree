@@ -1,11 +1,14 @@
-﻿// Project: MapleLib
-// File: eShopTitle.cs
-// Updated By: Jared
+﻿// Created: 2017/03/29 7:40 AM
+// Updated: 2017/09/29 2:04 AM
 // 
+// Project: MapleLib
+// Filename: eShopTitle.cs
+// Created By: Jared T
 
-using MapleLib.Common;
 using System;
+using System.ComponentModel;
 using System.Text.RegularExpressions;
+using MapleLib.Common;
 
 namespace MapleLib.Structs
 {
@@ -13,11 +16,11 @@ namespace MapleLib.Structs
     public class eShopTitle
     {
         private string _name;
+
         public string Name
         {
-            get
-            {
-                var name = Toolbelt.RIC(_name);
+            get {
+                var name = Toolbelt.Ric(_name);
                 return Regex.Replace(name, @"\s+", " ");
             }
             set { _name = value; }
@@ -39,18 +42,20 @@ namespace MapleLib.Structs
 
         public bool HasPatch => Versions.Count > 1;
 
-        [System.ComponentModel.Browsable(false)]
+        [Browsable(false)]
         public bool AvailableOnCDN { get; set; }
 
-        [System.ComponentModel.Browsable(false)]
+        [Browsable(false)]
         public string ImageLocation { get; set; }
 
-        [System.ComponentModel.Browsable(false)]
+        [Browsable(false)]
         public string Notes { get; set; }
 
-        public string ContentType {
+        public string ContentType
+        {
             get {
-                switch (Upper8Digits()) {
+                switch (Upper8Digits())
+                {
                     case "00050010":
                     case "0005001B":
                         return "System Application";

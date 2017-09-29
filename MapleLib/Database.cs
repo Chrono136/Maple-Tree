@@ -1,9 +1,12 @@
-﻿// Project: MapleLib
-// File: GraphicPackDatabase.cs
-// Updated By: Jared
+﻿// Created: 2017/05/13 3:44 PM
+// Updated: 2017/09/29 1:52 AM
 // 
+// Project: MapleLib
+// Filename: Database.cs
+// Created By: Jared T
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -24,7 +27,8 @@ namespace MapleLib
         {
             var dbFile = Path.GetFullPath(Path.Combine(Settings.ConfigDirectory, "mapleseed.db"));
 
-            if (LiteDatabase == null) {
+            if (LiteDatabase == null)
+            {
                 LiteDatabase = new LiteDatabase(Helper.FileOpenStream(dbFile));
                 SettingsCollection = LiteDatabase.GetCollection<Config>("Settings");
             }
@@ -38,7 +42,8 @@ namespace MapleLib
             if (Downloader == null)
                 Downloader = new Downloader();
 
-            Task.Run(async () => {
+            Task.Run(async () =>
+            {
                 while (DatabaseLoaded == null || DatabaseCount < MaxDatabaseCount)
                     await Task.Delay(250);
 
@@ -94,7 +99,7 @@ namespace MapleLib
             return WiiuTitles.Find(id.ToUpperInvariant()).FirstOrDefault();
         }
 
-        public static System.Collections.Generic.IEnumerable<Title> GetTitles()
+        public static IEnumerable<Title> GetTitles()
         {
             return WiiuTitles.All();
         }

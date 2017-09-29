@@ -1,7 +1,9 @@
-﻿// Project: MapleRoot
-// File: Extensions.cs
-// Updated By: Jared
+﻿// Created: 2017/03/27 11:20 AM
+// Updated: 2017/09/29 1:56 AM
 // 
+// Project: MapleLib
+// Filename: Extensions.cs
+// Created By: Jared T
 
 using System;
 using System.Collections.Generic;
@@ -51,7 +53,8 @@ namespace MapleLib.Common
                 return title.ImageLocation = cachedFile;
 
             foreach (var langCode in "US,EN,DE,FR,JA".Split(','))
-                try {
+                try
+                {
                     var url = $"http://art.gametdb.com/wiiu/coverHQ/{langCode}/{imageCode}.jpg";
 
                     if (!Web.UrlExists(url)) continue;
@@ -61,7 +64,8 @@ namespace MapleLib.Common
                     var data = await Web.DownloadDataAsync(url);
                     File.WriteAllBytes(title.ImageLocation, data);
                 }
-                catch {
+                catch
+                {
                     TextLog.MesgLog.WriteLog($"Could not locate cover image for {title}");
                 }
 
@@ -73,14 +77,16 @@ namespace MapleLib.Common
             if (string.IsNullOrEmpty(path))
                 return false;
 
-            try {
+            try
+            {
                 // ReSharper disable once UnusedVariable
                 var fileName = Path.GetFileName(path);
 
                 // ReSharper disable once UnusedVariable
                 var fileDirectory = Path.GetFullPath(path);
             }
-            catch (ArgumentException) {
+            catch (ArgumentException)
+            {
                 return true;
             }
             return false;
@@ -93,7 +99,8 @@ namespace MapleLib.Common
 
         public static byte[] GetBytes(this ZipArchiveEntry entry)
         {
-            using (var ms = new MemoryStream()) {
+            using (var ms = new MemoryStream())
+            {
                 entry.Open().CopyTo(ms);
                 return ms.ToArray();
             }
@@ -101,7 +108,8 @@ namespace MapleLib.Common
 
         public static byte[] GetBytes(this Stream stream)
         {
-            using (var ms = new MemoryStream()) {
+            using (var ms = new MemoryStream())
+            {
                 stream.CopyTo(ms);
                 return ms.ToArray();
             }
@@ -109,7 +117,8 @@ namespace MapleLib.Common
 
         private static string toString(this Stream stream)
         {
-            using (var ms = new MemoryStream()) {
+            using (var ms = new MemoryStream())
+            {
                 stream.CopyTo(ms);
                 return Encoding.Default.GetString(ms.ToArray());
             }
@@ -172,9 +181,12 @@ namespace MapleLib.Common
 
         public static void AppendText(this RichTextBox box, string text, Color color)
         {
-            try {
-                if (box.InvokeRequired) {
-                    box.Invoke(new Action(() => {
+            try
+            {
+                if (box.InvokeRequired)
+                {
+                    box.Invoke(new Action(() =>
+                    {
                         box.SelectionStart = box.TextLength;
                         box.SelectionLength = 0;
 
@@ -184,7 +196,8 @@ namespace MapleLib.Common
                         box.ScrollToCaret();
                     }));
                 }
-                else {
+                else
+                {
                     box.SelectionStart = box.TextLength;
                     box.SelectionLength = 0;
 
@@ -194,7 +207,8 @@ namespace MapleLib.Common
                     box.ScrollToCaret();
                 }
             }
-            catch (Exception e) {
+            catch (Exception e)
+            {
                 TextLog.Write(e.Message);
                 TextLog.Write(e.StackTrace);
             }

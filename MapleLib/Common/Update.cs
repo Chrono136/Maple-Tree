@@ -1,7 +1,9 @@
-﻿// Project: MapleLib
-// File: Update.cs
-// Updated By: Jared
+﻿// Created: 2017/05/05 9:17 PM
+// Updated: 2017/09/29 2:00 AM
 // 
+// Project: MapleLib
+// Filename: Update.cs
+// Created By: Jared T
 
 using System;
 using System.Drawing;
@@ -19,14 +21,16 @@ namespace MapleLib.Common
 
             var versionStrs = Web.DownloadString(VersionUrl).Split('\n');
 
-            if (UpdateType == UpdateType.MapleSeed) {
+            if (UpdateType == UpdateType.MapleSeed)
+            {
                 CurrentVersion = Assembly.GetEntryAssembly().GetName().Version.ToString();
 
                 if (versionStrs.Length == 2)
                     LatestVersion = versionStrs[0];
             }
 
-            if (UpdateType == UpdateType.MapleSeed2) {
+            if (UpdateType == UpdateType.MapleSeed2)
+            {
                 CurrentVersion = Settings.Version;
 
                 if (versionStrs.Length == 2)
@@ -49,7 +53,7 @@ namespace MapleLib.Common
 
         #region IDisposable Members
 
-        public void Dispose() {}
+        public void Dispose() { }
 
         #endregion
 

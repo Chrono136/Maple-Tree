@@ -1,7 +1,9 @@
-﻿// Project: MapleLib
-// File: Config.cs
-// Updated By: Jared
+﻿// Created: 2017/05/14 12:53 PM
+// Updated: 2017/09/29 1:54 AM
 // 
+// Project: MapleLib
+// Filename: Config.cs
+// Created By: Jared T
 
 using System;
 

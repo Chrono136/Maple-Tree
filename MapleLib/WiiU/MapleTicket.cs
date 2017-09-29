@@ -1,7 +1,9 @@
-﻿// Project: MapleLib
-// File: Ticket.cs
-// Updated By: Jared
+﻿// Created: 2017/03/30 5:22 AM
+// Updated: 2017/09/29 2:08 AM
 // 
+// Project: MapleLib
+// Filename: MapleTicket.cs
+// Created By: Jared T
 
 using System.Collections.Generic;
 using MapleLib.Common;
@@ -12,16 +14,16 @@ namespace MapleLib.WiiU
 {
     public static class MapleTicket
     {
-        private static readonly int TK = 0x140;
+        private const int Tk = 0x140;
 
-        private static void PatchDLC(ref List<byte> ticketData)
+        private static void PatchDlc(ref List<byte> ticketData)
         {
-            ticketData.InsertRange(TK + 0x164, Resources.DLCPatch);
+            ticketData.InsertRange(Tk + 0x164, Resources.DLCPatch);
         }
 
         private static void PatchDemo(ref List<byte> ticketData)
         {
-            ticketData.InsertRange(TK + 0x124, new byte[0x00 * 64]);
+            ticketData.InsertRange(Tk + 0x124, new byte[0x00 * 64]);
         }
 
         /// <summary>
@@ -62,15 +64,19 @@ namespace MapleLib.WiiU
 
             var tikdata = new List<byte>(tiktem);
 
-            if (title.ContentType == "DLC")
-                PatchDLC(ref tikdata);
+            switch (title.ContentType)
+            {
+                case "DLC":
+                    PatchDlc(ref tikdata);
+                    break;
+                case "Demo":
+                    PatchDemo(ref tikdata);
+                    break;
+            }
 
-            if (title.ContentType == "Demo")
-                PatchDemo(ref tikdata);
-
-            tikdata.InsertRange(TK + 0xA6, title.Versions[0].ToBytes());
-            tikdata.InsertRange(TK + 0x9C, title.ID.HexToBytes());
-            tikdata.InsertRange(TK + 0x7F, title.Key.HexToBytes());
+            tikdata.InsertRange(Tk + 0xA6, title.Versions[0].ToBytes());
+            tikdata.InsertRange(Tk + 0x9C, title.ID.HexToBytes());
+            tikdata.InsertRange(Tk + 0x7F, title.Key.HexToBytes());
 
             return tikdata.ToArray();
         }

@@ -1,7 +1,9 @@
-﻿// Project: MapleSeed
-// File: Toolbelt.cs
-// Updated By: Jared
+﻿// Created: 2017/03/27 11:20 AM
+// Updated: 2017/09/29 1:57 AM
 // 
+// Project: MapleLib
+// Filename: Toolbelt.cs
+// Created By: Jared T
 
 #region usings
 
@@ -26,13 +28,16 @@ namespace MapleLib.Common
     {
         public static bool LaunchCemu(string game, GraphicPack pack)
         {
-            try {
+            try
+            {
                 var cemuPath = Path.Combine(Settings.CemuDirectory, "cemu.exe");
 
-                if (game.IsNullOrEmpty() && File.Exists(cemuPath)) {
+                if (game.IsNullOrEmpty() && File.Exists(cemuPath))
+                {
                     RunCemu(Path.Combine(Settings.CemuDirectory, "cemu.exe"), string.Empty);
                 }
-                else {
+                else
+                {
                     string rpx = null;
                     var dir = Path.GetDirectoryName(Path.GetDirectoryName(game));
 
@@ -43,17 +48,20 @@ namespace MapleLib.Common
                     if (files.Any())
                         rpx = files.First();
 
-                    if (File.Exists(cemuPath) && File.Exists(rpx)) {
+                    if (File.Exists(cemuPath) && File.Exists(rpx))
+                    {
                         pack?.Apply();
                         RunCemu(cemuPath, rpx);
                         pack?.Remove();
                     }
-                    else {
+                    else
+                    {
                         SetStatus("Could not find a valid .rpx");
                     }
                 }
             }
-            catch (Exception e) {
+            catch (Exception e)
+            {
                 AppendLog($"{e.Message}\n{e.StackTrace}", Color.DarkRed);
                 return false;
             }
@@ -63,21 +71,24 @@ namespace MapleLib.Common
 
         private static void RunCemu(string cemuPath, string rpx)
         {
-            try {
+            try
+            {
                 var workingDir = Path.GetDirectoryName(cemuPath);
                 if (workingDir == null) return;
 
                 var o1 = Settings.FullScreenMode ? "-f" : "";
-                using (TextWriter writer = File.CreateText(Path.Combine(Settings.ConfigDirectory, "cemu.log"))) {
+                using (TextWriter writer = File.CreateText(Path.Combine(Settings.ConfigDirectory, "cemu.log")))
+                {
                     StartProcess(cemuPath, $"{o1} -g \"{rpx}\"", workingDir, null, true, false, writer).Wait();
                 }
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 TextLog.MesgLog.WriteError("Error!\r\n" + ex.Message);
             }
         }
 
-        public static string RIC(string str)
+        public static string Ric(string str)
         {
             return RemoveInvalidCharacters(str);
         }
@@ -112,7 +123,8 @@ namespace MapleLib.Common
             string[] orders = {"GB", "MB", "KB", "Bytes"};
             var max = (long) Math.Pow(scale, orders.Length - 1);
 
-            foreach (var order in orders) {
+            foreach (var order in orders)
+            {
                 if (bytes > max)
                     return $"{decimal.Divide(bytes, max):##.##} {order}";
 
@@ -130,12 +142,14 @@ namespace MapleLib.Common
 
         public static async Task<int> CDecrypt(string workingDir)
         {
-            try {
+            try
+            {
                 var cdecrypt = Path.Combine(workingDir, "CDecrypt.exe");
                 var libeay32 = Path.Combine(workingDir, "libeay32.dll");
-                var msvcr120d = Path.Combine(workingDir, "msvcr120d.dll");
+                var msvcr120D = Path.Combine(workingDir, "msvcr120d.dll");
 
-                foreach (var process in Process.GetProcessesByName("CDecrypt")) {
+                foreach (var process in Process.GetProcessesByName("CDecrypt"))
+                {
                     var fullpath = Path.GetFullPath(process.MainModule.FileName);
                     if (fullpath == Path.GetFullPath(cdecrypt))
                         process.Kill();
@@ -147,17 +161,20 @@ namespace MapleLib.Common
                 if (!GZip.Decompress(Resources.libeay32, libeay32))
                     AppendLog("Error decrypting contents!\r\n       Could not extract libeay32.");
 
-                if (!GZip.Decompress(Resources.msvcr120d, msvcr120d))
+                if (!GZip.Decompress(Resources.msvcr120d, msvcr120D))
                     AppendLog("Error decrypting contents!\r\n       Could not extract msvcr120d.");
 
-                using (TextWriter writer = File.CreateText(Path.Combine(Settings.ConfigDirectory, "CDecrypt.log"))) {
+                using (TextWriter writer = File.CreateText(Path.Combine(Settings.ConfigDirectory, "CDecrypt.log")))
+                {
                     return await StartProcess(cdecrypt, "tmd cetk", workingDir, null, true, false, writer);
                 }
             }
-            catch (TaskCanceledException) {
+            catch (TaskCanceledException)
+            {
                 TextLog.MesgLog.WriteError(@"Process Timed Out!");
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 AppendLog("Error decrypting contents!\r\n" + ex.Message);
             }
             return 1;
@@ -179,7 +196,8 @@ namespace MapleLib.Common
                     UseShellExecute = shellEx,
                     WorkingDirectory = workingDirectory
                 }
-            }) {
+            })
+            {
                 process.Start();
                 var cancellationTokenSource = timeout.HasValue
                     ? new CancellationTokenSource(timeout.Value)
@@ -188,7 +206,8 @@ namespace MapleLib.Common
                 var tasks = new List<Task>(2) {process.WaitForExitAsync(cancellationTokenSource.Token)};
                 if (outputTextWriter != null)
                     tasks.Add(ReadAsync(
-                        x => {
+                        x =>
+                        {
                             process.OutputDataReceived += x;
                             process.BeginOutputReadLine();
                         },
@@ -198,7 +217,8 @@ namespace MapleLib.Common
 
                 if (errorTextWriter != null)
                     tasks.Add(ReadAsync(
-                        x => {
+                        x =>
+                        {
                             process.ErrorDataReceived += x;
                             process.BeginErrorReadLine();
                         },
@@ -222,7 +242,7 @@ namespace MapleLib.Common
         /// <param name="process">The process to wait for cancellation.</param>
         /// <param name="cancellationToken">
         ///     A cancellation token. If invoked, the task will return
-        ///     immediately as cancelled.
+        ///     immediately as canceled.
         /// </param>
         /// <returns>A Task representing waiting for the process to end.</returns>
         private static Task WaitForExitAsync(this Process process,
@@ -233,7 +253,8 @@ namespace MapleLib.Common
             var taskCompletionSource = new TaskCompletionSource<object>();
 
             EventHandler handler = null;
-            handler = (sender, args) => {
+            handler = (sender, args) =>
+            {
                 process.Exited -= handler;
                 taskCompletionSource.TrySetResult(null);
             };
@@ -241,7 +262,8 @@ namespace MapleLib.Common
 
             if (cancellationToken != default(CancellationToken))
                 cancellationToken.Register(
-                    () => {
+                    () =>
+                    {
                         process.Exited -= handler;
                         taskCompletionSource.TrySetCanceled();
                     });
@@ -265,12 +287,15 @@ namespace MapleLib.Common
             var taskCompletionSource = new TaskCompletionSource<object>();
 
             DataReceivedEventHandler handler = null;
-            handler = (sender, e) => {
-                if (e.Data == null) {
+            handler = (sender, e) =>
+            {
+                if (e.Data == null)
+                {
                     removeHandler(handler);
                     taskCompletionSource.TrySetResult(null);
                 }
-                else {
+                else
+                {
                     textWriter.WriteLine(e.Data);
                     //TextLog.MesgLog.WriteLog(e.Data, Color.DarkSlateBlue);
                 }
@@ -280,7 +305,8 @@ namespace MapleLib.Common
 
             if (cancellationToken != default(CancellationToken))
                 cancellationToken.Register(
-                    () => {
+                    () =>
+                    {
                         removeHandler(handler);
                         taskCompletionSource.TrySetCanceled();
                     });

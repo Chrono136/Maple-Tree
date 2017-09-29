@@ -13,15 +13,15 @@ using MapleLib.UserInterface;
 
 namespace MapleLib.Databases.Managers
 {
-    public class WiiUManager : IDisposable
+    public sealed class WiiUManager : IDisposable
     {
         private readonly BindingSource _bindingSource;
 
         private readonly MapleList<Title> _databaseState;
 
-        public EditorForm Form;
+        private EditorForm _form;
 
-        public WiiUManager()
+        private WiiUManager()
         {
             _databaseState = new MapleList<Title>(Database.GetTitles());
 
@@ -34,7 +34,7 @@ namespace MapleLib.Databases.Managers
 
         private void InitializeForm()
         {
-            Form = new EditorForm
+            _form = new EditorForm
             {
                 dataGridView1 = {DataSource = _bindingSource},
                 bindingNavigator1 = {BindingSource = _bindingSource}
@@ -43,13 +43,14 @@ namespace MapleLib.Databases.Managers
 
         public void ToggleUi()
         {
-            if (Form.Disposing || Form.IsDisposed)
+            return; //TODO: complete
+            if (_form.Disposing || _form.IsDisposed)
                 InitializeForm();
 
-            if (Form.Visible)
-                Form.Hide();
+            if (_form.Visible)
+                _form.Hide();
             else
-                Form.Show();
+                _form.Show();
         }
 
         public void AddEntry(Title title)
@@ -67,15 +68,15 @@ namespace MapleLib.Databases.Managers
 
         private bool _disposedValue;
 
-        protected virtual void Dispose(bool disposing)
+        private void Dispose(bool disposing)
         {
             if (!_disposedValue)
             {
                 if (disposing)
                 {
-                    Form.Hide();
-                    Form.Dispose();
-                    Form = null;
+                    _form.Hide();
+                    _form.Dispose();
+                    _form = null;
                 }
 
                 // TODO: free unmanaged resources (unmanaged objects) and override a finalizer below.

@@ -1,5 +1,5 @@
 ﻿// Created: 2017/05/13 3:44 PM
-// Updated: 2017/09/29 1:52 AM
+// Updated: 2017/09/29 6:29 PM
 // 
 // Project: MapleLib
 // Filename: Database.cs
@@ -18,6 +18,7 @@ using MapleLib.Databases;
 using MapleLib.Network;
 using MapleLib.Structs;
 using MapleLib.WiiU;
+using Newtonsoft.Json;
 
 namespace MapleLib
 {
@@ -104,6 +105,19 @@ namespace MapleLib
             return WiiuTitles.All();
         }
 
+        public static void DumpDatabase(string dumpTo)
+        {
+            if (dumpTo.IsNullOrEmpty())
+            {
+                var curDir = Directory.GetCurrentDirectory();
+                dumpTo = Path.Combine(curDir, "WiiU.json");
+            }
+
+            var titles = GetTitles();
+            var json = JsonConvert.SerializeObject(titles);
+            File.WriteAllText(dumpTo, json);
+        }
+
         public static MapleList<GraphicPack> FindGraphicPacks(string id)
         {
             return GraphicPacks.Find(id.ToUpperInvariant());
@@ -119,9 +133,9 @@ namespace MapleLib
             LiteDatabase?.Dispose();
         }
 
-        public static Task DownloadTitle(string titleID, string titleFolderLocation, string contentType, string version)
+        public static Task DownloadTitle(string titleId, string titleFolderLocation, string contentType, string version)
         {
-            return Task.Run(() => Downloader.AddToQueue(titleID, titleFolderLocation, contentType, version));
+            return Task.Run(() => Downloader.AddToQueue(titleId, titleFolderLocation, contentType, version));
             //return WiiuClient.DownloadTitle(titleID, titleFolderLocation, contentType, version);
         }
 

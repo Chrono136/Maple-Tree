@@ -105,9 +105,9 @@ namespace MapleLib
             return WiiuTitles.All();
         }
 
-        public static void DumpDatabase(string dumpTo)
+        public static void Dump(string dumpTo = null)
         {
-            if (dumpTo.IsNullOrEmpty())
+            if (string.IsNullOrEmpty(dumpTo))
             {
                 var curDir = Directory.GetCurrentDirectory();
                 dumpTo = Path.Combine(curDir, "WiiU.json");

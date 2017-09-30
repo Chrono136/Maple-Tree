@@ -1,5 +1,5 @@
 ﻿// Created: 2017/05/14 5:33 AM
-// Updated: 2017/09/29 1:51 AM
+// Updated: 2017/09/29 10:02 PM
 // 
 // Project: MapleLib
 // Filename: GraphicPackDatabase.cs
@@ -10,7 +10,6 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Threading.Tasks;
-using IniParser.Parser;
 using LiteDB;
 using MapleLib.Collections;
 using MapleLib.Common;
@@ -82,33 +81,25 @@ namespace MapleLib.Databases
             try
             {
                 var entries = entry.Archive.Entries;
-                var files = entries.Where(x => Match(x, entry)).ToList();
+                var files = entries.Where(x => Match(x, entry) && !x.FullName.Contains("Cheats")).ToList();
 
                 var rules = files.Find(x => x.Name.ToLower() == "rules.txt")?.GetString();
-                var sources = files.Where(x => x.Name.ToLower().Contains("source.txt")).ToList();
+                var sources = files.Where(x => !x.Name.ToLower().Contains("rules.txt")).ToList();
 
                 if (string.IsNullOrEmpty(rules))
                     return null;
 
-                var parser = new IniDataParser
-                {
-                    Configuration =
-                    {
-                        SkipInvalidLines = true,
-                        AllowDuplicateKeys = true,
-                        AllowDuplicateSections = true
-                    }
-                };
-                var data = parser.Parse(rules);
+                var iniFile = new IniManager(rules);
+                var titleIdsValue = iniFile.GetValue("Definition", "titleIds", null);
+                var nameValue = iniFile.GetValue("Definition", "name", null);
 
-                if (data["Definition"]?["titleIds"] == null || data["Definition"]?["name"] == null)
-                    return null;
+                if (titleIdsValue == null || nameValue == null) return null;
 
-                var value = data["Definition"]?["titleIds"]?.ToUpper();
+                var value = titleIdsValue.ToUpper();
                 if (string.IsNullOrEmpty(value)) return null;
 
                 var titleIds = value.Split(',');
-                var name = data["Definition"]?["name"].Replace("\"", "").Trim();
+                var name = nameValue.Replace("\"", "").Trim();
 
                 var pack = new GraphicPack {Name = name, Rules = rules};
                 pack.TitleIds.AddRange(titleIds);

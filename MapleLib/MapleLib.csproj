@@ -137,6 +137,7 @@
     <Compile Include="Collections\MapleList.cs" />
     <Compile Include="Common\Crypto.cs" />
     <Compile Include="Common\Extensions.cs" />
+    <Compile Include="Common\IniManager.cs" />
     <Compile Include="Common\Update.cs" />
     <Compile Include="BaseClasses\Config.cs" />
     <Compile Include="Databases\Managers\WiiUManager.cs" />
@@ -155,23 +156,6 @@
     <Compile Include="Network\DownloadQueue.cs" />
     <Compile Include="Network\WiiuClient.cs" />
     <Compile Include="Structs\Versions.cs" />
-    <Compile Include="ThirdParty\IniFileParser\Exceptions\ParsingException.cs" />
-    <Compile Include="ThirdParty\IniFileParser\FileIniParser.cs" />
-    <Compile Include="ThirdParty\IniFileParser\Helpers\Assert.cs" />
-    <Compile Include="ThirdParty\IniFileParser\Model\Configuration\ConcatenateDuplicatedKeysIniParserConfiguration.cs" />
-    <Compile Include="ThirdParty\IniFileParser\Model\Configuration\IniParserConfiguration.cs" />
-    <Compile Include="ThirdParty\IniFileParser\Model\Formatting\DefaultIniDataFormatter.cs" />
-    <Compile Include="ThirdParty\IniFileParser\Model\Formatting\IIniDataFormatter.cs" />
-    <Compile Include="ThirdParty\IniFileParser\Model\IniData.cs" />
-    <Compile Include="ThirdParty\IniFileParser\Model\IniDataCaseInsensitive.cs" />
-    <Compile Include="ThirdParty\IniFileParser\Model\KeyData.cs" />
-    <Compile Include="ThirdParty\IniFileParser\Model\KeyDataCollection.cs" />
-    <Compile Include="ThirdParty\IniFileParser\Model\SectionData.cs" />
-    <Compile Include="ThirdParty\IniFileParser\Model\SectionDataCollection.cs" />
-    <Compile Include="ThirdParty\IniFileParser\Parser\ConcatenateDuplicatedKeysIniDataParser.cs" />
-    <Compile Include="ThirdParty\IniFileParser\Parser\IniDataParser.cs" />
-    <Compile Include="ThirdParty\IniFileParser\StreamIniDataParser.cs" />
-    <Compile Include="ThirdParty\IniFileParser\StringIniParser.cs" />
     <Compile Include="WiiU\GraphicPack.cs" />
     <Compile Include="Common\Helper.cs" />
     <Compile Include="Network\Web.cs" />
@@ -402,7 +386,6 @@
   <ItemGroup>
     <None Include="packages.config" />
     <None Include="Resources\DLCPatch" />
-    <None Include="ThirdParty\IniFileParser\Model\IniData.cs.rej" />
     <None Include="ThirdParty\Newtonsoft.Json\Dynamic.snk" />
     <None Include="ThirdParty\Newtonsoft.Json\Newtonsoft.Json.Dotnet.xproj" />
     <None Include="ThirdParty\Newtonsoft.Json\Newtonsoft.Json.Net20.project.json" />

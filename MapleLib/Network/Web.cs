@@ -10,6 +10,7 @@
 using System;
 using System.IO;
 using System.Net;
+using System.Text;
 using System.Threading.Tasks;
 using MapleLib.Common;
 using MapleLib.Structs;
@@ -75,7 +76,7 @@ namespace MapleLib.Network
         public static string DownloadString(string url)
         {
             if (!Helper.InternetActive())
-                return string.Empty;
+                return null;
 
             using (var wc = new WebClient())
             {
@@ -83,6 +84,20 @@ namespace MapleLib.Network
                 wc.Headers[HttpRequestHeader.CacheControl] = "max-age=0, no-cache, no-store";
                 wc.DownloadProgressChanged += DownloadProgressChanged;
                 return wc.DownloadString(url);
+            }
+        }
+
+        public static async Task<string> DownloadStringAsync(string url)
+        {
+            if (!Helper.InternetActive())
+                return null;
+
+            using (var wc = new WebClient())
+            {
+                wc.Headers[HttpRequestHeader.UserAgent] = WiiUserAgent;
+                wc.Headers[HttpRequestHeader.CacheControl] = "max-age=0, no-cache, no-store";
+                wc.DownloadProgressChanged += DownloadProgressChanged;
+                return await wc.DownloadStringTaskAsync(url);
             }
         }
 
@@ -126,7 +141,7 @@ namespace MapleLib.Network
                         return true;
                 }
             }
-            catch
+            catch(Exception)
             {
                 // ignored
             }

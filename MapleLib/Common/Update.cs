@@ -1,5 +1,5 @@
 ﻿// Created: 2017/05/05 9:17 PM
-// Updated: 2017/09/29 2:00 AM
+// Updated: 2017/09/29 11:57 PM
 // 
 // Project: MapleLib
 // Filename: Update.cs
@@ -8,6 +8,7 @@
 using System;
 using System.Drawing;
 using System.Reflection;
+using System.Threading.Tasks;
 using MapleLib.Enums;
 using MapleLib.Network;
 
@@ -19,22 +20,24 @@ namespace MapleLib.Common
         {
             UpdateType = build;
 
-            var versionStrs = Web.DownloadString(VersionUrl).Split('\n');
+            Task.Run(() => SetVersion()).Wait();
 
-            if (UpdateType == UpdateType.MapleSeed)
+            switch (UpdateType)
             {
-                CurrentVersion = Assembly.GetEntryAssembly().GetName().Version.ToString();
+                case UpdateType.MapleSeed:
+                    CurrentVersion = Assembly.GetEntryAssembly().GetName().Version.ToString();
+                    if (VersionStrings.Length == 2)
+                        LatestVersion = VersionStrings[0];
+                    break;
 
-                if (versionStrs.Length == 2)
-                    LatestVersion = versionStrs[0];
-            }
+                case UpdateType.MapleSeed2:
+                    CurrentVersion = Settings.Version;
+                    if (VersionStrings.Length == 2)
+                        LatestVersion = VersionStrings[1];
+                    break;
 
-            if (UpdateType == UpdateType.MapleSeed2)
-            {
-                CurrentVersion = Settings.Version;
-
-                if (versionStrs.Length == 2)
-                    LatestVersion = versionStrs[1];
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
 
             if (CurrentVersion != LatestVersion)
@@ -49,6 +52,8 @@ namespace MapleLib.Common
 
         private string CurrentVersion { get; }
 
+        private string[] VersionStrings { get; set; }
+
         private bool IsAvailable { get; }
 
         #region IDisposable Members
@@ -56,6 +61,12 @@ namespace MapleLib.Common
         public void Dispose() { }
 
         #endregion
+
+        private void SetVersion()
+        {
+            var result = Web.DownloadString(VersionUrl);
+            VersionStrings = result.Split('\n');
+        }
 
         public void CheckForUpdate()
         {

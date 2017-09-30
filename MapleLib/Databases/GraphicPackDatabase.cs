@@ -1,5 +1,5 @@
 ﻿// Created: 2017/05/14 5:33 AM
-// Updated: 2017/09/29 10:02 PM
+// Updated: 2017/09/29 11:07 PM
 // 
 // Project: MapleLib
 // Filename: GraphicPackDatabase.cs
@@ -34,12 +34,13 @@ namespace MapleLib.Databases
         private async Task<MapleList<GraphicPack>> Create()
         {
             var graphicPacks = new MapleList<GraphicPack>();
-            byte[] graphicPackBytes = {0};
 
             try
             {
-                const string url = "https://github.com/slashiee/cemu_graphic_packs/archive/master.zip";
-                if (Web.UrlExists(url) && (graphicPackBytes = await Web.DownloadDataAsync(url)) == null)
+                const string url = "http://github.com/slashiee/cemu_graphic_packs/archive/master.zip";
+
+                byte[] graphicPackBytes;
+                if ((graphicPackBytes = await Web.DownloadDataAsync(url)) == null)
                     return null;
 
                 if (graphicPackBytes.Length <= 1)

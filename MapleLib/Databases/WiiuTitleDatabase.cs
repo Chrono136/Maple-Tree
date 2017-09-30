@@ -49,9 +49,9 @@ namespace MapleLib.Databases
 
             var db = new MapleList<Title>();
 
-            await Task.Run(() =>
+            await Task.Run(async () =>
             {
-                var titlekeys = WiiUTitleKeys();
+                var titlekeys = await WiiUTitleKeys();
                 foreach (var wiiutitleKey in titlekeys)
                 {
                     var id = wiiutitleKey["titleID"].Value<string>()?.ToUpper();
@@ -154,25 +154,13 @@ namespace MapleLib.Databases
             }
         }
 
-        private static List<JObject> WiiUTitleKeys()
+        private static async Task<List<JObject>> WiiUTitleKeys()
         {
-            var url_1 = "http://wiiu.titlekeys.gq/json";
-            var url_2 = "https://wiiu.titlekeys.com/json";
+            const string url = "http://wiiu.titlekeys.gq/json";
 
-            var urls = new[] {url_1, url_2};
-
-            var jsonStr = string.Empty;
-
-            for (var i = 0; i < urls.Length; i++)
+            string jsonStr;
+            if ((jsonStr = await Web.DownloadStringAsync(url)) == null)
             {
-                var url = urls[i];
-
-                if (Web.UrlExists(url))
-                {
-                    jsonStr = Web.DownloadString(url);
-                    break;
-                }
-
                 TextLog.Write($"Failed to download db from {url}, falling back to embedded option");
                 jsonStr = Resources.wiiutitlekey;
             }

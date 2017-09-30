@@ -15,7 +15,6 @@ namespace MapleLib.Common
     /// </summary>
     /// <remarks>
     /// Section and key names are not case-sensitive. Values are loaded into a hash table for fast access.
-    /// Use <see cref="GetAllValues"/> to read multiple values that share the same section and key.
     /// Sections in the initialization file must have the following form:
     /// <code>
     ///     ; comment line
@@ -72,12 +71,12 @@ namespace MapleLib.Common
                             continue;
                         }
 
-                        if (line.Contains("="))  // key=value
+                        if (!line.Contains("=")) continue;
                         {
                             int index = line.IndexOf('=');
-                            string key = line.Substring(0, index).Trim();
-                            string val = line.Substring(index + 1).Trim();
-                            string key2 = $"[{section}]{key}".ToLower();
+                            var key = line.Substring(0, index).Trim();
+                            var val = line.Substring(index + 1).Trim();
+                            var key2 = $"[{section}]{key}".ToLower();
 
                             if (val.StartsWith("\"") && val.EndsWith("\""))  // strip quotes
                                 val = val.Substring(1, val.Length - 2);
@@ -124,7 +123,6 @@ namespace MapleLib.Common
         /// <param name="key">The key.</param>
         /// <param name="defaultValue">The default value.</param>
         /// <returns>The value.</returns>
-        /// <seealso cref="GetAllValues"/>
         public string GetValue(string section, string key, string defaultValue = "")
         {
             string value;
@@ -132,109 +130,6 @@ namespace MapleLib.Common
                 return defaultValue;
 
             return value;
-        }
-
-        /// <summary>
-        /// Gets an integer value by section and key.
-        /// </summary>
-        /// <param name="section">The section.</param>
-        /// <param name="key">The key.</param>
-        /// <param name="defaultValue">The default value.</param>
-        /// <param name="minValue">Optional minimum value to be enforced.</param>
-        /// <param name="maxValue">Optional maximum value to be enforced.</param>
-        /// <returns>The value.</returns>
-        public int GetInteger(string section, string key, int defaultValue = 0,
-            int minValue = int.MinValue, int maxValue = int.MaxValue)
-        {
-            string stringValue;
-            if (!TryGetValue(section, key, out stringValue))
-                return defaultValue;
-
-            int value;
-            if (!int.TryParse(stringValue, out value))
-            {
-                double dvalue;
-                if (!double.TryParse(stringValue, out dvalue))
-                    return defaultValue;
-                value = (int)dvalue;
-            }
-
-            if (value < minValue)
-                value = minValue;
-            if (value > maxValue)
-                value = maxValue;
-            return value;
-        }
-
-        /// <summary>
-        /// Gets a double floating-point value by section and key.
-        /// </summary>
-        /// <param name="section">The section.</param>
-        /// <param name="key">The key.</param>
-        /// <param name="defaultValue">The default value.</param>
-        /// <param name="minValue">Optional minimum value to be enforced.</param>
-        /// <param name="maxValue">Optional maximum value to be enforced.</param>
-        /// <returns>The value.</returns>
-        public double GetDouble(string section, string key, double defaultValue = 0,
-            double minValue = double.MinValue, double maxValue = double.MaxValue)
-        {
-            string stringValue;
-            if (!TryGetValue(section, key, out stringValue))
-                return defaultValue;
-
-            double value;
-            if (!double.TryParse(stringValue, out value))
-                return defaultValue;
-
-            if (value < minValue)
-                value = minValue;
-            if (value > maxValue)
-                value = maxValue;
-            return value;
-        }
-
-        /// <summary>
-        /// Gets a boolean value by section and key.
-        /// </summary>
-        /// <param name="section">The section.</param>
-        /// <param name="key">The key.</param>
-        /// <param name="defaultValue">The default value.</param>
-        /// <returns>The value.</returns>
-        public bool GetBoolean(string section, string key, bool defaultValue = false)
-        {
-            string stringValue;
-            if (!TryGetValue(section, key, out stringValue))
-                return defaultValue;
-
-            return (stringValue != "0" && !stringValue.StartsWith("f", true, null));
-        }
-
-        /// <summary>
-        /// Gets an array of string values by section and key.
-        /// </summary>
-        /// <param name="section">The section.</param>
-        /// <param name="key">The key.</param>
-        /// <returns>The array of values, or null if none found.</returns>
-        /// <seealso cref="GetValue"/>
-        public string[] GetAllValues(string section, string key)
-        {
-            string value;
-            var key2 = section.StartsWith("[") ? $"{section}{key}".ToLower() : $"[{section}]{key}".ToLower();
-
-            if (!_dictionary.TryGetValue(key2, out value))
-                return null;
-
-            var values = new List<string> {value};
-            int index = 1;
-            while (true)
-            {
-                var key3 = $"{key2}~{++index}";
-                if (!_dictionary.TryGetValue(key3, out value))
-                    break;
-                values.Add(value);
-            }
-
-            return values.ToArray();
         }
     }
 }

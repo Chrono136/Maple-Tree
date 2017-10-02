@@ -1,5 +1,5 @@
 ﻿// Created: 2017/05/14 6:05 AM
-// Updated: 2017/10/01 6:38 PM
+// Updated: 2017/10/02 12:24 PM
 // 
 // Project: MapleLib
 // Filename: WiiuTitleDatabase.cs
@@ -19,18 +19,35 @@ namespace MapleLib.Databases
     public static class WiiuTitleDatabase
     {
         public static MapleDictionary TitleLibrary { get; } = new MapleDictionary(Settings.LibraryDirectory);
-        
+
         private static async Task<IEnumerable<Title>> GetJObjects(string query)
         {
             var url = Database.API_BASE_URL + query;
             var json = await Web.DownloadStringAsync(url);
 
-            return string.IsNullOrEmpty(json) ? null : JsonConvert.DeserializeObject<IEnumerable<Title>>(json);
+            var settings = new JsonSerializerSettings();
+
+            var titles = JsonConvert.DeserializeObject<IList<Title>>(json, settings);
+
+            return string.IsNullOrEmpty(json) ? null : titles;
         }
 
         public static async Task<IEnumerable<Title>> All()
         {
             return new MapleList<Title>(await GetJObjects("title/all"));
+        }
+
+        public static Versions GetVersions(string id)
+        {
+            var url = Database.API_BASE_URL + $"title/{id}/versions";
+            var response = Web.DownloadString(url);
+
+            return response;
+        }
+
+        public static async Task<Versions> GetVersionsTask(string id)
+        {
+            return await Task.Run(() => GetVersions(id));
         }
 
         private static async Task<int> GetCount()
@@ -58,7 +75,7 @@ namespace MapleLib.Databases
                 var titleId = Helper.XmlGetStringByTag(xmlFile, "title_id");
 
                 Title title;
-                if ((title = await Database.FindTitle(titleId)) == null)
+                if ((title = await Database.FindTitleAsync(titleId)) == null)
                 {
                     TextLog.Write($"Could not find title using ID {titleId}");
                     continue;

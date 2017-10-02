@@ -1,7 +1,9 @@
-﻿// Project: MapleCake
-// File: MapleButtons.cs
-// Updated By: Jared
+﻿// Created: 2017/03/27 11:20 AM
+// Updated: 2017/10/02 1:58 PM
 // 
+// Project: MapleCake
+// Filename: MapleButtons.cs
+// Created By: Jared T
 
 using System;
 using System.IO;
@@ -13,9 +15,9 @@ using MapleCake.ViewModels;
 using MapleLib;
 using MapleLib.Abstract;
 using MapleLib.Common;
+using MapleLib.Databases.Managers;
 using MapleLib.Properties;
 using MapleLib.Structs;
-using MapleLib.Databases.Managers;
 
 namespace MapleCake.Models
 {
@@ -35,7 +37,7 @@ namespace MapleCake.Models
         public ICommand RemoveTitle => new CommandHandler(RemoveTitleButton);
         public ICommand TitleIdToClipboard => new CommandHandler(TitleIdToClipboardButton);
         public ICommand EditorUI => new CommandHandler(WiiUManager.Instance.ToggleUi);
-        
+
         private void UninstallButton()
         {
             MainWindowViewModel.Instance.Config.BackgroundImage = string.Empty;
@@ -46,8 +48,10 @@ namespace MapleCake.Models
 
         private static void LaunchCemuButton()
         {
-            new Thread(() => {
-                if (SelectedItem == null) {
+            new Thread(() =>
+            {
+                if (SelectedItem == null)
+                {
                     Toolbelt.LaunchCemu(string.Empty, null);
                     return;
                 }
@@ -60,7 +64,7 @@ namespace MapleCake.Models
             if (string.IsNullOrEmpty(TitleID))
                 return;
 
-            var title = await Database.FindTitle(TitleID);
+            var title = await Database.FindTitleAsync(TitleID);
             if (title == null) return;
 
             MainWindowViewModel.Instance.Config.DownloadCommandEnabled = false;
@@ -89,7 +93,8 @@ namespace MapleCake.Models
         {
             if (SelectedItem == null) return;
 
-            await Task.Run(() => {
+            await Task.Run(() =>
+            {
                 var updatePath = Path.Combine(Settings.BasePatchDir, SelectedItem.Lower8Digits());
                 var result = MessageBox.Show(string.Format(Resources.ActionWillDeleteAllContent, updatePath),
                     Resources.PleaseConfirmAction, MessageBoxButtons.OKCancel);
@@ -146,16 +151,14 @@ namespace MapleCake.Models
             if (SelectedItem.Name.IsNullOrEmpty())
                 throw new NullReferenceException($"[{SelectedItem}] Title Name is null or empty, can't proceed!");
 
-            Title title;
+            var title = await Database.FindTitleAsync(SelectedItem.ID);
 
             //download dlc if applicable
-            if (contentType == "DLC" && SelectedItem.HasDLC)
-                if ((title = await Database.FindTitle($"0005000C{SelectedItem.Lower8Digits()}")) != null)
-                    await title.DownloadDLC();
+            if (contentType == "DLC" && SelectedItem.HasDLC && title != null)
+                await title.DownloadDLC();
 
             //download patch if applicable
-            if (contentType == "Patch" && SelectedItem.HasPatch)
-                if ((title = await Database.FindTitle($"0005000E{SelectedItem.Lower8Digits()}")) != null)
+            if (contentType == "Patch" && SelectedItem.HasPatch && title != null)
                     await title.DownloadUpdate(version.ToString());
 
             if (contentType == "eShop/Application")

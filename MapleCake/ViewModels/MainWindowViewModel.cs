@@ -106,7 +106,7 @@ namespace MapleCake.ViewModels
             if (tid.Length != 16)
                 return;
 
-            var title = await Database.FindTitle(tid);
+            var title = await Database.FindTitleAsync(tid);
             if (title == null) return;
 
             Config.SelectedItem = title;

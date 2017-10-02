@@ -1,5 +1,5 @@
 ﻿// Created: 2017/05/14 4:32 PM
-// Updated: 2017/09/29 2:06 AM
+// Updated: 2017/10/02 1:47 PM
 // 
 // Project: MapleLib
 // Filename: WiiuClient.cs
@@ -83,12 +83,20 @@ namespace MapleLib.Network
 
             var workingId = id.ToUpper();
 
-            Title title;
-            if ((title = await Database.FindTitle(workingId)) == null)
+            //download dlc if applicable
+            if (contentType == "DLC")
+                workingId = $"0005000C{workingId.Substring(8).ToUpper()}";
+
+            //download patch if applicable
+            if (contentType == "Patch")
+                workingId = $"0005000E{workingId.Substring(8).ToUpper()}";
+
+            var title = await Database.FindTitleKeyTask(workingId);
+            if (title.titleKey.Length != 32)
                 throw new Exception("Could not locate the title key");
 
-            var key = title.Key;
-            var name = title.Name;
+            var key = title.titleKey;
+            var name = title.name;
             if (string.IsNullOrEmpty(key) || string.IsNullOrEmpty(name)) return;
 
             if (!Directory.Exists(outputDir))
@@ -119,7 +127,7 @@ namespace MapleLib.Network
             foreach (var nusUrl in nusUrls)
             {
                 var titleUrl = $"{nusUrl}{workingId}/";
-                tmd = await LoadTmd(id, key, outputDir, titleUrl, version);
+                tmd = await LoadTmd(workingId, key, outputDir, titleUrl, version);
 
                 if (tmd != null)
                     break;
@@ -137,7 +145,7 @@ namespace MapleLib.Network
 
             Toolbelt.AppendLog("Generating Ticket...");
 
-            var tikData = MapleTicket.Create(await Database.FindTitle(id));
+            var tikData = MapleTicket.Create(await Database.FindTitleKeyTask(workingId));
             if (tikData == null)
                 throw new Exception("Invalid ticket data. Verify Title ID.");
 
@@ -214,7 +222,7 @@ namespace MapleLib.Network
             return result;
         }
 
-        private static void ReportProgress(int min, int max, int value)
+        public static void ReportProgress(int min, int max, int value)
         {
             ProgressReport?.Invoke(null, new ProgressReport {Min = min, Max = max, Value = value});
         }

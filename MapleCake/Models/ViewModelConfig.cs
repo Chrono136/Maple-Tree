@@ -1,7 +1,9 @@
-﻿// Project: MapleCake
-// File: ViewModelConfig.cs
-// Updated By: Jared
+﻿// Created: 2017/03/27 11:20 AM
+// Updated: 2017/10/02 11:42 AM
 // 
+// Project: MapleCake
+// Filename: ViewModelConfig.cs
+// Created By: Jared T
 
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -59,7 +61,8 @@ namespace MapleCake.Models
 
         public bool DownloadCommandEnabled { get; set; } = true;
 
-        public string LibraryDirectory {
+        public string LibraryDirectory
+        {
             get { return Settings.LibraryDirectory; }
             set {
                 Settings.LibraryDirectory = value;
@@ -67,7 +70,8 @@ namespace MapleCake.Models
             }
         }
 
-        public string CemuDirectory {
+        public string CemuDirectory
+        {
             get { return Settings.CemuDirectory; }
             set {
                 Settings.CemuDirectory = value;
@@ -75,7 +79,8 @@ namespace MapleCake.Models
             }
         }
 
-        public string LaunchCemuText {
+        public string LaunchCemuText
+        {
             get { return _launchCemuText; }
             set {
                 _launchCemuText = value;
@@ -83,7 +88,8 @@ namespace MapleCake.Models
             }
         }
 
-        public bool FullScreen {
+        public bool FullScreen
+        {
             get { return Settings.FullScreenMode; }
             set {
                 Settings.FullScreenMode = value;
@@ -91,7 +97,8 @@ namespace MapleCake.Models
             }
         }
 
-        public bool GraphicPacksEnabled {
+        public bool GraphicPacksEnabled
+        {
             get { return Settings.GraphicPacksEnabled; }
             set {
                 Settings.GraphicPacksEnabled = value;
@@ -99,7 +106,8 @@ namespace MapleCake.Models
             }
         }
 
-        public bool StoreEncryptedContent {
+        public bool StoreEncryptedContent
+        {
             get { return Settings.StoreEncryptedContent; }
             set {
                 Settings.StoreEncryptedContent = value;
@@ -107,7 +115,8 @@ namespace MapleCake.Models
             }
         }
 
-        public bool CacheDatabase {
+        public bool CacheDatabase
+        {
             get { return Settings.CacheDatabase; }
             set {
                 Settings.CacheDatabase = value;
@@ -115,7 +124,8 @@ namespace MapleCake.Models
             }
         }
 
-        public bool DynamicTheme {
+        public bool DynamicTheme
+        {
             get { return Settings.DynamicTheme; }
             set {
                 _self.DynamicTheme(Settings.DynamicTheme = value);
@@ -123,7 +133,8 @@ namespace MapleCake.Models
             }
         }
 
-        public string TitleVersion {
+        public string TitleVersion
+        {
             get { return _titleVersion; }
             set {
                 _titleVersion = value;
@@ -131,24 +142,27 @@ namespace MapleCake.Models
             }
         }
 
-        public string TitleID {
+        public string TitleID
+        {
             get { return _titleId; }
             set { _self.titleIdTextChanged(_titleId = value); }
         }
 
-        public Title SelectedItem {
+        public Title SelectedItem
+        {
             get { return _selectedItem; }
             set {
                 _self.SetBackgroundImg(_selectedItem = value);
                 ContextItems = MapleContext.CreateMenu();
-                RaisePropertyChangedEvent("SelectedItem");
                 RaisePropertyChangedEvent("ContextItems");
+                RaisePropertyChangedEvent("SelectedItem");
                 RaisePropertyChangedEvent("SelectedItemGraphicPack");
                 RaisePropertyChangedEvent("SelectedItemGraphicPacks");
             }
         }
 
-        public GraphicPack SelectedItemGraphicPack {
+        public GraphicPack SelectedItemGraphicPack
+        {
             get {
                 if (SelectedItem == null)
                     return null;
@@ -167,7 +181,8 @@ namespace MapleCake.Models
             }
         }
 
-        public BindingList<GraphicPack> SelectedItemGraphicPacks {
+        public BindingList<GraphicPack> SelectedItemGraphicPacks
+        {
             get {
                 var col = new BindingList<GraphicPack>();
 
@@ -187,10 +202,19 @@ namespace MapleCake.Models
 
         public MapleDictionary TitleList => Database.GetLibrary();
 
-        public List<ICommandItem> ContextItems {
-            get { return _contextItems; }
+        public List<ICommandItem> ContextItems
+        {
+            get {
+                if (SelectedItem == null || _contextItems == null)
+                    return _contextItems = MapleContext.CreateMenu();
+
+                if (_contextItems[0].Text.Contains(SelectedItem.Name))
+                    return _contextItems;
+
+                return _contextItems = MapleContext.CreateMenu();
+            }
             set {
-                _contextItems = MapleContext.CreateMenu();
+                _contextItems = value;
                 RaisePropertyChangedEvent("SelectedItem");
                 RaisePropertyChangedEvent("ContextItems");
             }
@@ -200,7 +224,8 @@ namespace MapleCake.Models
         {
             var stateFile = Path.Combine(Settings.ConfigDirectory, "state");
 
-            using (var stream = File.Open(stateFile, FileMode.Create)) {
+            using (var stream = File.Open(stateFile, FileMode.Create))
+            {
                 var bformatter = new BinaryFormatter();
 
                 bformatter.Serialize(stream, new List<object> {_graphicPackCache, _graphicPackCollection});
@@ -220,10 +245,12 @@ namespace MapleCake.Models
             if (!File.Exists(stateFile))
                 return;
 
-            try {
+            try
+            {
                 List<object> state;
 
-                using (var stream = File.Open(stateFile, FileMode.Open)) {
+                using (var stream = File.Open(stateFile, FileMode.Open))
+                {
                     var bformatter = new BinaryFormatter();
 
                     state = bformatter.Deserialize(stream) as List<object>;
@@ -237,7 +264,8 @@ namespace MapleCake.Models
                 _graphicPackCollection = state[1] as Dictionary<string, BindingList<GraphicPack>>;
                 RaisePropertyChangedEvent("SelectedItemGraphicPacks");
             }
-            catch {
+            catch
+            {
                 // ignored
             }
         }

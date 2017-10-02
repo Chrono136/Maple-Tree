@@ -138,9 +138,11 @@
     <Compile Include="Common\Crypto.cs" />
     <Compile Include="Common\Extensions.cs" />
     <Compile Include="Common\IniManager.cs" />
+    <Compile Include="JsonConverter\TitleConverter.cs" />
     <Compile Include="Common\Update.cs" />
     <Compile Include="BaseClasses\Config.cs" />
     <Compile Include="Databases\Managers\WiiUManager.cs" />
+    <Compile Include="Structs\TitleKey.cs" />
     <Compile Include="UserInterface\EditorForm.cs">
       <SubType>Form</SubType>
     </Compile>

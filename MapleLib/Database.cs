@@ -1,5 +1,5 @@
 ﻿// Created: 2017/05/13 3:44 PM
-// Updated: 2017/10/01 6:35 PM
+// Updated: 2017/10/02 2:32 PM
 // 
 // Project: MapleLib
 // Filename: Database.cs
@@ -16,6 +16,7 @@ using MapleLib.Collections;
 using MapleLib.Common;
 using MapleLib.Databases;
 using MapleLib.Network;
+using MapleLib.Properties;
 using MapleLib.Structs;
 using MapleLib.WiiU;
 using Newtonsoft.Json;
@@ -53,6 +54,8 @@ namespace MapleLib
             });
         }
 
+        private static List<TitleKey> TitleKeys { get; set; }
+
         private static GraphicPackDatabase GraphicPacks { get; }
 
         private static LiteDatabase LiteDatabase { get; }
@@ -84,19 +87,24 @@ namespace MapleLib
             return value;
         }
 
-        public static bool Time2Update(DateTime lastUpdate)
-        {
-            return (DateTime.Today - lastUpdate).TotalDays > 14 || Settings.CacheDatabase;
-        }
-
         public static void AddTitle(Title title)
         {
             WiiuTitleDatabase.TitleLibrary.Add(title);
         }
 
-        public static async Task<Title> FindTitle(string id)
+        public static Title FindTitle(string id)
         {
-            return (await WiiuTitleDatabase.Find(id.ToUpperInvariant())).FirstOrDefault();
+            var titles = GetLibraryList().Where(x => x.ID == id.ToUpper()).ToList();
+
+            if (!titles.Any())
+                Task.Run(async () => { titles = (await WiiuTitleDatabase.Find(id)).ToList(); }).Wait();
+
+            return titles.FirstOrDefault();
+        }
+
+        public static async Task<Title> FindTitleAsync(string id)
+        {
+            return await Task.Run(() => FindTitle(id));
         }
 
         private static async Task<IEnumerable<Title>> GetTitles()
@@ -104,17 +112,41 @@ namespace MapleLib
             return await WiiuTitleDatabase.All();
         }
 
-        public static void Dump(string dumpTo = null)
+        private static async Task<List<TitleKey>> GetTitleKeysTask()
         {
-            if (string.IsNullOrEmpty(dumpTo))
+            return await Task.Run(() => GetTitleKeys());
+        }
+
+        private static List<TitleKey> GetTitleKeys()
+        {
+            if (TitleKeys != null)
+                return TitleKeys;
+
+            try
             {
-                var curDir = Directory.GetCurrentDirectory();
-                dumpTo = Path.Combine(curDir, "WiiU.json");
+                var json = Web.DownloadString("http://wiiu.titlekeys.gq/json");
+                TitleKeys = JsonConvert.DeserializeObject<List<TitleKey>>(json);
+            }
+            catch
+            {
+                TextLog.Write("Failure accessing http://wiiu.titlekeys.gq/json, falling back.");
+                TitleKeys = JsonConvert.DeserializeObject<List<TitleKey>>(Resources.wiiutitlekeys);
             }
 
-            var titles = GetTitles();
-            var json = JsonConvert.SerializeObject(titles);
-            File.WriteAllText(dumpTo, json);
+            return TitleKeys;
+        }
+
+        private static TitleKey FindTitleKey(string id)
+        {
+            if (TitleKeys == null)
+                TitleKeys = GetTitleKeys();
+
+            return TitleKeys.First(x => string.Equals(x.titleID, id, StringComparison.CurrentCultureIgnoreCase));
+        }
+
+        public static async Task<TitleKey> FindTitleKeyTask(string id)
+        {
+            return await Task.Run(() => FindTitleKey(id));
         }
 
         public static MapleList<GraphicPack> FindGraphicPacks(string id)
@@ -125,6 +157,11 @@ namespace MapleLib
         public static MapleDictionary GetLibrary()
         {
             return WiiuTitleDatabase.TitleLibrary;
+        }
+
+        private static IEnumerable<Title> GetLibraryList()
+        {
+            return new List<Title>(WiiuTitleDatabase.TitleLibrary);
         }
 
         public static void Dispose()

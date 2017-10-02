@@ -1,5 +1,5 @@
 ﻿// Created: 2017/08/02 8:21 AM
-// Updated: 2017/09/29 2:05 AM
+// Updated: 2017/10/02 1:13 PM
 // 
 // Project: MapleLib
 // Filename: Downloader.cs
@@ -24,11 +24,11 @@ namespace MapleLib.Network
 
         private DownloadQueue DownloadQueue { get; } = new DownloadQueue();
 
-        public void AddToQueue(string titleID, string titleFolderLocation, string contentType, string version)
+        public void AddToQueue(string titleId, string titleFolderLocation, string contentType, string version)
         {
             var itemInfo = new ItemInfo
             {
-                TitleID = titleID,
+                TitleID = titleId,
                 Location = titleFolderLocation,
                 ContentType = contentType,
                 Version = version

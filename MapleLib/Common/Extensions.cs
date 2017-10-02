@@ -1,5 +1,5 @@
 ﻿// Created: 2017/03/27 11:20 AM
-// Updated: 2017/10/01 6:59 PM
+// Updated: 2017/10/02 11:07 AM
 // 
 // Project: MapleLib
 // Filename: Extensions.cs
@@ -18,7 +18,6 @@ using System.Windows.Forms;
 using System.Xml;
 using MapleLib.Collections;
 using MapleLib.Network;
-using MapleLib.Properties;
 using MapleLib.Structs;
 using Application = System.Windows.Application;
 

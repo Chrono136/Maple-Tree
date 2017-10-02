@@ -1,7 +1,9 @@
-﻿// Project: MapleCake
-// File: MapleContext.cs
-// Updated By: Jared
+﻿// Created: 2017/03/27 11:20 AM
+// Updated: 2017/10/02 1:55 PM
 // 
+// Project: MapleCake
+// Filename: MapleContext.cs
+// Created By: Jared T
 
 using System.Collections.Generic;
 using System.IO;
@@ -19,7 +21,7 @@ namespace MapleCake.Models
     {
         private static MapleButtons Click => MainWindowViewModel.Instance.Click;
 
-        private static Title SelectedItem => MainWindowViewModel.Instance.Config.SelectedItem;
+        private static Title SelectedItem => MainWindowViewModel.Instance?.Config?.SelectedItem;
 
         public static List<ICommandItem> CreateMenu()
         {
@@ -56,15 +58,17 @@ namespace MapleCake.Models
             return items;
         }
 
-        private static async void CreateUpdateItems(ICollection<ICommandItem> items)
+        private static void CreateUpdateItems(ICollection<ICommandItem> items)
         {
-            var title = await Database.FindTitle($"00050000{SelectedItem.Lower8Digits()}");
+            var title = Database.FindTitle($"00050000{SelectedItem.Lower8Digits()}");
+
             var titleVersion = int.Parse(MainWindowViewModel.Instance.Config.TitleVersion);
 
             if (SelectedItem.HasPatch || SelectedItem.HasDLC)
                 items.Add(new SeparatorCommandItem());
-            
-            if (SelectedItem.HasPatch) {
+
+            if (SelectedItem.HasPatch)
+            {
                 foreach (var version in title.Versions)
                     items.Add(new CommandItem
                     {

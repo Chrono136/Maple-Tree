@@ -30,8 +30,7 @@ namespace MapleLib.Network
             if (string.IsNullOrEmpty(title.ID))
                 throw new Exception("Can't download content without a valid Title ID.");
 
-            if (string.IsNullOrEmpty(title.FolderLocation))
-                title.FolderLocation = Path.GetFullPath(Path.Combine(Settings.LibraryDirectory, $"{title}"));
+            title.FolderLocation = Path.GetFullPath(Path.Combine(Settings.LibraryDirectory, $"{title}"));
 
             #region Output Directory
 
@@ -122,6 +121,7 @@ namespace MapleLib.Network
 
         private static void DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
         {
+            WiiuClient.ReportProgress(0, (int) e.TotalBytesToReceive, (int) e.BytesReceived);
             DownloadProgressChangedEvent?.Invoke(sender, e);
         }
 

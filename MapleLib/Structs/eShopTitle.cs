@@ -1,5 +1,5 @@
 ﻿// Created: 2017/03/29 7:40 AM
-// Updated: 2017/09/29 2:04 AM
+// Updated: 2017/10/02 9:45 AM
 // 
 // Project: MapleLib
 // Filename: eShopTitle.cs
@@ -9,6 +9,7 @@ using System;
 using System.ComponentModel;
 using System.Text.RegularExpressions;
 using MapleLib.Common;
+using MapleLib.JsonConverter;
 
 namespace MapleLib.Structs
 {
@@ -35,7 +36,8 @@ namespace MapleLib.Structs
         public string CompanyCode { get; set; }
 
         public string Region { get; set; }
-
+        
+        [Newtonsoft.Json.JsonConverter(typeof(VersionConverter))]
         public Versions Versions { get; set; } = "0";
 
         public bool HasDLC { get; set; }

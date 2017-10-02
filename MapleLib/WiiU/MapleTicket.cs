@@ -7,6 +7,7 @@
 
 using System.Collections.Generic;
 using MapleLib.Common;
+using MapleLib.Databases;
 using MapleLib.Properties;
 using MapleLib.Structs;
 
@@ -14,16 +15,16 @@ namespace MapleLib.WiiU
 {
     public static class MapleTicket
     {
-        private const int Tk = 0x140;
+        private const int TK = 0x140;
 
         private static void PatchDlc(ref List<byte> ticketData)
         {
-            ticketData.InsertRange(Tk + 0x164, Resources.DLCPatch);
+            ticketData.InsertRange(TK + 0x164, Resources.DLCPatch);
         }
 
         private static void PatchDemo(ref List<byte> ticketData)
         {
-            ticketData.InsertRange(Tk + 0x124, new byte[0x00 * 64]);
+            ticketData.InsertRange(TK + 0x124, new byte[0x00 * 64]);
         }
 
         /// <summary>
@@ -31,9 +32,9 @@ namespace MapleLib.WiiU
         /// </summary>
         /// <param name="title">The title</param>
         /// <returns></returns>
-        public static byte[] Create(Title title)
+        public static byte[] Create(TitleKey title)
         {
-            if (title == null)
+            if (string.IsNullOrEmpty(title.titleID))
                 return null;
 
             var tiktem =
@@ -74,9 +75,11 @@ namespace MapleLib.WiiU
                     break;
             }
 
-            tikdata.InsertRange(Tk + 0xA6, title.Versions[0].ToBytes());
-            tikdata.InsertRange(Tk + 0x9C, title.ID.HexToBytes());
-            tikdata.InsertRange(Tk + 0x7F, title.Key.HexToBytes());
+            var versions = WiiuTitleDatabase.GetVersions($"00050000{title.Lower8Digits()}");
+
+            tikdata.InsertRange(TK + 0xA6, versions[0].ToBytes());
+            tikdata.InsertRange(TK + 0x9C, title.titleID.ToUpper().HexToBytes());
+            tikdata.InsertRange(TK + 0x7F, title.titleKey.ToUpper().HexToBytes());
 
             return tikdata.ToArray();
         }

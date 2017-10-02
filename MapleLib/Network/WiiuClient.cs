@@ -84,7 +84,7 @@ namespace MapleLib.Network
             var workingId = id.ToUpper();
 
             Title title;
-            if ((title = Database.FindTitle(workingId)) == null)
+            if ((title = await Database.FindTitle(workingId)) == null)
                 throw new Exception("Could not locate the title key");
 
             var key = title.Key;
@@ -137,7 +137,7 @@ namespace MapleLib.Network
 
             Toolbelt.AppendLog("Generating Ticket...");
 
-            var tikData = MapleTicket.Create(Database.FindTitle(id));
+            var tikData = MapleTicket.Create(await Database.FindTitle(id));
             if (tikData == null)
                 throw new Exception("Invalid ticket data. Verify Title ID.");
 

@@ -181,7 +181,7 @@ namespace MapleSeed
                 if (contentType == "DLC" && title.HasDLC)
                 {
                     id = $"0005000C{title.Lower8Digits()}";
-                    title = Database.FindTitle(id);
+                    title = await Database.FindTitle(id);
                     if (title == null) continue;
                     await title.DownloadDLC();
                 }
@@ -195,7 +195,7 @@ namespace MapleSeed
                     }
 
                     id = $"0005000E{title.Lower8Digits()}";
-                    title = Database.FindTitle(id);
+                    title = await Database.FindTitle(id);
                     if (title == null) continue;
                     await title.DownloadUpdate(version);
                 }
@@ -319,7 +319,7 @@ namespace MapleSeed
             if (string.IsNullOrEmpty(titleId)) return;
 
             Title title;
-            if ((title = Database.FindTitle(titleId)) == null) return;
+            if ((title = await Database.FindTitle(titleId)) == null) return;
             title.FolderLocation = Path.Combine(Settings.LibraryDirectory, $"{title}");
 
             await title.DownloadContent(titleVersion.Text);
@@ -384,12 +384,12 @@ namespace MapleSeed
             Settings.StoreEncryptedContent = storeEncCont.Checked;
         }
 
-        private void titleIdTextBox_TextChanged(object sender, EventArgs e)
+        private async void titleIdTextBox_TextChanged(object sender, EventArgs e)
         {
             if (titleIdTextBox.Text.Length != 16)
                 return;
 
-            var title = Database.FindTitle(titleIdTextBox.Text);
+            var title = await Database.FindTitle(titleIdTextBox.Text);
             if (title == null) return;
 
             titleName.Text = Toolbelt.Ric(title.Name);

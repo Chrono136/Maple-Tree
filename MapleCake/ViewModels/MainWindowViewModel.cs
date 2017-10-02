@@ -100,12 +100,12 @@ namespace MapleCake.ViewModels
             Config.RaisePropertyChangedEvent("BackgroundImage");
         }
 
-        public void titleIdTextChanged(string tid)
+        public async void titleIdTextChanged(string tid)
         {
             if (tid.Length != 16)
                 return;
 
-            var title = Database.FindTitle(tid);
+            var title = await Database.FindTitle(tid);
             if (title == null) return;
 
             Config.SelectedItem = title;

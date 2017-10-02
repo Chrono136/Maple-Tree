@@ -1,5 +1,5 @@
 ﻿// Created: 2017/05/13 3:44 PM
-// Updated: 2017/09/29 6:29 PM
+// Updated: 2017/10/01 6:35 PM
 // 
 // Project: MapleLib
 // Filename: Database.cs
@@ -24,6 +24,8 @@ namespace MapleLib
 {
     public static class Database
     {
+        public const string API_BASE_URL = "http://api.pixxy.in/";
+
         static Database()
         {
             var dbFile = Path.GetFullPath(Path.Combine(Settings.ConfigDirectory, "mapleseed.db"));
@@ -37,8 +39,7 @@ namespace MapleLib
             if (GraphicPacks == null)
                 GraphicPacks = new GraphicPackDatabase(LiteDatabase);
 
-            if (WiiuTitles == null)
-                WiiuTitles = new WiiuTitleDatabase(LiteDatabase);
+            WiiuTitleDatabase.Load();
 
             if (Downloader == null)
                 Downloader = new Downloader();
@@ -48,13 +49,11 @@ namespace MapleLib
                 while (DatabaseLoaded == null || DatabaseCount < MaxDatabaseCount)
                     await Task.Delay(250);
 
-                DatabaseLoaded?.Invoke(new object[] {GraphicPacks, WiiuTitles}, EventArgs.Empty);
+                DatabaseLoaded?.Invoke(new object[] {GraphicPacks}, EventArgs.Empty);
             });
         }
 
         private static GraphicPackDatabase GraphicPacks { get; }
-
-        private static WiiuTitleDatabase WiiuTitles { get; }
 
         private static LiteDatabase LiteDatabase { get; }
 
@@ -92,17 +91,17 @@ namespace MapleLib
 
         public static void AddTitle(Title title)
         {
-            WiiuTitles.TitleLibrary.Add(title);
+            WiiuTitleDatabase.TitleLibrary.Add(title);
         }
 
-        public static Title FindTitle(string id)
+        public static async Task<Title> FindTitle(string id)
         {
-            return WiiuTitles.Find(id.ToUpperInvariant()).FirstOrDefault();
+            return (await WiiuTitleDatabase.Find(id.ToUpperInvariant())).FirstOrDefault();
         }
 
-        public static IEnumerable<Title> GetTitles()
+        private static async Task<IEnumerable<Title>> GetTitles()
         {
-            return WiiuTitles.All();
+            return await WiiuTitleDatabase.All();
         }
 
         public static void Dump(string dumpTo = null)
@@ -125,7 +124,7 @@ namespace MapleLib
 
         public static MapleDictionary GetLibrary()
         {
-            return WiiuTitles.TitleLibrary;
+            return WiiuTitleDatabase.TitleLibrary;
         }
 
         public static void Dispose()
@@ -136,7 +135,6 @@ namespace MapleLib
         public static Task DownloadTitle(string titleId, string titleFolderLocation, string contentType, string version)
         {
             return Task.Run(() => Downloader.AddToQueue(titleId, titleFolderLocation, contentType, version));
-            //return WiiuClient.DownloadTitle(titleID, titleFolderLocation, contentType, version);
         }
 
         public static void RegisterEvent(EventHandler<ProgressReport> onEvent)
@@ -146,7 +144,7 @@ namespace MapleLib
 
         public static void RegisterEvent(EventHandler<AddItemEventArgs<Title>> onEvent)
         {
-            WiiuTitles.TitleLibrary.AddItemEvent += onEvent;
+            WiiuTitleDatabase.TitleLibrary.AddItemEvent += onEvent;
         }
     }
 }

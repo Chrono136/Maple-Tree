@@ -47,7 +47,7 @@ namespace MapleLib
                     Description = @"Cemu Title Directory" + Environment.NewLine + @"(Where you store games)"
                 };
 
-                var result = fbd.STAShowDialog();
+                var result = fbd.StaShowDialog();
                 if (!string.IsNullOrWhiteSpace(fbd.SelectedPath) && result == DialogResult.OK)
                     return Database.SaveConfig(Config.LibraryDirectory = fbd.SelectedPath);
 
@@ -74,7 +74,7 @@ namespace MapleLib
                     Filter = @"Cemu Excutable |cemu.exe"
                 };
 
-                var result = ofd.STAShowDialog();
+                var result = ofd.StaShowDialog();
                 if (!string.IsNullOrWhiteSpace(ofd.FileName) && result == DialogResult.OK)
                     return Database.SaveConfig(Config.CemuDirectory = Path.GetDirectoryName(ofd.FileName));
 

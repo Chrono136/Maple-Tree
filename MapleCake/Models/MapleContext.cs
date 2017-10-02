@@ -56,9 +56,9 @@ namespace MapleCake.Models
             return items;
         }
 
-        private static void CreateUpdateItems(ICollection<ICommandItem> items)
+        private static async void CreateUpdateItems(ICollection<ICommandItem> items)
         {
-            var title = Database.FindTitle($"00050000{SelectedItem.Lower8Digits()}");
+            var title = await Database.FindTitle($"00050000{SelectedItem.Lower8Digits()}");
             var titleVersion = int.Parse(MainWindowViewModel.Instance.Config.TitleVersion);
 
             if (SelectedItem.HasPatch || SelectedItem.HasDLC)

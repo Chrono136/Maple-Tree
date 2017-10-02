@@ -1,5 +1,5 @@
 ﻿// Created: 2017/03/27 11:20 AM
-// Updated: 2017/09/29 1:56 AM
+// Updated: 2017/10/01 6:59 PM
 // 
 // Project: MapleLib
 // Filename: Extensions.cs
@@ -35,12 +35,18 @@ namespace MapleLib.Common
 
             var code = title.ProductCode.Substring(6);
 
-            var doc = new XmlDocument();
+            var compCode = "01";
+            if (!string.IsNullOrEmpty(title.CompanyCode) && title.CompanyCode.Length > 3 && title.CompanyCode != "None")
+                compCode = title.CompanyCode.Substring(2);
+
+            /*var doc = new XmlDocument();
             doc.Load(new MemoryStream(Encoding.UTF8.GetBytes(Resources.wiiutdb)));
 
             var values = doc.GetElementsByTagName("id").Cast<XmlNode>().ToList();
             var value = values.Find(x => x.InnerText.Contains(code));
-            var imageCode = value?.InnerText;
+            var imageCode = value?.InnerText;*/
+
+            var imageCode = code + compCode;
 
             if (imageCode.IsNullOrEmpty())
                 return string.Empty;
@@ -94,7 +100,7 @@ namespace MapleLib.Common
 
         public static string GetString(this ZipArchiveEntry entry)
         {
-            return entry.Open().toString();
+            return ToString(entry.Open());
         }
 
         public static byte[] GetBytes(this ZipArchiveEntry entry)
@@ -115,7 +121,7 @@ namespace MapleLib.Common
             }
         }
 
-        private static string toString(this Stream stream)
+        private static string ToString(this Stream stream)
         {
             using (var ms = new MemoryStream())
             {
@@ -224,7 +230,7 @@ namespace MapleLib.Common
             return string.IsNullOrEmpty(str);
         }
 
-        public static async void AddOnUI(this MapleDictionary collection, Title item)
+        public static async void AddOnUi(this MapleDictionary collection, Title item)
         {
             var action = new Action(() => collection.Add(item));
 
@@ -232,27 +238,27 @@ namespace MapleLib.Common
             else await Application.Current.Dispatcher.BeginInvoke(action);
         }
 
-        public static DialogResult STAShowDialog(this CommonDialog dialog)
+        public static DialogResult StaShowDialog(this CommonDialog dialog)
         {
-            var state = new DialogState {dialog = dialog};
+            var state = new DialogState {Dialog = dialog};
             var t = new Thread(state.ThreadProcShowDialog);
             t.SetApartmentState(ApartmentState.STA);
             t.Start();
             t.Join();
-            return state.result;
+            return state.Result;
         }
 
         #region Nested type: DialogState
 
         private class DialogState
         {
-            public CommonDialog dialog;
-            public DialogResult result;
+            public CommonDialog Dialog;
+            public DialogResult Result;
 
 
             public void ThreadProcShowDialog()
             {
-                result = dialog.ShowDialog();
+                Result = Dialog.ShowDialog();
             }
         }
 

@@ -60,7 +60,7 @@ namespace MapleCake.Models
             if (string.IsNullOrEmpty(TitleID))
                 return;
 
-            var title = Database.FindTitle(TitleID);
+            var title = await Database.FindTitle(TitleID);
             if (title == null) return;
 
             MainWindowViewModel.Instance.Config.DownloadCommandEnabled = false;
@@ -150,12 +150,12 @@ namespace MapleCake.Models
 
             //download dlc if applicable
             if (contentType == "DLC" && SelectedItem.HasDLC)
-                if ((title = Database.FindTitle($"0005000C{SelectedItem.Lower8Digits()}")) != null)
+                if ((title = await Database.FindTitle($"0005000C{SelectedItem.Lower8Digits()}")) != null)
                     await title.DownloadDLC();
 
             //download patch if applicable
             if (contentType == "Patch" && SelectedItem.HasPatch)
-                if ((title = Database.FindTitle($"0005000E{SelectedItem.Lower8Digits()}")) != null)
+                if ((title = await Database.FindTitle($"0005000E{SelectedItem.Lower8Digits()}")) != null)
                     await title.DownloadUpdate(version.ToString());
 
             if (contentType == "eShop/Application")

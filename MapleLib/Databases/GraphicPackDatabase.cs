@@ -1,5 +1,5 @@
 ﻿// Created: 2017/05/14 5:33 AM
-// Updated: 2017/09/29 11:07 PM
+// Updated: 2017/10/01 6:33 PM
 // 
 // Project: MapleLib
 // Filename: GraphicPackDatabase.cs
@@ -13,13 +13,12 @@ using System.Threading.Tasks;
 using LiteDB;
 using MapleLib.Collections;
 using MapleLib.Common;
-using MapleLib.Interfaces;
 using MapleLib.Network;
 using MapleLib.WiiU;
 
 namespace MapleLib.Databases
 {
-    public class GraphicPackDatabase : IDatabase<GraphicPack>
+    public class GraphicPackDatabase
     {
         public GraphicPackDatabase(LiteDatabase db)
         {

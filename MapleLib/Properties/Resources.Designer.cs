@@ -162,9 +162,9 @@ namespace MapleLib.Properties {
         ///| 00050000-10101800
         ///| Si [rest of string was truncated]&quot;;.
         /// </summary>
-        public static string eShopAndDiskTitles {
+        public static string eShopAndDiskTitles1 {
             get {
-                return ResourceManager.GetString("eShopAndDiskTitles", resourceCulture);
+                return ResourceManager.GetString("eShopAndDiskTitles1", resourceCulture);
             }
         }
         
@@ -210,9 +210,9 @@ namespace MapleLib.Properties {
         ///| 0005000C-1010AF00
         ///| Marvel Avengers?:  Battl [rest of string was truncated]&quot;;.
         /// </summary>
-        public static string eShopTitleDLC {
+        public static string eShopTitleDLC1 {
             get {
-                return ResourceManager.GetString("eShopTitleDLC", resourceCulture);
+                return ResourceManager.GetString("eShopTitleDLC1", resourceCulture);
             }
         }
         
@@ -335,9 +335,9 @@ namespace MapleLib.Properties {
         ///0005000010101C00|New スーパーマリオブラザーズ U|WUP-N-ARPJ|16|JAP|Yes
         ///0005000010101D00|New Super Mario Br [rest of string was truncated]&quot;;.
         /// </summary>
-        public static string titles {
+        public static string titles1 {
             get {
-                return ResourceManager.GetString("titles", resourceCulture);
+                return ResourceManager.GetString("titles1", resourceCulture);
             }
         }
         
@@ -354,9 +354,9 @@ namespace MapleLib.Properties {
         ///0005000E10102200|Wii Fit U|32, 48, 64, 81|JAP
         ///0 [rest of string was truncated]&quot;;.
         /// </summary>
-        public static string updates {
+        public static string updates1 {
             get {
-                return ResourceManager.GetString("updates", resourceCulture);
+                return ResourceManager.GetString("updates1", resourceCulture);
             }
         }
         
@@ -372,18 +372,18 @@ namespace MapleLib.Properties {
         ///		&lt;company code=&quot;01&quot; name=&quot;Nintendo&quot;/&gt;
         ///		&lt;company co [rest of string was truncated]&quot;;.
         /// </summary>
-        public static string wiiutdb {
+        public static string wiiutdb1 {
             get {
-                return ResourceManager.GetString("wiiutdb", resourceCulture);
+                return ResourceManager.GetString("wiiutdb1", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to [{&quot;titleID&quot;:&quot;000500001010f300&quot;,&quot;titleKey&quot;:&quot;fa37b75fd0de03d2a297471477066c7c&quot;,&quot;name&quot;:&quot;Family Party\n30 Great Games Obstacle Arcade&quot;,&quot;region&quot;:&quot;USA&quot;,&quot;ticket&quot;:&quot;1&quot;},{&quot;titleID&quot;:&quot;0005000010144000&quot;,&quot;titleKey&quot;:&quot;e44b226422eb84923c05ccddc62ad487&quot;,&quot;name&quot;:&quot;Adventure Time: Explore the \nDungeon Because I Don&apos;t Know!&quot;,&quot;region&quot;:&quot;USA&quot;,&quot;ticket&quot;:&quot;1&quot;},{&quot;titleID&quot;:&quot;0005000010145e00&quot;,&quot;titleKey&quot;:&quot;4e330266ba3feba347e186ac499ba64e&quot;,&quot;name&quot;:&quot;Angry Birds Star Wars&quot;,&quot;region&quot;:&quot;USA&quot;,&quot;ticket&quot;:&quot;1&quot;},{&quot;titleID&quot;:&quot;0005000010147b00&quot;,&quot;titleKey&quot;:&quot; [rest of string was truncated]&quot;;.
         /// </summary>
-        public static string wiiutitlekey {
+        public static string wiiutitlekey1 {
             get {
-                return ResourceManager.GetString("wiiutitlekey", resourceCulture);
+                return ResourceManager.GetString("wiiutitlekey1", resourceCulture);
             }
         }
         

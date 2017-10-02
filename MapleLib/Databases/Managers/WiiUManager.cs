@@ -23,7 +23,7 @@ namespace MapleLib.Databases.Managers
 
         private WiiUManager()
         {
-            _databaseState = new MapleList<Title>(Database.GetTitles());
+            //_databaseState = new MapleList<Title>(Database.GetTitles());
 
             _bindingSource = new BindingSource {DataSource = _databaseState};
 
@@ -43,6 +43,7 @@ namespace MapleLib.Databases.Managers
 
         public void ToggleUi()
         {
+            MessageBox.Show(@"Featured disabled");
             return; //TODO: complete
             if (_form.Disposing || _form.IsDisposed)
                 InitializeForm();

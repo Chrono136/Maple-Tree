@@ -44,6 +44,7 @@ namespace MapleCake.ViewModels
         {
 #if DEBUG
             SetTitle($"MapleSeed {Settings.Version} - DEBUG VERSION");
+            SetTitle($"MapleSeed {Settings.Version}");
 #else
             SetTitle($"MapleSeed {Settings.Version}");
 #endif

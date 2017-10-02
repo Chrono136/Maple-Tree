@@ -1,9 +1,10 @@
-### Change Log - 2.1.1.16
+### Change Log - 2.1.1.16 (10/01/2017)
 - general fixes & improvements
 - Start Cemu without a title (CTRL + Click)
 - Change title selection using controller input (A to start)
 - Help tab detailing various features in MapleSeed2
 - Added a queue system for downloads
+- WiiuTitleDatabase switched to external API
 
 ### Change Log - 2.1.1.15 (07/07/2017)
 - general bug fixes

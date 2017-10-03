@@ -1,4 +1,5 @@
-﻿using SharpDX.XInput;
+﻿using System.Diagnostics;
+using SharpDX.XInput;
 
 namespace MapleLib.XInput
 {
@@ -8,6 +9,9 @@ namespace MapleLib.XInput
 
         public void Poll(XInputController xInputController)
         {
+            if (Process.GetProcessesByName("Cemu").Length > 0)
+                return;
+
             var state = GetState();
 
             state.Gamepad.LeftThumbX = 0;

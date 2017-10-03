@@ -1,5 +1,5 @@
 ﻿// Created: 2017/03/27 11:20 AM
-// Updated: 2017/10/02 1:58 PM
+// Updated: 2017/10/02 6:10 PM
 // 
 // Project: MapleCake
 // Filename: MapleButtons.cs
@@ -25,15 +25,15 @@ namespace MapleCake.Models
     public class MapleButtons
     {
         private static Title SelectedItem => MainWindowViewModel.Instance.Config.SelectedItem;
-        private static string TitleID => MainWindowViewModel.Instance.Config.TitleID;
+        private static string TitleId => MainWindowViewModel.Instance.Config.TitleID;
 
         public ICommand Uninstall => new CommandHandler(UninstallButton);
         public ICommand LaunchCemu => new CommandHandler(LaunchCemuButton);
         public ICommand Download => new CommandHandler(DownloadButton);
         public ICommand AddUpdate => new CommandHandler(AddUpdateButton);
         public ICommand RemoveUpdate => new CommandHandler(RemoveUpdateButton);
-        public ICommand AddDLC => new CommandHandler(AddDLCButton);
-        public ICommand RemoveDLC => new CommandHandler(RemoveDLCButton);
+        public ICommand AddDLC => new CommandHandler(AddDlcButton);
+        public ICommand RemoveDLC => new CommandHandler(RemoveDlcButton);
         public ICommand RemoveTitle => new CommandHandler(RemoveTitleButton);
         public ICommand TitleIdToClipboard => new CommandHandler(TitleIdToClipboardButton);
         public ICommand EditorUI => new CommandHandler(WiiUManager.Instance.ToggleUi);
@@ -61,10 +61,10 @@ namespace MapleCake.Models
 
         private static async void DownloadButton()
         {
-            if (string.IsNullOrEmpty(TitleID))
+            if (string.IsNullOrEmpty(TitleId))
                 return;
 
-            var title = await Database.FindTitleAsync(TitleID);
+            var title = await Database.FindTitleAsync(TitleId);
             if (title == null) return;
 
             MainWindowViewModel.Instance.Config.DownloadCommandEnabled = false;
@@ -106,12 +106,12 @@ namespace MapleCake.Models
             });
         }
 
-        private static async void AddDLCButton()
+        private static async void AddDlcButton()
         {
             await DownloadContentClick("DLC");
         }
 
-        private static void RemoveDLCButton()
+        private static void RemoveDlcButton()
         {
             if (SelectedItem == null) return;
 
@@ -159,7 +159,7 @@ namespace MapleCake.Models
 
             //download patch if applicable
             if (contentType == "Patch" && SelectedItem.HasPatch && title != null)
-                    await title.DownloadUpdate(version.ToString());
+                await title.DownloadUpdate(version.ToString());
 
             if (contentType == "eShop/Application")
                 await SelectedItem.DownloadContent(version.ToString());

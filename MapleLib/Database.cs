@@ -55,15 +55,15 @@ namespace MapleLib
             });
         }
 
-        private static Stream DbFileStream { get; set; }
+        private static Stream DbFileStream { get; }
 
         private static List<TitleKey> TitleKeys { get; set; }
 
-        private static GraphicPackDatabase GraphicPacks { get; set; }
+        private static GraphicPackDatabase GraphicPacks { get; }
 
-        private static LiteDatabase LiteDatabase { get; set; }
+        private static LiteDatabase LiteDatabase { get; }
 
-        private static LiteCollection<Config> SettingsCollection { get; set; }
+        private static LiteCollection<Config> SettingsCollection { get; }
 
         private static Downloader Downloader { get; }
 
@@ -172,8 +172,8 @@ namespace MapleLib
 
         public static void Dispose()
         {
-            DbFileStream.Dispose();
-            LiteDatabase.Dispose();
+            DbFileStream?.Dispose();
+            LiteDatabase?.Dispose();
         }
 
         public static Task DownloadTitle(string titleId, string titleFolderLocation, string contentType, string version)

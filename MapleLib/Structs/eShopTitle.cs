@@ -8,6 +8,7 @@
 using System;
 using System.ComponentModel;
 using System.Text.RegularExpressions;
+using System.Windows.Media.Imaging;
 using MapleLib.Common;
 using MapleLib.JsonConverter;
 
@@ -50,7 +51,7 @@ namespace MapleLib.Structs
         public bool AvailableOnCDN { get; set; }
 
         [Browsable(false)]
-        public string ImageLocation { get; set; }
+        public BitmapFrame ImageLocation { get; set; }
 
         [Browsable(false)]
         public string Notes { get; set; }

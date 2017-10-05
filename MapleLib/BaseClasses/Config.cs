@@ -1,11 +1,13 @@
 ﻿// Created: 2017/05/14 12:53 PM
-// Updated: 2017/09/29 1:54 AM
+// Updated: 2017/10/05 4:20 PM
 // 
 // Project: MapleLib
 // Filename: Config.cs
 // Created By: Jared T
 
 using System;
+using System.Collections.Generic;
+using System.Windows.Media.Imaging;
 
 namespace MapleLib.BaseClasses
 {
@@ -32,5 +34,7 @@ namespace MapleLib.BaseClasses
         public DateTime LastTitleDbUpdate { get; set; } = DateTime.Now.AddDays(-30);
 
         public DateTime LastPackDbUpdate { get; set; } = DateTime.Now.AddDays(-30);
+
+        public Dictionary<string, BitmapFrame> ImageCache { get; set; } = new Dictionary<string, BitmapFrame>();
     }
 }

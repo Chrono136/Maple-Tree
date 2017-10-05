@@ -35,7 +35,7 @@
             <TabItem Header="Control Panel" Background="{x:Null}">
                 <Grid Background="{x:Null}">
                     <TextBox Text="{Binding Config.TitleVersion, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Center" Height="23" Margin="331,3,10,0" TextAlignment="Center" TextWrapping="Wrap" VerticalAlignment="Top" Width="42" Background="{x:Null}"/>
-                    <TextBox Text="{Binding Config.TitleID, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Center" Height="23" Margin="10,3,57,0" TextAlignment="Center" TextWrapping="Wrap" VerticalAlignment="Top" Width="316" Background="{x:Null}"/>
+                    <TextBox Text="{Binding Config.TitleId, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Center" Height="23" Margin="10,3,57,0" TextAlignment="Center" TextWrapping="Wrap" VerticalAlignment="Top" Width="316" Background="{x:Null}"/>
                     <Button Content="Download" Command="{Binding Click.Download}" IsEnabled="{Binding Config.DownloadCommandEnabled}" HorizontalAlignment="Center" Margin="10,32,10,0" VerticalAlignment="Top" FontWeight="Bold" Width="363" Background="{x:Null}" Foreground="White"/>
 
                     <GroupBox Header="MapleSeed" HorizontalAlignment="Left" Margin="11,267,0,0" VerticalAlignment="Top" Height="215" Width="363"/>

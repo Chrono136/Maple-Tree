@@ -1,12 +1,11 @@
 ﻿// Created: 2017/03/27 11:20 AM
-// Updated: 2017/10/05 10:52 AM
+// Updated: 2017/10/05 4:09 PM
 // 
 // Project: MapleCake
 // Filename: MainWindowViewModel.cs
 // Created By: Jared T
 
 using System;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
@@ -16,7 +15,6 @@ using MapleLib;
 using MapleLib.Abstract;
 using MapleLib.Common;
 using MapleLib.Enums;
-using MapleLib.Properties;
 using MapleLib.Structs;
 using MapleLib.XInput;
 
@@ -83,26 +81,18 @@ namespace MapleCake.ViewModels
 
         public async Task SetBackgroundImg(Title title)
         {
-            if (!Config.DynamicTheme)
+            if (title == null || !Config.DynamicTheme || string.IsNullOrEmpty(title.ID))
                 return;
 
-            var path = Path.Combine(Settings.ConfigDirectory, "cache", "cemu.jpg");
+            //Config.BackgroundImage = Resources.CEMU;
 
-            if (!File.Exists(path))
-                Resources.CEMU.Save(path);
+            if (title.ImageLocation == null)
+                await title.Image();
 
-            Config.BackgroundImage = path;
-
-            if (title != null)
-            {
-                if (string.IsNullOrEmpty(title.ImageLocation))
-                    await Task.Run(() => title.Image());
-
-                Config.BackgroundImage = title.ImageLocation;
-            }
+            Config.BackgroundImage = title.ImageLocation;
         }
 
-        public async void titleIdTextChanged(string tid)
+        public async void TitleIdTextChanged(string tid)
         {
             if (tid.Length != 16)
                 return;
@@ -129,7 +119,7 @@ namespace MapleCake.ViewModels
             }
             else
             {
-                Config.BackgroundImage = string.Empty;
+                Config.BackgroundImage = null;
                 Config.RaisePropertyChangedEvent("BackgroundImage");
             }
         }

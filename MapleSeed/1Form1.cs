@@ -120,7 +120,8 @@ namespace MapleSeed
 
         private async void SetCurrentImage(eShopTitle title)
         {
-            pictureBox1.ImageLocation = await title.Image();
+            //TODO: FIX ME
+            //pictureBox1.ImageLocation = await title.Image();
         }
 
         private async void OnAddItemEvent(object sender, AddItemEventArgs<Title> e)

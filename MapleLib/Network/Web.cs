@@ -1,5 +1,5 @@
 ﻿// Created: 2017/04/01 10:40 AM
-// Updated: 2017/09/29 2:05 AM
+// Updated: 2017/10/05 3:09 PM
 // 
 // Project: MapleLib
 // Filename: Web.cs
@@ -10,7 +10,6 @@
 using System;
 using System.IO;
 using System.Net;
-using System.Text;
 using System.Threading.Tasks;
 using MapleLib.Common;
 using MapleLib.Structs;
@@ -25,7 +24,8 @@ namespace MapleLib.Network
 
         public static event EventHandler<DownloadProgressChangedEventArgs> DownloadProgressChangedEvent;
 
-        public static async Task DownloadContent(this Title title, string version = null, string contentType = null, bool libraryContent = false)
+        public static async Task DownloadContent(this Title title, string version = null, string contentType = null,
+            bool libraryContent = false)
         {
             if (string.IsNullOrEmpty(title.ID))
                 throw new Exception("Can't download content without a valid Title ID.");
@@ -45,7 +45,7 @@ namespace MapleLib.Network
             if (contentType == "Patch")
             {
                 workingId = $"0005000E{workingId.Substring(8)}";
-                
+
                 if (Settings.Cemu173Patch && !libraryContent)
                     title.FolderLocation = Path.Combine(Settings.BasePatchDir, workingId.Substring(8));
             }
@@ -147,7 +147,7 @@ namespace MapleLib.Network
                         return true;
                 }
             }
-            catch(Exception)
+            catch (Exception)
             {
                 // ignored
             }

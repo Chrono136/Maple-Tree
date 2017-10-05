@@ -1,5 +1,5 @@
 ﻿// Created: 2017/03/27 11:20 AM
-// Updated: 2017/10/05 12:30 PM
+// Updated: 2017/10/05 4:00 PM
 // 
 // Project: MapleLib
 // Filename: Extensions.cs
@@ -15,6 +15,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Windows.Media.Imaging;
 using System.Xml;
 using MapleLib.Collections;
 using MapleLib.Network;
@@ -28,8 +29,11 @@ namespace MapleLib.Common
 {
     public static class Extensions
     {
-        public static async Task<string> Image(this eShopTitle title, bool save = true)
+        public static async Task<BitmapFrame> Image(this eShopTitle title)
         {
+            if (string.IsNullOrEmpty(title.ProductCode))
+                return null;
+
             var code = title.ProductCode.Substring(6);
 
             var wiiutb = Resources.wiiutdb.Split('\n').ToList();
@@ -40,24 +44,18 @@ namespace MapleLib.Common
                 var entries = line.Split('=');
                 var id = entries[0]?.Trim();
 
-                var cacheDir = Path.Combine(Settings.ConfigDirectory, "cache");
-                if (!Directory.Exists(cacheDir)) Directory.CreateDirectory(cacheDir);
-
-                string cachedFile;
-                if (File.Exists(cachedFile = Path.Combine(cacheDir, $"{id}.jpg")))
-                    return title.ImageLocation = cachedFile;
-
                 foreach (var region in "EN,US,JA,NL,DE,FR".Split(','))
                     try
                     {
                         var url = $"http://art.gametdb.com/wiiu/coverHQ/{region}/{id}.jpg";
-
                         if (!Web.UrlExists(url)) continue;
-                        title.ImageLocation = cachedFile;
 
-                        if (!save) return string.Empty;
                         var data = await Web.DownloadDataAsync(url);
-                        File.WriteAllBytes(title.ImageLocation, data);
+
+                        using (var ms = new MemoryStream(data))
+                        {
+                            title.ImageLocation = BitmapFrame.Create(ms, BitmapCreateOptions.None, BitmapCacheOption.OnLoad);
+                        }
                     }
                     catch
                     {

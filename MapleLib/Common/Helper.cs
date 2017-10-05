@@ -1,5 +1,5 @@
 ﻿// Created: 2017/03/27 11:20 AM
-// Updated: 2017/10/05 2:01 PM
+// Updated: 2017/10/05 3:27 PM
 // 
 // Project: MapleLib
 // Filename: Helper.cs

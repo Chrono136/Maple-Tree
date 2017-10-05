@@ -1,5 +1,5 @@
 ﻿// Created: 2017/03/27 11:20 AM
-// Updated: 2017/10/05 12:42 PM
+// Updated: 2017/10/05 4:24 PM
 // 
 // Project: MapleCake
 // Filename: ViewModelConfig.cs
@@ -10,6 +10,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Windows.Media.Imaging;
 using MapleCake.Models.Interfaces;
 using MapleCake.ViewModels;
 using MapleLib;
@@ -23,8 +24,6 @@ namespace MapleCake.Models
     public class ViewModelConfig : ViewModelBase
     {
         private readonly MainWindowViewModel _self;
-
-        private string _backgroundImage;
 
         private List<ICommandItem> _contextItems;
 
@@ -61,12 +60,18 @@ namespace MapleCake.Models
 
         public bool DownloadCommandEnabled { get; set; } = true;
 
-        public string BackgroundImage
+        public BitmapFrame BackgroundImage
         {
-            get { return _backgroundImage; }
+            get {
+                if (SelectedItem == null)
+                    return null;
+                
+                return Settings.ImageCache[SelectedItem.ID];
+            }
             set {
-                _backgroundImage = value;
+                Settings.ImageCache[SelectedItem.ID] = value;
                 RaisePropertyChangedEvent("BackgroundImage");
+                Database.SaveConfig();
             }
         }
 
@@ -151,10 +156,10 @@ namespace MapleCake.Models
             }
         }
 
-        public string TitleID
+        public string TitleId
         {
             get { return _titleId; }
-            set { _self.titleIdTextChanged(_titleId = value); }
+            set { _self.TitleIdTextChanged(_titleId = value); }
         }
 
         public Title SelectedItem

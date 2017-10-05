@@ -1,5 +1,5 @@
 ﻿// Created: 2017/03/27 11:20 AM
-// Updated: 2017/10/05 2:56 PM
+// Updated: 2017/10/05 4:24 PM
 // 
 // Project: MapleCake
 // Filename: MapleButtons.cs
@@ -26,7 +26,7 @@ namespace MapleCake.Models
     public class MapleButtons
     {
         private static Title SelectedItem => MainWindowViewModel.Instance.Config.SelectedItem;
-        private static string TitleId => MainWindowViewModel.Instance.Config.TitleID;
+        private static string TitleId => MainWindowViewModel.Instance.Config.TitleId;
 
         public ICommand Uninstall => new CommandHandler(UninstallButton);
         public ICommand LaunchCemu => new CommandHandler(LaunchCemuButton);
@@ -39,10 +39,8 @@ namespace MapleCake.Models
         public ICommand TitleIdToClipboard => new CommandHandler(TitleIdToClipboardButton);
         public ICommand EditorUI => new CommandHandler(WiiUManager.Instance.ToggleUi);
 
-        private async void UninstallButton()
+        private void UninstallButton()
         {
-            await MainWindowViewModel.Instance.SetBackgroundImg(new Title());
-
             Helper.Uninstall();
         }
 
@@ -73,7 +71,7 @@ namespace MapleCake.Models
             int result;
             var vers = MainWindowViewModel.Instance.Config.TitleVersion;
             var version = int.TryParse(vers, out result) ? result.ToString() : "0";
-            
+
             switch (title.ContentType)
             {
                 case "Patch":

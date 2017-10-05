@@ -8,11 +8,13 @@
 #region usings
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Threading;
 using System.Windows.Forms;
+using System.Windows.Media.Imaging;
 using MapleLib.BaseClasses;
 using MapleLib.Common;
 using MapleLib.Properties;
@@ -157,6 +159,16 @@ namespace MapleLib
             get { return Config.StoreEncryptedContent; }
             set {
                 Config.StoreEncryptedContent = value;
+                Database.SaveConfig();
+            }
+        }
+
+        public static Dictionary<string, BitmapFrame> ImageCache
+        {
+            get { return Config.ImageCache; }
+            set
+            {
+                Config.ImageCache = value;
                 Database.SaveConfig();
             }
         }

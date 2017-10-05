@@ -1,5 +1,5 @@
 ﻿// Created: 2017/03/27 11:20 AM
-// Updated: 2017/10/05 4:09 PM
+// Updated: 2017/10/05 5:48 PM
 // 
 // Project: MapleCake
 // Filename: MainWindowViewModel.cs
@@ -87,7 +87,7 @@ namespace MapleCake.ViewModels
             //Config.BackgroundImage = Resources.CEMU;
 
             if (title.ImageLocation == null)
-                await title.Image();
+                await title.GetImage();
 
             Config.BackgroundImage = title.ImageLocation;
         }

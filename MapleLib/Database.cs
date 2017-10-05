@@ -1,5 +1,5 @@
 ﻿// Created: 2017/05/13 3:44 PM
-// Updated: 2017/10/05 4:24 PM
+// Updated: 2017/10/05 5:47 PM
 // 
 // Project: MapleLib
 // Filename: Database.cs
@@ -86,7 +86,14 @@ namespace MapleLib
 
         public static string SaveConfig(string value = null)
         {
-            SettingsCollection.Update(Settings.Config.Index, Settings.Config);
+            try
+            {
+                SettingsCollection.Update(Settings.Config.Index, Settings.Config);
+            }
+            catch (Exception e)
+            {
+                TextLog.Write(e.Message);
+            }
             return value;
         }
 

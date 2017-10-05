@@ -1,3 +1,8 @@
+### Change Log - 2.1.1.17 (XX/XX/2017)
+- General fixes & Improvements
+- Background images are stored in memory
+- Method for obtaining background images improved
+
 ### Change Log - 2.1.1.16 (10/01/2017)
 - general fixes & improvements
 - Start Cemu without a title (CTRL + Click)

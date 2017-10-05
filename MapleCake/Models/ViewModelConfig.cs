@@ -1,5 +1,5 @@
 ﻿// Created: 2017/03/27 11:20 AM
-// Updated: 2017/10/05 4:24 PM
+// Updated: 2017/10/05 5:48 PM
 // 
 // Project: MapleCake
 // Filename: ViewModelConfig.cs
@@ -65,13 +65,13 @@ namespace MapleCake.Models
             get {
                 if (SelectedItem == null)
                     return null;
-                
-                return Settings.ImageCache[SelectedItem.ID];
+
+                var data = Settings.ImageCache[SelectedItem.ID];
+                return BitmapFrame.Create(new MemoryStream(data));
             }
             set {
-                Settings.ImageCache[SelectedItem.ID] = value;
                 RaisePropertyChangedEvent("BackgroundImage");
-                Database.SaveConfig();
+                Database.SaveConfig(value?.ToString());
             }
         }
 

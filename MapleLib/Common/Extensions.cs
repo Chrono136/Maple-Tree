@@ -1,5 +1,5 @@
 ﻿// Created: 2017/03/27 11:20 AM
-// Updated: 2017/10/05 4:00 PM
+// Updated: 2017/10/05 5:47 PM
 // 
 // Project: MapleLib
 // Filename: Extensions.cs
@@ -29,41 +29,41 @@ namespace MapleLib.Common
 {
     public static class Extensions
     {
-        public static async Task<BitmapFrame> Image(this eShopTitle title)
+        public static async Task GetImage(this eShopTitle title)
         {
             if (string.IsNullOrEmpty(title.ProductCode))
-                return null;
+                return;
+
+            if (Settings.ImageCache.ContainsKey(title.ID))
+                return;
 
             var code = title.ProductCode.Substring(6);
 
             var wiiutb = Resources.wiiutdb.Split('\n').ToList();
             var line = wiiutb.FirstOrDefault(x => x.Contains(code))?.Trim();
 
-            if (!string.IsNullOrEmpty(line))
-            {
-                var entries = line.Split('=');
-                var id = entries[0]?.Trim();
+            if (string.IsNullOrEmpty(line)) return;
+            var entries = line.Split('=');
+            var id = entries[0]?.Trim();
 
-                foreach (var region in "EN,US,JA,NL,DE,FR".Split(','))
-                    try
+            foreach (var region in "EN,US,JA,NL,DE,FR".Split(','))
+                try
+                {
+                    var url = $"http://art.gametdb.com/wiiu/coverHQ/{region}/{id}.jpg";
+                    if (!Web.UrlExists(url)) continue;
+
+                    var data = await Web.DownloadDataAsync(url);
+                    Settings.ImageCache[title.ID] = data;
+
+                    using (var ms = new MemoryStream(data))
                     {
-                        var url = $"http://art.gametdb.com/wiiu/coverHQ/{region}/{id}.jpg";
-                        if (!Web.UrlExists(url)) continue;
-
-                        var data = await Web.DownloadDataAsync(url);
-
-                        using (var ms = new MemoryStream(data))
-                        {
-                            title.ImageLocation = BitmapFrame.Create(ms, BitmapCreateOptions.None, BitmapCacheOption.OnLoad);
-                        }
+                        title.ImageLocation = BitmapFrame.Create(ms);
                     }
-                    catch
-                    {
-                        TextLog.MesgLog.WriteLog($"Could not locate cover image for {title}");
-                    }
-            }
-
-            return title.ImageLocation;
+                }
+                catch
+                {
+                    TextLog.MesgLog.WriteLog($"Could not locate cover image for {title}");
+                }
         }
 
         public static bool FilePathHasInvalidChars(this string path)

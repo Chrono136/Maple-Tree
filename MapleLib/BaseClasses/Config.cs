@@ -35,6 +35,6 @@ namespace MapleLib.BaseClasses
 
         public DateTime LastPackDbUpdate { get; set; } = DateTime.Now.AddDays(-30);
 
-        public Dictionary<string, BitmapFrame> ImageCache { get; set; } = new Dictionary<string, BitmapFrame>();
+        public Dictionary<string, byte[]> ImageCache { get; set; } = new Dictionary<string, byte[]>();
     }
 }

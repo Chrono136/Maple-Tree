@@ -1,5 +1,5 @@
 ﻿// Created: 2017/03/27 11:19 AM
-// Updated: 2017/09/29 1:52 AM
+// Updated: 2017/10/05 5:48 PM
 // 
 // Project: MapleLib
 // Filename: Settings.cs
@@ -14,7 +14,6 @@ using System.IO;
 using System.Reflection;
 using System.Threading;
 using System.Windows.Forms;
-using System.Windows.Media.Imaging;
 using MapleLib.BaseClasses;
 using MapleLib.Common;
 using MapleLib.Properties;
@@ -163,11 +162,10 @@ namespace MapleLib
             }
         }
 
-        public static Dictionary<string, BitmapFrame> ImageCache
+        public static Dictionary<string, byte[]> ImageCache
         {
             get { return Config.ImageCache; }
-            set
-            {
+            set {
                 Config.ImageCache = value;
                 Database.SaveConfig();
             }

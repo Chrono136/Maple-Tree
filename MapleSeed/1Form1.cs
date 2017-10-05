@@ -129,7 +129,7 @@ namespace MapleSeed
             var title = e.Item;
             if (title == null) return;
 
-            await title.Image();
+            await title.GetImage();
 
             if (pictureBox1.ImageLocation.IsNullOrEmpty())
                 SetCurrentImage(title);

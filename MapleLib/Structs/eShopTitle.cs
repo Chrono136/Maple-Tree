@@ -27,6 +27,8 @@ namespace MapleLib.Structs
             set { _name = value; }
         }
 
+        public string OriginalName => _name;
+
         public string ID { get; set; }
 
         public string Key { get; set; }

@@ -1,5 +1,5 @@
 ﻿// Created: 2017/03/27 11:20 AM
-// Updated: 2017/10/02 11:42 AM
+// Updated: 2017/10/05 12:42 PM
 // 
 // Project: MapleCake
 // Filename: ViewModelConfig.cs
@@ -8,7 +8,6 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
-using System.IO.Packaging;
 using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
 using MapleCake.Models.Interfaces;
@@ -24,6 +23,8 @@ namespace MapleCake.Models
     public class ViewModelConfig : ViewModelBase
     {
         private readonly MainWindowViewModel _self;
+
+        private string _backgroundImage;
 
         private List<ICommandItem> _contextItems;
 
@@ -50,8 +51,6 @@ namespace MapleCake.Models
 
         public string Status { get; set; }
 
-        public string BackgroundImage { get; set; }
-
         public string LogBox { get; set; }
 
         public int ProgressMin { get; set; }
@@ -61,6 +60,15 @@ namespace MapleCake.Models
         public int ProgressValue { get; set; }
 
         public bool DownloadCommandEnabled { get; set; } = true;
+
+        public string BackgroundImage
+        {
+            get { return _backgroundImage; }
+            set {
+                _backgroundImage = value;
+                RaisePropertyChangedEvent("BackgroundImage");
+            }
+        }
 
         public string LibraryDirectory
         {

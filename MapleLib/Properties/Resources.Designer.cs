@@ -361,16 +361,23 @@ namespace MapleLib.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
-        ///&lt;datafile xmlns:xs=&quot;http://www.w3.org/2001/XMLSchema&quot; xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot; xsi:noNamespaceSchemaLocation=&quot;wiiutdb.xsd&quot;&gt;
-        ///	&lt;WiiUTDB version=&quot;20170329123009&quot; games=&quot;2178&quot;/&gt;
-        ///	&lt;!--
-        /// GameTDB: WiiU, Database started in 2012 (http://www.gametdb.com)
-        /// Never modify this file manually, it will get overwritten when you update. You can add games and fixes on the website.
-        ///	--&gt;
-        ///	&lt;companies&gt;
-        ///		&lt;company code=&quot;01&quot; name=&quot;Nintendo&quot;/&gt;
-        ///		&lt;company co [rest of string was truncated]&quot;;.
+        ///   Looks up a localized string similar to TITLES = http://www.gametdb.com (type: WiiU language: ORIG version: 20171005180418)
+        ///AAFD01 = Bayonetta
+        ///AAFE01 = Bayonetta
+        ///AAFJ01 = ベヨネッタ
+        ///AAFP01 = Bayonetta
+        ///AALE01 = Animal Crossing: amiibo Festival
+        ///AALJ01 = どうぶつの森amiiboフェスティバル
+        ///AALP01 = Animal Crossing: amiibo Festival
+        ///ABAE01 = Mario Party 10
+        ///ABAJ01 = マリオパーティ10
+        ///ABAP01 = Mario Party 10
+        ///ABBEVZ = Barbie: Dreamhouse Party
+        ///ABBPVZ = Barbie: Dreamhouse Party
+        ///ABEEG9 = Ben 10: Omniverse
+        ///ABEPAF = Ben 10: Omniverse
+        ///ABFE52 = Rapala Pro Bass Fishing
+        ///ABHE0 [rest of string was truncated]&quot;;.
         /// </summary>
         public static string wiiutdb {
             get {

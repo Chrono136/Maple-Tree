@@ -413,6 +413,7 @@
     <Content Include="Resources\Seed.ico" />
     <None Include="Resources\wiiutdb.xml" />
     <None Include="Resources\wiiutitlekey.txt" />
+    <None Include="Resources\wiiutdb.txt" />
     <Content Include="ThirdParty\Newtonsoft.Json\Newtonsoft.Json.csproj" />
     <Content Include="ThirdParty\Newtonsoft.Json\Newtonsoft.Json.Net20.csproj" />
     <Content Include="ThirdParty\Newtonsoft.Json\Newtonsoft.Json.Net35.csproj" />

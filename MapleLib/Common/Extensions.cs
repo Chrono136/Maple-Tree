@@ -1,5 +1,5 @@
 ﻿// Created: 2017/03/27 11:20 AM
-// Updated: 2017/10/02 11:07 AM
+// Updated: 2017/10/05 12:30 PM
 // 
 // Project: MapleLib
 // Filename: Extensions.cs
@@ -18,6 +18,7 @@ using System.Windows.Forms;
 using System.Xml;
 using MapleLib.Collections;
 using MapleLib.Network;
+using MapleLib.Properties;
 using MapleLib.Structs;
 using Application = System.Windows.Application;
 
@@ -29,52 +30,40 @@ namespace MapleLib.Common
     {
         public static async Task<string> Image(this eShopTitle title, bool save = true)
         {
-            return string.Empty;
-
-            if (string.IsNullOrEmpty(title.ProductCode) || title.ProductCode.Length <= 6)
-                return string.Empty;
-
             var code = title.ProductCode.Substring(6);
 
-            var compCode = "01";
-            if (!string.IsNullOrEmpty(title.CompanyCode) && title.CompanyCode.Length > 3 && title.CompanyCode != "None")
-                compCode = title.CompanyCode.Substring(2);
+            var wiiutb = Resources.wiiutdb.Split('\n').ToList();
+            var line = wiiutb.FirstOrDefault(x => x.Contains(code))?.Trim();
 
-            /*var doc = new XmlDocument();
-            doc.Load(new MemoryStream(Encoding.UTF8.GetBytes(Properties.Resources.wiiutdb)));
+            if (!string.IsNullOrEmpty(line))
+            {
+                var entries = line.Split('=');
+                var id = entries[0]?.Trim();
 
-            var values = doc.GetElementsByTagName("id").Cast<XmlNode>().ToList();
-            var value = values.Find(x => x.InnerText.Contains(code));
-            var imageCode = value?.InnerText;*/
+                var cacheDir = Path.Combine(Settings.ConfigDirectory, "cache");
+                if (!Directory.Exists(cacheDir)) Directory.CreateDirectory(cacheDir);
 
-            var imageCode = code + compCode;
+                string cachedFile;
+                if (File.Exists(cachedFile = Path.Combine(cacheDir, $"{id}.jpg")))
+                    return title.ImageLocation = cachedFile;
 
-            if (imageCode.IsNullOrEmpty())
-                return string.Empty;
+                foreach (var region in "EN,US,JA,NL,DE,FR".Split(','))
+                    try
+                    {
+                        var url = $"http://art.gametdb.com/wiiu/coverHQ/{region}/{id}.jpg";
 
-            var cacheDir = Path.Combine(Settings.ConfigDirectory, "cache");
-            if (!Directory.Exists(cacheDir)) Directory.CreateDirectory(cacheDir);
+                        if (!Web.UrlExists(url)) continue;
+                        title.ImageLocation = cachedFile;
 
-            string cachedFile;
-            if (File.Exists(cachedFile = Path.Combine(cacheDir, $"{imageCode}.jpg")))
-                return title.ImageLocation = cachedFile;
-
-            foreach (var langCode in "US,EN,DE,FR,JA".Split(','))
-                try
-                {
-                    var url = $"http://art.gametdb.com/wiiu/coverHQ/{langCode}/{imageCode}.jpg";
-
-                    if (!Web.UrlExists(url)) continue;
-                    title.ImageLocation = cachedFile;
-
-                    if (!save) return string.Empty;
-                    var data = await Web.DownloadDataAsync(url);
-                    File.WriteAllBytes(title.ImageLocation, data);
-                }
-                catch
-                {
-                    TextLog.MesgLog.WriteLog($"Could not locate cover image for {title}");
-                }
+                        if (!save) return string.Empty;
+                        var data = await Web.DownloadDataAsync(url);
+                        File.WriteAllBytes(title.ImageLocation, data);
+                    }
+                    catch
+                    {
+                        TextLog.MesgLog.WriteLog($"Could not locate cover image for {title}");
+                    }
+            }
 
             return title.ImageLocation;
         }

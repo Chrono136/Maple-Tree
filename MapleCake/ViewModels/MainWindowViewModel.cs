@@ -86,24 +86,20 @@ namespace MapleCake.ViewModels
             if (!Config.DynamicTheme)
                 return;
 
-            if (title == null)
-            {
-                var path = Path.Combine(Settings.ConfigDirectory, "cache", "cemu.jpg");
+            var path = Path.Combine(Settings.ConfigDirectory, "cache", "cemu.jpg");
 
-                if (!File.Exists(path))
-                    Resources.CEMU.Save(path);
+            if (!File.Exists(path))
+                Resources.CEMU.Save(path);
 
-                Config.BackgroundImage = path;
-            }
-            else
+            Config.BackgroundImage = path;
+
+            if (title != null)
             {
                 if (string.IsNullOrEmpty(title.ImageLocation))
                     await Task.Run(() => title.Image());
 
                 Config.BackgroundImage = title.ImageLocation;
             }
-
-            Config.RaisePropertyChangedEvent("BackgroundImage");
         }
 
         public async void titleIdTextChanged(string tid)

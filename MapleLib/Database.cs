@@ -1,5 +1,5 @@
 ﻿// Created: 2017/05/13 3:44 PM
-// Updated: 2017/10/02 2:32 PM
+// Updated: 2017/10/05 11:13 AM
 // 
 // Project: MapleLib
 // Filename: Database.cs
@@ -33,7 +33,8 @@ namespace MapleLib
 
             if (LiteDatabase == null)
             {
-                LiteDatabase = new LiteDatabase(Helper.FileOpenStream(dbFile));
+                DbFileStream = Helper.FileOpenStream(dbFile);
+                LiteDatabase = new LiteDatabase(DbFileStream);
                 SettingsCollection = LiteDatabase.GetCollection<Config>("Settings");
             }
 
@@ -54,13 +55,15 @@ namespace MapleLib
             });
         }
 
+        private static Stream DbFileStream { get; set; }
+
         private static List<TitleKey> TitleKeys { get; set; }
 
-        private static GraphicPackDatabase GraphicPacks { get; }
+        private static GraphicPackDatabase GraphicPacks { get; set; }
 
-        private static LiteDatabase LiteDatabase { get; }
+        private static LiteDatabase LiteDatabase { get; set; }
 
-        private static LiteCollection<Config> SettingsCollection { get; }
+        private static LiteCollection<Config> SettingsCollection { get; set; }
 
         private static Downloader Downloader { get; }
 
@@ -161,12 +164,16 @@ namespace MapleLib
 
         private static IEnumerable<Title> GetLibraryList()
         {
-            return new List<Title>(WiiuTitleDatabase.TitleLibrary);
+            if (WiiuTitleDatabase.TitleLibrary.Count > 0)
+                return new List<Title>(WiiuTitleDatabase.TitleLibrary);
+
+            return new List<Title>();
         }
 
         public static void Dispose()
         {
-            LiteDatabase?.Dispose();
+            DbFileStream.Dispose();
+            LiteDatabase.Dispose();
         }
 
         public static Task DownloadTitle(string titleId, string titleFolderLocation, string contentType, string version)

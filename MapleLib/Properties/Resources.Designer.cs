@@ -372,9 +372,9 @@ namespace MapleLib.Properties {
         ///		&lt;company code=&quot;01&quot; name=&quot;Nintendo&quot;/&gt;
         ///		&lt;company co [rest of string was truncated]&quot;;.
         /// </summary>
-        public static string wiiutdb1 {
+        public static string wiiutdb {
             get {
-                return ResourceManager.GetString("wiiutdb1", resourceCulture);
+                return ResourceManager.GetString("wiiutdb", resourceCulture);
             }
         }
         

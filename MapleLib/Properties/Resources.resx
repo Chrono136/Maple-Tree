@@ -167,7 +167,7 @@ See the log window for sample outputs.</value>
   <data name="eShopTitleDLC1" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\eShopTitleDLC.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
-  <data name="wiiutdb1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+  <data name="wiiutdb" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\wiiutdb.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
   <data name="DLCPatch" type="System.Resources.ResXFileRef, System.Windows.Forms">

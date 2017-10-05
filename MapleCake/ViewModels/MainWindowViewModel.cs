@@ -1,7 +1,9 @@
-﻿// Project: MapleUI
-// File: MainWindowViewModel.cs
-// Updated By: Jared
+﻿// Created: 2017/03/27 11:20 AM
+// Updated: 2017/10/05 10:52 AM
 // 
+// Project: MapleCake
+// Filename: MainWindowViewModel.cs
+// Created By: Jared T
 
 using System;
 using System.IO;
@@ -14,6 +16,7 @@ using MapleLib;
 using MapleLib.Abstract;
 using MapleLib.Common;
 using MapleLib.Enums;
+using MapleLib.Properties;
 using MapleLib.Structs;
 using MapleLib.XInput;
 
@@ -78,26 +81,28 @@ namespace MapleCake.ViewModels
             Database.DatabaseLoaded += Database_DatabasesLoaded;
         }
 
-        public async void SetBackgroundImg(Title title)
+        public async Task SetBackgroundImg(Title title)
         {
             if (!Config.DynamicTheme)
                 return;
 
-            if (title == null) {
+            if (title == null)
+            {
                 var path = Path.Combine(Settings.ConfigDirectory, "cache", "cemu.jpg");
 
                 if (!File.Exists(path))
-                    MapleLib.Properties.Resources.CEMU.Save(path);
+                    Resources.CEMU.Save(path);
 
                 Config.BackgroundImage = path;
             }
-            else {
+            else
+            {
                 if (string.IsNullOrEmpty(title.ImageLocation))
                     await Task.Run(() => title.Image());
 
                 Config.BackgroundImage = title.ImageLocation;
             }
-            
+
             Config.RaisePropertyChangedEvent("BackgroundImage");
         }
 
@@ -122,10 +127,12 @@ namespace MapleCake.ViewModels
 
         public void DynamicTheme(bool enabled)
         {
-            if (enabled) {
+            if (enabled)
+            {
                 SetBackgroundImg(Config.SelectedItem);
             }
-            else {
+            else
+            {
                 Config.BackgroundImage = string.Empty;
                 Config.RaisePropertyChangedEvent("BackgroundImage");
             }

@@ -29,6 +29,8 @@ namespace MapleLib.Common
     {
         public static async Task<string> Image(this eShopTitle title, bool save = true)
         {
+            return string.Empty;
+
             if (string.IsNullOrEmpty(title.ProductCode) || title.ProductCode.Length <= 6)
                 return string.Empty;
 
@@ -39,7 +41,7 @@ namespace MapleLib.Common
                 compCode = title.CompanyCode.Substring(2);
 
             /*var doc = new XmlDocument();
-            doc.Load(new MemoryStream(Encoding.UTF8.GetBytes(Resources.wiiutdb)));
+            doc.Load(new MemoryStream(Encoding.UTF8.GetBytes(Properties.Resources.wiiutdb)));
 
             var values = doc.GetElementsByTagName("id").Cast<XmlNode>().ToList();
             var value = values.Find(x => x.InnerText.Contains(code));

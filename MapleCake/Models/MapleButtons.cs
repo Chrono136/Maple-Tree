@@ -1,5 +1,5 @@
 ﻿// Created: 2017/03/27 11:20 AM
-// Updated: 2017/10/02 6:10 PM
+// Updated: 2017/10/05 10:57 AM
 // 
 // Project: MapleCake
 // Filename: MapleButtons.cs
@@ -38,10 +38,9 @@ namespace MapleCake.Models
         public ICommand TitleIdToClipboard => new CommandHandler(TitleIdToClipboardButton);
         public ICommand EditorUI => new CommandHandler(WiiUManager.Instance.ToggleUi);
 
-        private void UninstallButton()
+        private async void UninstallButton()
         {
-            MainWindowViewModel.Instance.Config.BackgroundImage = string.Empty;
-            MainWindowViewModel.Instance.Config.RaisePropertyChangedEvent("BackgroundImage");
+            await MainWindowViewModel.Instance.SetBackgroundImg(new Title());
 
             Helper.Uninstall();
         }

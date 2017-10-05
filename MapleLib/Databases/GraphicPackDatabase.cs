@@ -129,23 +129,18 @@ namespace MapleLib.Databases
         }
 
         #region IDatabase<GraphicPack> Members
-
-        /// <inheritdoc />
+        
         public LiteDatabase LiteDatabase { get; }
-
-        /// <inheritdoc />
+        
         public string CollectionName => "graphicpacks";
-
-        /// <inheritdoc />
+        
         public int Count => Col?.Count(Query.All()) ?? 0;
-
-        /// <inheritdoc />
+        
         public void Load()
         {
             Task.Run(() => InitDatabase());
         }
-
-        /// <inheritdoc />
+        
         public async void InitDatabase()
         {
             var doUpdate = Settings.LastPackDbUpdate < DateTime.Now.AddDays(-7);

@@ -8,6 +8,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
+using System.IO.Packaging;
 using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
 using MapleCake.Models.Interfaces;
@@ -164,7 +165,7 @@ namespace MapleCake.Models
         public GraphicPack SelectedItemGraphicPack
         {
             get {
-                if (SelectedItem == null)
+                if (string.IsNullOrEmpty(SelectedItem?.ID))
                     return null;
 
                 if (_graphicPackCache.ContainsKey(SelectedItem.ID))
@@ -186,7 +187,7 @@ namespace MapleCake.Models
             get {
                 var col = new BindingList<GraphicPack>();
 
-                if (SelectedItem != null)
+                if (!string.IsNullOrEmpty(SelectedItem?.ID))
                     col = _graphicPackCollection[SelectedItem.ID];
 
                 return col;

@@ -91,19 +91,14 @@ namespace MapleLib.Structs
             return int.TryParse(versionStr, out version) ? version : 0;
         }
 
-        public async Task DownloadContent(string version = "0")
+        public async Task DownloadUpdate(string version = "0", bool libraryContent = false)
         {
-            await this.DownloadContent(ContentType, version);
+            await this.DownloadContent(version, "Patch", libraryContent);
         }
 
-        public async Task DownloadUpdate(string version = "0")
+        public async Task DownloadDLC(bool libraryContent = false)
         {
-            await this.DownloadContent("Patch", version);
-        }
-
-        public async Task DownloadDLC()
-        {
-            await this.DownloadContent("DLC", "0");
+            await this.DownloadContent(null, "DLC", libraryContent);
         }
 
         public bool DeleteContent()

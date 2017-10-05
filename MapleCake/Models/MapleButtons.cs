@@ -1,5 +1,5 @@
 ﻿// Created: 2017/03/27 11:20 AM
-// Updated: 2017/10/05 10:57 AM
+// Updated: 2017/10/05 2:56 PM
 // 
 // Project: MapleCake
 // Filename: MapleButtons.cs
@@ -16,6 +16,7 @@ using MapleLib;
 using MapleLib.Abstract;
 using MapleLib.Common;
 using MapleLib.Databases.Managers;
+using MapleLib.Network;
 using MapleLib.Properties;
 using MapleLib.Structs;
 
@@ -63,8 +64,8 @@ namespace MapleCake.Models
             if (string.IsNullOrEmpty(TitleId))
                 return;
 
-            var title = await Database.FindTitleAsync(TitleId);
-            if (title == null) return;
+            var title = await Database.FindTitleAsync($"00050000{TitleId.Substring(8)}");
+            title.ID = TitleId;
 
             MainWindowViewModel.Instance.Config.DownloadCommandEnabled = false;
             RaisePropertyChangedEvent("DownloadCommandEnabled");
@@ -72,10 +73,24 @@ namespace MapleCake.Models
             int result;
             var vers = MainWindowViewModel.Instance.Config.TitleVersion;
             var version = int.TryParse(vers, out result) ? result.ToString() : "0";
+            
+            switch (title.ContentType)
+            {
+                case "Patch":
+                    await title.DownloadUpdate(version, true);
+                    break;
 
-            await title.DownloadContent(version);
+                case "DLC":
+                    await title.DownloadDLC(true);
+                    break;
 
-            MainWindowViewModel.Instance.Config.TitleList.Add(title);
+                default:
+                    await title.DownloadContent(version);
+                    break;
+            }
+
+            if (title.ContentType.Contains("App"))
+                MainWindowViewModel.Instance.Config.TitleList.Add(title);
 
             MainWindowViewModel.Instance.Config.DownloadCommandEnabled = true;
             RaisePropertyChangedEvent("DownloadCommandEnabled");

@@ -21,16 +21,22 @@ namespace MapleLib.Network
 {
     public static class Web
     {
-        private const string WiiUserAgent = "wii libnup/1.1";
+        private const string WII_USER_AGENT = "wii libnup/1.1";
 
         public static event EventHandler<DownloadProgressChangedEventArgs> DownloadProgressChangedEvent;
 
-        public static async Task DownloadContent(this Title title, string contentType, string version)
+        public static async Task DownloadContent(this Title title, string version = null, string contentType = null, bool libraryContent = false)
         {
             if (string.IsNullOrEmpty(title.ID))
                 throw new Exception("Can't download content without a valid Title ID.");
 
-            title.FolderLocation = Path.GetFullPath(Path.Combine(Settings.LibraryDirectory, $"{title}"));
+            if (contentType == null)
+                contentType = title.ContentType;
+
+            if (version == null)
+                version = "0";
+
+            title.FolderLocation = Path.Combine(Settings.LibraryDirectory, title.ToString());
 
             #region Output Directory
 
@@ -39,8 +45,8 @@ namespace MapleLib.Network
             if (contentType == "Patch")
             {
                 workingId = $"0005000E{workingId.Substring(8)}";
-
-                if (Settings.Cemu173Patch)
+                
+                if (Settings.Cemu173Patch && !libraryContent)
                     title.FolderLocation = Path.Combine(Settings.BasePatchDir, workingId.Substring(8));
             }
 
@@ -48,7 +54,7 @@ namespace MapleLib.Network
             {
                 workingId = $"0005000C{workingId.Substring(8)}";
 
-                if (Settings.Cemu173Patch)
+                if (Settings.Cemu173Patch && !libraryContent)
                     title.FolderLocation = Path.Combine(Settings.BasePatchDir, workingId.Substring(8), "aoc");
             }
 
@@ -64,7 +70,7 @@ namespace MapleLib.Network
 
             using (var wc = new WebClient())
             {
-                wc.Headers[HttpRequestHeader.UserAgent] = WiiUserAgent;
+                wc.Headers[HttpRequestHeader.UserAgent] = WII_USER_AGENT;
                 wc.Headers[HttpRequestHeader.CacheControl] = "max-age=0, no-cache, no-store";
                 wc.DownloadProgressChanged += DownloadProgressChanged;
                 await wc.DownloadFileTaskAsync(new Uri(url), saveTo);
@@ -79,7 +85,7 @@ namespace MapleLib.Network
 
             using (var wc = new WebClient())
             {
-                wc.Headers[HttpRequestHeader.UserAgent] = WiiUserAgent;
+                wc.Headers[HttpRequestHeader.UserAgent] = WII_USER_AGENT;
                 wc.Headers[HttpRequestHeader.CacheControl] = "max-age=0, no-cache, no-store";
                 wc.DownloadProgressChanged += DownloadProgressChanged;
                 return wc.DownloadString(url);
@@ -93,7 +99,7 @@ namespace MapleLib.Network
 
             using (var wc = new WebClient())
             {
-                wc.Headers[HttpRequestHeader.UserAgent] = WiiUserAgent;
+                wc.Headers[HttpRequestHeader.UserAgent] = WII_USER_AGENT;
                 wc.Headers[HttpRequestHeader.CacheControl] = "max-age=0, no-cache, no-store";
                 wc.DownloadProgressChanged += DownloadProgressChanged;
                 return await wc.DownloadStringTaskAsync(url);
@@ -107,7 +113,7 @@ namespace MapleLib.Network
 
             using (var wc = new WebClient())
             {
-                wc.Headers[HttpRequestHeader.UserAgent] = WiiUserAgent;
+                wc.Headers[HttpRequestHeader.UserAgent] = WII_USER_AGENT;
                 wc.Headers[HttpRequestHeader.CacheControl] = "max-age=0, no-cache, no-store";
                 wc.DownloadProgressChanged += DownloadProgressChanged;
                 return await wc.DownloadDataTaskAsync(new Uri(url));

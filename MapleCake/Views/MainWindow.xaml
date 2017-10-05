@@ -18,7 +18,7 @@
         <TabControl Width="389" Background="{x:Null}">
             <TabItem Header="Library" Background="{x:Null}">
                 <Grid Background="{x:Null}">
-                    <ListBox ItemsSource="{Binding Config.TitleList}" SelectedItem="{Binding Config.SelectedItem}" PreviewMouseRightButtonDown="UIElement_OnPreviewMouseRightButtonDown" Margin="0,10,0,65" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="White">
+                    <ListBox Name="ListBox1" ItemsSource="{Binding Config.TitleList}" SelectedItem="{Binding Config.SelectedItem}" PreviewMouseRightButtonDown="UIElement_OnPreviewMouseRightButtonDown" Margin="0,10,0,65" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="White">
                         <ListBox.ContextMenu>
                             <ContextMenu Closed="OnContextMenuClosing" ItemsSource="{Binding Config.ContextItems}" UsesItemContainerTemplate="True"/>
                         </ListBox.ContextMenu>

@@ -1,5 +1,5 @@
 ﻿// Created: 2017/03/27 11:20 AM
-// Updated: 2017/10/05 5:48 PM
+// Updated: 2017/10/05 6:16 PM
 // 
 // Project: MapleCake
 // Filename: ViewModelConfig.cs
@@ -63,7 +63,7 @@ namespace MapleCake.Models
         public BitmapFrame BackgroundImage
         {
             get {
-                if (SelectedItem == null)
+                if (SelectedItem == null || !Settings.DynamicTheme)
                     return null;
 
                 var data = Settings.ImageCache[SelectedItem.ID];

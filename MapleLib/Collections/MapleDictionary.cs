@@ -1,11 +1,12 @@
 ﻿// Created: 2017/03/27 11:20 AM
-// Updated: 2017/09/29 1:55 AM
+// Updated: 2017/10/05 6:12 PM
 // 
 // Project: MapleLib
 // Filename: MapleDictionary.cs
 // Created By: Jared T
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using MapleLib.Structs;
@@ -15,12 +16,9 @@ namespace MapleLib.Collections
     [Serializable]
     public class MapleDictionary : MapleList<Title>
     {
-        public MapleDictionary(string baseDir)
-        {
-            BaseDir = baseDir;
-        }
+        public MapleDictionary() { }
 
-        private string BaseDir { get; }
+        public MapleDictionary(IList<Title> list) : base(list) { }
 
         public async void OrganizeTitles()
         {

@@ -1,5 +1,5 @@
 ﻿// Created: 2017/03/27 11:20 AM
-// Updated: 2017/10/05 5:48 PM
+// Updated: 2017/10/05 6:17 PM
 // 
 // Project: MapleCake
 // Filename: MainWindowViewModel.cs
@@ -33,7 +33,7 @@ namespace MapleCake.ViewModels
             Init();
         }
 
-        private static XInputController xInputController { get; set; }
+        private static XInputController XInputController { get; set; }
 
         public static MainWindowViewModel Instance { get; private set; }
 
@@ -111,17 +111,12 @@ namespace MapleCake.ViewModels
             TextLog.MesgLog.WriteLog($"[{title.Lower8Digits()}][{title.Region}] {title.Name}");
         }
 
-        public void DynamicTheme(bool enabled)
+        public async void DynamicTheme(bool enabled)
         {
             if (enabled)
-            {
-                SetBackgroundImg(Config.SelectedItem);
-            }
+                await SetBackgroundImg(Config.SelectedItem);
             else
-            {
                 Config.BackgroundImage = null;
-                Config.RaisePropertyChangedEvent("BackgroundImage");
-            }
         }
 
         private async void OnLoadComplete(object sender, EventArgs e)
@@ -139,8 +134,8 @@ namespace MapleCake.ViewModels
 
             new Update(UpdateType.MapleSeed2).CheckForUpdate();
 
-            xInputController = new XInputController();
-            xInputController.Start(Config);
+            XInputController = new XInputController();
+            XInputController.Start(Config);
         }
 
         private void Database_DatabasesLoaded(object sender, EventArgs e)

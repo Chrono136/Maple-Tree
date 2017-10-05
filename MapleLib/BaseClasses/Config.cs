@@ -1,5 +1,5 @@
 ﻿// Created: 2017/05/14 12:53 PM
-// Updated: 2017/10/05 4:20 PM
+// Updated: 2017/10/05 5:55 PM
 // 
 // Project: MapleLib
 // Filename: Config.cs
@@ -7,7 +7,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Windows.Media.Imaging;
 
 namespace MapleLib.BaseClasses
 {

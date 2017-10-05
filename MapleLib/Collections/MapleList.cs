@@ -1,5 +1,5 @@
 ﻿// Created: 2017/03/27 11:20 AM
-// Updated: 2017/09/29 1:56 AM
+// Updated: 2017/10/05 6:12 PM
 // 
 // Project: MapleLib
 // Filename: MapleList.cs
@@ -23,6 +23,11 @@ namespace MapleLib.Collections
         public MapleList(IEnumerable<T> list) : base(new List<T>())
         {
             this.AddRange(list);
+            AddItemEvent += OnAddItemEvent;
+        }
+
+        protected MapleList(IList<T> list) : base(list)
+        {
             AddItemEvent += OnAddItemEvent;
         }
 

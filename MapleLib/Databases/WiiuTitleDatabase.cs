@@ -7,6 +7,7 @@
 
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using MapleLib.Collections;
 using MapleLib.Common;
@@ -20,10 +21,10 @@ namespace MapleLib.Databases
     {
         public static MapleDictionary TitleLibrary { get; } = new MapleDictionary(Settings.LibraryDirectory);
 
-        private static async Task<IEnumerable<Title>> GetJObjects(string query)
+        private static IEnumerable<Title> GetJObjects(string query)
         {
             var url = Database.API_BASE_URL + query;
-            var json = await Web.DownloadStringAsync(url);
+            var json = Web.DownloadString(url);
 
             var settings = new JsonSerializerSettings();
 
@@ -32,9 +33,14 @@ namespace MapleLib.Databases
             return string.IsNullOrEmpty(json) ? null : titles;
         }
 
+        private static async Task<IEnumerable<Title>> GetJObjectsTask(string query)
+        {
+            return await Task.Run(() => GetJObjects(query));
+        }
+
         public static async Task<IEnumerable<Title>> All()
         {
-            return new MapleList<Title>(await GetJObjects("title/all"));
+            return new MapleList<Title>(await GetJObjectsTask("title/all"));
         }
 
         public static Versions GetVersions(string id)
@@ -67,24 +73,26 @@ namespace MapleLib.Databases
             if (titleDirectory.FilePathHasInvalidChars())
                 throw new DirectoryNotFoundException($"TitleDir: '{titleDirectory}' is an invalid directory path");
 
-            var xmlFiles = Helper.GetFiles(titleDirectory, "meta.xml");
+            var xmlFiles = Helper.GetFiles(titleDirectory, "meta.xml").ToList();
 
-            foreach (var xmlFile in xmlFiles)
+            xmlFiles.ForEach(LoadLibraryForeach);
+        }
+
+        private static async void LoadLibraryForeach(string xmlFile)
+        {
+            var rootDir = Path.GetFullPath(Path.Combine(xmlFile, "../../"));
+            var titleId = Helper.XmlGetStringByTag(xmlFile, "title_id");
+
+            Title title;
+            if ((title = await Database.FindTitleAsync(titleId)) == null)
             {
-                var rootDir = Path.GetFullPath(Path.Combine(xmlFile, "../../"));
-                var titleId = Helper.XmlGetStringByTag(xmlFile, "title_id");
-
-                Title title;
-                if ((title = await Database.FindTitleAsync(titleId)) == null)
-                {
-                    TextLog.Write($"Could not find title using ID {titleId}");
-                    continue;
-                }
-
-                title.FolderLocation = rootDir;
-                title.MetaLocation = xmlFile;
-                TitleLibrary.AddOnUi(title);
+                TextLog.Write($"Could not find title using ID {titleId}");
+                return;
             }
+
+            title.FolderLocation = rootDir;
+            title.MetaLocation = xmlFile;
+            TitleLibrary.AddOnUi(title);
         }
 
         public static async void Load()
@@ -95,9 +103,14 @@ namespace MapleLib.Databases
             Database.DatabaseCount++;
         }
 
-        public static async Task<MapleList<Title>> Find(string id)
+        public static async Task<MapleList<Title>> FindAsync(string id)
         {
-            var titles = await GetJObjects($"title/{id.ToUpperInvariant()}");
+            return await Task.Run(() => Find(id));
+        }
+
+        public static MapleList<Title> Find(string id)
+        {
+            var titles = GetJObjects($"title/{id.ToUpperInvariant()}");
 
             return new MapleList<Title>(titles);
         }

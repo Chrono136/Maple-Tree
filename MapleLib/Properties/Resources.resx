@@ -132,12 +132,6 @@
   <data name="msvcr120d" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\resources\msvcr120d.dll;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="updates1" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\database.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
-  </data>
-  <data name="titles1" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\titles.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-16</value>
-  </data>
   <data name="EdgeBuildNotice" xml:space="preserve">
     <value>Edge is a very unstable build, that receives updates often and should be used with caution. Expect errors to be shown, bugs to be present, and program crashes.
 
@@ -157,15 +151,6 @@ See the log window for sample outputs.</value>
   <data name="ActionWillDeleteAllContent" xml:space="preserve">
     <value>This action will delete all content currently under
 '{0}'</value>
-  </data>
-  <data name="eShopAndDiskTitles1" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\eShopAndDiskTitles.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
-  </data>
-  <data name="eShopTitleUpdates" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\eShopTitleUpdates.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
-  </data>
-  <data name="eShopTitleDLC1" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\eShopTitleDLC.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
   <data name="DLCPatch" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\DLCPatch;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>

@@ -1,5 +1,5 @@
 ﻿// Created: 2017/03/27 11:20 AM
-// Updated: 2017/10/05 10:43 AM
+// Updated: 2017/10/05 2:01 PM
 // 
 // Project: MapleLib
 // Filename: Helper.cs
@@ -50,8 +50,9 @@ namespace MapleLib.Common
 
         public static IEnumerable<string> GetFiles(string path, string pattern)
         {
-            var files = new List<string>();
+            return Directory.EnumerateFiles(path, pattern, SearchOption.AllDirectories);
 
+            var files = new List<string>();
             try
             {
                 files.AddRange(Directory.GetFiles(path, pattern, SearchOption.TopDirectoryOnly));
@@ -65,6 +66,33 @@ namespace MapleLib.Common
             }
 
             return files;
+        }
+
+        public static IEnumerable<string> GetFileList(string rootFolderPath, string fileSearchPattern)
+        {
+            var pending = new Queue<string>();
+            pending.Enqueue(rootFolderPath);
+            string[] tmp;
+
+            while (pending.Count > 0)
+            {
+                rootFolderPath = pending.Dequeue();
+                try
+                {
+                    tmp = Directory.GetFiles(rootFolderPath, fileSearchPattern);
+                }
+                catch (UnauthorizedAccessException)
+                {
+                    continue;
+                }
+
+                for (var i = 0; i < tmp.Length; i++)
+                    yield return tmp[i];
+
+                tmp = Directory.GetDirectories(rootFolderPath);
+                for (var i = 0; i < tmp.Length; i++)
+                    pending.Enqueue(tmp[i]);
+            }
         }
 
         public static Stream FileOpenStream(string path)

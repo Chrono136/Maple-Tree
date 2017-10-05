@@ -100,7 +100,7 @@ namespace MapleLib
             var titles = GetLibraryList().Where(x => x.ID == id.ToUpper()).ToList();
 
             if (!titles.Any())
-                Task.Run(async () => { titles = (await WiiuTitleDatabase.Find(id)).ToList(); }).Wait();
+                titles = WiiuTitleDatabase.Find(id).ToList();
 
             return titles.FirstOrDefault();
         }

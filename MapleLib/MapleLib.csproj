@@ -399,19 +399,13 @@
     <None Include="ThirdParty\Newtonsoft.Json\project.json" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\database.txt" />
-    <None Include="Resources\titles.txt" />
     <None Include="Resources\CDecrypt.exe" />
     <Content Include="Changelog.txt" />
-    <None Include="Resources\eShopAndDiskTitles.txt" />
-    <None Include="Resources\eShopTitleUpdates.txt" />
-    <None Include="Resources\eShopTitleDLC.txt" />
     <None Include="Resources\libeay32.dll" />
     <None Include="Resources\msvcr120d.dll" />
     <Content Include="Resources\images\CEMU.jpg" />
     <Content Include="Resources\Seed-icon.png" />
     <Content Include="Resources\Seed.ico" />
-    <None Include="Resources\wiiutdb.xml" />
     <None Include="Resources\wiiutitlekey.txt" />
     <None Include="Resources\wiiutdb.txt" />
     <Content Include="ThirdParty\Newtonsoft.Json\Newtonsoft.Json.csproj" />

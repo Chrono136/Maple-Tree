@@ -151,7 +151,7 @@ namespace MapleLib
             if (TitleKeys == null)
                 TitleKeys = GetTitleKeys();
 
-            return TitleKeys.First(x => string.Equals(x.titleID, id, StringComparison.CurrentCultureIgnoreCase));
+            return TitleKeys.FirstOrDefault(x => string.Equals(x.titleID, id, StringComparison.CurrentCultureIgnoreCase));
         }
 
         public static async Task<TitleKey> FindTitleKeyTask(string id)

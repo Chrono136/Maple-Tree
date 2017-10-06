@@ -1,5 +1,5 @@
 ### Change Log - 2.1.1.17 (XX/XX/2017)
-- General fixes & Improvements
+- General fixes & Performance improvements
 - Background images are stored in memory
 - Method for obtaining background images improved
 

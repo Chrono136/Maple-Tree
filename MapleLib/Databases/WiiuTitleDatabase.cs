@@ -1,5 +1,5 @@
 ﻿// Created: 2017/05/14 6:05 AM
-// Updated: 2017/10/05 6:07 PM
+// Updated: 2017/10/05 8:44 PM
 // 
 // Project: MapleLib
 // Filename: WiiuTitleDatabase.cs
@@ -19,7 +19,7 @@ namespace MapleLib.Databases
 {
     public static class WiiuTitleDatabase
     {
-        public static MapleDictionary TitleLibrary { get; private set; } = new MapleDictionary();
+        public static MapleDictionary TitleLibrary { get; } = new MapleDictionary();
 
         private static IEnumerable<Title> GetJObjects(string query)
         {
@@ -76,11 +76,6 @@ namespace MapleLib.Databases
             var xmlFiles = Helper.GetFiles(titleDirectory, "meta.xml").ToList();
 
             xmlFiles.ForEach(LoadLibraryForeach);
-
-            while (TitleLibrary.Count < xmlFiles.Count)
-                await Task.Delay(100);
-
-            TitleLibrary = new MapleDictionary(TitleLibrary.OrderBy(x => x.Name).ToList());
         }
 
         private static async void LoadLibraryForeach(string xmlFile)

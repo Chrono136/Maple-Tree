@@ -1,5 +1,5 @@
 ﻿// Created: 2017/03/27 11:20 AM
-// Updated: 2017/10/06 10:50 AM
+// Updated: 2017/10/06 12:20 PM
 // 
 // Project: MapleCake
 // Filename: MainWindow.xaml.cs
@@ -7,12 +7,10 @@
 
 using System;
 using System.ComponentModel;
-using System.IO;
 using System.Windows;
 using System.Windows.Input;
 using MapleCake.Models;
 using MapleCake.ViewModels;
-using MapleLib.Common;
 
 namespace MapleCake.Views
 {

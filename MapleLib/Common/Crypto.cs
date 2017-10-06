@@ -9,7 +9,6 @@ using System;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
-using CDecrypt.Cpp.CLI;
 
 namespace MapleLib.Common
 {
@@ -21,7 +20,7 @@ namespace MapleLib.Common
             var bytes2 = Encoding.ASCII.GetBytes(cetkPath);
             var bytes3 = Encoding.ASCII.GetBytes(outPath);
 
-            int result;
+            var result = 0;
 
             unsafe
             {
@@ -34,7 +33,7 @@ namespace MapleLib.Common
                             var sp1 = (sbyte*)p1;
                             var sp2 = (sbyte*)p2;
                             var sp3 = (sbyte*)p3;
-                            result = new Decrypt().decrypt(3, sp1, sp2, sp3);
+                            //result = new Decrypt().decrypt(3, sp1, sp2, sp3);
                         }
                     }
                 }

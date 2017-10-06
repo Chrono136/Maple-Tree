@@ -171,4 +171,7 @@ See the log window for sample outputs.</value>
   <data name="wiiutdb" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\wiiutdb.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
+  <data name="CDecrypt1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\CDecrypt.dll;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
 </root>

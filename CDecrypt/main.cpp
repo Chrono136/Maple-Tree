@@ -39,7 +39,11 @@ unsigned char WiiUCommenKey[16] =
 #include <direct.h>
 #include <ctype.h>
 
-#pragma comment(lib,"libeay32.lib")
+//#pragma comment(lib,"libeay32.lib")
+#pragma comment(lib, "legacy_stdio_definitions.lib")
+#pragma comment(lib,"libeay32MTd.lib")
+
+extern "C" { FILE __iob_func[3] = { *stdin,*stdout,*stderr }; }
 
 typedef unsigned __int64 u64;
 typedef signed __int64 s64;
@@ -602,15 +606,19 @@ s32 main(s32 argc, char* argv[]) {
 }
 
 namespace CDecrypt {
-	namespace Cpp {
-		public class __declspec(dllimport) Decrypt
-		{
-		public:
-			s32 decrypt(s32 argc, char* arg1, char* arg2, char* arg3);
-		};
+	class __declspec(dllimport) Decrypt
+	{
+	public:
+		s32 decrypt(s32 argc, char* arg1, char* arg2, char* arg3);
 	};
 };
 
+int CDecrypt::Decrypt::decrypt(s32 argc, char* arg1, char* arg2, char* arg3)
+{
+	return _decrypt(argc, arg1, arg2, arg3);
+}
+
+/*
 namespace CDecrypt
 {
 	namespace Cpp
@@ -630,13 +638,8 @@ namespace CDecrypt
 		}
 	}
 }
-
-int CDecrypt::Cpp::Decrypt::decrypt(s32 argc, char* arg1, char* arg2, char* arg3)
-{
-	return _decrypt(argc, arg1, arg2, arg3);
-}
-
 int CDecrypt::Cpp::CLI::Decrypt::decrypt(s32 argc, char* arg1, char* arg2, char* arg3)
 {
 	return _impl->decrypt(argc, arg1, arg2, arg3);
 }
+*/

@@ -29,6 +29,17 @@ namespace MapleLib
 
         static Database()
         {
+            AppDomain.CurrentDomain.AssemblyResolve += Helper.AssemblyResolve;
+            try
+            {
+                EmbeddedAssembly.Load("MapleLib.Resources.CDecrypt.dll", "CDecrypt.dll");
+                //EmbeddedAssembly.Load("MapleLib.Resources.libeay32.dll", "libeay32.dll");
+            }
+            catch(Exception e)
+            {
+                
+            }
+
             var dbFile = Path.GetFullPath(Path.Combine(Settings.ConfigDirectory, "mapleseed.db"));
 
             if (LiteDatabase == null)

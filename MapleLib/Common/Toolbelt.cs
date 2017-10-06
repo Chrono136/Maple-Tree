@@ -144,11 +144,19 @@ namespace MapleLib.Common
         {
             try
             {
+                //if (!GZip.Decompress(Resources.libeay32, Path.Combine(workingDir, "libeay32.dll")))
+                    //AppendLog("Error decrypting contents!\r\n       Could not extract libeay32.");
+
+                var tmd = Path.Combine(workingDir, "tmd");
+                var cetk = Path.Combine(workingDir, "cetk");
+
                 var curDir = Directory.GetCurrentDirectory();
                 Directory.SetCurrentDirectory(workingDir);
-                var result = Common.CDecrypt.Extract("tmd", "cetk", workingDir);
+
+                Common.CDecrypt.Extract(tmd, cetk, workingDir);
+
                 Directory.SetCurrentDirectory(curDir);
-                return result;
+                return 1;
 
                 var cdecrypt = Path.Combine(workingDir, "CDecrypt.exe");
                 var libeay32 = Path.Combine(workingDir, "libeay32.dll");

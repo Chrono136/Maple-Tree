@@ -89,6 +89,7 @@
     <Compile Include="Collections\MapleDictionary.cs" />
     <Compile Include="Collections\MapleList.cs" />
     <Compile Include="Common\Crypto.cs" />
+    <Compile Include="Common\EmbeddedAssembly.cs" />
     <Compile Include="Common\Extensions.cs" />
     <Compile Include="Common\IniManager.cs" />
     <Compile Include="JsonConverter\TitleConverter.cs" />
@@ -354,8 +355,9 @@
   <ItemGroup>
     <None Include="Resources\CDecrypt.exe" />
     <Content Include="Changelog.txt" />
-    <None Include="Resources\libeay32.dll" />
+    <EmbeddedResource Include="Resources\libeay32.dll" />
     <None Include="Resources\msvcr120d.dll" />
+    <EmbeddedResource Include="Resources\CDecrypt.dll" />
     <Content Include="Resources\images\CEMU.jpg" />
     <Content Include="Resources\Seed-icon.png" />
     <Content Include="Resources\Seed.ico" />
@@ -377,12 +379,6 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\CDecrypt\CDecrypt.vcxproj">
-      <Project>{efd4bb8c-2736-4dd8-a693-ca9b80a729a8}</Project>
-      <Name>CDecrypt</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

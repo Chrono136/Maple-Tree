@@ -1,11 +1,12 @@
 ﻿// Created: 2017/09/18 11:55 AM
-// Updated: 2017/09/29 1:51 AM
+// Updated: 2017/10/06 9:06 AM
 // 
 // Project: MapleLib
 // Filename: WiiUManager.cs
 // Created By: Jared T
 
 using System;
+using System.Collections.Generic;
 using System.Windows.Forms;
 using MapleLib.Collections;
 using MapleLib.Structs;
@@ -21,9 +22,11 @@ namespace MapleLib.Databases.Managers
 
         private EditorForm _form;
 
-        private WiiUManager()
+        private WiiUManager() { }
+
+        private WiiUManager(IEnumerable<Title> databaseState)
         {
-            //_databaseState = new MapleList<Title>(Database.GetTitles());
+            _databaseState = new MapleList<Title>(databaseState);
 
             _bindingSource = new BindingSource {DataSource = _databaseState};
 
@@ -50,8 +53,7 @@ namespace MapleLib.Databases.Managers
 
             if (_form.Visible)
                 _form.Hide();
-            else
-                _form.Show();
+            _form.Show();
         }
 
         public void AddEntry(Title title)

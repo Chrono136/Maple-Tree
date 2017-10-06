@@ -118,7 +118,7 @@ namespace MapleSeed
             }
         }
 
-        private async void SetCurrentImage(eShopTitle title)
+        private static void SetCurrentImage(eShopTitle title)
         {
             //TODO: FIX ME
             //pictureBox1.ImageLocation = await title.Image();

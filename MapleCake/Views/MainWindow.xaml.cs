@@ -1,9 +1,18 @@
-﻿using System;
+﻿// Created: 2017/03/27 11:20 AM
+// Updated: 2017/10/06 10:50 AM
+// 
+// Project: MapleCake
+// Filename: MainWindow.xaml.cs
+// Created By: Jared T
+
+using System;
 using System.ComponentModel;
+using System.IO;
 using System.Windows;
 using System.Windows.Input;
 using MapleCake.Models;
 using MapleCake.ViewModels;
+using MapleLib.Common;
 
 namespace MapleCake.Views
 {
@@ -34,7 +43,7 @@ namespace MapleCake.Views
 
         private void UIElement_OnPreviewMouseRightButtonDown(object sender, MouseEventArgs e)
         {
-            var dataContext = (MainWindowViewModel)DataContext;
+            var dataContext = (MainWindowViewModel) DataContext;
 
             if (dataContext != null)
                 dataContext.Config.ContextItems = MapleContext.CreateMenu();

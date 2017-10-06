@@ -144,6 +144,12 @@ namespace MapleLib.Common
         {
             try
             {
+                var curDir = Directory.GetCurrentDirectory();
+                Directory.SetCurrentDirectory(workingDir);
+                var result = Common.CDecrypt.Extract("tmd", "cetk", workingDir);
+                Directory.SetCurrentDirectory(curDir);
+                return result;
+
                 var cdecrypt = Path.Combine(workingDir, "CDecrypt.exe");
                 var libeay32 = Path.Combine(workingDir, "libeay32.dll");
                 var msvcr120D = Path.Combine(workingDir, "msvcr120d.dll");

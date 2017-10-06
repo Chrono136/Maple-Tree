@@ -399,7 +399,7 @@ void ExtractFile(FILE* in, u64 PartDataOffset, u64 FileOffset, u64 Size, char* F
 	fclose(out);
 }
 
-s32 main(s32 argc, char* argv[])
+s32 _decrypt(s32 argc, char* arg1, char* arg2, char* arg3)
 {
 	char str[1024];
 
@@ -415,7 +415,7 @@ s32 main(s32 argc, char* argv[])
 	}
 
 	u32 TMDLen;
-	char* TMD = ReadFile(argv[1], &TMDLen);
+	char* TMD = ReadFile(arg1, &TMDLen);
 	if (TMD == nullptr)
 	{
 		perror("Failed to open tmd\n");
@@ -423,7 +423,7 @@ s32 main(s32 argc, char* argv[])
 	}
 
 	u32 TIKLen;
-	char* TIK = ReadFile(argv[2], &TIKLen);
+	char* TIK = ReadFile(arg2, &TIKLen);
 	if (TIK == nullptr)
 	{
 		perror("Failed to open cetk\n");
@@ -595,4 +595,48 @@ s32 main(s32 argc, char* argv[])
 		}
 	}
 	return EXIT_SUCCESS;
+}
+
+s32 main(s32 argc, char* argv[]) {
+	return _decrypt(argc, argv[1], argv[2], "");
+}
+
+namespace CDecrypt {
+	namespace Cpp {
+		public class __declspec(dllimport) Decrypt
+		{
+		public:
+			s32 decrypt(s32 argc, char* arg1, char* arg2, char* arg3);
+		};
+	};
+};
+
+namespace CDecrypt
+{
+	namespace Cpp
+	{
+		class Decrypt;
+
+		namespace CLI
+		{
+			public ref class Decrypt
+			{
+			public:
+				int decrypt(s32 argc, char* arg1, char* arg2, char* arg3);
+			
+			private:
+				Cpp::Decrypt* _impl;
+			};
+		}
+	}
+}
+
+int CDecrypt::Cpp::Decrypt::decrypt(s32 argc, char* arg1, char* arg2, char* arg3)
+{
+	return _decrypt(argc, arg1, arg2, arg3);
+}
+
+int CDecrypt::Cpp::CLI::Decrypt::decrypt(s32 argc, char* arg1, char* arg2, char* arg3)
+{
+	return _impl->decrypt(argc, arg1, arg2, arg3);
 }

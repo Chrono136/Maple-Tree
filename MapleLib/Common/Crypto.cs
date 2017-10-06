@@ -1,5 +1,5 @@
 ﻿// Created: 2017/03/27 11:20 AM
-// Updated: 2017/09/29 1:56 AM
+// Updated: 2017/10/06 11:32 AM
 // 
 // Project: MapleLib
 // Filename: Crypto.cs
@@ -9,9 +9,41 @@ using System;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
+using CDecrypt.Cpp.CLI;
 
 namespace MapleLib.Common
 {
+    public static class CDecrypt
+    {
+        public static int Extract(string tmdPath, string cetkPath, string outPath)
+        {
+            var bytes1 = Encoding.ASCII.GetBytes(tmdPath);
+            var bytes2 = Encoding.ASCII.GetBytes(cetkPath);
+            var bytes3 = Encoding.ASCII.GetBytes(outPath);
+
+            int result;
+
+            unsafe
+            {
+                fixed (byte* p1 = bytes1)
+                {
+                    fixed (byte* p2 = bytes2)
+                    {
+                        fixed (byte* p3 = bytes3)
+                        {
+                            var sp1 = (sbyte*)p1;
+                            var sp2 = (sbyte*)p2;
+                            var sp3 = (sbyte*)p3;
+                            result = new Decrypt().decrypt(3, sp1, sp2, sp3);
+                        }
+                    }
+                }
+            }
+
+            return result;
+        }
+    }
+
     public static class Crypto
     {
         private static readonly string PasswordHash = "mapleseed584723";

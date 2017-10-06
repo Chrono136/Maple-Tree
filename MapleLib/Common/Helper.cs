@@ -1,5 +1,5 @@
 ﻿// Created: 2017/03/27 11:20 AM
-// Updated: 2017/10/05 3:27 PM
+// Updated: 2017/10/06 9:42 AM
 // 
 // Project: MapleLib
 // Filename: Helper.cs
@@ -51,21 +51,6 @@ namespace MapleLib.Common
         public static IEnumerable<string> GetFiles(string path, string pattern)
         {
             return Directory.EnumerateFiles(path, pattern, SearchOption.AllDirectories);
-
-            var files = new List<string>();
-            try
-            {
-                files.AddRange(Directory.GetFiles(path, pattern, SearchOption.TopDirectoryOnly));
-
-                foreach (var directory in Directory.GetDirectories(path))
-                    files.AddRange(GetFiles(directory, pattern));
-            }
-            catch (UnauthorizedAccessException)
-            {
-                TextLog.Write($"UnauthorizedAccessException: {path}");
-            }
-
-            return files;
         }
 
         public static IEnumerable<string> GetFileList(string rootFolderPath, string fileSearchPattern)

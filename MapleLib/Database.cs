@@ -1,5 +1,5 @@
 ﻿// Created: 2017/05/13 3:44 PM
-// Updated: 2017/10/05 5:47 PM
+// Updated: 2017/10/06 10:14 AM
 // 
 // Project: MapleLib
 // Filename: Database.cs
@@ -151,7 +151,8 @@ namespace MapleLib
             if (TitleKeys == null)
                 TitleKeys = GetTitleKeys();
 
-            return TitleKeys.FirstOrDefault(x => string.Equals(x.titleID, id, StringComparison.CurrentCultureIgnoreCase));
+            return TitleKeys.FirstOrDefault(
+                x => string.Equals(x.titleID, id, StringComparison.CurrentCultureIgnoreCase));
         }
 
         public static async Task<TitleKey> FindTitleKeyTask(string id)

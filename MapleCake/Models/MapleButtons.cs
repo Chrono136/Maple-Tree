@@ -13,12 +13,12 @@ using System.Windows.Forms;
 using System.Windows.Input;
 using MapleCake.ViewModels;
 using MapleLib;
-using MapleLib.Abstract;
 using MapleLib.Common;
 using MapleLib.Databases.Managers;
 using MapleLib.Network;
 using MapleLib.Properties;
 using MapleLib.Structs;
+using MapleLib.UserInterface;
 
 namespace MapleCake.Models
 {

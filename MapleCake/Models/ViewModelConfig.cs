@@ -14,9 +14,9 @@ using System.Windows.Media.Imaging;
 using MapleCake.Models.Interfaces;
 using MapleCake.ViewModels;
 using MapleLib;
-using MapleLib.Abstract;
 using MapleLib.Collections;
 using MapleLib.Structs;
+using MapleLib.UserInterface;
 using MapleLib.WiiU;
 
 namespace MapleCake.Models

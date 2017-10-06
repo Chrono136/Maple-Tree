@@ -12,8 +12,8 @@ using MapleCake.Models.ContextMenu;
 using MapleCake.Models.Interfaces;
 using MapleCake.ViewModels;
 using MapleLib;
-using MapleLib.Abstract;
 using MapleLib.Structs;
+using MapleLib.UserInterface;
 
 namespace MapleCake.Models
 {

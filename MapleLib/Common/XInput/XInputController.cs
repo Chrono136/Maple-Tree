@@ -4,11 +4,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using Dynamitey;
 using MapleLib.Collections;
-using MapleLib.Common;
 using MapleLib.Structs;
 using SharpDX.XInput;
 
-namespace MapleLib.XInput
+namespace MapleLib.Common.XInput
 {
     public class XInputController
     {

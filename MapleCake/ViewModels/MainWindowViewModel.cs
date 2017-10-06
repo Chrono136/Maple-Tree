@@ -12,11 +12,11 @@ using System.Windows;
 using System.Windows.Threading;
 using MapleCake.Models;
 using MapleLib;
-using MapleLib.Abstract;
 using MapleLib.Common;
+using MapleLib.Common.XInput;
 using MapleLib.Enums;
 using MapleLib.Structs;
-using MapleLib.XInput;
+using MapleLib.UserInterface;
 
 namespace MapleCake.ViewModels
 {

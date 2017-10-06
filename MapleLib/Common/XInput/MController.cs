@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics;
 using SharpDX.XInput;
 
-namespace MapleLib.XInput
+namespace MapleLib.Common.XInput
 {
     public class MController : Controller
     {

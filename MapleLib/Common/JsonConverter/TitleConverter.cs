@@ -9,7 +9,7 @@ using System;
 using MapleLib.Structs;
 using Newtonsoft.Json;
 
-namespace MapleLib.JsonConverter
+namespace MapleLib.Common.JsonConverter
 {
     public class VersionConverter : Newtonsoft.Json.JsonConverter
     {

@@ -10,7 +10,7 @@ using System.ComponentModel;
 using System.Text.RegularExpressions;
 using System.Windows.Media.Imaging;
 using MapleLib.Common;
-using MapleLib.JsonConverter;
+using MapleLib.Common.JsonConverter;
 
 namespace MapleLib.Structs
 {

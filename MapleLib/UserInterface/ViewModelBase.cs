@@ -9,7 +9,7 @@ using System;
 using System.ComponentModel;
 using System.Windows.Input;
 
-namespace MapleLib.Abstract
+namespace MapleLib.UserInterface
 {
     public abstract class ViewModelBase : INotifyPropertyChanged
     {

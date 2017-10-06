@@ -8,7 +8,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace MapleLib.BaseClasses
+namespace MapleLib.Common
 {
     public class Config
     {

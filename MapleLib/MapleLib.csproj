@@ -85,16 +85,16 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Abstract\ViewModelBase.cs" />
+    <Compile Include="UserInterface\ViewModelBase.cs" />
     <Compile Include="Collections\MapleDictionary.cs" />
     <Compile Include="Collections\MapleList.cs" />
     <Compile Include="Common\Crypto.cs" />
     <Compile Include="Common\EmbeddedAssembly.cs" />
     <Compile Include="Common\Extensions.cs" />
     <Compile Include="Common\IniManager.cs" />
-    <Compile Include="JsonConverter\TitleConverter.cs" />
+    <Compile Include="Common\JsonConverter\TitleConverter.cs" />
     <Compile Include="Common\Update.cs" />
-    <Compile Include="BaseClasses\Config.cs" />
+    <Compile Include="Common\Config.cs" />
     <Compile Include="Databases\Managers\WiiUManager.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -335,8 +335,8 @@
     <Compile Include="ThirdParty\Newtonsoft.Json\WriteState.cs" />
     <Compile Include="Common\Toolbelt.cs" />
     <Compile Include="WiiU\MapleTicket.cs" />
-    <Compile Include="XInput\MController.cs" />
-    <Compile Include="XInput\XInputController.cs" />
+    <Compile Include="Common\XInput\MController.cs" />
+    <Compile Include="Common\XInput\XInputController.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -377,6 +377,7 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>

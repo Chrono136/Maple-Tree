@@ -2,6 +2,7 @@
 - General fixes & Performance improvements
 - Background images are stored in memory
 - Method for obtaining background images improved
+- CDecrypt no longer requires external VC & OpenSSL Libraries
 
 ### Change Log - 2.1.1.16 (10/01/2017)
 - general fixes & improvements

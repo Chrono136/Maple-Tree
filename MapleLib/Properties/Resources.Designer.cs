@@ -73,9 +73,9 @@ namespace MapleLib.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
-        public static byte[] CDecrypt {
+        public static byte[] CDecrypt_exe_gz {
             get {
-                object obj = ResourceManager.GetObject("CDecrypt", resourceCulture);
+                object obj = ResourceManager.GetObject("CDecrypt_exe_gz", resourceCulture);
                 return ((byte[])(obj));
             }
         }

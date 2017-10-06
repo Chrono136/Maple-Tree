@@ -153,10 +153,10 @@ namespace MapleLib.Common
                         process.Kill();
                 }
 
-                if (!GZip.Decompress(Resources.CDecrypt, cdecrypt))
+                if (!GZip.Decompress(Resources.CDecrypt_exe_gz, cdecrypt))
                     AppendLog("Error decrypting contents!\r\n       Could not extract CDecrypt.");
 
-                using (TextWriter writer = File.CreateText(Path.Combine(Settings.ConfigDirectory, "CDecrypt.log")))
+                using (TextWriter writer = File.CreateText(Path.Combine(workingDir, "CDecrypt.log")))
                 {
                     return await StartProcess(cdecrypt, "tmd cetk", workingDir, null, true, false, writer);
                 }

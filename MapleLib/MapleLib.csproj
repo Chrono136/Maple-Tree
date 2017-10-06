@@ -340,6 +340,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="Resources\CDecrypt.exe.gz" />
     <None Include="Resources\DLCPatch" />
     <None Include="ThirdParty\Newtonsoft.Json\Dynamic.snk" />
     <None Include="ThirdParty\Newtonsoft.Json\Newtonsoft.Json.Dotnet.xproj" />
@@ -353,7 +354,6 @@
     <None Include="ThirdParty\Newtonsoft.Json\project.json" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\CDecrypt.exe" />
     <Content Include="Changelog.txt" />
     <Content Include="Resources\images\CEMU.jpg" />
     <Content Include="Resources\Seed-icon.png" />

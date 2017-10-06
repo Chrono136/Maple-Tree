@@ -126,12 +126,6 @@
   <data name="CDecrypt" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\resources\cdecrypt.exe;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="libeay32" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\libeay32.dll;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="msvcr120d" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\msvcr120d.dll;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
   <data name="EdgeBuildNotice" xml:space="preserve">
     <value>Edge is a very unstable build, that receives updates often and should be used with caution. Expect errors to be shown, bugs to be present, and program crashes.
 
@@ -170,8 +164,5 @@ See the log window for sample outputs.</value>
   </data>
   <data name="wiiutdb" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\wiiutdb.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
-  </data>
-  <data name="CDecrypt1" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\CDecrypt.dll;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
 </root>

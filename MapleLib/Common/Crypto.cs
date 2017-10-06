@@ -16,6 +16,8 @@ namespace MapleLib.Common
     {
         public static int Extract(string tmdPath, string cetkPath, string outPath)
         {
+            var wrapper = new CDecryptWrapper.Cpp.CLI.Decrypt();
+
             var bytes1 = Encoding.ASCII.GetBytes(tmdPath);
             var bytes2 = Encoding.ASCII.GetBytes(cetkPath);
             var bytes3 = Encoding.ASCII.GetBytes(outPath);
@@ -33,7 +35,8 @@ namespace MapleLib.Common
                             var sp1 = (sbyte*)p1;
                             var sp2 = (sbyte*)p2;
                             var sp3 = (sbyte*)p3;
-                            //result = new Decrypt().decrypt(3, sp1, sp2, sp3);
+
+                            result = wrapper.decrypt(3, sp1, sp2, sp3);
                         }
                     }
                 }

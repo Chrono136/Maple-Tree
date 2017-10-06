@@ -39,7 +39,6 @@ unsigned char WiiUCommenKey[16] =
 #include <direct.h>
 #include <ctype.h>
 
-//#pragma comment(lib,"libeay32.lib")
 #pragma comment(lib, "legacy_stdio_definitions.lib")
 #pragma comment(lib,"libeay32MTd.lib")
 
@@ -605,21 +604,24 @@ s32 main(s32 argc, char* argv[]) {
 	return _decrypt(argc, argv[1], argv[2], "");
 }
 
-namespace CDecrypt {
-	class __declspec(dllimport) Decrypt
+namespace CDecryptWrapper
+{
+	namespace Cpp
 	{
-	public:
-		s32 decrypt(s32 argc, char* arg1, char* arg2, char* arg3);
-	};
+		class __declspec(dllimport) Decrypt
+		{
+		public:
+			s32 decrypt(s32 argc, char* arg1, char* arg2, char* arg3);
+		};
+	}
 };
 
-int CDecrypt::Decrypt::decrypt(s32 argc, char* arg1, char* arg2, char* arg3)
+int CDecryptWrapper::Cpp::Decrypt::decrypt(s32 argc, char* arg1, char* arg2, char* arg3)
 {
 	return _decrypt(argc, arg1, arg2, arg3);
 }
-
 /*
-namespace CDecrypt
+namespace CDecryptWrapper
 {
 	namespace Cpp
 	{
@@ -638,7 +640,8 @@ namespace CDecrypt
 		}
 	}
 }
-int CDecrypt::Cpp::CLI::Decrypt::decrypt(s32 argc, char* arg1, char* arg2, char* arg3)
+
+int CDecryptWrapper::Cpp::CLI::Decrypt::decrypt(s32 argc, char* arg1, char* arg2, char* arg3)
 {
 	return _impl->decrypt(argc, arg1, arg2, arg3);
 }

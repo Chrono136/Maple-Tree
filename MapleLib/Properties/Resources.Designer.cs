@@ -81,16 +81,6 @@ namespace MapleLib.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
-        /// </summary>
-        public static byte[] CDecrypt1 {
-            get {
-                object obj = ResourceManager.GetObject("CDecrypt1", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
         public static System.Drawing.Bitmap CEMU {
@@ -127,26 +117,6 @@ namespace MapleLib.Properties {
         public static string EdgeBuildNotice {
             get {
                 return ResourceManager.GetString("EdgeBuildNotice", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
-        /// </summary>
-        public static byte[] libeay32 {
-            get {
-                object obj = ResourceManager.GetObject("libeay32", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
-        /// </summary>
-        public static byte[] msvcr120d {
-            get {
-                object obj = ResourceManager.GetObject("msvcr120d", resourceCulture);
-                return ((byte[])(obj));
             }
         }
         

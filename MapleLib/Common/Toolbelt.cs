@@ -1,5 +1,5 @@
 ﻿// Created: 2017/03/27 11:20 AM
-// Updated: 2017/09/29 1:57 AM
+// Updated: 2017/10/06 3:25 PM
 // 
 // Project: MapleLib
 // Filename: Toolbelt.cs
@@ -144,23 +144,7 @@ namespace MapleLib.Common
         {
             try
             {
-                //if (!GZip.Decompress(Resources.libeay32, Path.Combine(workingDir, "libeay32.dll")))
-                    //AppendLog("Error decrypting contents!\r\n       Could not extract libeay32.");
-
-                var tmd = Path.Combine(workingDir, "tmd");
-                var cetk = Path.Combine(workingDir, "cetk");
-
-                var curDir = Directory.GetCurrentDirectory();
-                Directory.SetCurrentDirectory(workingDir);
-
-                Common.CDecrypt.Extract(tmd, cetk, workingDir);
-
-                Directory.SetCurrentDirectory(curDir);
-                return 1;
-
                 var cdecrypt = Path.Combine(workingDir, "CDecrypt.exe");
-                var libeay32 = Path.Combine(workingDir, "libeay32.dll");
-                var msvcr120D = Path.Combine(workingDir, "msvcr120d.dll");
 
                 foreach (var process in Process.GetProcessesByName("CDecrypt"))
                 {
@@ -171,12 +155,6 @@ namespace MapleLib.Common
 
                 if (!GZip.Decompress(Resources.CDecrypt, cdecrypt))
                     AppendLog("Error decrypting contents!\r\n       Could not extract CDecrypt.");
-
-                if (!GZip.Decompress(Resources.libeay32, libeay32))
-                    AppendLog("Error decrypting contents!\r\n       Could not extract libeay32.");
-
-                if (!GZip.Decompress(Resources.msvcr120d, msvcr120D))
-                    AppendLog("Error decrypting contents!\r\n       Could not extract msvcr120d.");
 
                 using (TextWriter writer = File.CreateText(Path.Combine(Settings.ConfigDirectory, "CDecrypt.log")))
                 {

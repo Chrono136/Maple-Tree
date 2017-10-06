@@ -1,5 +1,5 @@
 ﻿// Created: 2017/03/27 11:20 AM
-// Updated: 2017/10/06 12:21 PM
+// Updated: 2017/10/06 3:25 PM
 // 
 // Project: MapleLib
 // Filename: Helper.cs
@@ -14,47 +14,11 @@ using System.Net;
 using System.Reflection;
 using System.Windows.Forms;
 using System.Xml;
-using MapleLib.Properties;
 
 namespace MapleLib.Common
 {
     public static class Helper
     {
-        public static Assembly AssemblyResolve1()
-        {
-            using (Stream stream = new MemoryStream(Resources.CDecrypt1))
-            {
-                var rawAssembly = new byte[stream.Length];
-                stream.Read(rawAssembly, 0, (int) stream.Length);
-                return Assembly.Load(rawAssembly);
-            }
-        }
-
-        public static Assembly AssemblyResolve2()
-        {
-            using (Stream stream = new MemoryStream(Resources.libeay32))
-            {
-                var rawAssembly = new byte[stream.Length];
-                stream.Read(rawAssembly, 0, (int) stream.Length);
-                return Assembly.Load(rawAssembly);
-            }
-        }
-
-        public static Assembly AssemblyResolve(object sender, ResolveEventArgs args)
-        {
-            var assembly = Assembly.GetExecutingAssembly();
-            var assemblyName = args.Name.Split(',')[0];
-
-            using (var stream = assembly.GetManifestResourceStream("MapleLib.Resources." + assemblyName + ".dll"))
-            {
-                if (stream == null) return null;
-
-                var rawAssembly = new byte[stream.Length];
-                stream.Read(rawAssembly, 0, (int) stream.Length);
-                return Assembly.Load(rawAssembly);
-            }
-        }
-
         public static uint GenerateHashFromRawRpxData(byte[] rpxData, int size)
         {
             uint h = 0x3416DCBF;

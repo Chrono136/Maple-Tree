@@ -106,6 +106,9 @@ namespace MapleLib.Structs
             var ret = false;
             var path = Path.GetFullPath(FolderLocation);
 
+            if (!Directory.Exists(path))
+                return false;
+
             var result = MessageBox.Show(string.Format(Resources.ActionWillDeleteAllContent, path),
                 Resources.PleaseConfirmAction, MessageBoxButtons.OKCancel);
 

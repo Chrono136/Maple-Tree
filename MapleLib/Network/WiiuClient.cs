@@ -1,5 +1,5 @@
 ﻿// Created: 2017/05/14 4:32 PM
-// Updated: 2017/10/02 1:47 PM
+// Updated: 2017/10/14 4:02 PM
 // 
 // Project: MapleLib
 // Filename: WiiuClient.cs
@@ -11,11 +11,15 @@ using System.Drawing;
 using System.IO;
 using System.Net;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Forms;
+using System.Windows.Threading;
 using libWiiSharp;
 using MapleLib.Common;
 using MapleLib.Structs;
 using MapleLib.WiiU;
+using Application = System.Windows.Application;
+using MessageBox = System.Windows.MessageBox;
 
 namespace MapleLib.Network
 {
@@ -23,14 +27,14 @@ namespace MapleLib.Network
     {
         public static event EventHandler<ProgressReport> ProgressReport;
 
-        private static async Task<byte[]> DownloadData(string url)
+        private static byte[] DownloadData(string url)
         {
             byte[] data = { };
 
             try
             {
                 if (Helper.InternetActive())
-                    data = await Web.DownloadDataAsync(url);
+                    data = Web.DownloadData(url);
             }
             catch (WebException e)
             {
@@ -40,9 +44,9 @@ namespace MapleLib.Network
             return data;
         }
 
-        private static async Task<TMD> DownloadTmd(string url, string saveTo)
+        private static TMD DownloadTmd(string url, string saveTo)
         {
-            var data = await DownloadData(url);
+            var data = DownloadData(url);
             if (data.Length <= 0) return null;
             var tmd = TMD.Load(data);
 
@@ -55,7 +59,7 @@ namespace MapleLib.Network
             return tmd;
         }
 
-        private static async Task<TMD> LoadTmd(string id, string key, string outputDir, string titleUrl, string version)
+        private static TMD LoadTmd(string id, string key, string outputDir, string titleUrl, string version)
         {
             var tmdFile = Path.Combine(outputDir, "tmd");
 
@@ -63,11 +67,11 @@ namespace MapleLib.Network
                 return null;
 
             version = int.Parse(version) == 0 ? "" : $".{version}";
-            if (await DownloadTmd(titleUrl + $"tmd{version}", tmdFile) == null)
+            if (DownloadTmd(titleUrl + $"tmd{version}", tmdFile) == null)
             {
                 var url = $"http://ccs.cdn.wup.shop.nintendo.net/ccs/download/{id.ToLower()}/tmd";
 
-                await DownloadTmd(url, tmdFile);
+                DownloadTmd(url, tmdFile);
             }
 
             var file = new FileInfo(tmdFile);
@@ -77,7 +81,7 @@ namespace MapleLib.Network
             return TMD.Load(tmdFile);
         }
 
-        public static async Task DownloadTitle(string id, string outputDir, string contentType, string version)
+        private static void DownloadTitle(string id, string outputDir, string contentType, string version)
         {
             #region Setup
 
@@ -91,7 +95,7 @@ namespace MapleLib.Network
             if (contentType == "Patch")
                 workingId = $"0005000E{workingId.Substring(8).ToUpper()}";
 
-            var title = await Database.FindTitleKeyTask(workingId);
+            var title = Database.FindTitleKey(workingId);
             if (title.titleKey.Length != 32)
                 throw new Exception("Could not locate the title key");
 
@@ -102,10 +106,13 @@ namespace MapleLib.Network
             if (!Directory.Exists(outputDir))
                 Directory.CreateDirectory(outputDir);
 
+            var result = MessageBoxResult.Cancel;
             var str = $"Download {contentType} content to the following location?\n\"{outputDir}\"";
-            var result = MessageBox.Show(str, name, MessageBoxButtons.YesNo);
-
-            if (result != DialogResult.Yes)
+            Application.Current.Dispatcher.Invoke(DispatcherPriority.Normal, new Action(() =>
+            {
+                result = MessageBox.Show(Application.Current.MainWindow, str, name, MessageBoxButton.YesNo);
+            }));
+            if (result != MessageBoxResult.Yes)
                 return;
 
             Toolbelt.AppendLog($"Output Directory '{outputDir}'");
@@ -127,7 +134,7 @@ namespace MapleLib.Network
             foreach (var nusUrl in nusUrls)
             {
                 var titleUrl = $"{nusUrl}{workingId}/";
-                tmd = await LoadTmd(workingId, key, outputDir, titleUrl, version);
+                tmd = LoadTmd(workingId, key, outputDir, titleUrl, version);
 
                 if (tmd != null)
                     break;
@@ -145,7 +152,7 @@ namespace MapleLib.Network
 
             Toolbelt.AppendLog("Generating Ticket...");
 
-            var tikData = MapleTicket.Create(await Database.FindTitleKeyTask(workingId));
+            var tikData = MapleTicket.Create(Database.FindTitleKey(workingId));
             if (tikData == null)
                 throw new Exception("Invalid ticket data. Verify Title ID.");
 
@@ -162,7 +169,7 @@ namespace MapleLib.Network
             foreach (var nusUrl in nusUrls)
             {
                 var url = nusUrl + workingId;
-                if (await DownloadContent(tmd, outputDir, url) != 1)
+                if (DownloadContent(tmd, outputDir, url) != 1)
                     continue;
 
                 Toolbelt.AppendLog(string.Empty);
@@ -170,7 +177,7 @@ namespace MapleLib.Network
                 Toolbelt.AppendLog("  + This may take a minute. Please wait...");
                 Toolbelt.SetStatus("Decrypting Content. This may take a minute. Please wait...", Color.OrangeRed);
 
-                if (await Toolbelt.CDecrypt(outputDir) != 0)
+                if (Toolbelt.CDecrypt(outputDir) != 0)
                 {
                     CleanUp(outputDir, tmd);
                     Toolbelt.AppendLog($"Error while decrypting {name}");
@@ -188,38 +195,36 @@ namespace MapleLib.Network
             Toolbelt.SetStatus($"[+] [{contentType}] {name} v{tmd.TitleVersion} Finished.");
         }
 
-        private static async Task<int> DownloadContent(TMD tmd, string outputDir, string titleUrl)
+        public static async Task DownloadTitleTask(string id, string outputDir, string contentType, string version)
         {
-            var result = 0;
+            await Task.Run(() => DownloadTitle(id, outputDir, contentType, version));
+        }
+
+        private static int DownloadContent(TMD tmd, string outputDir, string titleUrl)
+        {
             for (var i = 0; i < tmd.NumOfContents; i++)
             {
                 var i1 = i;
-                result = await Task.Run(async () =>
-                {
-                    var numc = tmd.NumOfContents;
-                    var size = Toolbelt.SizeSuffix((long) tmd.Contents[i1].Size);
-                    Toolbelt.AppendLog($"Downloading Content #{i1 + 1} of {numc}... ({size})");
-                    var contentPath = Path.Combine(outputDir, tmd.Contents[i1].ContentID.ToString("x8"));
+                var numc = tmd.NumOfContents;
+                var size = Toolbelt.SizeSuffix((long) tmd.Contents[i1].Size);
+                Toolbelt.AppendLog($"Downloading Content #{i1 + 1} of {numc}... ({size})");
+                var contentPath = Path.Combine(outputDir, tmd.Contents[i1].ContentID.ToString("x8"));
 
-                    if (!Toolbelt.IsValid(tmd.Contents[i1], contentPath))
-                        try
-                        {
-                            var downloadUrl = $"{titleUrl}/{tmd.Contents[i1].ContentID:x8}";
-                            await Web.DownloadFileAsync(downloadUrl, contentPath);
-                        }
-                        catch (Exception ex)
-                        {
-                            Toolbelt.AppendLog($"Downloading Content #{i1 + 1} of {numc} failed...\n{ex.Message}");
-                            return 0;
-                        }
-                    ReportProgress(0, tmd.NumOfContents - 1, i1);
-                    return 1;
-                });
-                if (result == 0)
-                    break;
+                if (!Toolbelt.IsValid(tmd.Contents[i1], contentPath))
+                    try
+                    {
+                        var downloadUrl = $"{titleUrl}/{tmd.Contents[i1].ContentID:x8}";
+                        Web.DownloadFile(downloadUrl, contentPath);
+                    }
+                    catch (Exception ex)
+                    {
+                        Toolbelt.AppendLog($"Downloading Content #{i1 + 1} of {numc} failed...\n{ex.Message}");
+                        break;
+                    }
+                ReportProgress(0, tmd.NumOfContents - 1, i1);
             }
             ReportProgress(0, 100, 0);
-            return result;
+            return 1;
         }
 
         public static void ReportProgress(int min, int max, int value)

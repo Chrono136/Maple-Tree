@@ -1,5 +1,5 @@
 ﻿// Created: 2017/03/27 11:20 AM
-// Updated: 2017/10/06 3:25 PM
+// Updated: 2017/10/14 2:53 PM
 // 
 // Project: MapleLib
 // Filename: Helper.cs
@@ -9,11 +9,14 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Management;
 using System.Net;
-using System.Reflection;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Forms;
 using System.Xml;
+using MapleLib.Properties;
+using MessageBox = System.Windows.MessageBox;
 
 namespace MapleLib.Common
 {
@@ -31,6 +34,34 @@ namespace MapleLib.Common
             return h;
         }
 
+        public static void CheckSession()
+        {
+            var currentProcess = Process.GetCurrentProcess();
+            var processes = Process.GetProcessesByName("MapleSeed2");
+
+            if (currentProcess.ProcessName != "MapleSeed2")
+            {
+                MessageBox.Show(Resources.InvalidExecutableName);
+                currentProcess.Kill();
+            }
+
+            if (processes.Length <= 1)
+                return;
+
+            var result = MessageBox.Show(Resources.Session_Still_Open, "Previous Session Open", MessageBoxButton.OKCancel);
+            if (result == MessageBoxResult.OK)
+            {
+                foreach (var process in processes)
+                    if (process.Id != currentProcess.Id)
+                        process.Kill();
+
+                Thread.Sleep(1500);
+                return;
+            }
+
+            currentProcess.Kill();
+        }
+
         public static bool InternetActive()
         {
             try
@@ -43,7 +74,7 @@ namespace MapleLib.Common
             }
             catch
             {
-                MessageBox.Show(@"This tool requires an Internet connection for network features.");
+                System.Windows.Forms.MessageBox.Show(@"This tool requires an Internet connection for network features.");
                 return false;
             }
         }
@@ -51,33 +82,6 @@ namespace MapleLib.Common
         public static IEnumerable<string> GetFiles(string path, string pattern)
         {
             return Directory.EnumerateFiles(path, pattern, SearchOption.AllDirectories);
-        }
-
-        public static IEnumerable<string> GetFileList(string rootFolderPath, string fileSearchPattern)
-        {
-            var pending = new Queue<string>();
-            pending.Enqueue(rootFolderPath);
-            string[] tmp;
-
-            while (pending.Count > 0)
-            {
-                rootFolderPath = pending.Dequeue();
-                try
-                {
-                    tmp = Directory.GetFiles(rootFolderPath, fileSearchPattern);
-                }
-                catch (UnauthorizedAccessException)
-                {
-                    continue;
-                }
-
-                for (var i = 0; i < tmp.Length; i++)
-                    yield return tmp[i];
-
-                tmp = Directory.GetDirectories(rootFolderPath);
-                for (var i = 0; i < tmp.Length; i++)
-                    pending.Enqueue(tmp[i]);
-            }
         }
 
         public static Stream FileOpenStream(string path)
@@ -91,7 +95,7 @@ namespace MapleLib.Common
 
         public static void Uninstall()
         {
-            var results = MessageBox.Show(@"This will remove all extra files related to MapleSeed", "",
+            var results = System.Windows.Forms.MessageBox.Show(@"This will remove all extra files related to MapleSeed", "",
                 MessageBoxButtons.OKCancel);
 
             if (results != DialogResult.OK) return;
@@ -101,32 +105,8 @@ namespace MapleLib.Common
             if (!string.IsNullOrEmpty(Settings.ConfigDirectory))
                 Directory.Delete(Settings.ConfigDirectory, true);
 
-            MessageBox.Show(@"You may now delete this exe");
+            System.Windows.Forms.MessageBox.Show(@"You may now delete this exe");
             Process.GetCurrentProcess().Kill();
-        }
-
-        public static string UniqueId()
-        {
-            var drive = DriveInfo.GetDrives()[0].ToString().Replace(":", "").Replace("\\", "");
-            var dsk = new ManagementObject(@"win32_logicaldisk.deviceid=""" + drive + @":""");
-            dsk.Get();
-            var volumeSerial = dsk["VolumeSerialNumber"].ToString();
-            return volumeSerial;
-        }
-
-        public static void ResolveAssembly()
-        {
-            AppDomain.CurrentDomain.AssemblyResolve += (sender, args) =>
-            {
-                var resourceName = new AssemblyName(args.Name).Name + ".dll";
-                using (var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName))
-                {
-                    if (stream == null) return null;
-                    var assemblyData = new byte[stream.Length];
-                    stream.Read(assemblyData, 0, assemblyData.Length);
-                    return Assembly.Load(assemblyData);
-                }
-            };
         }
 
         public static string XmlGetStringByTag(string file, string tag)
@@ -143,7 +123,7 @@ namespace MapleLib.Common
             }
             catch (Exception e)
             {
-                System.Windows.MessageBox.Show(e.Message);
+                MessageBox.Show(e.Message);
             }
 
             return null;

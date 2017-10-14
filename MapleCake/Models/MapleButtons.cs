@@ -1,5 +1,5 @@
 ﻿// Created: 2017/03/27 11:20 AM
-// Updated: 2017/10/05 4:24 PM
+// Updated: 2017/10/14 3:24 PM
 // 
 // Project: MapleCake
 // Filename: MapleButtons.cs
@@ -75,15 +75,15 @@ namespace MapleCake.Models
             switch (title.ContentType)
             {
                 case "Patch":
-                    await title.DownloadUpdate(version, true);
+                    await title.DownloadUpdateTask(version, true);
                     break;
 
                 case "DLC":
-                    await title.DownloadDLC(true);
+                    await title.DownloadDLCTask(true);
                     break;
 
                 default:
-                    await title.DownloadContent(version);
+                    await title.DownloadContentTask(version);
                     break;
             }
 
@@ -98,29 +98,17 @@ namespace MapleCake.Models
         {
             int version;
             if (int.TryParse(MainWindowViewModel.Instance.Config.TitleVersion, out version))
-                await DownloadContentClick("Patch", version);
-        }
-
-        private static async void RemoveUpdateButton()
-        {
-            if (SelectedItem == null) return;
-
-            await Task.Run(() =>
-            {
-                var updatePath = Path.Combine(Settings.BasePatchDir, SelectedItem.Lower8Digits());
-                var result = MessageBox.Show(string.Format(Resources.ActionWillDeleteAllContent, updatePath),
-                    Resources.PleaseConfirmAction, MessageBoxButtons.OKCancel);
-
-                if (result != DialogResult.OK)
-                    return;
-
-                SelectedItem.DeleteUpdateContent();
-            });
+                await DownloadContentClickTask("Patch", version);
         }
 
         private static async void AddDlcButton()
         {
-            await DownloadContentClick("DLC");
+            await DownloadContentClickTask("DLC");
+        }
+
+        private static void RemoveUpdateButton()
+        {
+            SelectedItem?.DeleteUpdateContent();
         }
 
         private static void RemoveDlcButton()
@@ -152,7 +140,12 @@ namespace MapleCake.Models
             MainWindowViewModel.Instance.RaisePropertyChangedEvent(propertyName);
         }
 
-        public static async Task DownloadContentClick(string contentType, int version = 0)
+        public static async Task DownloadContentClickTask(string contentType, int version = 0)
+        {
+            await Task.Run(() => DownloadContentClick(contentType, version));
+        }
+
+        public static void DownloadContentClick(string contentType, int version = 0)
         {
             if (SelectedItem == null)
                 throw new NullReferenceException("Title is null or empty, can't proceed!");
@@ -163,18 +156,18 @@ namespace MapleCake.Models
             if (SelectedItem.Name.IsNullOrEmpty())
                 throw new NullReferenceException($"[{SelectedItem}] Title Name is null or empty, can't proceed!");
 
-            var title = await Database.FindTitleAsync(SelectedItem.ID);
+            var title = Database.FindTitle(SelectedItem.ID);
 
             //download dlc if applicable
-            if (contentType == "DLC" && SelectedItem.HasDLC && title != null)
-                await title.DownloadDLC();
+            if (contentType == "DLC" && SelectedItem.HasDLC)
+                title?.DownloadDLC();
 
             //download patch if applicable
-            if (contentType == "Patch" && SelectedItem.HasPatch && title != null)
-                await title.DownloadUpdate(version.ToString());
+            if (contentType == "Patch" && SelectedItem.HasPatch)
+                title?.DownloadUpdate(version.ToString());
 
             if (contentType == "eShop/Application")
-                await SelectedItem.DownloadContent(version.ToString());
+                SelectedItem.DownloadContent(version.ToString());
         }
     }
 }

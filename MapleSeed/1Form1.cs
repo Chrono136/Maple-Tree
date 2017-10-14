@@ -1,5 +1,5 @@
 ﻿// Created: 2017/03/27 11:29 AM
-// Updated: 2017/09/29 2:03 AM
+// Updated: 2017/10/14 3:18 PM
 // 
 // Project: MapleSeed
 // Filename: 1Form1.cs
@@ -184,7 +184,7 @@ namespace MapleSeed
                     id = $"0005000C{title.Lower8Digits()}";
                     title = await Database.FindTitleAsync(id);
                     if (title == null) continue;
-                    await title.DownloadDLC();
+                    await title.DownloadDLCTask();
                 }
 
                 if (contentType == "Patch")
@@ -198,11 +198,11 @@ namespace MapleSeed
                     id = $"0005000E{title.Lower8Digits()}";
                     title = await Database.FindTitleAsync(id);
                     if (title == null) continue;
-                    await title.DownloadUpdate(version);
+                    await title.DownloadUpdateTask(version);
                 }
 
                 if (contentType == "eShop/Application")
-                    await title.DownloadContent(version);
+                    await title.DownloadContentTask(version);
             }
 
             btn.Enabled = true;
@@ -308,7 +308,7 @@ namespace MapleSeed
                 if (Directory.Exists(Path.Combine(fullPath, "content")))
                     Directory.Delete(Path.Combine(fullPath, "content"), true);
 
-                await title.DownloadContent();
+                await title.DownloadContentTask();
             }
 
             cleanTitleBtn.Enabled = true;
@@ -323,7 +323,7 @@ namespace MapleSeed
             if ((title = await Database.FindTitleAsync(titleId)) == null) return;
             title.FolderLocation = Path.Combine(Settings.LibraryDirectory, $"{title}");
 
-            await title.DownloadContent(titleVersion.Text);
+            await title.DownloadContentTask(titleVersion.Text);
 
             Database.AddTitle(title);
         }

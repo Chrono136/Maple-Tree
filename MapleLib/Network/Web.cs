@@ -1,5 +1,5 @@
 ﻿// Created: 2017/04/01 10:40 AM
-// Updated: 2017/10/05 3:09 PM
+// Updated: 2017/10/14 3:43 PM
 // 
 // Project: MapleLib
 // Filename: Web.cs
@@ -24,8 +24,12 @@ namespace MapleLib.Network
 
         public static event EventHandler<DownloadProgressChangedEventArgs> DownloadProgressChangedEvent;
 
-        public static async Task DownloadContent(this Title title, string version = null, string contentType = null,
-            bool libraryContent = false)
+        public static async Task DownloadContentTask(this Title title, string version = null, string contentType = null, bool libraryContent = false)
+        {
+            await Task.Run(() => DownloadContent(title, version, contentType, libraryContent));
+        }
+
+        public static void DownloadContent(this Title title, string version = null, string contentType = null, bool libraryContent = false)
         {
             if (string.IsNullOrEmpty(title.ID))
                 throw new Exception("Can't download content without a valid Title ID.");
@@ -60,10 +64,10 @@ namespace MapleLib.Network
 
             #endregion
 
-            await Database.DownloadTitle(title.ID, title.FolderLocation, contentType, version);
+            Database.DownloadTitle(title.ID, title.FolderLocation, contentType, version);
         }
 
-        public static async Task DownloadFileAsync(string url, string saveTo)
+        public static void DownloadFile(string url, string saveTo)
         {
             if (!Helper.InternetActive())
                 return;
@@ -73,9 +77,13 @@ namespace MapleLib.Network
                 wc.Headers[HttpRequestHeader.UserAgent] = WII_USER_AGENT;
                 wc.Headers[HttpRequestHeader.CacheControl] = "max-age=0, no-cache, no-store";
                 wc.DownloadProgressChanged += DownloadProgressChanged;
-                await wc.DownloadFileTaskAsync(new Uri(url), saveTo);
-                while (wc.IsBusy) await Task.Delay(100);
+                wc.DownloadFileAsync(new Uri(url), saveTo);
             }
+        }
+
+        public static async Task DownloadFileAsync(string url, string saveTo)
+        {
+            await Task.Run(() => DownloadFile(url, saveTo));
         }
 
         public static string DownloadString(string url)
@@ -106,7 +114,7 @@ namespace MapleLib.Network
             }
         }
 
-        public static async Task<byte[]> DownloadDataAsync(string url)
+        public static byte[] DownloadData(string url)
         {
             if (!Helper.InternetActive())
                 return new byte[0];
@@ -116,8 +124,13 @@ namespace MapleLib.Network
                 wc.Headers[HttpRequestHeader.UserAgent] = WII_USER_AGENT;
                 wc.Headers[HttpRequestHeader.CacheControl] = "max-age=0, no-cache, no-store";
                 wc.DownloadProgressChanged += DownloadProgressChanged;
-                return await wc.DownloadDataTaskAsync(new Uri(url));
+                return wc.DownloadData(new Uri(url));
             }
+        }
+
+        public static async Task<byte[]> DownloadDataAsync(string url)
+        {
+            return await Task.Run(() => DownloadData(url));
         }
 
         public static void ResetDownloadProgressChanged()

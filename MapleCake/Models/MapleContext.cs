@@ -1,5 +1,5 @@
 ﻿// Created: 2017/03/27 11:20 AM
-// Updated: 2017/10/02 1:55 PM
+// Updated: 2017/10/14 3:07 PM
 // 
 // Project: MapleCake
 // Filename: MapleContext.cs
@@ -105,9 +105,9 @@ namespace MapleCake.Models
                 items.Add(new CommandItem {Text = "[-] DLC", ToolTip = "Remove DLC", Command = Click.RemoveDLC});
         }
 
-        private static async void DownloadContent(string type, int version)
+        private static void DownloadContent(string type, int version)
         {
-            await MapleButtons.DownloadContentClick(type, version);
+            MapleButtons.DownloadContentClick(type, version);
         }
     }
 }

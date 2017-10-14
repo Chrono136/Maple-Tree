@@ -1,5 +1,5 @@
 ﻿// Created: 2017/08/02 8:21 AM
-// Updated: 2017/10/02 1:13 PM
+// Updated: 2017/10/14 3:28 PM
 // 
 // Project: MapleLib
 // Filename: Downloader.cs
@@ -51,7 +51,7 @@ namespace MapleLib.Network
                 try
                 {
                     TextLog.Write($"[DLQ] '{itemInfo.Name}' starting download.");
-                    await DownloadProcess(itemInfo);
+                    DownloadProcess(itemInfo);
                     DownloadQueue.Remove(itemInfo);
                 }
                 catch (Exception e)
@@ -63,10 +63,9 @@ namespace MapleLib.Network
             }
         }
 
-        private Task DownloadProcess(ItemInfo itemInfo)
+        private async void DownloadProcess(ItemInfo itemInfo)
         {
-            return WiiuClient.DownloadTitle(itemInfo.TitleID, itemInfo.Location, itemInfo.ContentType,
-                itemInfo.Version);
+            await WiiuClient.DownloadTitleTask(itemInfo.TitleID, itemInfo.Location, itemInfo.ContentType, itemInfo.Version);
         }
 
         private void DownloadQueue_AddDownload(object sender, ItemInfo e)

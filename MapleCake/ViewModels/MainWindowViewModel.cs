@@ -24,6 +24,8 @@ namespace MapleCake.ViewModels
     {
         public MainWindowViewModel()
         {
+            Helper.CheckSession();
+
             if (Config == null)
                 Config = new ViewModelConfig(this);
 

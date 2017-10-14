@@ -1,5 +1,5 @@
 ﻿// Created: 2017/03/27 11:20 AM
-// Updated: 2017/10/06 3:25 PM
+// Updated: 2017/10/14 2:54 PM
 // 
 // Project: MapleLib
 // Filename: Toolbelt.cs
@@ -79,7 +79,7 @@ namespace MapleLib.Common
                 var o1 = Settings.FullScreenMode ? "-f" : "";
                 using (TextWriter writer = File.CreateText(Path.Combine(Settings.ConfigDirectory, "cemu.log")))
                 {
-                    StartProcess(cemuPath, $"{o1} -g \"{rpx}\"", workingDir, null, true, false, writer).Wait();
+                    StartProcess(cemuPath, $"{o1} -g \"{rpx}\"", workingDir, null, true, false, writer);
                 }
             }
             catch (Exception ex)
@@ -140,7 +140,7 @@ namespace MapleLib.Common
             return (ulong) new FileInfo(contentFile).Length == content.Size;
         }
 
-        public static async Task<int> CDecrypt(string workingDir)
+        public static int CDecrypt(string workingDir)
         {
             try
             {
@@ -158,7 +158,8 @@ namespace MapleLib.Common
 
                 using (TextWriter writer = File.CreateText(Path.Combine(workingDir, "CDecrypt.log")))
                 {
-                    return await StartProcess(cdecrypt, "tmd cetk", workingDir, null, true, false, writer);
+                    StartProcess(cdecrypt, "tmd cetk", workingDir, null, true, false, writer).Wait();
+                    return 0;
                 }
             }
             catch (TaskCanceledException)
@@ -191,10 +192,11 @@ namespace MapleLib.Common
             })
             {
                 process.Start();
+
                 var cancellationTokenSource = timeout.HasValue
                     ? new CancellationTokenSource(timeout.Value)
                     : new CancellationTokenSource();
-
+                
                 var tasks = new List<Task>(2) {process.WaitForExitAsync(cancellationTokenSource.Token)};
                 if (outputTextWriter != null)
                     tasks.Add(ReadAsync(

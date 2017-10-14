@@ -121,6 +121,15 @@ namespace MapleLib.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The executable name should be MapleSeed2 with the extension .exe, place correct this. Exiting..
+        /// </summary>
+        public static string InvalidExecutableName {
+            get {
+                return ResourceManager.GetString("InvalidExecutableName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to This action will rename all game folders to an organized format.
         ///
         ///See the log window for sample outputs..
@@ -137,6 +146,16 @@ namespace MapleLib.Properties {
         public static string PleaseConfirmAction {
             get {
                 return ResourceManager.GetString("PleaseConfirmAction", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Previous MapleSeed2 session is still open.
+        ///Would you like to kill the previous session and start a new one?.
+        /// </summary>
+        public static string Session_Still_Open {
+            get {
+                return ResourceManager.GetString("Session_Still_Open", resourceCulture);
             }
         }
         

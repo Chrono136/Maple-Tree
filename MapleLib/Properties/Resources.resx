@@ -165,4 +165,11 @@ See the log window for sample outputs.</value>
   <data name="CDecrypt_exe_gz" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\CDecrypt.exe.gz;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="Session_Still_Open" xml:space="preserve">
+    <value>Previous MapleSeed2 session is still open.
+Would you like to kill the previous session and start a new one?</value>
+  </data>
+  <data name="InvalidExecutableName" xml:space="preserve">
+    <value>The executable name should be MapleSeed2 with the extension .exe, place correct this. Exiting.</value>
+  </data>
 </root>

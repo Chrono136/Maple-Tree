@@ -1,5 +1,5 @@
 ﻿// Created: 2017/05/13 3:44 PM
-// Updated: 2017/10/06 3:24 PM
+// Updated: 2017/10/14 3:16 PM
 // 
 // Project: MapleLib
 // Filename: Database.cs
@@ -145,7 +145,7 @@ namespace MapleLib
             return TitleKeys;
         }
 
-        private static TitleKey FindTitleKey(string id)
+        public static TitleKey FindTitleKey(string id)
         {
             if (TitleKeys == null)
                 TitleKeys = GetTitleKeys();
@@ -183,9 +183,14 @@ namespace MapleLib
             LiteDatabase?.Dispose();
         }
 
-        public static Task DownloadTitle(string titleId, string titleFolderLocation, string contentType, string version)
+        public static Task DownloadTitleTask(string titleId, string titleFolderLocation, string contentType, string version)
         {
             return Task.Run(() => Downloader.AddToQueue(titleId, titleFolderLocation, contentType, version));
+        }
+
+        public static void DownloadTitle(string titleId, string titleFolderLocation, string contentType, string version)
+        {
+            Downloader.AddToQueue(titleId, titleFolderLocation, contentType, version);
         }
 
         public static void RegisterEvent(EventHandler<ProgressReport> onEvent)

@@ -1,8 +1,10 @@
-### Change Log - 2.1.1.17 (XX/XX/2017)
+### Change Log - 2.1.1.17 (10/14/2017)
 - General fixes & Performance improvements
 - Background images are stored in memory
 - Method for obtaining background images improved
 - CDecrypt no longer requires external VC & OpenSSL Libraries
+- Added a check for existing MapleSeed2 sessions
+- MainWindow no longer takes precedence over Diaglog boxes
 
 ### Change Log - 2.1.1.16 (10/01/2017)
 - general fixes & improvements

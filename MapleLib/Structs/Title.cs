@@ -1,5 +1,5 @@
 ﻿// Created: 2017/03/27 11:20 AM
-// Updated: 2017/10/05 3:09 PM
+// Updated: 2017/10/14 3:21 PM
 // 
 // Project: MapleLib
 // Filename: Title.cs
@@ -91,14 +91,24 @@ namespace MapleLib.Structs
             return int.TryParse(versionStr, out version) ? version : 0;
         }
 
-        public async Task DownloadUpdate(string version = "0", bool libraryContent = false)
+        public void DownloadUpdate(string version = "0", bool libraryContent = false)
         {
-            await this.DownloadContent(version, "Patch", libraryContent);
+            this.DownloadContent(version, "Patch", libraryContent);
         }
 
-        public async Task DownloadDLC(bool libraryContent = false)
+        public void DownloadDLC(bool libraryContent = false)
         {
-            await this.DownloadContent(null, "DLC", libraryContent);
+            this.DownloadContent(null, "DLC", libraryContent);
+        }
+
+        public async Task DownloadUpdateTask(string version = "0", bool libraryContent = false)
+        {
+            await Task.Run(() => DownloadUpdate(version, libraryContent));
+        }
+
+        public async Task DownloadDLCTask(bool libraryContent = false)
+        {
+            await Task.Run(() => DownloadDLC(libraryContent));
         }
 
         public bool DeleteContent()
@@ -121,6 +131,11 @@ namespace MapleLib.Structs
         public void DeleteUpdateContent()
         {
             var updatePath = Path.Combine(Settings.BasePatchDir, Lower8Digits());
+            var result = MessageBox.Show(string.Format(Resources.ActionWillDeleteAllContent, updatePath),
+                Resources.PleaseConfirmAction, MessageBoxButtons.OKCancel);
+
+            if (result != DialogResult.OK)
+                return;
 
             if (Directory.Exists(Path.Combine(updatePath, "code")))
                 Directory.Delete(Path.Combine(updatePath, "code"), true);

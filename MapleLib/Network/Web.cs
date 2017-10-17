@@ -77,7 +77,7 @@ namespace MapleLib.Network
                 wc.Headers[HttpRequestHeader.UserAgent] = WII_USER_AGENT;
                 wc.Headers[HttpRequestHeader.CacheControl] = "max-age=0, no-cache, no-store";
                 wc.DownloadProgressChanged += DownloadProgressChanged;
-                wc.DownloadFileAsync(new Uri(url), saveTo);
+                wc.DownloadFile(new Uri(url), saveTo);
             }
         }
 

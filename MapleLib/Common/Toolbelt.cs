@@ -79,7 +79,7 @@ namespace MapleLib.Common
                 var o1 = Settings.FullScreenMode ? "-f" : "";
                 using (TextWriter writer = File.CreateText(Path.Combine(Settings.ConfigDirectory, "cemu.log")))
                 {
-                    StartProcess(cemuPath, $"{o1} -g \"{rpx}\"", workingDir, null, true, false, writer);
+                    StartProcess(cemuPath, $"{o1} -g \"{rpx}\"", workingDir, null, true, false, writer).Wait();
                 }
             }
             catch (Exception ex)

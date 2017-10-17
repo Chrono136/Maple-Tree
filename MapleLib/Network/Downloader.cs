@@ -17,7 +17,7 @@ namespace MapleLib.Network
         public Downloader()
         {
             DownloadQueue.AddDownload += DownloadQueue_AddDownload;
-            DownloadQueueWorkerTask = Task.Run(() => DownloadQueueTask());
+            DownloadQueueWorkerTask = DownloadQueueTask();
         }
 
         private Task DownloadQueueWorkerTask { get; }
@@ -36,7 +36,7 @@ namespace MapleLib.Network
             DownloadQueue.Add(itemInfo);
         }
 
-        private async void DownloadQueueTask()
+        private async Task DownloadQueueTask()
         {
             while (!Process.GetCurrentProcess().HasExited)
             {
@@ -51,7 +51,7 @@ namespace MapleLib.Network
                 try
                 {
                     TextLog.Write($"[DLQ] '{itemInfo.Name}' starting download.");
-                    DownloadProcess(itemInfo);
+                    await DownloadProcess(itemInfo);
                     DownloadQueue.Remove(itemInfo);
                 }
                 catch (Exception e)
@@ -63,7 +63,7 @@ namespace MapleLib.Network
             }
         }
 
-        private async void DownloadProcess(ItemInfo itemInfo)
+        private async Task DownloadProcess(ItemInfo itemInfo)
         {
             await WiiuClient.DownloadTitleTask(itemInfo.TitleID, itemInfo.Location, itemInfo.ContentType, itemInfo.Version);
         }

@@ -9,6 +9,9 @@ namespace MapleLib.Common.XInput
 
         public void Poll(XInputController xInputController)
         {
+            if (!Settings.ControllerInput)
+                return;
+
             if (Process.GetProcessesByName("Cemu").Length > 0)
                 return;
 

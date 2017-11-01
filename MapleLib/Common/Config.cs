@@ -30,6 +30,8 @@ namespace MapleLib.Common
 
         public bool StoreEncryptedContent { get; set; } = true;
 
+        public bool ControllerInput { get; set; }
+
         public DateTime LastTitleDbUpdate { get; set; } = DateTime.Now.AddDays(-30);
 
         public DateTime LastPackDbUpdate { get; set; } = DateTime.Now.AddDays(-30);

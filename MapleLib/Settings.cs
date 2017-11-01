@@ -160,6 +160,16 @@ namespace MapleLib
                 Database.SaveConfig();
             }
         }
+        
+        public static bool ControllerInput
+        {
+            get { return Config.ControllerInput; }
+            set
+            {
+                Config.ControllerInput = value;
+                Database.SaveConfig();
+            }
+        }
 
         public static Dictionary<string, byte[]> ImageCache
         {

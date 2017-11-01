@@ -138,6 +138,16 @@ namespace MapleCake.Models
             }
         }
 
+        public bool ControllerInput
+        {
+            get { return Settings.ControllerInput; }
+            set
+            {
+                Settings.ControllerInput = value;
+                RaisePropertyChangedEvent("ControllerInput");
+            }
+        }
+
         public bool DynamicTheme
         {
             get { return Settings.DynamicTheme; }

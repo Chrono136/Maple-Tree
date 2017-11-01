@@ -1,5 +1,5 @@
 ﻿// Created: 2017/03/27 11:20 AM
-// Updated: 2017/10/14 2:53 PM
+// Updated: 2017/10/26 4:27 PM
 // 
 // Project: MapleLib
 // Filename: Helper.cs
@@ -11,7 +11,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Forms;
 using System.Xml;

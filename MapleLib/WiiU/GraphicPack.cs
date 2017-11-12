@@ -1,5 +1,5 @@
 ﻿// Created: 2017/04/01 12:46 PM
-// Updated: 2017/09/29 2:04 AM
+// Updated: 2017/11/11 1:29 PM
 // 
 // Project: MapleLib
 // Filename: GraphicPack.cs
@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using MapleLib.Collections;
 using MapleLib.Common;
 
@@ -17,6 +18,8 @@ namespace MapleLib.WiiU
     [Serializable]
     public class GraphicPack
     {
+        public int Id { get; set; }
+
         private string GPDirectory => Path.Combine(Settings.CemuDirectory, "graphicPacks", Toolbelt.Ric(Name));
 
         public MapleList<GraphicPackSource> Sources { get; } = new MapleList<GraphicPackSource>();
@@ -45,7 +48,7 @@ namespace MapleLib.WiiU
                 Directory.CreateDirectory(GPDirectory);
 
             File.WriteAllText(Path.Combine(GPDirectory, "rules.txt"), Rules);
-            Sources.ToList().ForEach(x => File.WriteAllBytes(Path.Combine(GPDirectory, x.FileName), x.Data));
+            Sources.ToList().ForEach(x => File.WriteAllBytes(Path.Combine(GPDirectory, x.FileName), Encoding.UTF8.GetBytes(x.Data)));
         }
 
         public void Remove()
@@ -65,7 +68,7 @@ namespace MapleLib.WiiU
         public struct GraphicPackSource
         {
             public string FileName { get; set; }
-            public byte[] Data { get; set; }
+            public string Data { get; set; }
         }
 
         #endregion

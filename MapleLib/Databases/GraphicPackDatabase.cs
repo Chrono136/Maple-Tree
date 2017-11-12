@@ -36,10 +36,19 @@ namespace MapleLib.Databases
 
             try
             {
-                const string url = "http://github.com/slashiee/cemu_graphic_packs/archive/master.zip";
-
+                string dataString;
+                if ((dataString = await Web.DownloadStringAsync("https://github.com/slashiee/cemu_graphic_packs/releases/latest")) == null)
+                    return null;
+                
+                var d = dataString.Split('\n').ToList();
+                var line = d.Find(x => x.Contains("graphicPacks_2"));
+                line = line.Replace("\"", "");
+                line = line.Replace("<a href=", "");
+                line = line.Replace("rel=nofollow>", "");
+                line = line.Trim();
+                
                 byte[] graphicPackBytes;
-                if ((graphicPackBytes = await Web.DownloadDataAsync(url)) == null)
+                if ((graphicPackBytes = await Web.DownloadDataAsync($"https://github.com{line}")) == null)
                     return null;
 
                 if (graphicPackBytes.Length <= 1)
@@ -47,7 +56,7 @@ namespace MapleLib.Databases
 
                 using (var zipArchive = new ZipArchive(new MemoryStream(graphicPackBytes)))
                 {
-                    var list = zipArchive.Entries?.Where(x => x.Name.Length == 0 && x.FullName.EndsWith("/")).ToList();
+                    var list = zipArchive.Entries?.Where(x => x.FullName.Contains("rules.txt")).ToList();
 
                     if (list == null)
                         return null;
@@ -80,11 +89,11 @@ namespace MapleLib.Databases
         {
             try
             {
-                var entries = entry.Archive.Entries;
-                var files = entries.Where(x => Match(x, entry) && !x.FullName.Contains("Cheats")).ToList();
+                var entries = entry.Archive?.Entries;
+                var files = entries?.Where(x => Match(x, entry) && !x.FullName.Contains("Cheats")).ToList();
 
-                var rules = files.Find(x => x.Name.ToLower() == "rules.txt")?.GetString();
-                var sources = files.Where(x => !x.Name.ToLower().Contains("rules.txt")).ToList();
+                var rules = files?.Find(x => x.Name.ToLower() == "rules.txt")?.GetString();
+                var sources = files?.Where(x => !x.Name.ToLower().Contains("rules.txt")).ToList();
 
                 if (string.IsNullOrEmpty(rules))
                     return null;
@@ -108,7 +117,7 @@ namespace MapleLib.Databases
                     var graphicPackSource = new GraphicPack.GraphicPackSource
                     {
                         FileName = source.Name,
-                        Data = source.GetBytes()
+                        Data = source.GetString()
                     };
                     pack.Sources.Add(graphicPackSource);
                 }
@@ -124,24 +133,24 @@ namespace MapleLib.Databases
 
         private static bool Match(ZipArchiveEntry x, ZipArchiveEntry entry)
         {
-            return Path.GetFullPath($"{Path.GetDirectoryName(x.FullName)}/") == Path.GetFullPath(entry.FullName) &&
+            return Path.GetFullPath($"{Path.GetDirectoryName(x.FullName)}/") == Path.GetFullPath($"{Path.GetDirectoryName(entry.FullName)}/") &&
                    !string.IsNullOrEmpty(x.Name);
         }
 
         #region IDatabase<GraphicPack> Members
-        
-        public LiteDatabase LiteDatabase { get; }
-        
-        public string CollectionName => "graphicpacks";
-        
-        public int Count => Col?.Count(Query.All()) ?? 0;
-        
-        public void Load()
+
+        private LiteDatabase LiteDatabase { get; }
+
+        private string CollectionName => "graphicpacks";
+
+        private int Count => Col?.Count(Query.All()) ?? 0;
+
+        private void Load()
         {
             Task.Run(() => InitDatabase());
         }
-        
-        public async void InitDatabase()
+
+        private async void InitDatabase()
         {
             var doUpdate = Settings.LastPackDbUpdate < DateTime.Now.AddDays(-7);
 

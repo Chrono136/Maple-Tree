@@ -26,11 +26,13 @@ namespace MapleLib.Databases
             var url = Database.API_BASE_URL + query;
             var json = Web.DownloadString(url);
 
+            if (string.IsNullOrEmpty(json))
+                return null;
+
             var settings = new JsonSerializerSettings();
+            var obj = JsonConvert.DeserializeObject(json, settings);
 
-            var titles = JsonConvert.DeserializeObject<IList<Title>>(json, settings);
-
-            return string.IsNullOrEmpty(json) ? null : titles;
+            return obj as IList<Title>;
         }
 
         private static async Task<IEnumerable<Title>> GetJObjectsTask(string query)
@@ -112,7 +114,7 @@ namespace MapleLib.Databases
         {
             var titles = GetJObjects($"title/{id.ToUpperInvariant()}");
 
-            return new MapleList<Title>(titles);
+            return titles == null ? null : new MapleList<Title>(titles);
         }
     }
 }

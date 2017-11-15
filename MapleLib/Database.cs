@@ -103,6 +103,9 @@ namespace MapleLib
 
         public static Title FindTitle(string id)
         {
+            if (string.IsNullOrEmpty(id))
+                return null;
+
             var titles = GetLibraryList().Where(x => x.ID == id.ToUpper()).ToList();
 
             if (!titles.Any())

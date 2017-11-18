@@ -1,5 +1,5 @@
 ### Change Log - 2.1.1.19 (xx/xx/2017)
-- 
+- General fixes & Performance improvements
 
 ### Change Log - 2.1.1.18 (11/11/2017)
 - Added Toggle for controller input

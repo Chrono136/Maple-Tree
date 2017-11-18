@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MapleCake", "MapleCake\Mapl
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CDecrypt", "CDecrypt\CDecrypt.vcxproj", "{EFD4BB8C-2736-4DD8-A693-CA9B80A729A8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Maple.Net", "Maple.Net\Maple.Net.csproj", "{7658E8AE-5DD6-4AE3-9568-59CC41CFD5C4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -47,6 +49,14 @@ Global
 		{EFD4BB8C-2736-4DD8-A693-CA9B80A729A8}.Release|Any CPU.ActiveCfg = Release|Win32
 		{EFD4BB8C-2736-4DD8-A693-CA9B80A729A8}.Release|x86.ActiveCfg = Release|Win32
 		{EFD4BB8C-2736-4DD8-A693-CA9B80A729A8}.Release|x86.Build.0 = Release|Win32
+		{7658E8AE-5DD6-4AE3-9568-59CC41CFD5C4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7658E8AE-5DD6-4AE3-9568-59CC41CFD5C4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7658E8AE-5DD6-4AE3-9568-59CC41CFD5C4}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{7658E8AE-5DD6-4AE3-9568-59CC41CFD5C4}.Debug|x86.Build.0 = Debug|Any CPU
+		{7658E8AE-5DD6-4AE3-9568-59CC41CFD5C4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7658E8AE-5DD6-4AE3-9568-59CC41CFD5C4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7658E8AE-5DD6-4AE3-9568-59CC41CFD5C4}.Release|x86.ActiveCfg = Release|Any CPU
+		{7658E8AE-5DD6-4AE3-9568-59CC41CFD5C4}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

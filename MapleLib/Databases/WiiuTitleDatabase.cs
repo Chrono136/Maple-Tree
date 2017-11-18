@@ -30,9 +30,7 @@ namespace MapleLib.Databases
                 return null;
 
             var settings = new JsonSerializerSettings();
-            var obj = JsonConvert.DeserializeObject(json, settings);
-
-            return obj as IList<Title>;
+            return JsonConvert.DeserializeObject<IList<Title>>(json, settings);
         }
 
         private static async Task<IEnumerable<Title>> GetJObjectsTask(string query)
@@ -114,7 +112,7 @@ namespace MapleLib.Databases
         {
             var titles = GetJObjects($"title/{id.ToUpperInvariant()}");
 
-            return titles == null ? null : new MapleList<Title>(titles);
+            return titles == null ? new MapleList<Title>() : new MapleList<Title>(titles);
         }
     }
 }

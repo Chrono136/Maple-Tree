@@ -1,5 +1,5 @@
 ﻿// Created: 2017/05/14 4:32 PM
-// Updated: 2017/10/14 4:02 PM
+// Updated: 2017/11/18 2:20 PM
 // 
 // Project: MapleLib
 // Filename: WiiuClient.cs
@@ -12,21 +12,18 @@ using System.IO;
 using System.Net;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Forms;
 using System.Windows.Threading;
 using libWiiSharp;
 using MapleLib.Common;
 using MapleLib.Structs;
 using MapleLib.WiiU;
-using Application = System.Windows.Application;
-using MessageBox = System.Windows.MessageBox;
 
 namespace MapleLib.Network
 {
     public static class WiiuClient
     {
         public static event EventHandler<ProgressReport> ProgressReport;
-
+        
         private static byte[] DownloadData(string url)
         {
             byte[] data = { };
@@ -103,17 +100,15 @@ namespace MapleLib.Network
             var name = title.name;
             if (string.IsNullOrEmpty(key) || string.IsNullOrEmpty(name)) return;
 
-            if (!Directory.Exists(outputDir))
-                Directory.CreateDirectory(outputDir);
-
             var result = MessageBoxResult.Cancel;
             var str = $"Download {contentType} content to the following location?\n\"{outputDir}\"";
-            Application.Current.Dispatcher.Invoke(DispatcherPriority.Normal, new Action(() =>
-            {
-                result = MessageBox.Show(Application.Current.MainWindow, str, name, MessageBoxButton.YesNo);
-            }));
+            Application.Current.Dispatcher.Invoke(DispatcherPriority.Normal,
+                new Action(() => { result = MessageBox.Show(Application.Current.MainWindow, str, name, MessageBoxButton.YesNo); }));
             if (result != MessageBoxResult.Yes)
                 return;
+
+            if (!Directory.Exists(outputDir))
+                Directory.CreateDirectory(outputDir);
 
             Toolbelt.AppendLog($"Output Directory '{outputDir}'");
 

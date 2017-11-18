@@ -1,23 +1,25 @@
-﻿// Created: 2017/08/02 8:21 AM
-// Updated: 2017/10/14 3:28 PM
+﻿// Created: 2017/11/18 3:07 PM
+// Updated: 2017/11/18 3:45 PM
 // 
-// Project: MapleLib
-// Filename: Downloader.cs
+// Project: Maple.Net
+// Filename: DownloadManager.cs
 // Created By: Jared T
 
 using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
-using MapleLib.Common;
 
-namespace MapleLib.Network
+namespace Maple.Net
 {
-    public class Downloader
+    public class DownloadManager
     {
-        public Downloader()
+        private readonly Func<string, string, string, string, Task> _downloadTitleTask;
+
+        public DownloadManager(Func<string, string, string, string, Task> downloadTitleTask)
         {
-            DownloadQueue.AddDownload += DownloadQueue_AddDownload;
             DownloadQueueWorkerTask = DownloadQueueTask();
+
+            _downloadTitleTask = downloadTitleTask;
         }
 
         private Task DownloadQueueWorkerTask { get; }
@@ -28,7 +30,7 @@ namespace MapleLib.Network
         {
             var itemInfo = new ItemInfo
             {
-                TitleID = titleId,
+                TitleId = titleId,
                 Location = titleFolderLocation,
                 ContentType = contentType,
                 Version = version
@@ -47,38 +49,20 @@ namespace MapleLib.Network
                 }
 
                 var itemInfo = DownloadQueue[0];
-
-                try
-                {
-                    TextLog.Write($"[DLQ] '{itemInfo.Name}' starting download.");
-                    await DownloadProcess(itemInfo);
-                    DownloadQueue.Remove(itemInfo);
-                }
-                catch (Exception e)
-                {
-                    TextLog.Write(e.Message);
-                    TextLog.Write(e.StackTrace);
-                    TextLog.Write($"[DLQ] '{itemInfo.Name}' failed download.");
-                }
+                await DownloadProcess(itemInfo);
+                DownloadQueue.Remove(itemInfo);
             }
         }
 
         private async Task DownloadProcess(ItemInfo itemInfo)
         {
-            await WiiuClient.DownloadTitleTask(itemInfo.TitleID, itemInfo.Location, itemInfo.ContentType, itemInfo.Version);
-        }
-
-        private void DownloadQueue_AddDownload(object sender, ItemInfo e)
-        {
-            TextLog.Write($"[DLQ] '{e.Name}' added to queue.");
+            await _downloadTitleTask(itemInfo.TitleId, itemInfo.Location, itemInfo.ContentType, itemInfo.Version);
         }
     }
 
     public class ItemInfo
     {
-        public string Name => Database.FindTitle(TitleID)?.ToString();
-
-        public string TitleID { get; set; }
+        public string TitleId { get; set; }
 
         public string Location { get; set; }
 

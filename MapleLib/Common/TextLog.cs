@@ -1,5 +1,5 @@
 ﻿// Created: 2017/03/27 11:20 AM
-// Updated: 2017/09/29 1:56 AM
+// Updated: 2017/11/18 1:59 PM
 // 
 // Project: MapleLib
 // Filename: TextLog.cs

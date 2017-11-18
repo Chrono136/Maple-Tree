@@ -11,6 +11,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using LiteDB;
+using Maple.Net;
 using MapleLib.Collections;
 using MapleLib.Common;
 using MapleLib.Databases;
@@ -42,8 +43,7 @@ namespace MapleLib
 
             WiiuTitleDatabase.Load();
 
-            if (Downloader == null)
-                Downloader = new Downloader();
+            DownloadManager = new DownloadManager(WiiuClient.DownloadTitleTask);
 
             Task.Run(async () =>
             {
@@ -64,7 +64,7 @@ namespace MapleLib
 
         private static LiteCollection<Config> SettingsCollection { get; }
 
-        private static Downloader Downloader { get; }
+        private static DownloadManager DownloadManager { get; }
 
         private static int MaxDatabaseCount => 2;
 
@@ -106,7 +106,8 @@ namespace MapleLib
             if (string.IsNullOrEmpty(id))
                 return null;
 
-            var titles = GetLibraryList().Where(x => x.ID == id.ToUpper()).ToList();
+            var list = GetLibraryList();
+            var titles = list.Where(x => x.ID == id.ToUpper()).ToList();
 
             if (!titles.Any())
                 titles = WiiuTitleDatabase.Find(id).ToList();
@@ -188,19 +189,14 @@ namespace MapleLib
 
         public static Task DownloadTitleTask(string titleId, string titleFolderLocation, string contentType, string version)
         {
-            return Task.Run(() => Downloader.AddToQueue(titleId, titleFolderLocation, contentType, version));
+            return Task.Run(() => DownloadTitle(titleId, titleFolderLocation, contentType, version));
         }
 
         public static void DownloadTitle(string titleId, string titleFolderLocation, string contentType, string version)
         {
-            Downloader.AddToQueue(titleId, titleFolderLocation, contentType, version);
+            DownloadManager.AddToQueue(titleId, titleFolderLocation, contentType, version);
         }
-
-        public static void RegisterEvent(EventHandler<ProgressReport> onEvent)
-        {
-            WiiuClient.ProgressReport += onEvent;
-        }
-
+        
         public static void RegisterEvent(EventHandler<AddItemEventArgs<Title>> onEvent)
         {
             WiiuTitleDatabase.TitleLibrary.AddItemEvent += onEvent;

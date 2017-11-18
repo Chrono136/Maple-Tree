@@ -112,8 +112,6 @@
     <Compile Include="Databases\WiiuTitleDatabase.cs" />
     <Compile Include="Enums\UpdateType.cs" />
     <Compile Include="Database.cs" />
-    <Compile Include="Network\Downloader.cs" />
-    <Compile Include="Network\DownloadQueue.cs" />
     <Compile Include="Network\WiiuClient.cs" />
     <Compile Include="Structs\Versions.cs" />
     <Compile Include="WiiU\GraphicPack.cs" />
@@ -377,7 +375,12 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\Maple.Net\Maple.Net.csproj">
+      <Project>{7658e8ae-5dd6-4ae3-9568-59cc41cfd5c4}</Project>
+      <Name>Maple.Net</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>

@@ -1,14 +1,14 @@
-﻿// Created: 2017/08/02 9:25 AM
-// Updated: 2017/09/29 2:05 AM
+﻿// Created: 2017/11/18 3:07 PM
+// Updated: 2017/11/18 3:08 PM
 // 
-// Project: MapleLib
+// Project: Maple.Net
 // Filename: DownloadQueue.cs
 // Created By: Jared T
 
 using System;
 using System.Collections.Generic;
 
-namespace MapleLib.Network
+namespace Maple.Net
 {
     public class DownloadQueue : List<ItemInfo>
     {

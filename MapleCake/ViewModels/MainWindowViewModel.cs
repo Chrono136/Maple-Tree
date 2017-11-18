@@ -15,6 +15,7 @@ using MapleLib;
 using MapleLib.Common;
 using MapleLib.Common.XInput;
 using MapleLib.Enums;
+using MapleLib.Network;
 using MapleLib.Structs;
 using MapleLib.UserInterface;
 
@@ -77,7 +78,7 @@ namespace MapleCake.ViewModels
             TextLog.MesgLog.NewLogEntryEventHandler += MesgLogOnNewLogEntryEventHandler;
             TextLog.StatusLog.NewLogEntryEventHandler += StatusLogOnNewLogEntryEventHandler;
 
-            Database.RegisterEvent(Database_ProgressReport);
+            WiiuClient.ProgressReport += Database_ProgressReport;
             Database.DatabaseLoaded += Database_DatabasesLoaded;
         }
 

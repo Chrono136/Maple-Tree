@@ -1,5 +1,5 @@
 ﻿// Created: 2017/03/27 11:19 AM
-// Updated: 2017/10/05 5:48 PM
+// Updated: 2017/11/18 11:17 PM
 // 
 // Project: MapleLib
 // Filename: Settings.cs
@@ -12,10 +12,11 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
-using System.Threading;
 using System.Windows.Forms;
 using MapleLib.Common;
-using MapleLib.Properties;
+using NBug;
+using NBug.Enums;
+using Application = System.Windows.Application;
 
 #endregion
 
@@ -30,8 +31,25 @@ namespace MapleLib
 
         static Settings()
         {
-            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
-            Application.ThreadException += Application_ThreadException;
+            var metaFile = Path.Combine(ConfigDirectory, "meta.txt");
+            var sessionFile = Path.Combine(ConfigDirectory, "session.txt");
+
+            File.WriteAllText(sessionFile, Helper.RandomString(32));
+            File.WriteAllText(metaFile, $@"MachineName: {Environment.MachineName} | UserName: {Environment.UserName}");
+
+            NBug.Settings.ReleaseMode = true;
+            NBug.Settings.WriteLogToDisk = false;
+
+            NBug.Settings.AddDestinationFromConnectionString("Type=Http;Url=http://api.pixxy.in/errorreport.php;");
+            NBug.Settings.MiniDumpType = MiniDumpType.None;
+            NBug.Settings.StoragePath = StoragePath.IsolatedStorage;
+            NBug.Settings.UIMode = UIMode.Full;
+            NBug.Settings.AdditionalReportFiles.Add(metaFile);
+            NBug.Settings.AdditionalReportFiles.Add(sessionFile);
+            NBug.Settings.SleepBeforeSend = 0;
+
+            AppDomain.CurrentDomain.UnhandledException += Handler.UnhandledException;
+            Application.Current.DispatcherUnhandledException += Handler.DispatcherUnhandledException;
         }
 
         public static Config Config => _config ?? (_config = Database.GetConfig());
@@ -160,12 +178,11 @@ namespace MapleLib
                 Database.SaveConfig();
             }
         }
-        
+
         public static bool ControllerInput
         {
             get { return Config.ControllerInput; }
-            set
-            {
+            set {
                 Config.ControllerInput = value;
                 Database.SaveConfig();
             }
@@ -185,19 +202,6 @@ namespace MapleLib
         public static string ConfigDirectory => Path.Combine(AppFolder, ConfigName);
 
         public static string BasePatchDir => GetBasePatchDir();
-
-        private static void Application_ThreadException(object sender, ThreadExceptionEventArgs e)
-        {
-            var ex = e.Exception;
-            File.WriteAllText("error.log", string.Format(Resources.ThreadException, ex.Message, ex.StackTrace));
-            MessageBox.Show(@"error.log has been created containing details of this error.");
-        }
-
-        private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
-        {
-            File.WriteAllText("error.log", $@"{e.ExceptionObject}");
-            MessageBox.Show($@"{e.ExceptionObject}");
-        }
 
         private static string GetBasePatchDir()
         {

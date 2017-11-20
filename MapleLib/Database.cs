@@ -85,14 +85,8 @@ namespace MapleLib
 
         public static string SaveConfig(string value = null)
         {
-            try
-            {
-                SettingsCollection.Update(Settings.Config.Index, Settings.Config);
-            }
-            catch (Exception e)
-            {
-                TextLog.Write(e.Message);
-            }
+            SettingsCollection.Update(Settings.Config.Index, Settings.Config);
+
             return value;
         }
 

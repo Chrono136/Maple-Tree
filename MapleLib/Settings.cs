@@ -1,5 +1,5 @@
 ﻿// Created: 2017/03/27 11:19 AM
-// Updated: 2017/11/18 11:17 PM
+// Updated: 2017/11/19 4:54 PM
 // 
 // Project: MapleLib
 // Filename: Settings.cs
@@ -13,10 +13,8 @@ using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
+using Maple.Error;
 using MapleLib.Common;
-using NBug;
-using NBug.Enums;
-using Application = System.Windows.Application;
 
 #endregion
 
@@ -31,25 +29,7 @@ namespace MapleLib
 
         static Settings()
         {
-            var metaFile = Path.Combine(ConfigDirectory, "meta.txt");
-            var sessionFile = Path.Combine(ConfigDirectory, "session.txt");
-
-            File.WriteAllText(sessionFile, Helper.RandomString(32));
-            File.WriteAllText(metaFile, $@"MachineName: {Environment.MachineName} | UserName: {Environment.UserName}");
-
-            NBug.Settings.ReleaseMode = true;
-            NBug.Settings.WriteLogToDisk = false;
-
-            NBug.Settings.AddDestinationFromConnectionString("Type=Http;Url=http://api.pixxy.in/errorreport.php;");
-            NBug.Settings.MiniDumpType = MiniDumpType.None;
-            NBug.Settings.StoragePath = StoragePath.IsolatedStorage;
-            NBug.Settings.UIMode = UIMode.Full;
-            NBug.Settings.AdditionalReportFiles.Add(metaFile);
-            NBug.Settings.AdditionalReportFiles.Add(sessionFile);
-            NBug.Settings.SleepBeforeSend = 0;
-
-            AppDomain.CurrentDomain.UnhandledException += Handler.UnhandledException;
-            Application.Current.DispatcherUnhandledException += Handler.DispatcherUnhandledException;
+            MapleError.Initialize();
         }
 
         public static Config Config => _config ?? (_config = Database.GetConfig());
@@ -89,7 +69,7 @@ namespace MapleLib
                 var ofd = new OpenFileDialog
                 {
                     CheckFileExists = true,
-                    Filter = @"Cemu Excutable |cemu.exe"
+                    Filter = @"Cemu Executable |cemu.exe"
                 };
 
                 var result = ofd.StaShowDialog();
@@ -101,17 +81,6 @@ namespace MapleLib
             }
             set {
                 Config.CemuDirectory = Path.GetFullPath(value);
-                Database.SaveConfig();
-            }
-        }
-
-        public static string Hub { get; set; }
-
-        public static DateTime LastTitleDbUpdate
-        {
-            get { return Config.LastTitleDbUpdate; }
-            set {
-                Config.LastTitleDbUpdate = value;
                 Database.SaveConfig();
             }
         }
@@ -182,7 +151,9 @@ namespace MapleLib
         public static bool ControllerInput
         {
             get { return Config.ControllerInput; }
-            set {
+            set
+            {
+                throw new Exception("test");
                 Config.ControllerInput = value;
                 Database.SaveConfig();
             }
@@ -198,7 +169,9 @@ namespace MapleLib
         }
 
         private static string ConfigName => "MapleTree";
+
         private static string AppFolder => Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+
         public static string ConfigDirectory => Path.Combine(AppFolder, ConfigName);
 
         public static string BasePatchDir => GetBasePatchDir();

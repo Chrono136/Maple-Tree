@@ -48,12 +48,15 @@ namespace MapleLib.Databases.Managers
         {
             MessageBox.Show(@"Featured disabled");
             return; //TODO: complete
+            // ReSharper disable once HeuristicUnreachableCode
+#pragma warning disable 162
             if (_form.Disposing || _form.IsDisposed)
                 InitializeForm();
 
             if (_form.Visible)
                 _form.Hide();
             _form.Show();
+#pragma warning restore 162
         }
 
         public void AddEntry(Title title)

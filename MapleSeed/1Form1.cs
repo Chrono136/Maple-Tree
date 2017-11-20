@@ -76,7 +76,6 @@ namespace MapleSeed
 
             titleDir.Text = Settings.LibraryDirectory;
             cemuDir.Text = Settings.CemuDirectory;
-            serverHub.Text = Settings.Hub;
         }
 
         private static void InitSettings()
@@ -372,7 +371,7 @@ namespace MapleSeed
 
         private void serverHub_TextChanged(object sender, EventArgs e)
         {
-            Settings.Hub = serverHub.Text;
+
         }
 
         private void cemu173Patch_CheckedChanged(object sender, EventArgs e)

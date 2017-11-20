@@ -39,7 +39,7 @@ using Newtonsoft.Json.Serialization;
 
 namespace Newtonsoft.Json.Utilities
 {
-    internal static class CollectionUtils
+    public static class CollectionUtils
     {
         /// <summary>
         /// Determines whether the collection is null or empty.

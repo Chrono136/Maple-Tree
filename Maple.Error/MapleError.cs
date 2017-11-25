@@ -1,52 +1,90 @@
 ﻿// Created: 2017/11/19 10:53 AM
-// Updated: 2017/11/19 8:48 PM
+// Updated: 2017/11/24 8:19 PM
 // 
 // Project: Maple.Error
 // Filename: MapleError.cs
 // Created By: Jared T
 
 using System;
+using System.Diagnostics;
+using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Forms;
 using Octokit;
+using Application = System.Windows.Forms.Application;
+using Clipboard = System.Windows.Clipboard;
+using MessageBox = System.Windows.MessageBox;
 
 namespace Maple.Error
 {
     public static class MapleError
     {
+        private static GitHubClient GitHub { get; set; }
+
+        private static string Token => "OWZlZTM2N2RlN2Y3NWEzZGZjNTRjZDU4M2VlODk0NDEwYTE2MTUxZQ==";
+
         private static string SessionId => Guid.NewGuid().ToString().Replace("-", "");
 
-        public static void Initialize()
+        private static bool Initialized { get; set; }
+
+        private static string Version { get; set; }
+
+        public static async void Initialize(string version)
         {
-            AppDomain.CurrentDomain.FirstChanceException += (sender, eventArgs) => { CreateBug(eventArgs.Exception); };
-            //System.Windows.Forms.Application.SetUnhandledExceptionMode(UnhandledExceptionMode.ThrowException);
-            //System.Windows.Forms.Application.ThreadException += EventHandlers.ThreadException;
-            //AppDomain.CurrentDomain.UnhandledException += EventHandlers.UnhandledException;
-            //System.Windows.Application.Current.DispatcherUnhandledException += EventHandlers.DispatcherUnhandledException;
+            if (Initialized) return;
+            Initialized = true;
+
+            Version = version;
+
+            GitHub = new GitHubClient(new ProductHeaderValue("MapleSeed")) {Credentials = new Credentials(Token.FromBase64())};
+
+            Application.SetUnhandledExceptionMode(UnhandledExceptionMode.ThrowException);
+            Application.ThreadException += EventHandlers.ThreadException;
+
+            AppDomain.CurrentDomain.UnhandledException += EventHandlers.UnhandledException;
+            System.Windows.Application.Current.DispatcherUnhandledException += EventHandlers.DispatcherUnhandledException;
+            //AppDomain.CurrentDomain.FirstChanceException += (sender, eventArgs) => { CreateBug(eventArgs.Exception); };
         }
 
-        public static async void CreateBug(Exception ex)
+        public static NewIssue CreateIssue(Exception ex)
         {
-            const string message = "{0}\n\nWould you like to submit this error to the developer?\nYour issue ID will be copied to your clipboard.";
-            var mbResult = MessageBox.Show(string.Format(message, ex.Message), "Error Occurred", MessageBoxButton.YesNo);
-            if (mbResult != MessageBoxResult.Yes)
-                return;
-
-            var github = new GitHubClient(new ProductHeaderValue("MapleSeed"));
-            var tokenAuth = new Credentials("315f0d4a929da095bcf9de7b198c07dd65b397c8");
-            github.Credentials = tokenAuth;
-
-            var dateTime = new DateTimeWithZone(DateTime.Now, TimeZoneInfo.Utc);
-
-            var createIssue = new NewIssue($"Error Report {SessionId}")
+            var result = MessageBoxResult.Cancel;
+            Helper.InvokeOnCurrentDispatcher(() =>
             {
-                Body = $"**Time Stamp:** {dateTime.UniversalTime}\n" +
-                       $"**Issue ID:** {SessionId}\n" +
-                       "\n" +
-                       $">**Source:** {ex.Source}\n" +
-                       $"**Message:** {ex.Message}\n" +
-                       $"**Stack Trace:** {ex.StackTrace}\n"
+                const string message = "{0}\n\nWould you like to submit this error to the developer?" +
+                                       "\nYour issue ID will be copied to your clipboard.";
+
+                var owner = System.Windows.Application.Current.MainWindow;
+                result = MessageBox.Show(owner, string.Format(message, ex.Message), "Error Occurred", MessageBoxButton.YesNo);
+            });
+
+            if (result != MessageBoxResult.Yes && GitHub != null)
+                return null;
+
+            return new NewIssue($"Bug Report - {SessionId}")
+            {
+                Body =
+                    $"**Version:** {Version}\n" +
+                    $"**Time Stamp:** {DateTimeWithZone.UniversalTime}\n" +
+                    $"**Issue ID:** {SessionId}\n" +
+                    "\n" +
+                    $">**Source:** {ex.Source}\n" +
+                    $"**Message:** {ex.Message}\n" +
+                    $"**Stack Trace:** {ex.StackTrace}\n"
             };
-            var issue = await github.Issue.Create("Tsume", "Maple-Tree", createIssue);
+        }
+
+        public static async void SendIssue(NewIssue newIssue)
+        {
+            if (newIssue == null) return;
+            var issue = await GitHub.Issue.Create("Tsume", "Maple-Tree", newIssue);
+            issue.ToUpdate().State = ItemState.Closed;
+
+            Helper.InvokeOnCurrentDispatcher(() =>
+            {
+                MessageBox.Show($"Navigating to bug report. \n{issue.HtmlUrl}", "Bug Report Submitted");
+                Process.Start(issue.HtmlUrl);
+            });
         }
     }
 }

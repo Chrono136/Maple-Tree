@@ -9,19 +9,19 @@ using System;
 
 namespace Maple.Error
 {
-    public struct DateTimeWithZone
+    public static class DateTimeWithZone
     {
-        public DateTimeWithZone(DateTime dateTime, TimeZoneInfo timeZone)
+        static DateTimeWithZone()
         {
-            var dateTimeUnspec = DateTime.SpecifyKind(dateTime, DateTimeKind.Unspecified);
-            UniversalTime = TimeZoneInfo.ConvertTimeToUtc(dateTimeUnspec, timeZone);
-            TimeZone = timeZone;
+            var dateTimeUnspec = DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Unspecified);
+            UniversalTime = TimeZoneInfo.ConvertTimeToUtc(dateTimeUnspec, TimeZoneInfo.Utc);
+            TimeZone = TimeZoneInfo.Utc;
         }
 
-        public DateTime UniversalTime { get; }
+        public static DateTime UniversalTime { get; }
 
-        public TimeZoneInfo TimeZone { get; }
+        private static TimeZoneInfo TimeZone { get; }
 
-        public DateTime LocalTime => TimeZoneInfo.ConvertTime(UniversalTime, TimeZone);
+        public static DateTime LocalTime => TimeZoneInfo.ConvertTime(UniversalTime, TimeZone);
     }
 }

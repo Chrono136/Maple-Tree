@@ -1,5 +1,5 @@
 ﻿// Created: 2017/11/19 4:23 PM
-// Updated: 2017/11/19 5:04 PM
+// Updated: 2017/11/24 8:18 PM
 // 
 // Project: Maple.Error
 // Filename: EventHandlers.cs
@@ -15,17 +15,18 @@ namespace Maple.Error
     {
         public static void UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
-            MapleError.CreateBug(e.ExceptionObject as Exception);
+            MapleError.SendIssue(MapleError.CreateIssue(e.ExceptionObject as Exception));
         }
 
         public static void DispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
         {
-            MapleError.CreateBug(e.Exception);
+            e.Handled = true;
+            MapleError.SendIssue(MapleError.CreateIssue(e.Exception));
         }
 
         public static void ThreadException(object sender, ThreadExceptionEventArgs e)
         {
-            MapleError.CreateBug(e.Exception);
+            MapleError.SendIssue(MapleError.CreateIssue(e.Exception));
         }
     }
 }

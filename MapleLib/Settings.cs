@@ -1,5 +1,5 @@
 ﻿// Created: 2017/03/27 11:19 AM
-// Updated: 2017/11/19 4:54 PM
+// Updated: 2017/11/24 7:06 PM
 // 
 // Project: MapleLib
 // Filename: Settings.cs
@@ -29,7 +29,7 @@ namespace MapleLib
 
         static Settings()
         {
-            MapleError.Initialize();
+            MapleError.Initialize(Version);
         }
 
         public static Config Config => _config ?? (_config = Database.GetConfig());
@@ -151,9 +151,7 @@ namespace MapleLib
         public static bool ControllerInput
         {
             get { return Config.ControllerInput; }
-            set
-            {
-                throw new Exception("test");
+            set {
                 Config.ControllerInput = value;
                 Database.SaveConfig();
             }

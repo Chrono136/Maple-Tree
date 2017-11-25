@@ -41,6 +41,11 @@ namespace MapleLib.Common
             return new string(Enumerable.Repeat(chars, length).Select(s => s[random.Next(s.Length)]).ToArray());
         }
 
+        public static object InvokeOnCurrentDispatcher(Action action)
+        {
+            return System.Windows.Application.Current.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Normal, action);
+        }
+
         public static void CheckSession()
         {
             var currentProcess = Process.GetCurrentProcess();

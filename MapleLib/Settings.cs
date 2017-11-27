@@ -1,5 +1,5 @@
 ﻿// Created: 2017/03/27 11:19 AM
-// Updated: 2017/11/24 7:06 PM
+// Updated: 2017/11/26 9:01 PM
 // 
 // Project: MapleLib
 // Filename: Settings.cs
@@ -25,14 +25,14 @@ namespace MapleLib
         public static readonly string Version =
             Assembly.GetExecutingAssembly().GetName().Version.ToString();
 
-        private static Config _config;
+        //private static Config _config;
 
         static Settings()
         {
             MapleError.Initialize(Version);
         }
 
-        public static Config Config => _config ?? (_config = Database.GetConfig());
+        public static Config Config { get; set; } = Database.LoadConfig();
 
         public static string LibraryDirectory
         {
@@ -81,6 +81,16 @@ namespace MapleLib
             }
             set {
                 Config.CemuDirectory = Path.GetFullPath(value);
+                Database.SaveConfig();
+            }
+        }
+
+        public static string DatabaseVersion
+        {
+            get { return Config.DatabaseVersion; }
+            set
+            {
+                Config.DatabaseVersion = value;
                 Database.SaveConfig();
             }
         }

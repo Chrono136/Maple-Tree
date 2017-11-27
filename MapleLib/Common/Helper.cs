@@ -46,6 +46,11 @@ namespace MapleLib.Common
             return System.Windows.Application.Current.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Normal, action);
         }
 
+        public static string FullPath(string path1, string path2)
+        {
+            return Path.GetFullPath(Path.Combine(path1, path2));
+        }
+
         public static void CheckSession()
         {
             var currentProcess = Process.GetCurrentProcess();

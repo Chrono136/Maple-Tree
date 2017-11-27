@@ -1,5 +1,5 @@
 ﻿// Created: 2017/05/13 3:44 PM
-// Updated: 2017/10/14 3:16 PM
+// Updated: 2017/11/27 3:48 PM
 // 
 // Project: MapleLib
 // Filename: Database.cs
@@ -27,23 +27,24 @@ namespace MapleLib
     {
         public const string API_BASE_URL = "http://api.pixxy.in/";
 
+        private const int DATABASE_VERSION = 3;
+
         static Database()
         {
-            var dbFile = Path.GetFullPath(Path.Combine(Settings.ConfigDirectory, "mapleseed.db"));
+            if (string.IsNullOrEmpty(DatabaseFileLocation))
+                DatabaseFileLocation = Helper.FullPath(Settings.ConfigDirectory, "mapleseed.db");
 
-            if (LiteDatabase == null)
-            {
-                DbFileStream = Helper.FileOpenStream(dbFile);
-                LiteDatabase = new LiteDatabase(DbFileStream);
-                SettingsCollection = LiteDatabase.GetCollection<Config>("Settings");
-            }
+            InitializeDatabase();
+
+            VersionCheck();
+
+            WiiuTitleDatabase.Load();
 
             if (GraphicPacks == null)
                 GraphicPacks = new GraphicPackDatabase(LiteDatabase);
 
-            WiiuTitleDatabase.Load();
-
-            DownloadManager = new DownloadManager(WiiuClient.DownloadTitleTask);
+            if (DownloadManager == null)
+                DownloadManager = new DownloadManager(WiiuClient.DownloadTitleTask);
 
             Task.Run(async () =>
             {
@@ -54,25 +55,57 @@ namespace MapleLib
             });
         }
 
-        private static Stream DbFileStream { get; }
+        private static string DatabaseFileLocation { get; }
+
+        private static Stream DbFileStream { get; set; }
 
         private static List<TitleKey> TitleKeys { get; set; }
 
         private static GraphicPackDatabase GraphicPacks { get; }
 
-        private static LiteDatabase LiteDatabase { get; }
+        private static LiteDatabase LiteDatabase { get; set; }
 
-        private static LiteCollection<Config> SettingsCollection { get; }
+        private static LiteCollection<Config> SettingsCollection { get; set; }
 
         private static DownloadManager DownloadManager { get; }
 
+        public static int DatabaseCount { get; set; }
+
         private static int MaxDatabaseCount => 2;
 
-        public static int DatabaseCount { get; set; }
+        private static void InitializeDatabase()
+        {
+            if (LiteDatabase != null) return;
+            DbFileStream = Helper.FileOpenStream(DatabaseFileLocation);
+            LiteDatabase = new LiteDatabase(DbFileStream);
+            SettingsCollection = LiteDatabase.GetCollection<Config>("Settings");
+
+            Settings.Config = LoadConfig();
+        }
+
+        private static void VersionCheck()
+        {
+            if (Settings.DatabaseVersion == DATABASE_VERSION.ToString())
+                return;
+
+            LiteDatabase.Dispose();
+            LiteDatabase = null;
+
+            DbFileStream.Dispose();
+            DbFileStream = null;
+
+            SettingsCollection = null;
+
+            File.Delete(DatabaseFileLocation);
+
+            InitializeDatabase();
+
+            Settings.DatabaseVersion = DATABASE_VERSION.ToString();
+        }
 
         public static event EventHandler<EventArgs> DatabaseLoaded;
 
-        public static Config GetConfig()
+        public static Config LoadConfig()
         {
             if (SettingsCollection.Count() != 0)
                 return SettingsCollection.FindAll().First();
@@ -190,7 +223,7 @@ namespace MapleLib
         {
             DownloadManager.AddToQueue(titleId, titleFolderLocation, contentType, version);
         }
-        
+
         public static void RegisterEvent(EventHandler<AddItemEventArgs<Title>> onEvent)
         {
             WiiuTitleDatabase.TitleLibrary.AddItemEvent += onEvent;

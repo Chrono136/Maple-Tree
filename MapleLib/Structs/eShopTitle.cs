@@ -17,6 +17,8 @@ namespace MapleLib.Structs
     [Serializable]
     public class eShopTitle
     {
+        public long Uid { get; set; }
+
         private string _name;
 
         public string Name

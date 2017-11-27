@@ -1,5 +1,5 @@
 ﻿// Created: 2017/11/19 10:53 AM
-// Updated: 2017/11/24 8:19 PM
+// Updated: 2017/11/24 8:40 PM
 // 
 // Project: Maple.Error
 // Filename: MapleError.cs
@@ -7,12 +7,10 @@
 
 using System;
 using System.Diagnostics;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Forms;
 using Octokit;
 using Application = System.Windows.Forms.Application;
-using Clipboard = System.Windows.Clipboard;
 using MessageBox = System.Windows.MessageBox;
 
 namespace Maple.Error
@@ -29,7 +27,7 @@ namespace Maple.Error
 
         private static string Version { get; set; }
 
-        public static async void Initialize(string version)
+        public static void Initialize(string version)
         {
             if (Initialized) return;
             Initialized = true;
@@ -54,8 +52,9 @@ namespace Maple.Error
                 const string message = "{0}\n\nWould you like to submit this error to the developer?" +
                                        "\nYour issue ID will be copied to your clipboard.";
 
-                var owner = System.Windows.Application.Current.MainWindow;
-                result = MessageBox.Show(owner, string.Format(message, ex.Message), "Error Occurred", MessageBoxButton.YesNo);
+                Window owner;
+                if ((owner = System.Windows.Application.Current.MainWindow) != null)
+                    result = MessageBox.Show(owner, string.Format(message, ex.Message), "Error Occurred", MessageBoxButton.YesNo);
             });
 
             if (result != MessageBoxResult.Yes && GitHub != null)

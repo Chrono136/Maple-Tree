@@ -1,5 +1,5 @@
-﻿// Created: 2017/05/14 12:53 PM
-// Updated: 2017/10/05 5:55 PM
+﻿// Created: 2017/10/06 3:48 PM
+// Updated: 2017/11/27 2:39 PM
 // 
 // Project: MapleLib
 // Filename: Config.cs
@@ -17,6 +17,8 @@ namespace MapleLib.Common
         public string LibraryDirectory { get; set; } = "";
 
         public string CemuDirectory { get; set; } = "";
+
+        public string DatabaseVersion { get; set; }
 
         public bool FullScreenMode { get; set; }
 

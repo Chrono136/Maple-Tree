@@ -58,7 +58,10 @@ namespace MapleLib.Databases
 
         private static async Task<int> GetCount()
         {
-            var countStr = await Web.DownloadStringAsync(Database.API_BASE_URL + "title/count");
+            const string apiUrl = Database.API_BASE_URL + "title/count";
+
+            var countStr = await Web.DownloadStringAsync(apiUrl);
+
             return string.IsNullOrEmpty(countStr) ? 0 : int.Parse(countStr);
         }
 
@@ -110,6 +113,9 @@ namespace MapleLib.Databases
 
         public static MapleList<Title> Find(string id)
         {
+            if (string.IsNullOrEmpty(id))
+                return new MapleList<Title>();
+
             var titles = GetJObjects($"title/{id.ToUpperInvariant()}");
 
             return titles == null ? new MapleList<Title>() : new MapleList<Title>(titles);

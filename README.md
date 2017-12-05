@@ -5,6 +5,7 @@
 - https://discord.gg/3CZhJj6
 
 #### Requirements
+- Windows 7 and above
 - Active internet connection
 - .Net 4.5.2
 

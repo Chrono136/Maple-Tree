@@ -18,6 +18,9 @@ If you would like to make a donation to this project, please use the Paypal link
 # 
 # FAQ
 
+### Error: The Process cannot access the file mapleseed.db
+- Check your Task Manager and virus protection, to ensure MapleSeed is not running in the background or being accessed by another program.
+
 ### What is this?
 - A small set of applications created specifically for Cemu, an experimental Wii U emulator. Designed to make Wii U title management as easy as possible, and mininal intervention.
 

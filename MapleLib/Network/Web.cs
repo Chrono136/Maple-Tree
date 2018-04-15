@@ -107,6 +107,9 @@ namespace MapleLib.Network
 
             using (var wc = new WebClient())
             {
+                ServicePointManager.Expect100Continue = true;
+                ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+
                 wc.Headers[HttpRequestHeader.UserAgent] = WII_USER_AGENT;
                 wc.Headers[HttpRequestHeader.CacheControl] = "max-age=0, no-cache, no-store";
                 wc.DownloadProgressChanged += DownloadProgressChanged;

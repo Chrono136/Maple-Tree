@@ -87,8 +87,6 @@ namespace MapleCake.ViewModels
             if (title == null || !Config.DynamicTheme || string.IsNullOrEmpty(title.ID))
                 return;
 
-            //Config.BackgroundImage = Resources.CEMU;
-
             if (title.ImageLocation == null)
                 await title.GetImage();
 

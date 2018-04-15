@@ -30,7 +30,7 @@ namespace MapleLib.WiiU
 
         public string Name { get; set; }
 
-        public string Rules { private get; set; }
+        public string Rules { get; set; }
 
         public void Apply()
         {

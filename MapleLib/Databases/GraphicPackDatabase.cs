@@ -6,6 +6,7 @@
 // Created By: Jared T
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -37,7 +38,7 @@ namespace MapleLib.Databases
             try
             {
                 string dataString;
-                if ((dataString = await Web.DownloadStringAsync("https://github.com/slashiee/cemu_graphic_packs/releases/latest")) == null)
+                if ((dataString = await Web.DownloadStringAsync("http://github.com/slashiee/cemu_graphic_packs/releases/latest")) == null)
                     return null;
                 
                 var d = dataString.Split('\n').ToList();
@@ -183,11 +184,16 @@ namespace MapleLib.Databases
             Database.DatabaseCount++;
         }
 
+        List<GraphicPack> graphic_pack_cache { get; set; }
         public MapleList<GraphicPack> Find(string id)
         {
-            var col = LiteDatabase.GetCollection<GraphicPack>(CollectionName);
+            if (graphic_pack_cache == null)
+            {
+                var col = LiteDatabase.GetCollection<GraphicPack>(CollectionName);
+                graphic_pack_cache = col.FindAll().ToList();
+            }
 
-            var title = col.Find(x => x.TitleIdString.Contains(id));
+            var title = graphic_pack_cache.FindAll(x => x.Rules.Contains(id));
             return new MapleList<GraphicPack>(title);
         }
 

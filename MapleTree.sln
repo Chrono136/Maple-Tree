@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.27428.2037
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MapleSeed", "MapleSeed\MapleSeed.csproj", "{07945F9B-70DC-4360-8D8B-D1991D6D722F}"
 EndProject
@@ -28,29 +28,29 @@ Global
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{07945F9B-70DC-4360-8D8B-D1991D6D722F}.Debug|Any CPU.ActiveCfg = Release|x86
-		{07945F9B-70DC-4360-8D8B-D1991D6D722F}.Debug|Any CPU.Build.0 = Release|x86
+		{07945F9B-70DC-4360-8D8B-D1991D6D722F}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{07945F9B-70DC-4360-8D8B-D1991D6D722F}.Debug|Any CPU.Build.0 = Debug|x86
 		{07945F9B-70DC-4360-8D8B-D1991D6D722F}.Debug|x86.ActiveCfg = Debug|x86
 		{07945F9B-70DC-4360-8D8B-D1991D6D722F}.Debug|x86.Build.0 = Debug|x86
 		{07945F9B-70DC-4360-8D8B-D1991D6D722F}.Release|Any CPU.ActiveCfg = Release|x86
 		{07945F9B-70DC-4360-8D8B-D1991D6D722F}.Release|x86.ActiveCfg = Release|x86
 		{07945F9B-70DC-4360-8D8B-D1991D6D722F}.Release|x86.Build.0 = Release|x86
-		{4375D4C0-FEF9-46F5-942D-36C2EBE15672}.Debug|Any CPU.ActiveCfg = Release|x86
-		{4375D4C0-FEF9-46F5-942D-36C2EBE15672}.Debug|Any CPU.Build.0 = Release|x86
+		{4375D4C0-FEF9-46F5-942D-36C2EBE15672}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{4375D4C0-FEF9-46F5-942D-36C2EBE15672}.Debug|Any CPU.Build.0 = Debug|x86
 		{4375D4C0-FEF9-46F5-942D-36C2EBE15672}.Debug|x86.ActiveCfg = Debug|x86
 		{4375D4C0-FEF9-46F5-942D-36C2EBE15672}.Debug|x86.Build.0 = Debug|x86
 		{4375D4C0-FEF9-46F5-942D-36C2EBE15672}.Release|Any CPU.ActiveCfg = Release|x86
 		{4375D4C0-FEF9-46F5-942D-36C2EBE15672}.Release|x86.ActiveCfg = Release|x86
 		{4375D4C0-FEF9-46F5-942D-36C2EBE15672}.Release|x86.Build.0 = Release|x86
-		{77492B31-B4AF-45BE-A4AC-111E3010965E}.Debug|Any CPU.ActiveCfg = Release|x86
-		{77492B31-B4AF-45BE-A4AC-111E3010965E}.Debug|Any CPU.Build.0 = Release|x86
+		{77492B31-B4AF-45BE-A4AC-111E3010965E}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{77492B31-B4AF-45BE-A4AC-111E3010965E}.Debug|Any CPU.Build.0 = Debug|x86
 		{77492B31-B4AF-45BE-A4AC-111E3010965E}.Debug|x86.ActiveCfg = Debug|x86
 		{77492B31-B4AF-45BE-A4AC-111E3010965E}.Debug|x86.Build.0 = Debug|x86
 		{77492B31-B4AF-45BE-A4AC-111E3010965E}.Release|Any CPU.ActiveCfg = Release|x86
 		{77492B31-B4AF-45BE-A4AC-111E3010965E}.Release|x86.ActiveCfg = Release|x86
 		{77492B31-B4AF-45BE-A4AC-111E3010965E}.Release|x86.Build.0 = Release|x86
-		{EFD4BB8C-2736-4DD8-A693-CA9B80A729A8}.Debug|Any CPU.ActiveCfg = Release|Win32
-		{EFD4BB8C-2736-4DD8-A693-CA9B80A729A8}.Debug|Any CPU.Build.0 = Release|Win32
+		{EFD4BB8C-2736-4DD8-A693-CA9B80A729A8}.Debug|Any CPU.ActiveCfg = Debug|Win32
+		{EFD4BB8C-2736-4DD8-A693-CA9B80A729A8}.Debug|Any CPU.Build.0 = Debug|Win32
 		{EFD4BB8C-2736-4DD8-A693-CA9B80A729A8}.Debug|x86.ActiveCfg = Release|Win32
 		{EFD4BB8C-2736-4DD8-A693-CA9B80A729A8}.Debug|x86.Build.0 = Release|Win32
 		{EFD4BB8C-2736-4DD8-A693-CA9B80A729A8}.Release|Any CPU.ActiveCfg = Release|Win32
@@ -83,5 +83,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {D0E1FC74-FD4D-4979-AC92-9542211ABC07}
 	EndGlobalSection
 EndGlobal

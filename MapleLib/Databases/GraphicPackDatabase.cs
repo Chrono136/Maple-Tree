@@ -37,6 +37,9 @@ namespace MapleLib.Databases
 
             try
             {
+                //https://github.com/Tsume/Maple-Tree/issues/375
+                System.Net.ServicePointManager.SecurityProtocol = System.Net.SecurityProtocolType.Tls11 | System.Net.SecurityProtocolType.Tls12;
+
                 string dataString;
                 if ((dataString = await Web.DownloadStringAsync("http://github.com/slashiee/cemu_graphic_packs/releases/latest")) == null)
                     return null;

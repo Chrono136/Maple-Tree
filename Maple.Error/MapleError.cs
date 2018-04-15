@@ -36,12 +36,16 @@ namespace Maple.Error
 
             GitHub = new GitHubClient(new ProductHeaderValue("MapleSeed")) {Credentials = new Credentials(Token.FromBase64())};
 
-            Application.SetUnhandledExceptionMode(UnhandledExceptionMode.ThrowException);
-            Application.ThreadException += EventHandlers.ThreadException;
+            try
+            {
+                Application.SetUnhandledExceptionMode(UnhandledExceptionMode.ThrowException);
+                Application.ThreadException += EventHandlers.ThreadException;
 
-            AppDomain.CurrentDomain.UnhandledException += EventHandlers.UnhandledException;
-            System.Windows.Application.Current.DispatcherUnhandledException += EventHandlers.DispatcherUnhandledException;
-            //AppDomain.CurrentDomain.FirstChanceException += (sender, eventArgs) => { CreateBug(eventArgs.Exception); };
+                AppDomain.CurrentDomain.UnhandledException += EventHandlers.UnhandledException;
+                System.Windows.Application.Current.DispatcherUnhandledException += EventHandlers.DispatcherUnhandledException;
+                //AppDomain.CurrentDomain.FirstChanceException += (sender, eventArgs) => { CreateBug(eventArgs.Exception); };
+            }
+            catch { }
         }
 
         public static NewIssue CreateIssue(Exception ex)

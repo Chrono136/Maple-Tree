@@ -40,7 +40,13 @@ namespace MapleLib.Common
                     throw new ArgumentOutOfRangeException();
             }
 
-            if (CurrentVersion != LatestVersion)
+            int currentVersion = int.Parse(CurrentVersion.Replace(".", ""));
+            int latestVersion = int.Parse(LatestVersion.Replace(".", ""));
+
+            if (currentVersion != latestVersion)
+                TextLog.MesgLog.WriteLog($"[Version Mismatch] Latest Release: {LatestVersion}", Color.Gray);
+
+            if (currentVersion < latestVersion)
                 IsAvailable = true;
         }
 

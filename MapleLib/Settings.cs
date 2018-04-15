@@ -29,6 +29,11 @@ namespace MapleLib
 
         static Settings()
         {
+            Initialize();
+        }
+
+        public static void Initialize()
+        {
             MapleError.Initialize(Version);
         }
 

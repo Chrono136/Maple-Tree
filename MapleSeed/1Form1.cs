@@ -50,11 +50,11 @@ namespace MapleSeed
 
             RegisterDefaults();
 
-            new Update(UpdateType.MapleSeed).CheckForUpdate();
-
-            AppendLog($"Game Directory [{Settings.LibraryDirectory}]");
             AppendLog(@"Welcome to Maple Tree.");
+            AppendLog($"Game Directory [{Settings.LibraryDirectory}]");
             AppendLog(@"Enter /help for a list of possible commands.");
+
+            new Update(UpdateType.MapleSeed).CheckForUpdate();
 
             Controls.Cast<Control>().ToList().ForEach(x => x.Enabled = true);
         }

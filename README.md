@@ -61,9 +61,3 @@ If you would like to make a donation to this project, please use the Paypal link
 ### MapleSeed Lite - Discontinued / Unsupported
  - Title Launching
  - Dynamic theme
-# 
-## MapleSeed Version 2 - Preview
-![MS Version 2](http://u.pixxy.in/BM7t29.png)
-# 
-## MapleSeed Version 1 - Preview
-![MS Version 1](http://u.pixxy.in/qZTqZa.png)

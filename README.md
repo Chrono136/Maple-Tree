@@ -62,6 +62,6 @@ If you would like to make a donation to this project, please use the Paypal link
  - Title Launching
  - Dynamic theme
 
-### Donators
+### Donation Credits
  - Tiberius
  - TinFoilFox

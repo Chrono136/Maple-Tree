@@ -1,0 +1,71 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Common">
+      <UniqueIdentifier>{74e13d95-9854-4846-a53a-51d83cba426e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="WiiU">
+      <UniqueIdentifier>{974f50ca-f055-4e31-901e-670d3e494896}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Properties">
+      <UniqueIdentifier>{80165f8b-58a5-4d3e-aa27-683766618dfa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ThirdParty">
+      <UniqueIdentifier>{dcca2128-2fed-4fd4-a115-069532a5795a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Network">
+      <UniqueIdentifier>{0fce9a48-a96b-47cb-af04-43de0a47a8c7}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Toolbelt.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Decrypt.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="MapleTicket.h">
+      <Filter>WiiU</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>Properties</Filter>
+    </ClInclude>
+    <ClInclude Include="stdafx.h">
+      <Filter>Properties</Filter>
+    </ClInclude>
+    <ClInclude Include="mongoose.h">
+      <Filter>ThirdParty</Filter>
+    </ClInclude>
+    <ClInclude Include="rang.hpp">
+      <Filter>ThirdParty</Filter>
+    </ClInclude>
+    <ClInclude Include="DownloadClient.h">
+      <Filter>Network</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Toolbelt.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="MapleMini.cpp" />
+    <ClCompile Include="Decrypt.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="MapleTicket.cpp">
+      <Filter>WiiU</Filter>
+    </ClCompile>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>Properties</Filter>
+    </ClCompile>
+    <ClCompile Include="mongoose.c">
+      <Filter>ThirdParty</Filter>
+    </ClCompile>
+    <ClCompile Include="DownloadClient.cpp">
+      <Filter>Network</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

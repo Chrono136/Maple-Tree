@@ -20,6 +20,9 @@
     <Filter Include="Network">
       <UniqueIdentifier>{0fce9a48-a96b-47cb-af04-43de0a47a8c7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Structures">
+      <UniqueIdentifier>{1b159b88-8cf7-4a5f-9c33-b6c729e0cd16}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Toolbelt.h">
@@ -46,6 +49,19 @@
     <ClInclude Include="DownloadClient.h">
       <Filter>Network</Filter>
     </ClInclude>
+    <ClInclude Include="TitleInfo.h">
+      <Filter>Structures</Filter>
+    </ClInclude>
+    <ClInclude Include="MapleMini.h" />
+    <ClInclude Include="frozen.h">
+      <Filter>ThirdParty</Filter>
+    </ClInclude>
+    <ClInclude Include="TMD.h">
+      <Filter>WiiU</Filter>
+    </ClInclude>
+    <ClInclude Include="TMD_Content.h">
+      <Filter>WiiU</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Toolbelt.cpp">
@@ -66,6 +82,18 @@
     </ClCompile>
     <ClCompile Include="DownloadClient.cpp">
       <Filter>Network</Filter>
+    </ClCompile>
+    <ClCompile Include="TitleInfo.cpp">
+      <Filter>Structures</Filter>
+    </ClCompile>
+    <ClCompile Include="frozen.c">
+      <Filter>ThirdParty</Filter>
+    </ClCompile>
+    <ClCompile Include="TMD.cpp">
+      <Filter>WiiU</Filter>
+    </ClCompile>
+    <ClCompile Include="TMD_Content.cpp">
+      <Filter>WiiU</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

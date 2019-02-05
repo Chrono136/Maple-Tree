@@ -3,7 +3,6 @@ CDecrypt - Decrypt Wii U NUS content files [https://code.google.com/p/cdecrypt/]
 
 Copyright (c) 2013-2015 crediar
 
-Modified by: Tsumes 2017
 CDecrypt is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
@@ -14,6 +13,8 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+Modified by: Tsumes 2019
 */
 #pragma once
 
@@ -45,6 +46,19 @@ public:
 			return 1;
 		else
 			return 0;
+	}
+
+	void simpleDecrypt(const char* path, char* defaultDir)
+	{
+		_chdir(path);
+
+		struct stat buffer;
+		if ((stat("tmd", &buffer) == 0) && (stat("cetk", &buffer) == 0))
+		{
+			if (!(ret = _decrypt(NULL, "tmd", "cetk")))
+				std::cout << "Content Decryption Complete.\n\n";
+			_chdir(defaultDir);
+		}
 	}
 
 	static std::thread* Threads;
@@ -199,7 +213,7 @@ public:
 
 	void ExtractFile(FILE* in, u64 PartDataOffset, u64 FileOffset, u64 Size, char* FileName, u16 ContentID);
 
-	s32 _decrypt(char*, char*, char*);
+	s32 _decrypt(char*, const char*, const char*);
 
 	static int ret;
 

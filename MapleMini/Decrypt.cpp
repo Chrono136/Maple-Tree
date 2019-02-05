@@ -7,46 +7,54 @@ std::thread* Decrypt::Threads;
 
 Decrypt::Decrypt(char* defaultDir)
 {
+	struct stat buffer;
+	if ((stat("tmd", &buffer) == 0) && (stat("cetk", &buffer) == 0)) {
+		simpleDecrypt("", defaultDir);
+		getchar();
+		return;
+	}
+
 	cout << rang::style::bold << "MapleMini Console Version 1.0\n" << endl;
 	cout << rang::style::bold << "Built: " << __TIME__ << " " << __DATE__ << endl << endl;
 
 	cout << rang::style::bold << "Command Line Options: " << "[] Required, {} Optional" << rang::style::reset << endl;
 	cout << " Decypt: MapleMini.exe [\"c:\\Location\\to\\encrypted\\content\"]" << endl;
-	cout << " Download: MapleMini.exe {-dl} [Title ID]" << endl << endl;
+	//cout << " Download: MapleMini.exe {-dl} [Title ID]" << endl << endl;
 
 	cout << rang::style::bold << "Input Options: " << "[] Required, {} Optional" << rang::style::reset << endl;
-	cout << " Download: [-dl] [\"Title ID\"]" << endl;
+	//cout << " Download: [-dl] [\"Title ID\"]" << endl;
 	cout << " Decrypt: [-de] [\"c:\\Location\\to\\encrypted\\content\"]" << endl << endl;
 
 	cout << rang::style::bold << "----------------------------------------------------------" << endl << endl;
 
 	while (true)
 	{
-		//-de "D:\Emulators\WiiU_Roms\[USA] Mario Kart 8"
+		//-de "D:\Emulators\WiiU_Roms\[USA] Mutant Mudds Deluxe"
 		auto input = Toolbelt::getUserInput();
 
-		std::string result;
+		std::string path;
 		std::regex re("\\\"(.*)\\\"");
 		std::smatch match;
 		if (std::regex_search(input, match, re) && match.size() > 1) {
-			result = match.str(1);
+			path = match.str(1);
 		}
-		else result = std::string("");
+		else path = std::string("");
 
-		if (input[0] == '-' && input[1] == 'd' && input[2] == 'l' && result.length() > 2)
+		if (input[0] == '-' && input[1] == 'd' && input[2] == 'l' && path.length() > 2)
 		{
-
+			continue;
 		}
 
-		if (input[0] == '-' && input[1] == 'd' && input[2] == 'e' && result.length() > 2)
+		if (input[0] == '-' && input[1] == 'd' && input[2] == 'e' && path.length() > 2)
 		{
-			char* tmd = new char[4]{ 't', 'm', 'd','\0' };
-			char* cetk = new char[5]{ 'c', 'e', 't', 'k', '\0' };
+			simpleDecrypt(Toolbelt::StringToCharArray(path), defaultDir);
+			continue;
+		}
 
-			_chdir(Toolbelt::StringToCharArray(result));
-			ret = _decrypt(NULL, tmd, cetk);
-			_chdir(defaultDir);
-			cout << "Content Decryption Complete.\n\n";
+		if (path.length() > 2 && dirExists(Toolbelt::StringToCharArray(path)))
+		{
+			simpleDecrypt(Toolbelt::StringToCharArray(path), defaultDir);
+			break;
 		}
 
 		if (strcmp(Toolbelt::StringToCharArray(input), "exit") == 0)
@@ -168,15 +176,14 @@ void Decrypt::ExtractFileHash(FILE* in, u64 PartDataOffset, u64 FileOffset, u64 
 	u8 Hashes[0x400];
 
 	u64 Wrote = 0;
-	u64 WriteSize = 0xFC00; // Hash block size
+	u64 WriteSize = 0xFC00;	// Hash block size
 	u64 Block = (FileOffset / 0xFC00) & 0xF;
 
-	FILE* out = fopen(FileName, "wb");
-	if (out == nullptr)
+	FILE *out = fopen(FileName, "wb");
+	if (out == NULL)
 	{
 		printf("Could not create \"%s\"\n", FileName);
-		perror("Error");
-		getchar();
+		perror("");
 		exit(0);
 	}
 
@@ -186,7 +193,7 @@ void Decrypt::ExtractFileHash(FILE* in, u64 PartDataOffset, u64 FileOffset, u64 
 	if (soffset + Size > WriteSize)
 		WriteSize = WriteSize - soffset;
 
-	_fseeki64(in, PartDataOffset + roffset, SEEK_SET);
+	fseeko(in, PartDataOffset + roffset, SEEK_SET);
 	while (Size > 0)
 	{
 		if (WriteSize > Size)
@@ -195,17 +202,17 @@ void Decrypt::ExtractFileHash(FILE* in, u64 PartDataOffset, u64 FileOffset, u64 
 		fread(encdata, sizeof(char), BLOCK_SIZE, in);
 
 		memset(IV, 0, sizeof(IV));
-		IV[1] = static_cast<u8>(ContentID);
-		AES_cbc_encrypt(reinterpret_cast<const u8 *>(encdata), static_cast<u8 *>(Hashes), 0x400, &key, IV, AES_DECRYPT);
+		IV[1] = (u8)ContentID;
+		AES_cbc_encrypt((const u8 *)(encdata), (u8 *)Hashes, 0x400, &key, IV, AES_DECRYPT);
 
 		memcpy(H0, Hashes + 0x14 * Block, SHA_DIGEST_LENGTH);
 
 		memcpy(IV, Hashes + 0x14 * Block, sizeof(IV));
 		if (Block == 0)
 			IV[1] ^= ContentID;
-		AES_cbc_encrypt(reinterpret_cast<const u8 *>(encdata + 0x400), reinterpret_cast<u8 *>(decdata), 0xFC00, &key, IV, AES_DECRYPT);
+		AES_cbc_encrypt((const u8 *)(encdata + 0x400), (u8 *)decdata, 0xFC00, &key, IV, AES_DECRYPT);
 
-		SHA1(reinterpret_cast<const u8 *>(decdata), 0xFC00, hash);
+		SHA1((const u8 *)decdata, 0xFC00, hash);
 		if (Block == 0)
 			hash[1] ^= ContentID;
 		H0Count++;
@@ -216,7 +223,6 @@ void Decrypt::ExtractFileHash(FILE* in, u64 PartDataOffset, u64 FileOffset, u64 
 			hexdump(Hashes, 0x100);
 			hexdump(decdata, 0x100);
 			printf("Failed to verify H0 hash\n");
-			getchar();
 			exit(0);
 		}
 
@@ -293,7 +299,7 @@ void Decrypt::ExtractFile(FILE* in, u64 PartDataOffset, u64 FileOffset, u64 Size
 	fclose(out);
 }
 
-s32 Decrypt::_decrypt(char* argc, char* arg1, char* arg2)
+s32 Decrypt::_decrypt(char* argc, const char* arg1, const char* arg2)
 {
 	char str[1024];
 
@@ -316,15 +322,6 @@ s32 Decrypt::_decrypt(char* argc, char* arg1, char* arg2)
 	}
 
 	TitleMetaData* tmd = reinterpret_cast<TitleMetaData*>(TMD);
-
-	printf("\n\nStarting decryption process for %I64u", tmd->TitleID);
-	printf("\nPress any key to confirm. Press ESC to cancel.\n");
-	switch (_getch())
-	{
-	case 27:
-		return EXIT_FAILURE;
-		break;
-	}
 	
 	if (tmd->Version != 1)
 	{
@@ -420,13 +417,23 @@ s32 Decrypt::_decrypt(char* argc, char* arg1, char* arg2)
 
 	Decrypt::Threads = new std::thread[Entries];
 
+	printf("\n\nStarting decryption for title ID %#010x", (unsigned int)tmd->TitleID);
+	printf("\nPress any key to confirm. Press ESC to cancel.\n");
+	switch (_getch())
+	{
+	case 27:
+		printf("\nProcess cancelled!!\n");
+		return EXIT_FAILURE;
+		break;
+	}
+
 	for (u32 i = 1; i < Entries; ++i)
 	{
 		if (level)
 		{
 			while (LEntry[level - 1] == i)
 			{
-				//printf("[%03X]leaving :\"%s\" Level:%d\n", i, CNT + NameOff + bs24( fe[Entry[level-1]].NameOffset ), level );
+				printf("[%03X]leaving :\"%s\" Level:%d\n", i, CNT + NameOff + bs24( fe[Entry[level-1]].NameOffset ), level );
 				level--;
 			}
 		}
@@ -489,10 +496,10 @@ s32 Decrypt::_decrypt(char* argc, char* arg1, char* arg2)
 				{
 					int fileLen = bs32(fe[i].FileLength);
 					int contentID = bs16(fe[i].ContentID);
-					Threads[i] = std::thread(&Decrypt::ExtractFileHash, this,
-						std::ref(cnt), 0, std::ref(CNTOff), std::ref(fileLen), std::ref(Path), std::ref(contentID));
+					Decrypt::ExtractFileHash(std::ref(cnt), 0, std::ref(CNTOff), std::ref(fileLen), std::ref(Path), std::ref(contentID));
 
-					Threads[i].join();
+					//Threads[i] = std::thread(&Decrypt::ExtractFileHash, this, std::ref(cnt), 0, std::ref(CNTOff), std::ref(fileLen), std::ref(Path), std::ref(contentID));
+					//Threads[i].join();
 				}
 				else
 				{

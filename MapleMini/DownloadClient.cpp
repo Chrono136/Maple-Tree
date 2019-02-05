@@ -24,6 +24,11 @@ DownloadClient::~DownloadClient()
 {
 }
 
+int DownloadClient::downloadContent(void * tmd, char * outputDir, char * titleURL)
+{
+	return 0;
+}
+
 void DownloadClient::ev_handler(struct mg_connection *nc, int ev, void *ev_data)
 {
 	DownloadClient *dc = (DownloadClient *) nc->user_data;
@@ -44,6 +49,7 @@ void DownloadClient::ev_handler(struct mg_connection *nc, int ev, void *ev_data)
 			dc->length = hm->body.len;
 			dc->dataBytes = new char[dc->length];
 			memcpy(dc->dataBytes, hm->body.p, hm->body.len);
+			dc->dataBytes[dc->length] = '\0';
 		}
 		else
 		{

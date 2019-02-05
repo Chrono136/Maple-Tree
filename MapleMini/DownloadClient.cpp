@@ -11,7 +11,7 @@ DownloadClient::DownloadClient(const char *url)
 	struct mg_connection *nc;
 
 	mg_mgr_init(&mgr, NULL);
-	nc = mg_connect_http(&mgr, ev_handler, url, NULL, NULL);
+	nc = mg_connect_http(&mgr, ev_handler, url, "", NULL);
 	nc->user_data = this;
 
 	while (s_exit_flag == 0) {
@@ -24,20 +24,18 @@ DownloadClient::~DownloadClient()
 {
 }
 
-int DownloadClient::downloadContent(void * tmd, char * outputDir, char * titleURL)
-{
-	return 0;
-}
-
 void DownloadClient::ev_handler(struct mg_connection *nc, int ev, void *ev_data)
 {
 	DownloadClient *dc = (DownloadClient *) nc->user_data;
 	struct http_message *hm = (struct http_message *) ev_data;
 
+	auto rbuf = nc->recv_mbuf.buf;
+	auto sbuf = nc->send_mbuf.buf;
+
 	switch (ev) {
 	case MG_EV_CONNECT:
 		if (*(int *)ev_data != 0) {
-			fprintf(stderr, "connect() failed: %s\n", strerror(*(int *)ev_data));
+			fprintf(stderr, "connect() failed: %s\n", dc->error = strerror(*(int *)ev_data));
 			s_exit_flag = 1;
 		}
 		break;

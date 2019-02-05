@@ -31,6 +31,8 @@ Decrypt::Decrypt(char* defaultDir)
 	{
 		//-de "D:\Emulators\WiiU_Roms\[USA] Mutant Mudds Deluxe"
 		auto input = Toolbelt::getUserInput();
+		auto _input = string(input);
+		_input.replace(0, 4, "");
 
 		std::string path;
 		std::regex re("\\\"(.*)\\\"");
@@ -40,8 +42,13 @@ Decrypt::Decrypt(char* defaultDir)
 		}
 		else path = std::string("");
 
-		if (input[0] == '-' && input[1] == 'd' && input[2] == 'l' && path.length() > 2)
+		if (input[0] == '-' && input[1] == 'd' && input[2] == 'l' && _input.length() == 16)
 		{
+			string url = string("http://api.tsumes.com/title/" + _input);
+			auto dc = DownloadClient(url.c_str());
+			if (dc.error) continue;
+			auto ti = TitleInfo(dc.dataBytes, (int)dc.length);
+			ti.DownloadContent(".");
 			continue;
 		}
 
@@ -301,6 +308,7 @@ void Decrypt::ExtractFile(FILE* in, u64 PartDataOffset, u64 FileOffset, u64 Size
 
 s32 Decrypt::_decrypt(char* argc, const char* arg1, const char* arg2)
 {
+#pragma region SETUP
 	char str[1024];
 
 	u32 TMDLen;
@@ -322,7 +330,7 @@ s32 Decrypt::_decrypt(char* argc, const char* arg1, const char* arg2)
 	}
 
 	TitleMetaData* tmd = reinterpret_cast<TitleMetaData*>(TMD);
-	
+
 	if (tmd->Version != 1)
 	{
 		printf("Unsupported TMD Version:%u\n", tmd->Version);
@@ -426,6 +434,7 @@ s32 Decrypt::_decrypt(char* argc, const char* arg1, const char* arg2)
 		return EXIT_FAILURE;
 		break;
 	}
+#pragma endregion
 
 	for (u32 i = 1; i < Entries; ++i)
 	{
@@ -492,18 +501,20 @@ s32 Decrypt::_decrypt(char* argc, const char* arg1, const char* arg2)
 						return EXIT_FAILURE;
 					}
 				}
+
+				int fileLen = bs32(fe[i].FileLength);
+				int contentID = bs16(fe[i].ContentID);
+
 				if ((bs16(fe[i].Flags) & 0x440))
 				{
-					int fileLen = bs32(fe[i].FileLength);
-					int contentID = bs16(fe[i].ContentID);
-					Decrypt::ExtractFileHash(std::ref(cnt), 0, std::ref(CNTOff), std::ref(fileLen), std::ref(Path), std::ref(contentID));
+					ExtractFileHash(cnt, 0, CNTOff, fileLen, Path, contentID);
 
 					//Threads[i] = std::thread(&Decrypt::ExtractFileHash, this, std::ref(cnt), 0, std::ref(CNTOff), std::ref(fileLen), std::ref(Path), std::ref(contentID));
 					//Threads[i].join();
 				}
 				else
 				{
-					ExtractFile(cnt, 0, CNTOff, bs32(fe[i].FileLength), Path, bs16(fe[i].ContentID));
+					ExtractFile(cnt, 0, CNTOff, fileLen, Path, contentID);
 				}
 				fclose(cnt);
 			}

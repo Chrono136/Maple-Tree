@@ -3,10 +3,13 @@
 class TitleInfo
 {
 public:
+	TitleInfo(char* str, size_t len);
 	TitleInfo();
 	~TitleInfo();
 
-	TitleInfo(char* str, size_t len);
+	static void CreateDatabase();
+
+	int DownloadContent(const char * outputDir);
 
 	char* uid;
 	char* id;

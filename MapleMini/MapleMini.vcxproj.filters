@@ -1,10 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Resource Files">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
-    </Filter>
     <Filter Include="Common">
       <UniqueIdentifier>{74e13d95-9854-4846-a53a-51d83cba426e}</UniqueIdentifier>
     </Filter>
@@ -56,12 +52,6 @@
     <ClInclude Include="frozen.h">
       <Filter>ThirdParty</Filter>
     </ClInclude>
-    <ClInclude Include="TMD.h">
-      <Filter>WiiU</Filter>
-    </ClInclude>
-    <ClInclude Include="TMD_Content.h">
-      <Filter>WiiU</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Toolbelt.cpp">
@@ -88,12 +78,6 @@
     </ClCompile>
     <ClCompile Include="frozen.c">
       <Filter>ThirdParty</Filter>
-    </ClCompile>
-    <ClCompile Include="TMD.cpp">
-      <Filter>WiiU</Filter>
-    </ClCompile>
-    <ClCompile Include="TMD_Content.cpp">
-      <Filter>WiiU</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

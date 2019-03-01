@@ -9,8 +9,9 @@ struct ComInit
 };
 static int s_exit_flag = 0;
 
-DownloadClient::DownloadClient(const char *url)
+DownloadClient::DownloadClient(const char *url, const char* fileName, bool toFile)
 {
+	
 	ComInit init;
 
 	// use CComPtr so you don't have to manually call Release()
@@ -27,13 +28,29 @@ DownloadClient::DownloadClient(const char *url)
 		return;
 	}
 
+	std::string tmpf = std::tmpnam(nullptr);
+	std::ofstream outfile;
+	if (toFile)
+		outfile = std::ofstream(fileName, std::ofstream::binary);
+
 	string buffer;
 	do
 	{
 		char* _dataBytes = new char[2048];
 		hr = pStream->Read(_dataBytes, sizeof(_dataBytes), (ULONG*) &length);
-		buffer.append(_dataBytes, length);
+
+		if (toFile)
+		{
+			outfile.write(_dataBytes, length);
+		}
+		else
+		{
+			buffer.append(_dataBytes, length);
+		}
+
 	} while (SUCCEEDED(hr) && hr != S_FALSE);
+
+	outfile.close();
 
 	if (FAILED(hr))
 	{
@@ -43,8 +60,12 @@ DownloadClient::DownloadClient(const char *url)
 	else
 	{
 		length = buffer.length();
-		dataBytes = new char[length];
-		memcpy(dataBytes, buffer.c_str(), length);
+
+		if (!toFile)
+		{
+			dataBytes = new char[length];
+			memcpy(dataBytes, buffer.c_str(), length);
+		}
 	}
 	
 	/*

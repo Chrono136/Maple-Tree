@@ -72,6 +72,8 @@ TitleInfo::TitleInfo(char * str, size_t len)
 #pragma comment(lib,"Urlmon.lib")
 int TitleInfo::DownloadContent(const char * outputDir)
 {
+	string baseURL = string("http://ccs.cdn.wup.shop.nintendo.net/ccs/download/");
+
 	_outputPath = outputDir;
 	string dir = (string(outputDir) + string("/[") + string(region) + string("] ") + string(name));
 
@@ -104,31 +106,29 @@ int TitleInfo::DownloadContent(const char * outputDir)
 	}
 
 	auto tmd = (TitleMetaData*) TMD;
+	u16 contentCount = bs16(tmd->ContentCount);
 
-	string baseURL = string("http://ccs.cdn.wup.shop.nintendo.net/ccs/download/");
-
-	for (int i = 0; i < tmd->ContentCount; i++)
+	for (int i = 0; i < contentCount; i++)
 	{
 		char str[1024];
-		u8 title_id[16];
-		memset(title_id, 0, sizeof(title_id));
-		memcpy(title_id, TMD + 0x18C, 8);
 
 		auto i1 = i;
-		auto numc = tmd->ContentCount;
-		auto size = tmd->Contents[i1].Size;
+		auto numc = bs16(tmd->ContentCount);
+		auto size = bs64(tmd->Contents[i1].Size);
 		printf("Downloading Content #%u of %u... (%lu)\n", i1 + 1, numc, size);
-		
-		sprintf(str, "%08X", title_id);
-		auto titleID = string(str);
 
-		sprintf(str, "%08X", bs16(tmd->Contents[i1].ID));
+		sprintf(str, "00050000%08X", bs64(tmd->TitleID));
+		auto titleID = string(str);
+		
+		sprintf(str, "%08X", bs32(tmd->Contents[i1].ID));
 		auto contentID = string(str);
 
 		string contentPath = string(_outputPath) + string("/") + contentID;
+		auto downloadURL = baseURL + titleID + string("/") + contentID;
 
-		string url = baseURL + string(titleID) + string("/") + string(contentID);
-		auto downloadURL = url;
+		auto filePath = dir + string("/") + string(contentID.c_str());
+		auto dc = DownloadClient(downloadURL.c_str(), filePath.c_str(), 1);
+		
 	}
 
 	return 0;

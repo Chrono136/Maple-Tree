@@ -72,7 +72,7 @@ TitleInfo::TitleInfo(char * str, size_t len)
 #pragma comment(lib,"Urlmon.lib")
 int TitleInfo::DownloadContent(const char * outputDir)
 {
-	auto nusURL = string("http://api.tsumes.com/title/");
+	_outputPath = outputDir;
 	string dir = (string(outputDir) + string("/[") + string(region) + string("] ") + string(name));
 
 	auto _dir = std::wstring(Toolbelt::s2ws(dir));
@@ -85,14 +85,17 @@ int TitleInfo::DownloadContent(const char * outputDir)
 	std::transform(_id.begin(), _id.end(), _id.begin(), ::tolower);
 
 	string tmdPath = dir + string("/tmd");
-	string tmdURL = (nusURL + _id + string("/tmd"));
+	string tmdURL = (string("http://api.tsumes.com/title/") + _id + string("/tmd"));
 
-	auto dc = DownloadClient(tmdURL.c_str());
-	if (dc.error) return -1;
-	Toolbelt::SaveFile(dir.c_str(), dc.dataBytes, (u32)dc.length);
+	if (!Toolbelt::FileExists(tmdPath))
+	{
+		auto dc = DownloadClient(tmdURL.c_str());
+		if (dc.error) return -1;
+		Toolbelt::SaveFile(tmdPath.c_str(), dc.dataBytes, (u32)dc.length);
+	}
 	
-	u32 TMDLen;
-	char* TMD = Toolbelt::ReadFile(dir.c_str(), &TMDLen);
+	u32 TMDLen = Toolbelt::GetFileSize(tmdPath);
+	char* TMD = Toolbelt::ReadFile(tmdPath.c_str(), &TMDLen);
 
 	if (TMD == nullptr)
 	{
@@ -100,11 +103,32 @@ int TitleInfo::DownloadContent(const char * outputDir)
 		return -1;
 	}
 
-	auto tmd = reinterpret_cast<Decrypt::TitleMetaData*>(TMD);
+	auto tmd = (TitleMetaData*) TMD;
+
+	string baseURL = string("http://ccs.cdn.wup.shop.nintendo.net/ccs/download/");
 
 	for (int i = 0; i < tmd->ContentCount; i++)
 	{
+		char str[1024];
+		u8 title_id[16];
+		memset(title_id, 0, sizeof(title_id));
+		memcpy(title_id, TMD + 0x18C, 8);
 
+		auto i1 = i;
+		auto numc = tmd->ContentCount;
+		auto size = tmd->Contents[i1].Size;
+		printf("Downloading Content #%u of %u... (%lu)\n", i1 + 1, numc, size);
+		
+		sprintf(str, "%08X", title_id);
+		auto titleID = string(str);
+
+		sprintf(str, "%08X", bs16(tmd->Contents[i1].ID));
+		auto contentID = string(str);
+
+		string contentPath = string(_outputPath) + string("/") + contentID;
+
+		string url = baseURL + string(titleID) + string("/") + string(contentID);
+		auto downloadURL = url;
 	}
 
 	return 0;

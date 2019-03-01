@@ -57,6 +57,7 @@ public:
 		{
 			if (!(ret = _decrypt(NULL, "tmd", "cetk")))
 				std::cout << "Content Decryption Complete.\n\n";
+
 			_chdir(defaultDir);
 		}
 	}
@@ -81,7 +82,7 @@ public:
 	u64 H0Count = 0;
 	u64 H0Fail = 0;
 
-#pragma pack(push,1)
+#pragma pack(1)
 
 	enum ContentType
 	{
@@ -188,8 +189,6 @@ public:
 		unsigned short Flags;
 		unsigned short ContentID;
 	};
-
-#pragma pack(pop)
 	
 #define bs16(s) (u16)( ((s)>>8) | ((s)<<8) )
 #define bs32(s) (u32)( (((s)&0xFF0000)>>8) | (((s)&0xFF00)<<8) | ((s)>>24) | ((s)<<24) )
@@ -221,4 +220,6 @@ public:
 	Decrypt(const Decrypt & obj);
 	Decrypt();
 	~Decrypt();
+
+#pragma pack(pop)
 };

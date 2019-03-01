@@ -25,5 +25,8 @@ public:
 	char* ccode;
 	char* iloc;
 	char* notes;
+
+private:
+	const char* _outputPath;
 };
 

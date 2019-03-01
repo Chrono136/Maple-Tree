@@ -24,9 +24,6 @@
     <ClInclude Include="Toolbelt.h">
       <Filter>Common</Filter>
     </ClInclude>
-    <ClInclude Include="Decrypt.h">
-      <Filter>Common</Filter>
-    </ClInclude>
     <ClInclude Include="MapleTicket.h">
       <Filter>WiiU</Filter>
     </ClInclude>
@@ -58,9 +55,6 @@
       <Filter>Common</Filter>
     </ClCompile>
     <ClCompile Include="MapleMini.cpp" />
-    <ClCompile Include="Decrypt.cpp">
-      <Filter>Common</Filter>
-    </ClCompile>
     <ClCompile Include="MapleTicket.cpp">
       <Filter>WiiU</Filter>
     </ClCompile>

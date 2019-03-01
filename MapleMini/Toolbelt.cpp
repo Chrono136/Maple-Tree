@@ -2,6 +2,11 @@
 #include "Toolbelt.h"
 
 
+bool Toolbelt::FileExists(const std::string& name) {
+	struct stat buffer;
+	return (stat(name.c_str(), &buffer) == 0);
+}
+
 int Toolbelt::DirExists(const char *path)
 {
 	struct stat info;
@@ -12,6 +17,13 @@ int Toolbelt::DirExists(const char *path)
 		return 1;
 	else
 		return 0;
+}
+
+long Toolbelt::GetFileSize(std::string filename)
+{
+	struct stat stat_buf;
+	int rc = stat(filename.c_str(), &stat_buf);
+	return rc == 0 ? stat_buf.st_size : -1;
 }
 
 std::wstring Toolbelt::s2ws(const std::string& s)

@@ -2,7 +2,9 @@
 class Toolbelt
 {
 public:
+	static bool FileExists(const std::string& name);
 	static int DirExists(const char *path);
+	static long GetFileSize(std::string filename);
 	static std::wstring s2ws(const std::string& s);
 	static std::string getUserInput();
 	static char* StringToCharArray(std::string);

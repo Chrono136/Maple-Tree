@@ -6,7 +6,7 @@ public:
 	~DownloadClient();
 
 	char *dataBytes;
-	size_t length;
+	long length;
 	char *error;
 	static void ev_handler(struct mg_connection *c, int ev, void *p);
 };

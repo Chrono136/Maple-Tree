@@ -112,9 +112,9 @@ int TitleInfo::DownloadContent()
 		auto i1 = i;
 		auto numc = bs16(tmd->ContentCount);
 		auto size = bs64(tmd->Contents[i1].Size);
-		printf("Downloading Content #%u of %u... (%lu)\n", i1 + 1, numc, size);
+		printf("Downloading Content #%u of %u... (%lu)\n", i1 + 1, numc, (unsigned long)size);
 
-		sprintf(str, "00050000%08X", bs64(tmd->TitleID));
+		sprintf(str, "00050000%08X", (unsigned int)bs64(tmd->TitleID));
 		auto titleID = string(str);
 		
 		sprintf(str, "%08X", bs32(tmd->Contents[i1].ID));

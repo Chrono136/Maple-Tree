@@ -18,7 +18,7 @@
  */
 
 //#define _CRT_SECURE_NO_WARNINGS /* Disable deprecation warning in VS2005+ */
-
+#pragma warning (push, 0)
 #include "frozen.h"
 #include <ctype.h>
 #include <stdarg.h>
@@ -992,3 +992,4 @@ int json_scanf(const char *str, int len, const char *fmt, ...) {
   va_end(ap);
   return result;
 }
+#pragma warning (pop)

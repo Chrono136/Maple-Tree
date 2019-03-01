@@ -17,7 +17,7 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #pragma once
-#define _CRT_SECURE_NO_WARNINGS
+//#define _CRT_SECURE_NO_WARNINGS
 
 
 static unsigned char WiiUCommenDevKey[16] =
@@ -115,7 +115,7 @@ typedef struct
 	
 	ContentInfo ContentInfos[64];
 
-	Content Contents[];		// 0x1E4 
+	Content Contents[1024];		// 0x1E4 
 
 } TitleMetaData;
 
@@ -134,7 +134,7 @@ struct FST
 
 	u32 UnknownB[5];
 	
-	FSTInfo FSTInfos[];
+	FSTInfo FSTInfos[1024];
 };
 
 struct FEntry
@@ -193,7 +193,7 @@ static char *ReadFile( const char *Name, u32 *Length )
 
 	char *Data = new char[*Length];
 
-	u32 read = fread( Data, 1, *Length, in );
+	auto read = fread( Data, 1, *Length, in );
 
 	fclose( in );
 
@@ -504,7 +504,7 @@ static s32 start(s32 argc, const char*arg1, const char* arg2)
 
 	s32 level = 0;
 
-	printf("\n\nStarting decryption for title ID 00050000-%08X", bs64(tmd->TitleID));
+	printf("\n\nStarting decryption for title ID 00050000-%08X", (unsigned int)bs64(tmd->TitleID));
 	printf("\nPress any key to confirm. Press ESC to cancel.\n");
 	switch (_getch())
 	{

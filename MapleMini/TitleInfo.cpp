@@ -8,7 +8,6 @@ TitleInfo::TitleInfo()
 {
 }
 
-
 TitleInfo::~TitleInfo()
 {
 }
@@ -44,8 +43,10 @@ void TitleInfo::CreateDatabase()
 	return;
 }
 
-TitleInfo::TitleInfo(char * str, size_t len)
+TitleInfo::TitleInfo(char * str, size_t len, const char * _outputDir)
 {
+	outputDir = string(_outputDir);
+
 	struct json_token t;
 
 	for (int i = 0; json_scanf_array_elem(str, (int) len, "", i, &t) > 0; i++) {
@@ -66,18 +67,16 @@ TitleInfo::TitleInfo(char * str, size_t len)
 		database[strtol(id, NULL, 0)] = this;
 	}
 
+	workingDir = string(_outputDir) + string("/[") + string(region) + string("] ") + string(name);
 	return;
 }
 
 #pragma comment(lib,"Urlmon.lib")
-int TitleInfo::DownloadContent(const char * outputDir)
+int TitleInfo::DownloadContent()
 {
 	string baseURL = string("http://ccs.cdn.wup.shop.nintendo.net/ccs/download/");
 
-	_outputPath = outputDir;
-	string dir = (string(outputDir) + string("/[") + string(region) + string("] ") + string(name));
-
-	auto _dir = std::wstring(Toolbelt::s2ws(dir));
+	auto _dir = std::wstring(Toolbelt::s2ws(workingDir));
 	if (CreateDirectory(_dir.c_str(), NULL) || ERROR_ALREADY_EXISTS == GetLastError())
 	{
 
@@ -86,14 +85,12 @@ int TitleInfo::DownloadContent(const char * outputDir)
 	string _id(id);
 	std::transform(_id.begin(), _id.end(), _id.begin(), ::tolower);
 
-	string tmdPath = dir + string("/tmd");
+	string tmdPath = workingDir + string("/tmd");
 	string tmdURL = (string("http://api.tsumes.com/title/") + _id + string("/tmd"));
 
 	if (!Toolbelt::FileExists(tmdPath))
 	{
-		auto dc = DownloadClient(tmdURL.c_str());
-		if (dc.error) return -1;
-		Toolbelt::SaveFile(tmdPath.c_str(), dc.dataBytes, (u32)dc.length);
+		DownloadClient(tmdURL.c_str(), tmdPath.c_str(), 1);
 	}
 	
 	u32 TMDLen = Toolbelt::GetFileSize(tmdPath);
@@ -123,12 +120,11 @@ int TitleInfo::DownloadContent(const char * outputDir)
 		sprintf(str, "%08X", bs32(tmd->Contents[i1].ID));
 		auto contentID = string(str);
 
-		string contentPath = string(_outputPath) + string("/") + contentID;
+		string contentPath = string(outputDir) + string("/") + contentID;
 		auto downloadURL = baseURL + titleID + string("/") + contentID;
 
-		auto filePath = dir + string("/") + string(contentID.c_str());
+		auto filePath = workingDir + string("/") + string(contentID.c_str());
 		auto dc = DownloadClient(downloadURL.c_str(), filePath.c_str(), 1);
-		
 	}
 
 	return 0;

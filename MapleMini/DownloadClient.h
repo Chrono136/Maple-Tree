@@ -5,8 +5,10 @@ public:
 	DownloadClient(const char *url, const char* fileName = 0, bool toFile = 0);
 	~DownloadClient();
 
+	void DownloadData(const char *url, const char* fileName, bool toFile);
+
 	char *dataBytes;
-	long length;
+	u32 length;
 	char *error;
 	static void ev_handler(struct mg_connection *c, int ev, void *p);
 };

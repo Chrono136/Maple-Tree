@@ -79,8 +79,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>C:\OpenSSL-Win64\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\OpenSSL-Win64\lib\VC\static;C:\OpenSSL-Win64\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\OpenSSL-Win64\include;$(MSBuildProjectDirectory)\ThirdParty\include;$(MSBuildProjectDirectory)\ThirdParty\curl-7.64.0\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\OpenSSL-Win64\lib\VC\static;C:\OpenSSL-Win64\lib;$(MSBuildProjectDirectory)\ThirdParty\curl-7.64.0\lib;D:\Projects\boost_1_67_0\lib;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)\bin\$(Configuration)\$(Platform)\</OutDir>
     <IntDir>bin\$(Configuration)\$(Platform)\</IntDir>
   </PropertyGroup>
@@ -112,6 +112,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>D:\Projects\boost_1_67_0;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -156,32 +157,31 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="DownloadClient.h" />
-    <ClInclude Include="frozen.h" />
     <ClInclude Include="MapleMini.h" />
     <ClInclude Include="MapleTicket.h" />
-    <ClInclude Include="mongoose.h" />
-    <ClInclude Include="rang.hpp" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="ThirdParty\frozen.h" />
+    <ClInclude Include="ThirdParty\mongoose.h" />
+    <ClInclude Include="ThirdParty\rang.hpp" />
     <ClInclude Include="TitleInfo.h" />
     <ClInclude Include="Toolbelt.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DownloadClient.cpp" />
-    <ClCompile Include="frozen.c">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">4244;4267</DisableSpecificWarnings>
-    </ClCompile>
     <ClCompile Include="MapleMini.cpp" />
     <ClCompile Include="MapleTicket.cpp" />
-    <ClCompile Include="mongoose.c">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
-    </ClCompile>
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="ThirdParty\frozen.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="ThirdParty\mongoose.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="TitleInfo.cpp" />
     <ClCompile Include="Toolbelt.cpp" />

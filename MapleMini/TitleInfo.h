@@ -3,13 +3,16 @@
 class TitleInfo
 {
 public:
-	TitleInfo(char* str, size_t len);
+	TitleInfo(char* str, size_t len, const char * outputDir);
 	TitleInfo();
 	~TitleInfo();
 
 	static void CreateDatabase();
 
-	int DownloadContent(const char * outputDir);
+	int DownloadContent();
+
+	std::string workingDir;
+	std::string outputDir;
 
 	char* uid;
 	char* id;
@@ -27,6 +30,5 @@ public:
 	char* notes;
 
 private:
-	const char* _outputPath;
 };
 

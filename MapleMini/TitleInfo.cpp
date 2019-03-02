@@ -76,7 +76,7 @@ int TitleInfo::DownloadContent()
 {
 	string baseURL = string("http://ccs.cdn.wup.shop.nintendo.net/ccs/download/");
 
-	auto _dir = std::wstring(Toolbelt::s2ws(workingDir));
+	auto _dir = std::wstring(s2ws(workingDir));
 	if (CreateDirectory(_dir.c_str(), NULL) || ERROR_ALREADY_EXISTS == GetLastError())
 	{
 
@@ -88,13 +88,13 @@ int TitleInfo::DownloadContent()
 	string tmdPath = workingDir + string("/tmd");
 	string tmdURL = (string("http://api.tsumes.com/title/") + _id + string("/tmd"));
 
-	if (!Toolbelt::FileExists(tmdPath))
+	if (!FileExists(tmdPath))
 	{
 		DownloadClient(tmdURL.c_str(), tmdPath.c_str(), 1);
 	}
 	
-	u32 TMDLen = Toolbelt::GetFileSize(tmdPath);
-	char* TMD = Toolbelt::ReadFile(tmdPath.c_str(), &TMDLen);
+	u32 TMDLen = GetFileSize(tmdPath);
+	char* TMD = ReadFile(tmdPath.c_str(), &TMDLen);
 
 	if (TMD == nullptr)
 	{
@@ -127,5 +127,6 @@ int TitleInfo::DownloadContent()
 		auto dc = DownloadClient(downloadURL.c_str(), filePath.c_str(), 1);
 	}
 
+	cout << rang::style::bold << "Download Complete!!" << rang::style::reset << endl;
 	return 0;
 }

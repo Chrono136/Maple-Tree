@@ -2,12 +2,12 @@
 #include "Toolbelt.h"
 
 
-bool Toolbelt::FileExists(const std::string& name) {
+bool CommonTools::FileExists(const std::string& name) {
 	struct stat buffer;
 	return (stat(name.c_str(), &buffer) == 0);
 }
 
-int Toolbelt::DirExists(const char *path)
+int CommonTools::DirExists(const char *path)
 {
 	struct stat info;
 
@@ -19,14 +19,14 @@ int Toolbelt::DirExists(const char *path)
 		return 0;
 }
 
-long Toolbelt::GetFileSize(std::string filename)
+long CommonTools::GetFileSize(std::string filename)
 {
 	struct stat stat_buf;
 	int rc = stat(filename.c_str(), &stat_buf);
 	return rc == 0 ? stat_buf.st_size : -1;
 }
 
-std::wstring Toolbelt::s2ws(const std::string& s)
+std::wstring CommonTools::s2ws(const std::string& s)
 {
 	int len;
 	int slength = (int)s.length() + 1;
@@ -38,7 +38,7 @@ std::wstring Toolbelt::s2ws(const std::string& s)
 	return r;
 }
 
-std::string Toolbelt::getUserInput()
+std::string CommonTools::getUserInput()
 {
 	std::string input = "";
 
@@ -48,7 +48,7 @@ std::string Toolbelt::getUserInput()
 }
 
 //TODO: probably a memory leak, don't care(yet)
-char* Toolbelt::StringToCharArray(std::string str)
+char * CommonTools::StringToCharArray(std::string str)
 {
 	char *cstr = new char[str.length() + 1];
 	strcpy(cstr, str.c_str());
@@ -57,22 +57,60 @@ char* Toolbelt::StringToCharArray(std::string str)
 	delete[] cstr;
 }
 
-char * Toolbelt::DownloadBytes(char *)
+vector<void*> CommonTools::DownloadBytes(const char * url)
 {
-	return nullptr;
+	vector<void*> d;
+	auto dc = DownloadClient(url);
+	
+	if (dc.length > 0)
+	{
+		d.push_back(dc.dataBytes);
+		d.push_back(&dc.length);
+	}
+
+	return d;
 }
 
-void Toolbelt::WriteLine(const char * text)
+void CommonTools::WriteLine(char const * const fmt, ...)
 {
-	cout << rang::style::bold << text << rang::style::reset << endl;
+	char buffer[1024];
+
+	va_list args;
+	va_start(args, fmt);
+	vsprintf(buffer, fmt, args);
+
+	cout << buffer << rang::style::reset << endl;
+
+	va_end(args);
 }
 
-void Toolbelt::WriteLineRed(const char * text)
+void CommonTools::WriteLineBold(char const * const fmt, ...)
 {
-	cout << rang::fg::red << text << rang::style::reset << endl;
+	char buffer[1024];
+
+	va_list args;
+	va_start(args, fmt);
+	vsprintf(buffer, fmt, args);
+
+	cout << rang::style::bold << buffer << rang::style::reset << endl;
+
+	va_end(args);
 }
 
-char * Toolbelt::ReadFile(const char * Name, u32 * Length)
+void CommonTools::WriteLineRed(char const * const fmt, ...)
+{
+	char buffer[1024];
+
+	va_list args;
+	va_start(args, fmt);
+	vsprintf(buffer, fmt, args);
+
+	cout << rang::fg::red << fmt << rang::style::reset << endl;
+
+	va_end(args);
+}
+
+char * CommonTools::ReadFile(const char * Name, u32 * Length)
 {
 	FILE* in = fopen(Name, "rb");
 	if (in == nullptr)
@@ -95,7 +133,7 @@ char * Toolbelt::ReadFile(const char * Name, u32 * Length)
 	return Data;
 }
 
-void Toolbelt::SaveFile(const char* Name, void* Data, u32 Length)
+void CommonTools::SaveFile(const char* Name, void* Data, u32 Length)
 {
 	if (Data == nullptr)
 	{
@@ -120,13 +158,4 @@ void Toolbelt::SaveFile(const char* Name, void* Data, u32 Length)
 	}
 
 	fclose(Out);
-}
-
-Toolbelt::Toolbelt()
-{
-}
-
-
-Toolbelt::~Toolbelt()
-{
 }

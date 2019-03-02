@@ -177,7 +177,7 @@ static u64 bs64( u64 i )
 {
 	return ((u64)(bs32(i&0xFFFFFFFF))<<32) | (bs32(i>>32));
 }
-static char *ReadFile( const char *Name, u32 *Length )
+static char *_ReadFile( const char *Name, u32 *Length )
 {
 	FILE *in = fopen(Name,"rb");
 	if( in == NULL )
@@ -401,7 +401,7 @@ static s32 start(s32 argc, const char*arg1, const char* arg2)
 	}
 
 	u32 TMDLen;
-	char *TMD = ReadFile(arg1, &TMDLen);
+	char *TMD = _ReadFile(arg1, &TMDLen);
 	if (TMD == nullptr)
 	{
 		perror("Failed to open tmd\n");
@@ -409,7 +409,7 @@ static s32 start(s32 argc, const char*arg1, const char* arg2)
 	}
 
 	u32 TIKLen;
-	char *TIK = ReadFile(arg2, &TIKLen);
+	char *TIK = _ReadFile(arg2, &TIKLen);
 	if (TIK == nullptr)
 	{
 		perror("Failed to open cetk\n");
@@ -455,11 +455,11 @@ static s32 start(s32 argc, const char*arg1, const char* arg2)
 	sprintf(str, "%08X.app", bs32(tmd->Contents[0].ID));
 
 	u32 CNTLen;
-	char *CNT = ReadFile(str, &CNTLen);
+	char *CNT = _ReadFile(str, &CNTLen);
 	if (CNT == (char*)NULL)
 	{
 		sprintf(str, "%08X", bs32(tmd->Contents[0].ID));
-		CNT = ReadFile(str, &CNTLen);
+		CNT = _ReadFile(str, &CNTLen);
 		if (CNT == (char*)NULL)
 		{
 			printf("Failed to open content:%02X\n", bs32(tmd->Contents[0].ID));

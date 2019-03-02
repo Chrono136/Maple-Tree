@@ -112,9 +112,9 @@ void DownloadClient::DownloadData(const char *url, const char* fileName, bool to
 		}
 		outFile.close();
 		
-		if (Toolbelt::GetFileSize(fileName) < 2e+7)
+		if (GetFileSize(fileName) < 2e+7)
 		{
-			if (!toFile && (buffer = string(Toolbelt::ReadFile(fileName, &length))).length())
+			if (!toFile && (buffer = string(ReadFile(fileName, &length))).length())
 			{
 				dataBytes = new char[length];
 				memcpy(dataBytes, buffer.c_str(), length);

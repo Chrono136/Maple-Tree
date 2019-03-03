@@ -1,4 +1,4 @@
-# MapleTree - Stable
+# MapleSeed Command Line
 
 #### MapleSeed CLI Development Discord
 - Pre-released debug builds will be posted to the #releases channel periodically.

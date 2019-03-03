@@ -21,9 +21,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Toolbelt.h">
-      <Filter>Common</Filter>
-    </ClInclude>
     <ClInclude Include="MapleTicket.h">
       <Filter>WiiU</Filter>
     </ClInclude>
@@ -46,11 +43,14 @@
     <ClInclude Include="ThirdParty\rang.hpp">
       <Filter>ThirdParty</Filter>
     </ClInclude>
+    <ClInclude Include="CommonStructures.h">
+      <Filter>Structures</Filter>
+    </ClInclude>
+    <ClInclude Include="Tools.h">
+      <Filter>Common</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Toolbelt.cpp">
-      <Filter>Common</Filter>
-    </ClCompile>
     <ClCompile Include="MapleMini.cpp" />
     <ClCompile Include="MapleTicket.cpp">
       <Filter>WiiU</Filter>
@@ -66,6 +66,9 @@
     </ClCompile>
     <ClCompile Include="ThirdParty\frozen.c">
       <Filter>ThirdParty</Filter>
+    </ClCompile>
+    <ClCompile Include="Tools.cpp">
+      <Filter>Common</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

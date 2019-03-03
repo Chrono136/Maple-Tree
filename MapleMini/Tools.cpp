@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "Toolbelt.h"
+#include "Tools.h"
 
 
 bool CommonTools::FileExists(const std::string& name) {
@@ -57,18 +57,18 @@ char * CommonTools::StringToCharArray(std::string str)
 	delete[] cstr;
 }
 
-vector<void*> CommonTools::DownloadBytes(const char * url)
+struct CommonStructures::DataInfo CommonTools::DownloadBytes(const char * url)
 {
-	vector<void*> d;
-	auto dc = DownloadClient(url);
+	DataInfo di;
+	DownloadClient dc;
 	
-	if (dc.length > 0)
+	if ((dc = DownloadClient(url)).length > 0)
 	{
-		d.push_back(dc.dataBytes);
-		d.push_back(&dc.length);
+		di.data = dc.dataBytes;
+		di.len = dc.length;
 	}
 
-	return d;
+	return di;
 }
 
 void CommonTools::WriteLine(char const * const fmt, ...)

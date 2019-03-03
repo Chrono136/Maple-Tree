@@ -17,7 +17,7 @@ If you would like to make a donation to this project, please use the Paypal link
 # 
 # FAQ
 
-### Content does no decrypt.
+### Content does not decrypt.
 - Ensure you have both the cetk and tmd located in the same directory as the content you're decrypting. These files are required.
 
 ### What is this?

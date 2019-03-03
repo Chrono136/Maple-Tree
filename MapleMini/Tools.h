@@ -14,8 +14,7 @@ namespace CommonTools
 	char* StringToCharArray(std::string);
 
 	//A shortcut to DownloadClient::DownloadData
-	//Returns an array of 2 void pointers. char*(data) and int(length)
-	std::vector<void*> DownloadBytes(const char* url);
+	struct CommonStructures::DataInfo DownloadBytes(const char* url);
 
 	char* ReadFile(const char* Name, u32* Length);
 	void SaveFile(const char* Name, void* Data, u32 Length);

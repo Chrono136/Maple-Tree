@@ -78,9 +78,7 @@ int TitleInfo::DownloadContent()
 
 	auto _dir = std::wstring(s2ws(workingDir));
 	if (CreateDirectory(_dir.c_str(), NULL) || ERROR_ALREADY_EXISTS == GetLastError())
-	{
-
-	}
+	{}
 
 	string _id(id);
 	std::transform(_id.begin(), _id.end(), _id.begin(), ::tolower);
@@ -112,7 +110,6 @@ int TitleInfo::DownloadContent()
 		auto i1 = i;
 		auto numc = bs16(tmd->ContentCount);
 		auto size = bs64(tmd->Contents[i1].Size);
-		printf("Downloading Content #%u of %u... (%lu)\n", i1 + 1, numc, (unsigned long)size);
 
 		sprintf(str, "00050000%08X", (unsigned int)bs64(tmd->TitleID));
 		auto titleID = string(str);
@@ -123,8 +120,17 @@ int TitleInfo::DownloadContent()
 		string contentPath = string(outputDir) + string("/") + contentID;
 		auto downloadURL = baseURL + titleID + string("/") + contentID;
 
-		auto filePath = workingDir + string("/") + string(contentID.c_str());
-		auto dc = DownloadClient(downloadURL.c_str(), filePath.c_str(), 1);
+		auto filePath = workingDir + string("/") + contentID;
+
+		if (!CommonTools::ContentExists(filePath, size))
+		{
+			printf("Downloading Content (%s) #%u of %u... (%lu)\n", contentID.c_str(), i1 + 1, numc, (unsigned long)size);
+			auto dc = DownloadClient(downloadURL.c_str(), filePath.c_str(), 1);
+		}
+		else
+		{
+			printf("Skipping Content (%s) #%u of %u... (%lu)\n", contentID.c_str(), i1 + 1, numc, (unsigned long)size);
+		}
 	}
 
 	cout << rang::style::bold << "Download Complete!!" << rang::style::reset << endl;

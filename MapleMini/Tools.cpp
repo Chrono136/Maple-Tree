@@ -2,7 +2,19 @@
 #include "Tools.h"
 
 
-bool CommonTools::FileExists(const std::string& name) {
+bool CommonTools::ContentExists(std::string f, long s) {
+	if (!CommonTools::FileExists(f))
+	{
+		return 0;
+	}
+	if (CommonTools::GetFileSize(f) != s)
+	{
+		return 0;
+	}
+	return 1;
+}
+
+bool CommonTools::FileExists(std::string name) {
 	struct stat buffer;
 	return (stat(name.c_str(), &buffer) == 0);
 }

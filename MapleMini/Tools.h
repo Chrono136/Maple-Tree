@@ -6,7 +6,8 @@ namespace CommonTools
 	void WriteLineBold(char const* const _format, ...);
 	void WriteLineRed(char const * const fmt, ...);
 
-	bool FileExists(const std::string& name);
+	bool ContentExists(std::string filePath, long shouldBe);
+	bool FileExists(std::string name);
 	int DirExists(const char *path);
 	long GetFileSize(std::string filename);
 	std::wstring s2ws(const std::string& s);

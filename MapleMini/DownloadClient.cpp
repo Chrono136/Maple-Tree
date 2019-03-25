@@ -20,8 +20,6 @@ void DownloadClient::DownloadData(const char *url, const char* fileName, unsigne
 			fileName = tmpnam(nullptr);
 		}
 		
-		boost::progress_display progress(rsize);
-		
 		if ((csize = CommonTools::GetFileSize(fileName)) > rsize)
 			outFile = std::ofstream(fileName, std::ofstream::binary);
 		else
@@ -89,12 +87,20 @@ void DownloadClient::DownloadData(const char *url, const char* fileName, unsigne
 		}
 
 		// Read until EOF, writing data to output as we go.
-		while (boost::asio::read(socket, response, boost::asio::transfer_at_least(1), error))
+		if (resume)
 		{
-			outFile << &response;
-			if (resume)
+			boost::progress_display progress(rsize);
+			while (boost::asio::read(socket, response, boost::asio::transfer_at_least(1), error))
 			{
+				outFile << &response;
 				progress += (unsigned long)outFile.tellp() - progress.count();
+			}
+		}
+		else
+		{
+			while (boost::asio::read(socket, response, boost::asio::transfer_at_least(1), error))
+			{
+				outFile << &response;
 			}
 		}
 		outFile.close();

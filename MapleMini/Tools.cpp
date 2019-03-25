@@ -34,31 +34,6 @@ bool CommonTools::ContentValid(std::string path, unsigned long len, unsigned cha
 	if (CommonTools::FileExists(path) != true) return 0;
 	if (CommonTools::GetFileSize(path) != len) return 0;
 	return 1;
-
-	char hexstr[SHA_DIGEST_LENGTH * 2 + 1];
-	for (int i = 0; i < SHA_DIGEST_LENGTH; i++)
-		sprintf(&hexstr[i * 2], "%02x", (unsigned int)hash[i]);
-
-	unsigned char digest[SHA_DIGEST_LENGTH];
-	SHA_CTX ctx;
-	SHA1_Init(&ctx);
-	std::ifstream bigFile(path);
-	const int bufferSize = 1024 * 10;
-	while (bigFile)
-	{
-		char buf[bufferSize];
-		bigFile.read(buf, bufferSize);
-		SHA1_Update(&ctx, buf, bufferSize);
-	}
-	SHA1_Final(digest, &ctx);
-	char hex_str[SHA_DIGEST_LENGTH * 2 + 1];
-	for (int i = 0; i < SHA_DIGEST_LENGTH; i++)
-		sprintf(&hex_str[i * 2], "%02x", (unsigned int)digest[i]);
-
-	if (memcmp(hash, digest, SHA_DIGEST_LENGTH) != 0)
-		return 0;
-
-	return 1;
 }
 
 bool CommonTools::FileExists(std::string name) {

@@ -106,8 +106,6 @@ int TitleInfo::DownloadContent()
 	for (int i = 0; i < contentCount; i++)
 	{
 		char str[1024];
-
-		auto size = bs64(tmd->Contents[i].Size);
 		
 		sprintf(str, "00050000%08X", (unsigned int)bs64(tmd->TitleID));
 		auto titleID = string(str);
@@ -119,6 +117,7 @@ int TitleInfo::DownloadContent()
 		auto downloadURL = baseURL + titleID + string("/") + contentID;
 
 		auto filePath = workingDir + string("/") + contentID;
+		auto size = bs64(tmd->Contents[i].Size);
 
 		if (!CommonTools::ContentValid(filePath, size, NULL))
 		{

@@ -4,6 +4,9 @@
 using namespace boost::asio;
 using boost::asio::ip::tcp;
 
+#define PBSTR "||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||"
+#define PBWIDTH 60
+
 void DownloadClient::DownloadData(const char *url, const char* fileName, unsigned long rsize, bool toFile, bool resume)
 {
 	string buffer;
@@ -24,6 +27,8 @@ void DownloadClient::DownloadData(const char *url, const char* fileName, unsigne
 			outFile = std::ofstream(fileName, std::ofstream::binary);
 		else
 			outFile = std::ofstream(fileName, std::ofstream::binary | std::ios_base::app);
+		
+		boost::progress_display progress(rsize);
 
 		boost::asio::io_service io_service;
 
@@ -54,9 +59,6 @@ void DownloadClient::DownloadData(const char *url, const char* fileName, unsigne
 			request_stream << "Range: bytes=" << csize << "-" << rsize << "\r\n";
 		}
 		request_stream << "Connection: close\r\n\r\n";
-
-		// This buffer is used for reading and must be persisted
-		//boost::beast::flat_buffer buffer;
 
 		// Send the request.
 		boost::asio::write(socket, request);
@@ -93,6 +95,10 @@ void DownloadClient::DownloadData(const char *url, const char* fileName, unsigne
 		{
 			outFile << &response;
 			outFile.flush();
+			if (resume)
+			{
+				progress += (unsigned long) outFile.tellp()-progress.count();
+			}
 		}
 		outFile.close();
 		

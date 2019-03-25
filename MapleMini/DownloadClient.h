@@ -7,6 +7,7 @@ public:
 	~DownloadClient();
 
 	void DownloadData(const char *url, const char* fileName, unsigned long filesize, bool toFile, bool resume);
+	void printProgress(double percentage);
 
 	char *dataBytes;
 	u32 length;

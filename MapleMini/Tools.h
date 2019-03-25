@@ -8,7 +8,8 @@ namespace CommonTools
 
 	void ParseUrl(std::string url, std::string &serverName, std::string &filepath, std::string &filename);
 
-	bool ContentExists(std::string filePath, long shouldBe);
+	bool ContentValid(std::string filePath, unsigned long len, unsigned char* s);
+
 	bool FileExists(std::string name);
 	int DirExists(const char *path);
 	unsigned long GetFileSize(std::string filename);

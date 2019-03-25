@@ -4,14 +4,13 @@
 using namespace boost::asio;
 using boost::asio::ip::tcp;
 
-#define PBSTR "||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||"
-#define PBWIDTH 60
 
 void DownloadClient::DownloadData(const char *url, const char* fileName, unsigned long rsize, bool toFile, bool resume)
 {
-	string buffer;
 	string pserverName; string pfilepath; string pfilename;
 	ParseUrl(url, pserverName, pfilepath, pfilename);
+
+	unsigned long csize;
 	std::ofstream outFile;
 
 	try
@@ -21,14 +20,12 @@ void DownloadClient::DownloadData(const char *url, const char* fileName, unsigne
 			fileName = tmpnam(nullptr);
 		}
 		
-		unsigned long csize = CommonTools::GetFileSize(fileName);
+		boost::progress_display progress(rsize);
 		
-		if (csize > rsize)
+		if ((csize = CommonTools::GetFileSize(fileName)) > rsize)
 			outFile = std::ofstream(fileName, std::ofstream::binary);
 		else
 			outFile = std::ofstream(fileName, std::ofstream::binary | std::ios_base::app);
-		
-		boost::progress_display progress(rsize);
 
 		boost::asio::io_service io_service;
 
@@ -90,20 +87,21 @@ void DownloadClient::DownloadData(const char *url, const char* fileName, unsigne
 		{
 			outFile << &response;
 		}
+
 		// Read until EOF, writing data to output as we go.
 		while (boost::asio::read(socket, response, boost::asio::transfer_at_least(1), error))
 		{
 			outFile << &response;
-			outFile.flush();
 			if (resume)
 			{
-				progress += (unsigned long) outFile.tellp()-progress.count();
+				progress += (unsigned long)outFile.tellp() - progress.count();
 			}
 		}
 		outFile.close();
 		
 		if (GetFileSize(fileName) < 2e+7)
 		{
+			string buffer;
 			if (!toFile && (buffer = string(ReadFile(fileName, &length))).length())
 			{
 				dataBytes = new char[length];

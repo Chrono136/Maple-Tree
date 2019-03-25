@@ -107,14 +107,12 @@ int TitleInfo::DownloadContent()
 	{
 		char str[1024];
 
-		auto i1 = i;
-		auto numc = bs16(tmd->ContentCount);
-		auto size = bs64(tmd->Contents[i1].Size);
-
+		auto size = bs64(tmd->Contents[i].Size);
+		
 		sprintf(str, "00050000%08X", (unsigned int)bs64(tmd->TitleID));
 		auto titleID = string(str);
 		
-		sprintf(str, "%08X", bs32(tmd->Contents[i1].ID));
+		sprintf(str, "%08X", bs32(tmd->Contents[i].ID));
 		auto contentID = string(str);
 
 		string contentPath = string(outputDir) + string("/") + contentID;
@@ -122,14 +120,14 @@ int TitleInfo::DownloadContent()
 
 		auto filePath = workingDir + string("/") + contentID;
 
-		if (!CommonTools::ContentExists(filePath, size))
+		if (!CommonTools::ContentValid(filePath, size, NULL))
 		{
-			printf("Downloading Content (%s) #%u of %u... (%lu)\n", contentID.c_str(), i1 + 1, numc, (unsigned long)size);
+			printf("Downloading Content (%s) #%u of %u... (%lu)\n", contentID.c_str(), i + 1, contentCount, (unsigned long)size);
 			auto dc = DownloadClient(downloadURL.c_str(), filePath.c_str(), (unsigned long)size, 1, 1);
 		}
 		else
 		{
-			printf("Skipping Content (%s) #%u of %u... (%lu)\n", contentID.c_str(), i1 + 1, numc, (unsigned long)size);
+			printf("Skipping Content (%s) #%u of %u... (%lu)\n", contentID.c_str(), i + 1, contentCount, (unsigned long)size);
 		}
 	}
 

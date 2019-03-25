@@ -2,6 +2,33 @@
 #include "Tools.h"
 
 
+void CommonTools::ParseUrl(std::string url, std::string &serverName, std::string &filepath, std::string &filename)
+{
+	string::size_type n;
+
+	if (url.substr(0, 7) == "http://")
+		url.erase(0, 7);
+
+	if (url.substr(0, 8) == "https://")
+		url.erase(0, 8);
+
+	n = url.find('/');
+	if (n != string::npos)
+	{
+		serverName = url.substr(0, n);
+		filepath = url.substr(n);
+		n = filepath.rfind('/');
+		filename = filepath.substr(n + 1);
+	}
+
+	else
+	{
+		serverName = url;
+		filepath = "/";
+		filename = "";
+	}
+}
+
 bool CommonTools::ContentExists(std::string f, long s) {
 	if (!CommonTools::FileExists(f))
 	{
@@ -31,11 +58,11 @@ int CommonTools::DirExists(const char *path)
 		return 0;
 }
 
-long CommonTools::GetFileSize(std::string filename)
+unsigned long CommonTools::GetFileSize(std::string filename)
 {
 	struct stat stat_buf;
 	int rc = stat(filename.c_str(), &stat_buf);
-	return rc == 0 ? stat_buf.st_size : -1;
+	return rc == 0 ? (unsigned long)stat_buf.st_size : -1;
 }
 
 std::wstring CommonTools::s2ws(const std::string& s)

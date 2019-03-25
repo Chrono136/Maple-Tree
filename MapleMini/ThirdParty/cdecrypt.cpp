@@ -386,7 +386,7 @@ static void ExtractFile( FILE *in, u64 PartDataOffset, u64 FileOffset, u64 Size,
 	
 	fclose( out );
 }
-static s32 start(s32 argc, const char*arg1, const char* arg2)
+static s32 startDecryption(s32 argc, const char*arg1, const char* arg2, bool confirm = 1)
 {
 	char str[1024];
 
@@ -504,14 +504,17 @@ static s32 start(s32 argc, const char*arg1, const char* arg2)
 
 	s32 level = 0;
 
-	printf("\n\nStarting decryption for title ID 00050000-%08X", (unsigned int)bs64(tmd->TitleID));
-	printf("\nPress any key to confirm. Press ESC to cancel.\n");
-	switch (_getch())
+	if (confirm)
 	{
-	case 27:
-		printf("\nProcess cancelled!!\n");
-		return EXIT_FAILURE;
-		break;
+		printf("\n\nStarting decryption for title ID 00050000-%08X", (unsigned int)bs64(tmd->TitleID));
+		printf("\nPress any key to confirm. Press ESC to cancel.\n");
+		switch (_getch())
+		{
+		case 27:
+			printf("\nProcess cancelled!!\n");
+			return EXIT_FAILURE;
+			break;
+		}
 	}
 
 	for (u32 i = 1; i < Entries; ++i)
@@ -591,5 +594,6 @@ static s32 start(s32 argc, const char*arg1, const char* arg2)
 			}
 		}
 	}
+	std::cout << "Content Decryption Complete.\n\n";
 	return EXIT_SUCCESS;
 }

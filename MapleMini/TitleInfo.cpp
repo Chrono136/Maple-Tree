@@ -125,7 +125,7 @@ int TitleInfo::DownloadContent()
 		if (!CommonTools::ContentExists(filePath, size))
 		{
 			printf("Downloading Content (%s) #%u of %u... (%lu)\n", contentID.c_str(), i1 + 1, numc, (unsigned long)size);
-			auto dc = DownloadClient(downloadURL.c_str(), filePath.c_str(), 1);
+			auto dc = DownloadClient(downloadURL.c_str(), filePath.c_str(), (unsigned long)size, 1, 1);
 		}
 		else
 		{

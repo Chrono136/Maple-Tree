@@ -6,10 +6,12 @@ namespace CommonTools
 	void WriteLineBold(char const* const _format, ...);
 	void WriteLineRed(char const * const fmt, ...);
 
+	void ParseUrl(std::string url, std::string &serverName, std::string &filepath, std::string &filename);
+
 	bool ContentExists(std::string filePath, long shouldBe);
 	bool FileExists(std::string name);
 	int DirExists(const char *path);
-	long GetFileSize(std::string filename);
+	unsigned long GetFileSize(std::string filename);
 	std::wstring s2ws(const std::string& s);
 	std::string getUserInput();
 	char* StringToCharArray(std::string);

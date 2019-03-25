@@ -4,39 +4,12 @@
 using namespace boost::asio;
 using boost::asio::ip::tcp;
 
-void mParseUrl(const char *mUrl, string &serverName, string &filepath, string &filename)
+void DownloadClient::DownloadData(const char *url, const char* fileName, unsigned long rsize, bool toFile, bool resume)
 {
-	string::size_type n;
-	string url = mUrl;
-
-	if (url.substr(0, 7) == "http://")
-		url.erase(0, 7);
-
-	if (url.substr(0, 8) == "https://")
-		url.erase(0, 8);
-
-	n = url.find('/');
-	if (n != string::npos)
-	{
-		serverName = url.substr(0, n);
-		filepath = url.substr(n);
-		n = filepath.rfind('/');
-		filename = filepath.substr(n + 1);
-	}
-
-	else
-	{
-		serverName = url;
-		filepath = "/";
-		filename = "";
-	}
-}
-
-void DownloadClient::DownloadData(const char *url, const char* fileName, bool toFile)
-{
-	string serverName; string filepath; string filename;
-	mParseUrl(url, serverName, filepath, filename);
 	string buffer;
+	string pserverName; string pfilepath; string pfilename;
+	ParseUrl(url, pserverName, pfilepath, pfilename);
+	std::ofstream outFile;
 
 	try
 	{
@@ -44,14 +17,19 @@ void DownloadClient::DownloadData(const char *url, const char* fileName, bool to
 		{
 			fileName = tmpnam(nullptr);
 		}
-
-		std::ofstream outFile(fileName, std::ofstream::binary);
+		
+		unsigned long csize = CommonTools::GetFileSize(fileName);
+		
+		if (csize > rsize)
+			outFile = std::ofstream(fileName, std::ofstream::binary);
+		else
+			outFile = std::ofstream(fileName, std::ofstream::binary | std::ios_base::app);
 
 		boost::asio::io_service io_service;
 
 		// Get a list of endpoints corresponding to the server name.
 		tcp::resolver resolver(io_service);
-		tcp::resolver::query query(serverName, "http");
+		tcp::resolver::query query(pserverName, "http");
 		tcp::resolver::iterator endpoint_iterator = resolver.resolve(query);
 		tcp::resolver::iterator end;
 
@@ -67,9 +45,14 @@ void DownloadClient::DownloadData(const char *url, const char* fileName, bool to
 		boost::asio::streambuf request;
 		std::ostream request_stream(&request);
 
-		request_stream << "GET " << filepath << " HTTP/1.0\r\n";
-		request_stream << "Host: " << serverName << "\r\n";
+		request_stream << "GET " << pfilepath << " HTTP/1.0\r\n";
+		request_stream << "Host: " << pserverName << "\r\n";
 		request_stream << "Accept: */*\r\n";
+		if (resume) //setup download resume
+		{
+			outFile.seekp(0, ios::end);
+			request_stream << "Range: bytes=" << csize << "-" << rsize << "\r\n";
+		}
 		request_stream << "Connection: close\r\n\r\n";
 
 		// This buffer is used for reading and must be persisted
@@ -109,6 +92,7 @@ void DownloadClient::DownloadData(const char *url, const char* fileName, bool to
 		while (boost::asio::read(socket, response, boost::asio::transfer_at_least(1), error))
 		{
 			outFile << &response;
+			outFile.flush();
 		}
 		outFile.close();
 		
@@ -128,9 +112,9 @@ void DownloadClient::DownloadData(const char *url, const char* fileName, bool to
 	}
 }
 
-DownloadClient::DownloadClient(const char *url, const char* fileName, bool toFile)
+DownloadClient::DownloadClient(const char *url, const char* fileName, unsigned long filesize, bool toFile, bool resume)
 {
-	DownloadData(url, fileName, toFile);
+	DownloadData(url, fileName, filesize, toFile, resume);
 }
 
 DownloadClient::~DownloadClient()

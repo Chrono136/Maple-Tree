@@ -81,7 +81,6 @@ void DownloadClient::DownloadFile(const char *url, const char*fn)
 	catch (std::exception const& e)
 	{
 		std::cerr << "Error: " << e.what() << std::endl;
-		return;
 	}
 }
 

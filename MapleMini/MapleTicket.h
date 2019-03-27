@@ -7,12 +7,10 @@ public:
 
 	static MapleTicket Create(TitleInfo * ti);
 
-	int length;
-	char* ticket;
+	char* data;
+	int len;
 
 private:
-	static const int TK = 0x140;
-
-
+	static const int TICKET_SIZE;
 };
 

@@ -72,8 +72,8 @@ char * TitleInfo::GenerateTicket(std::string working_dir, TitleInfo * ti)
 	if (ti && DirExists(working_dir.c_str()))
 	{
 		MapleTicket mt = MapleTicket::Create(ti);
-		char* data = mt.ticket;
-		int len = mt.length;
+		char* data = mt.data;
+		int len = mt.len;
 
 		SaveFile((working_dir + string("/cetk")).c_str(), data, len);
 		

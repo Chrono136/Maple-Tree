@@ -43,8 +43,11 @@ void TitleInfo::CreateDatabase()
 	return;
 }
 
-char * TitleInfo::GenerateTMD(std::string working_dir, std::string _id)
+char * TitleInfo::GenerateTMD(std::string working_dir, std::string __id)
 {
+	string _id(__id);
+	std::transform(_id.begin(), _id.end(), _id.begin(), ::tolower);
+
 	string tmdPath = working_dir + string("/tmd");
 	string tmdURL = (string("http://api.tsumes.com/title/") + _id + string("/tmd"));
 
@@ -114,14 +117,10 @@ int TitleInfo::DownloadContent()
 	string baseURL = string("http://ccs.cdn.wup.shop.nintendo.net/ccs/download/");
 
 	auto _dir = std::wstring(s2ws(workingDir));
-	if (CreateDirectory(_dir.c_str(), NULL) || ERROR_ALREADY_EXISTS == GetLastError())
-	{}
-
-	string _id(id);
-	std::transform(_id.begin(), _id.end(), _id.begin(), ::tolower);
+	if (CreateDirectory(_dir.c_str(), NULL) || ERROR_ALREADY_EXISTS == GetLastError()) {}
 
 #pragma region Setup TMD
-	char* TMD = GenerateTMD(workingDir, _id);
+	char* TMD = GenerateTMD(workingDir, id);
 	TitleMetaData* tmd = (TitleMetaData*)TMD;
 #pragma endregion
 
@@ -130,7 +129,6 @@ int TitleInfo::DownloadContent()
 #pragma endregion
 
 	u16 contentCount = bs16(tmd->ContentCount);
-
 	for (int i = 0; i < contentCount; i++)
 	{
 		char str[1024];

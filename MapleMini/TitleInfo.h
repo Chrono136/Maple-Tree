@@ -9,6 +9,10 @@ public:
 
 	static void CreateDatabase();
 
+	static char * GenerateTMD(std::string working_dir, std::string _id);
+
+	static char * GenerateTicket(std::string working_dir, TitleInfo * ti);
+
 	int DownloadContent();
 
 	std::string workingDir;

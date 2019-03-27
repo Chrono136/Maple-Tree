@@ -17,7 +17,7 @@ void TitleInfo::CreateDatabase()
 	struct json_token t;
 	printf("Creating database...\n");
 	auto dc = DownloadClient("http://api.tsumes.com/title/all");
-	for (int i = 0; json_scanf_array_elem(dc.dataBytes, (int)dc.length, "", i, &t) > 0; i++) {
+	for (int i = 0; json_scanf_array_elem(dc.buf, (int)dc.len, "", i, &t) > 0; i++) {
 		thread([](struct json_token t) { 
 			auto ti = new TitleInfo;
 			json_scanf(t.ptr, t.len, "{uid: %Q}", &ti->uid);
@@ -41,6 +41,43 @@ void TitleInfo::CreateDatabase()
 
 	printf("Creating database complete.\n");
 	return;
+}
+
+char * TitleInfo::GenerateTMD(std::string working_dir, std::string _id)
+{
+	string tmdPath = working_dir + string("/tmd");
+	string tmdURL = (string("http://api.tsumes.com/title/") + _id + string("/tmd"));
+
+	DownloadClient dc_tmd;
+	if (!FileExists(tmdPath))
+	{
+		dc_tmd.DownloadFile(tmdURL.c_str(), tmdPath.c_str());
+	}
+
+	char* TMD = ReadFile(tmdPath.c_str(), &dc_tmd.len);
+	if (TMD == nullptr)
+	{
+		perror("Failed to open tmd\n");
+		return NULL;
+	}
+
+	return TMD;
+}
+
+char * TitleInfo::GenerateTicket(std::string working_dir, TitleInfo * ti)
+{
+	if (ti && DirExists(working_dir.c_str()))
+	{
+		MapleTicket mt = MapleTicket::Create(ti);
+		char* data = mt.ticket;
+		int len = mt.length;
+
+		SaveFile((working_dir + string("/cetk")).c_str(), data, len);
+		
+		return data;
+	}
+
+	return nullptr;
 }
 
 TitleInfo::TitleInfo(char * str, size_t len, const char * _outputDir)
@@ -83,24 +120,15 @@ int TitleInfo::DownloadContent()
 	string _id(id);
 	std::transform(_id.begin(), _id.end(), _id.begin(), ::tolower);
 
-	string tmdPath = workingDir + string("/tmd");
-	string tmdURL = (string("http://api.tsumes.com/title/") + _id + string("/tmd"));
+#pragma region Setup TMD
+	char* TMD = GenerateTMD(workingDir, _id);
+	TitleMetaData* tmd = (TitleMetaData*)TMD;
+#pragma endregion
 
-	if (!FileExists(tmdPath))
-	{
-		DownloadClient(tmdURL.c_str(), tmdPath.c_str(), 1);
-	}
-	
-	u32 TMDLen = GetFileSize(tmdPath);
-	char* TMD = ReadFile(tmdPath.c_str(), &TMDLen);
+#pragma region Setup Ticket
+	GenerateTicket(workingDir, this);
+#pragma endregion
 
-	if (TMD == nullptr)
-	{
-		perror("Failed to open tmd\n");
-		return -1;
-	}
-
-	auto tmd = (TitleMetaData*) TMD;
 	u16 contentCount = bs16(tmd->ContentCount);
 
 	for (int i = 0; i < contentCount; i++)

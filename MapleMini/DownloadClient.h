@@ -6,11 +6,14 @@ public:
 	DownloadClient() {}
 	~DownloadClient();
 
-	void DownloadData(const char *url, const char* fileName, unsigned long filesize, bool toFile, bool resume);
-	void printProgress(double percentage);
+	//url-> the remote location of the file to obtain
+	//fn-> the local file name to save remote file as
+	void DownloadFile(const char *url, const char*fn);
 
-	char *dataBytes;
-	u32 length;
-	char *error;
+	void DownloadData(const char *url, const char* fileName, unsigned long filesize, bool toFile, bool resume);
+
+	char *buf;
+	u32 len;
+	char *err;
 };
 

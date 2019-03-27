@@ -36,6 +36,35 @@ bool CommonTools::ContentValid(std::string path, unsigned long len, unsigned cha
 	return 1;
 }
 
+std::vector<unsigned char> CommonTools::HexToBytes(const std::string & hex)
+{
+	std::vector<unsigned char> bytes;
+
+	for (unsigned int i = 0; i < hex.length(); i += 2) {
+		std::string byteString = hex.substr(i, 2);
+		char byte = (char)strtol(byteString.c_str(), NULL, 16);
+		bytes.push_back(byte);
+	}
+
+	return bytes;
+}
+
+std::string CommonTools::string_to_hex(const std::string& input)
+{
+	static const char* const lut = "0123456789abcdef";
+	size_t len = input.length();
+
+	std::string output;
+	output.reserve(2 * len);
+	for (size_t i = 0; i < len; ++i)
+	{
+		const unsigned char c = input[i];
+		output.push_back(lut[c >> 4]);
+		output.push_back(lut[c & 15]);
+	}
+	return output;
+}
+
 bool CommonTools::FileExists(std::string name) {
 	struct stat buffer;
 	return (stat(name.c_str(), &buffer) == 0);
@@ -96,10 +125,10 @@ struct CommonStructures::DataInfo CommonTools::DownloadBytes(const char * url)
 	DataInfo di;
 	DownloadClient dc;
 	
-	if ((dc = DownloadClient(url)).length > 0)
+	if ((dc = DownloadClient(url)).len > 0)
 	{
-		di.data = dc.dataBytes;
-		di.len = dc.length;
+		di.data = dc.buf;
+		di.len = dc.len;
 	}
 
 	return di;
@@ -167,29 +196,20 @@ char * CommonTools::ReadFile(const char * Name, u32 * Length)
 	return Data;
 }
 
-void CommonTools::SaveFile(const char* Name, void* Data, u32 Length)
+void CommonTools::SaveFile(const char* fn, const char* buf, u32 len)
 {
-	if (Data == nullptr)
+	if (buf == nullptr)
 	{
 		printf("zero ptr");
 		return;
 	}
-	if (Length == 0)
+	if (len == 0)
 	{
 		printf("zero sz");
 		return;
 	}
-	FILE* Out = fopen(Name, "wb");
-	if (Out == nullptr)
-	{
-		perror("");
-		return;
-	}
-
-	if (fwrite(Data, 1, Length, Out) != Length)
-	{
-		perror("");
-	}
-
-	fclose(Out);
+	std::ofstream os(fn);
+	os.seekp(os.beg);
+	os.write(buf, len);
+	os.close();
 }

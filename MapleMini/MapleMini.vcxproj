@@ -23,7 +23,7 @@
     <ProjectGuid>{702AF608-BC81-4990-8E54-92A5DD94199B}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>MapleMini</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.17134.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
     <ProjectName>MapleSeedCLI</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />

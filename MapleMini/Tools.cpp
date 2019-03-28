@@ -67,7 +67,7 @@ std::string CommonTools::string_to_hex(const std::string& input)
 
 bool CommonTools::FileExists(std::string name) {
 	struct stat buffer;
-	return (stat(name.c_str(), &buffer) == 0);
+	return stat(name.c_str(), &buffer) == 0;
 }
 
 int CommonTools::DirExists(const char *path)

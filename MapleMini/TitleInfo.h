@@ -3,20 +3,27 @@
 class TitleInfo
 {
 public:
-	TitleInfo(char* str, size_t len, const char * outputDir);
+	TitleInfo(char* str, size_t len);
 	TitleInfo();
 	~TitleInfo();
 
 	static void CreateDatabase();
 
+	static TitleInfo * GetTitleInfo(const char * id);
+
+	TitleInfo * ParseTitleInfo(const char * str, size_t len);
+
 	static char * GenerateTMD(std::string working_dir, std::string _id);
 
-	static char * GenerateTicket(std::string working_dir, TitleInfo * ti);
+	static char * GenerateTicket(std::string id);
+	static char * GenerateTicket(TitleInfo * ti);
+
+	void SetDirectory(std::string output_root);
 
 	int DownloadContent();
 
 	std::string workingDir;
-	std::string outputDir;
+	static std::string outputDir;
 
 	char* uid;
 	char* id;

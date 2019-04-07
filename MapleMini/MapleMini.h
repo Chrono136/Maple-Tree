@@ -5,9 +5,10 @@ namespace MapleSeed
 	public:
 		static int g_init(signed int argc, char* argv[]);
 
-		static po::options_description defineOptions();
-
 		static void simpleDecrypt(std::string path, std::string defaultdir);
+
+	private:
+		static po::options_description defineOptions();
 
 		static void downloadcontent(std::string defaultdir, std::string id);
 

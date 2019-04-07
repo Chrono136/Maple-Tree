@@ -179,7 +179,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <PreBuildEvent>
-      <Command>CALL $(SolutionDir)gitgen.bat "$(IntDir)\" "$(ProjectDir)gen-versioninfo.h" --force</Command>
+      <Command>CALL $(SolutionDir)gitgen.bat "$(ProjectDir)gen-versioninfo.h"</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug (Static library)|x64'">

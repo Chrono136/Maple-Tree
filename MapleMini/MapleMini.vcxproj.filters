@@ -70,5 +70,6 @@
     <ClCompile Include="Tools.cpp">
       <Filter>Common</Filter>
     </ClCompile>
+    <ClCompile Include="main.cpp" />
   </ItemGroup>
 </Project>

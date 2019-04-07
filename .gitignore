@@ -2,13 +2,7 @@
 # This .gitignore file was automatically created by Microsoft(R) Visual Studio.
 ################################################################################
 
-/MapleMini/bin/Debug/x64
 /.vs
-/bin/Debug
-/MapleMini/[USA] Mutant Mudds Deluxe
-/MapleMini/[USA] Mutant Mudds Deluxe
-/MapleMini/[USA] Mutant Mudds Deluxe
-/MapleMini/[USA] Mutant Mudds Deluxe/tmd
-/MapleMini/bin/Release/x64
-/MapleMini/x64/Release
-/bin/Release/x64
+/bin
+/MapleMini/bin
+/MapleMini/x64

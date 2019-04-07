@@ -143,7 +143,7 @@ GOTO :EOF
 :: --------------------
 :: Precedence is Git, VERSION_FILE, then DEFAULT_VERSION.
 :: Check if git is available by testing git describe.
-CALL git describe>NUL 2>&1
+CALL git describe --tags --abbrev=5>NUL 2>&1
 IF NOT ERRORLEVEL 1 (
   SET fGIT_AVAILABLE=1
   :: Parse git version string
@@ -160,13 +160,12 @@ IF NOT ERRORLEVEL 1 (
   )
 )
 SET strFILE_VERSION=%strFILE_VERSION:~1%
-SET strFILE_VERSION=%strFILE_VERSION:-=.%
 GOTO :EOF
 
 :: --------------------
 :PARSE_GIT_STRING
 :: --------------------
-FOR /F "tokens=*" %%A IN ('"git describe --abbrev=5 HEAD"') DO (
+FOR /F "tokens=*" %%A IN ('"git describe --tags --abbrev=5"') DO (
   SET strFILE_VERSION=%%A
 )
 :: If HEAD is dirty then this is not part of an official build and even if a
@@ -184,7 +183,7 @@ IF ERRORLEVEL 1 (
 )
 FOR /F %%A IN ('git diff-index --name-only HEAD --') DO SET tmp=%%A
 IF NOT "%tmp%" == "" (
-  SET strFILE_VERSION=%strFILE_VERSION%-dirty
+  SET strFILE_VERSION=%strFILE_VERSION%
 )
 SET tmp=
 GOTO :EOF
@@ -304,7 +303,7 @@ GOTO :EOF
 :: PATCHED indicates that the build is taking place at a non-tagged commit.
 SET tmp=v%nbMAJOR_PART%.%nbMINOR_PART%.%nbFIX_PART%%strSTAGE_PART%%nbSTAGE_VERSION%
 IF DEFINED fGIT_AVAILABLE (
-  FOR /F "tokens=*" %%A IN ('"git describe HEAD"') DO SET tmp2=%%A
+  FOR /F "tokens=*" %%A IN ('"git describe --tags --abbrev=5"') DO SET tmp2=%%A
 )
 IF NOT "%tmp%" == "%tmp2%" SET fPATCHED=1
 
@@ -494,47 +493,47 @@ FOR /F "tokens=* usebackq" %%A IN (`"%git_cmd%"`) DO (
 
 :: Builder checked out the parent of v1.0.0
 CALL git reset --hard v1.0.0~1 >NUL
-FOR /F "tokens=*" %%A IN ('"git describe HEAD"') DO SET tmp=%%A
+FOR /F "tokens=*" %%A IN ('"git describe --tags --abbrev=5"') DO SET tmp=%%A
 CALL :TEST_VERSION %tmp%
 
 :: Builder staged a file.
 CALL touch README >NUL
 CALL git add README
-FOR /F "tokens=*" %%A IN ('"git describe HEAD"') DO SET tmp=%%A
+FOR /F "tokens=*" %%A IN ('"git describe --tags --abbrev=5"') DO SET tmp=%%A
 CALL :TEST_VERSION %tmp%
 
 :: Builder checks out a tagged release and stages a file
 CALL git reset --hard v1.0.0 >NUL
-FOR /F "tokens=*" %%A IN ('"git describe HEAD"') DO SET tmp=%%A
+FOR /F "tokens=*" %%A IN ('"git describe --tags --abbrev=5"') DO SET tmp=%%A
 CALL touch README
 CALL git add README
 CALL :TEST_VERSION %tmp%
 
 :: Builder commits that file.
 CALL git commit -m "Modified Release" >NUL
-FOR /F "tokens=*" %%A IN ('"git describe HEAD"') DO SET tmp=%%A
+FOR /F "tokens=*" %%A IN ('"git describe --tags --abbrev=5"') DO SET tmp=%%A
 CALL :TEST_VERSION %tmp%
 
 :: Builder creates own tag
 CALL git tag v1.0.0-custom -m "Modified Release Tag"
-FOR /F "tokens=*" %%A IN ('"git describe HEAD"') DO SET tmp=%%A
+FOR /F "tokens=*" %%A IN ('"git describe --tags --abbrev=5"') DO SET tmp=%%A
 CALL :TEST_VERSION %tmp%
 
 :: Builder checked out a maint release and staged a file
 CALL git reset --hard v1.0.0.1 >NUL
-FOR /F "tokens=*" %%A IN ('"git describe HEAD"') DO SET tmp=%%A
+FOR /F "tokens=*" %%A IN ('"git describe --tags --abbrev=5"') DO SET tmp=%%A
 CALL touch README
 CALL git add README
 CALL :TEST_VERSION %tmp%
 
 :: Builder commits that file.
 CALL git commit -m "Modified Maint Release" >NUL
-FOR /F "tokens=*" %%A IN ('"git describe HEAD"') DO SET tmp=%%A
+FOR /F "tokens=*" %%A IN ('"git describe --tags --abbrev=5"') DO SET tmp=%%A
 CALL :TEST_VERSION %tmp%
 
 :: Builder creates own tag
 CALL git tag v1.0.0.1-custom -m "Modified Maint Release Tag"
-FOR /F "tokens=*" %%A IN ('"git describe HEAD"') DO SET tmp=%%A
+FOR /F "tokens=*" %%A IN ('"git describe --tags --abbrev=5"') DO SET tmp=%%A
 CALL :TEST_VERSION %tmp%
 
 ECHO.

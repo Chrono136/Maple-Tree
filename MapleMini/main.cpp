@@ -2,5 +2,5 @@
 
 int main(signed int argc, char* argv[])
 {
-	return MapleSeed::MapleMain::g_init(argc, argv, "1.05c");
+	return MapleSeed::MapleMain::g_init(argc, argv, GEN_VER_VERSION_STRING);
 }

@@ -178,6 +178,9 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <PreBuildEvent>
+      <Command>CALL $(SolutionDir)GIT-VS-VERSION-FILE.bat "$(IntDir)\" "$(ProjectDir)gen-versioninfo.h" --force</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug (Static library)|x64'">
     <ClCompile>
@@ -235,6 +238,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="DownloadClient.h" />
+    <ClInclude Include="gen-versioninfo.h" />
     <ClInclude Include="MapleMini.h" />
     <ClInclude Include="MapleTicket.h" />
     <ClInclude Include="stdafx.h" />

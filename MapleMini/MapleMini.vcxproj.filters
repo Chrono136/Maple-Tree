@@ -46,6 +46,7 @@
     <ClInclude Include="Tools.h">
       <Filter>Common</Filter>
     </ClInclude>
+    <ClInclude Include="gen-versioninfo.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MapleMini.cpp" />

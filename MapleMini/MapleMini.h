@@ -3,7 +3,7 @@ namespace MapleSeed
 	class MapleMain
 	{
 	public:
-		static int g_init(signed int argc, char* argv[], std::string vers);
+		static int g_init(signed int argc, char* argv[]);
 
 		static void simpleDecrypt(std::string path, std::string defaultdir);
 

@@ -1,19 +1,21 @@
-#pragma once
-class MapleTicket
+namespace MapleSeed
 {
-public:
-	MapleTicket();
-	~MapleTicket();
+#pragma once
+	class MapleTicket
+	{
+	public:
+		MapleTicket();
+		~MapleTicket();
 
-	static MapleTicket Create(TitleInfo * ti);
-	static MapleTicket Create(std::string id);
+		static MapleTicket Create(TitleInfo * ti);
+		static MapleTicket Create(std::string id);
 
-	char* data;
-	int len;
+		char* data;
+		int len;
 
-	TitleInfo * info;
+		TitleInfo * info;
 
-private:
-	static const int TICKET_SIZE;
-};
-
+	private:
+		static const int TICKET_SIZE;
+	};
+}

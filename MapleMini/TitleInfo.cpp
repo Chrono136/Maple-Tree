@@ -25,37 +25,6 @@ TitleInfo::~TitleInfo()
 {
 }
 
-void TitleInfo::CreateDatabase()
-{
-	struct json_token t;
-	printf("Creating database...\n");
-	auto dc = DownloadClient("http://api.tsumes.com/title/all");
-	for (int i = 0; json_scanf_array_elem(dc.buf, (int)dc.len, "", i, &t) > 0; i++) {
-		thread([](struct json_token t) { 
-			auto ti = new TitleInfo;
-			json_scanf(t.ptr, t.len, "{uid: %Q}", &ti->uid);
-			json_scanf(t.ptr, t.len, "{ID: %Q}", &ti->id);
-			json_scanf(t.ptr, t.len, "{Key: %Q}", &ti->key);
-			json_scanf(t.ptr, t.len, "{Name: %Q}", &ti->name);
-			json_scanf(t.ptr, t.len, "{Region: %Q}", &ti->region);
-			json_scanf(t.ptr, t.len, "{Versions: %Q}", &ti->versions);
-			json_scanf(t.ptr, t.len, "{HasDLC: %Q}", &ti->hasdlc);
-			json_scanf(t.ptr, t.len, "{HasPatch: %Q}", &ti->haspatch);
-			json_scanf(t.ptr, t.len, "{ContentType: %Q}", &ti->contenttype);
-			json_scanf(t.ptr, t.len, "{AvailableOnCDN: %Q}", &ti->cdn);
-			json_scanf(t.ptr, t.len, "{ProductCode: %Q}", &ti->pcode);
-			json_scanf(t.ptr, t.len, "{CompanyCode: %Q}", &ti->ccode);
-			json_scanf(t.ptr, t.len, "{ImageLocation: %Q}", &ti->iloc);
-			json_scanf(t.ptr, t.len, "{Notes: %Q}", &ti->notes);
-			database[strtol(ti->id, NULL, 0)] = ti;
-			printf("Adding db entry %s\n", ti->name);
-		}, t).detach();
-	}
-
-	printf("Creating database complete.\n");
-	return;
-}
-
 TitleInfo * TitleInfo::GetTitleInfo(const char * id)
 {
 	string url = string("http://api.tsumes.com/title/" + string(id));

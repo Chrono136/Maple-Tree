@@ -4,7 +4,12 @@
 using namespace boost::asio;
 using boost::asio::ip::tcp;
 
-void DownloadClient::DownloadFile(const char *url, const char*fn)
+MapleSeed::DownloadClient::DownloadClient(const char *url, const char* fileName, unsigned long filesize, bool toFile, bool resume)
+{
+	DownloadData(url, fileName, filesize, toFile, resume);
+}
+
+void MapleSeed::DownloadClient::DownloadFile(const char *url, const char*fn)
 {
 	string psn;string pfp;string pfn;
 	ParseUrl(url, psn, pfp, pfn);
@@ -84,7 +89,7 @@ void DownloadClient::DownloadFile(const char *url, const char*fn)
 	}
 }
 
-void DownloadClient::DownloadData(const char *url, const char* fileName, unsigned long rsize, bool toFile, bool resume)
+void MapleSeed::DownloadClient::DownloadData(const char *url, const char* fileName, unsigned long rsize, bool toFile, bool resume)
 {
 	string pserverName; string pfilepath; string pfilename;
 	ParseUrl(url, pserverName, pfilepath, pfilename);
@@ -171,6 +176,11 @@ void DownloadClient::DownloadData(const char *url, const char* fileName, unsigne
 			boost::progress_display progress(rsize);
 			while (boost::asio::read(socket, response, boost::asio::transfer_at_least(1), error))
 			{
+				if (error)
+				{
+					WriteLineRed(error.message().c_str());
+				}
+
 				outFile << &response;
 				progress += (unsigned long)outFile.tellp() - progress.count();
 			}
@@ -199,13 +209,4 @@ void DownloadClient::DownloadData(const char *url, const char* fileName, unsigne
 		std::cerr << "Error: " << e.what() << std::endl;
 		return;
 	}
-}
-
-DownloadClient::DownloadClient(const char *url, const char* fileName, unsigned long filesize, bool toFile, bool resume)
-{
-	DownloadData(url, fileName, filesize, toFile, resume);
-}
-
-DownloadClient::~DownloadClient()
-{
 }

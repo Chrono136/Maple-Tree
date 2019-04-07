@@ -234,7 +234,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="CommonStructures.h" />
     <ClInclude Include="DownloadClient.h" />
     <ClInclude Include="MapleMini.h" />
     <ClInclude Include="MapleTicket.h" />

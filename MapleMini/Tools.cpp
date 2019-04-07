@@ -120,7 +120,7 @@ char * CommonTools::StringToCharArray(std::string str)
 	delete[] cstr;
 }
 
-struct CommonStructures::DataInfo CommonTools::DownloadBytes(const char * url)
+struct DataInfo CommonTools::DownloadBytes(const char * url)
 {
 	DataInfo di;
 	DownloadClient dc;

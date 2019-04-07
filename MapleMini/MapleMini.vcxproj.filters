@@ -43,9 +43,6 @@
     <ClInclude Include="ThirdParty\rang.hpp">
       <Filter>ThirdParty</Filter>
     </ClInclude>
-    <ClInclude Include="CommonStructures.h">
-      <Filter>Structures</Filter>
-    </ClInclude>
     <ClInclude Include="Tools.h">
       <Filter>Common</Filter>
     </ClInclude>

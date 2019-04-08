@@ -32,7 +32,7 @@
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>MapleMini</RootNamespace>
     <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
-    <ProjectName>MapleSeedCLI</ProjectName>
+    <ProjectName>MapleSeed++</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -57,8 +57,8 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v141</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug (Static library)|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
@@ -115,8 +115,9 @@
     <LinkIncremental>true</LinkIncremental>
     <IncludePath>$(SolutionDir)libs\boost_1.67.0\include;$(SolutionDir)libs\openssl64_1.1.1b\include;$(SolutionDir)libs\nana_1.7.0\include;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)\libs\openssl64_1.1.1b;$(SolutionDir)\libs\boost_1.67.0;$(SolutionDir)\libs\nana_1.7.0;$(LibraryPath)</LibraryPath>
-    <OutDir>$(SolutionDir)\bin\$(Configuration)\$(Platform)\</OutDir>
-    <IntDir>bin\$(Configuration)\$(Platform)\</IntDir>
+    <OutDir>$(SolutionDir)\bin\</OutDir>
+    <IntDir>$(SolutionDir)\bin\int\$(Platform)_$(Configuration)\</IntDir>
+    <TargetName>$(ProjectName)_$(Platform)D</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug (Static library)|x64'">
     <LinkIncremental>true</LinkIncremental>

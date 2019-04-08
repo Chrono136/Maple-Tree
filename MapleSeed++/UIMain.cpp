@@ -4,13 +4,9 @@
 
 bool UIMain::IsVisible = false;
 
-UIMain::UIMain()
-{
-}
+UIMain::UIMain() {}
 
-UIMain::~UIMain()
-{
-}
+UIMain::~UIMain() {}
 
 void HideConsole()
 {

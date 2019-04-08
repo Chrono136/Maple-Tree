@@ -7,10 +7,10 @@ namespace MapleSeed
 
 		static void simpleDecrypt(std::string path, std::string defaultdir);
 
+		static void DownloadContent(std::string defaultdir, std::string id);
+
 	private:
 		static po::options_description defineOptions();
-
-		static void downloadcontent(std::string defaultdir, std::string id);
 
 		static void create_decrypt_file(std::string _id);
 

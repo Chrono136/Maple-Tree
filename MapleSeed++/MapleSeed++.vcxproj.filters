@@ -56,6 +56,7 @@
     <ClInclude Include="ThreadManager.h">
       <Filter>Common</Filter>
     </ClInclude>
+    <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MapleMini.cpp" />
@@ -87,5 +88,11 @@
     <ClCompile Include="ThirdParty\cdecrypt.cpp">
       <Filter>ThirdParty</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="MapleSeed++.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\..\MapleSeed.ico" />
   </ItemGroup>
 </Project>

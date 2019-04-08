@@ -103,6 +103,7 @@
     <ClInclude Include="gen-versioninfo.h" />
     <ClInclude Include="MapleMini.h" />
     <ClInclude Include="MapleTicket.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="ThirdParty\frozen.h" />
@@ -133,6 +134,12 @@
     <ClCompile Include="TitleInfo.cpp" />
     <ClCompile Include="Tools.cpp" />
     <ClCompile Include="UIMain.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="MapleSeed++.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\..\MapleSeed.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

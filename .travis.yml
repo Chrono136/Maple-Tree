@@ -1,1 +1,4 @@
-os: windows
+os:
+  - windows
+  - linux
+language: cpp

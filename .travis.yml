@@ -3,4 +3,4 @@ os:
   
 language: cpp
 
-script: make
+script: cmake

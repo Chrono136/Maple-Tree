@@ -1,4 +1,5 @@
-# MapleSeed Command Line
+# MapleSeed Command Line - [![Build status](https://ci.appveyor.com/api/projects/status/d1kt2vhaj0so8pc8?svg=true)](https://ci.appveyor.com/project/Tsume/maple-tree)
+
 
 #### MapleSeed CLI Development Discord
 - Pre-released debug builds will be posted to the #releases channel periodically.

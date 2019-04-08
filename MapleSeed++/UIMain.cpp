@@ -87,7 +87,7 @@ int UIMain::Init()
 
 	//set icon from resource
 	wstring app_path(4096, '\0');
-	app_path.resize(GetModuleFileNameW(0, &app_path.front(), app_path.size()));
+	app_path.resize(GetModuleFileNameW(0, &app_path.front(), (DWORD)app_path.size()));
 	ui.frm.icon(paint::image(app_path));
 
 	//design main form

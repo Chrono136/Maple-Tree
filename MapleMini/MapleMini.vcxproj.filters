@@ -19,6 +19,9 @@
     <Filter Include="Structures">
       <UniqueIdentifier>{1b159b88-8cf7-4a5f-9c33-b6c729e0cd16}</UniqueIdentifier>
     </Filter>
+    <Filter Include="GUI">
+      <UniqueIdentifier>{aea04024-4cf9-4835-be51-b78542757120}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MapleTicket.h">
@@ -47,6 +50,12 @@
       <Filter>Common</Filter>
     </ClInclude>
     <ClInclude Include="gen-versioninfo.h" />
+    <ClInclude Include="UIMain.h">
+      <Filter>GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="ThreadManager.h">
+      <Filter>Common</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MapleMini.cpp" />
@@ -69,5 +78,11 @@
       <Filter>Common</Filter>
     </ClCompile>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="UIMain.cpp">
+      <Filter>GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="ThreadManager.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

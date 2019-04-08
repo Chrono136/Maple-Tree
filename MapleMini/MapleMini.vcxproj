@@ -113,8 +113,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>C:\OpenSSL-Win64\include;$(MSBuildProjectDirectory)\ThirdParty\include;$(MSBuildProjectDirectory)\ThirdParty\curl-7.64.0\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\OpenSSL-Win64\lib\VC\static;C:\OpenSSL-Win64\lib;$(MSBuildProjectDirectory)\ThirdParty\curl-7.64.0\lib;D:\Projects\Libraries\boost_1_67_0\stage\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\OpenSSL-Win64\include;$(MSBuildProjectDirectory)\ThirdParty\include;$(MSBuildProjectDirectory)\ThirdParty\curl-7.64.0\include;D:\Projects\Libraries\nana\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\OpenSSL-Win64\lib\VC\static;C:\OpenSSL-Win64\lib;$(MSBuildProjectDirectory)\ThirdParty\curl-7.64.0\lib;D:\Projects\Libraries\boost_1_67_0\stage\lib;D:\Projects\Libraries\nana\build\bin;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)\bin\$(Configuration)\$(Platform)\</OutDir>
     <IntDir>bin\$(Configuration)\$(Platform)\</IntDir>
   </PropertyGroup>
@@ -245,8 +245,10 @@
     <ClInclude Include="targetver.h" />
     <ClInclude Include="ThirdParty\frozen.h" />
     <ClInclude Include="ThirdParty\rang.hpp" />
+    <ClInclude Include="ThreadManager.h" />
     <ClInclude Include="TitleInfo.h" />
     <ClInclude Include="Tools.h" />
+    <ClInclude Include="UIMain.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DownloadClient.cpp" />
@@ -266,8 +268,10 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug (Static library)|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="ThreadManager.cpp" />
     <ClCompile Include="TitleInfo.cpp" />
     <ClCompile Include="Tools.cpp" />
+    <ClCompile Include="UIMain.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

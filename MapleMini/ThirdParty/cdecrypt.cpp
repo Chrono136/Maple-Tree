@@ -39,8 +39,9 @@ static unsigned char WiiUCommenKey[16] =
 #include <direct.h>
 #include <ctype.h>
 #include <thread>
+#include <conio.h>
 
-#pragma comment(lib,"libeay32.lib")
+#pragma comment(lib,"libcrypto64MTd.lib")
 
 typedef unsigned	__int64 u64;
 typedef signed		__int64 s64;
@@ -58,7 +59,7 @@ static AES_KEY key;
 static u8 enc_title_key[16];
 static u8 dec_title_key[16];
 static u8 title_id[16];
-u8 dkey[16];
+static u8 dkey[16];
 
 static u64 H0Count = 0;
 static u64 H0Fail  = 0;
@@ -594,6 +595,6 @@ static s32 startDecryption(s32 argc, const char*arg1, const char* arg2, bool con
 			}
 		}
 	}
-	std::cout << "Content Decryption Complete.\n\n";
+	printf("Content Decryption Complete.\n\n");
 	return EXIT_SUCCESS;
 }

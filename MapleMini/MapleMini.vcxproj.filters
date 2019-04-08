@@ -84,5 +84,8 @@
     <ClCompile Include="ThreadManager.cpp">
       <Filter>Common</Filter>
     </ClCompile>
+    <ClCompile Include="ThirdParty\cdecrypt.cpp">
+      <Filter>ThirdParty</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

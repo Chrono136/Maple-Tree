@@ -101,6 +101,7 @@
   <ItemGroup>
     <ClInclude Include="DownloadClient.h" />
     <ClInclude Include="gen-versioninfo.h" />
+    <ClInclude Include="Library.h" />
     <ClInclude Include="MapleMini.h" />
     <ClInclude Include="MapleTicket.h" />
     <ClInclude Include="resource.h" />
@@ -115,6 +116,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DownloadClient.cpp" />
+    <ClCompile Include="Library.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MapleMini.cpp" />
     <ClCompile Include="MapleTicket.cpp" />
@@ -139,7 +141,8 @@
     <ResourceCompile Include="MapleSeed++.rc" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="..\..\MapleSeed.ico" />
+    <Image Include="..\default.png" />
+    <Image Include="..\MapleSeed.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

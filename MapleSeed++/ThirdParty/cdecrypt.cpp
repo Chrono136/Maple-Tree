@@ -55,7 +55,7 @@ typedef signed		short s16;
 typedef unsigned	char u8;
 typedef signed		char s8;
 
-static AES_KEY key;
+static AES_KEY _key;
 static u8 enc_title_key[16];
 static u8 dec_title_key[16];
 static u8 title_id[16];
@@ -291,14 +291,14 @@ static void ExtractFileHash( FILE *in, u64 PartDataOffset, u64 FileOffset, u64 S
 		
 		memset( IV, 0, sizeof(IV) );
 		IV[1] = (u8)ContentID;
-		AES_cbc_encrypt( (const u8 *)(encdata), (u8 *)Hashes, 0x400, &key, IV, AES_DECRYPT );		
+		AES_cbc_encrypt( (const u8 *)(encdata), (u8 *)Hashes, 0x400, &_key, IV, AES_DECRYPT );		
 		
 		memcpy( H0, Hashes+0x14*Block, SHA_DIGEST_LENGTH );
 
 		memcpy( IV, Hashes+0x14*Block, sizeof(IV) );
 		if( Block == 0 )
 			IV[1] ^= ContentID;
-		AES_cbc_encrypt( (const u8 *)(encdata+0x400), (u8 *)decdata, 0xFC00, &key, IV, AES_DECRYPT );
+		AES_cbc_encrypt( (const u8 *)(encdata+0x400), (u8 *)decdata, 0xFC00, &_key, IV, AES_DECRYPT );
 
 		SHA1( (const u8 *)decdata, 0xFC00, hash );
 		if( Block == 0 )
@@ -372,7 +372,7 @@ static void ExtractFile( FILE *in, u64 PartDataOffset, u64 FileOffset, u64 Size,
 
 		fread( encdata, sizeof( char ), BLOCK_SIZE, in);
 		
-		AES_cbc_encrypt( (const u8 *)(encdata), (u8 *)decdata, BLOCK_SIZE, &key, IV, AES_DECRYPT);
+		AES_cbc_encrypt( (const u8 *)(encdata), (u8 *)decdata, BLOCK_SIZE, &_key, IV, AES_DECRYPT);
 
 		Size -= fwrite( decdata+soffset, sizeof( char ), WriteSize, out);
 
@@ -430,11 +430,11 @@ static s32 startDecryption(s32 argc, const char*arg1, const char* arg2, bool con
 
 	if (strcmp(TMD + 0x140, "Root-CA00000003-CP0000000b") == 0)
 	{
-		AES_set_decrypt_key((const u8*)WiiUCommenKey, sizeof(WiiUCommenKey) * 8, &key);
+		AES_set_decrypt_key((const u8*)WiiUCommenKey, sizeof(WiiUCommenKey) * 8, &_key);
 	}
 	else if (strcmp(TMD + 0x140, "Root-CA00000004-CP00000010") == 0)
 	{
-		AES_set_decrypt_key((const u8*)WiiUCommenDevKey, sizeof(WiiUCommenDevKey) * 8, &key);
+		AES_set_decrypt_key((const u8*)WiiUCommenDevKey, sizeof(WiiUCommenDevKey) * 8, &_key);
 	}
 	else
 	{
@@ -447,8 +447,8 @@ static s32 startDecryption(s32 argc, const char*arg1, const char* arg2, bool con
 	memcpy(title_id, TMD + 0x18C, 8);
 	memcpy(enc_title_key, TIK + 0x1BF, 16);
 
-	AES_cbc_encrypt(enc_title_key, dec_title_key, sizeof(dec_title_key), &key, title_id, AES_DECRYPT);
-	AES_set_decrypt_key(dec_title_key, sizeof(dec_title_key) * 8, &key);
+	AES_cbc_encrypt(enc_title_key, dec_title_key, sizeof(dec_title_key), &_key, title_id, AES_DECRYPT);
+	AES_set_decrypt_key(dec_title_key, sizeof(dec_title_key) * 8, &_key);
 
 	char iv[16];
 	memset(iv, 0, sizeof(iv));
@@ -474,7 +474,7 @@ static s32 startDecryption(s32 argc, const char*arg1, const char* arg2, bool con
 		return EXIT_FAILURE;
 	}
 
-	AES_cbc_encrypt((const u8 *)(CNT), (u8 *)(CNT), CNTLen, &key, (u8*)(iv), AES_DECRYPT);
+	AES_cbc_encrypt((const u8 *)(CNT), (u8 *)(CNT), CNTLen, &_key, (u8*)(iv), AES_DECRYPT);
 
 	if (bs32(*(u32*)CNT) != 0x46535400)
 	{

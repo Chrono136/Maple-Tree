@@ -5,14 +5,6 @@ public:
 	UIMain();
 	~UIMain();
 
-	static int Init();
-
-	static void HideConsole();
-
-	static void ShowConsole();
-
-	static nana::form* mainForm;
-
 	void OnFormDestroy();
 
 	void OnToggleConsoleClick(const nana::arg_click& ei);
@@ -23,8 +15,26 @@ public:
 
 	bool IsVisible = false;
 
-	nana::rectangle btn_def_sz = nana::rectangle(20, 20, 125, 30);
+	nana::progress *progressbar;
 
-	nana::inputbox *titleIdInputbox;
+	nana::label *messagelabel;
+
+	static void ProgressUpdateCallback(unsigned long min, unsigned long max, const char *data)
+	{
+		if (UIMain::mainForm && UIMain::mainForm->progressbar)
+		{
+			UIMain::mainForm->progressbar->amount(max);
+			UIMain::mainForm->progressbar->value(min);
+			UIMain::mainForm->messagelabel->caption(data);
+		}
+	}
+
+	static int Init();
+
+	static void HideConsole();
+
+	static void ShowConsole();
+
+	static UIMain* mainForm;
 };
 

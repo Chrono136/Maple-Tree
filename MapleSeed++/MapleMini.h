@@ -9,6 +9,8 @@ namespace MapleSeed
 
 		static void DownloadContent(std::string defaultdir, std::string id);
 
+		static std::string BaseDirectory;
+
 	private:
 		static po::options_description defineOptions();
 

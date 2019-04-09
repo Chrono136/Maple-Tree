@@ -182,7 +182,17 @@ void MapleSeed::DownloadClient::DownloadData(const char *url, const char* fileNa
 				}
 
 				outFile << &response;
-				progress += (unsigned long)outFile.tellp() - progress.count();
+				
+				auto read = (unsigned long)outFile.tellp();
+				auto sread = std::to_string(read / 1024);
+
+				progress += read - progress.count();
+
+				auto _min = to_string(read) + " bytes ";
+				auto _max = to_string(rsize) + " bytes ";
+				auto str = string(fileName) + string(" | ") + _min + string("/ ") + _max;
+				//UIMain::ProgressUpdateCallback(read, rsize, str.c_str());
+				//boost::thread([&] {UIMain::ProgressUpdateCallback(read, rsize, str.c_str()); });
 			}
 		}
 		else

@@ -1,9 +1,17 @@
 #pragma once
-class UIMain
+class UIMain : public nana::form
 {
 public:
 	UIMain();
 	~UIMain();
+
+	static int Init();
+
+	static void HideConsole();
+
+	static void ShowConsole();
+
+	static nana::form* mainForm;
 
 	void OnFormDestroy();
 
@@ -13,15 +21,7 @@ public:
 
 	void OnDecryptContentClick(const nana::arg_click& ei);
 
-	static int Init();
-
-	static void HideConsole();
-
-	static void ShowConsole();
-
-	static bool IsVisible;
-
-	nana::form frm = form(API::make_center(848, 480));
+	bool IsVisible = false;
 
 	nana::rectangle btn_def_sz = nana::rectangle(20, 20, 125, 30);
 

@@ -2,17 +2,17 @@
 #include "UIMain.h"
 
 
-bool UIMain::IsVisible = false;
+nana::form* UIMain::mainForm;
 
-UIMain::UIMain() 
+UIMain::UIMain() :
+	form(API::make_center(848, 480))
 {
-	//lock window size
-	API::track_window_size(frm, frm.size(), false);
-	API::track_window_size(frm, frm.size(), true);
+	mainForm = this;
 }
 
 UIMain::~UIMain()
 {
+	mainForm = nullptr;
 }
 
 void UIMain::HideConsole()
@@ -49,30 +49,25 @@ void UIMain::OnToggleConsoleClick(const nana::arg_click& ei)
 
 void UIMain::OnDownloadTitleClick(const nana::arg_click& ei)
 {
-	if (!titleIdInputbox)
+	nana::inputbox id_inputbox_{ *this, "Input id of the desired title", "Download Title" };
+
+	inputbox::text id("<bold>Title ID</>");
+	id_inputbox_.min_width_entry_field(200);
+	id_inputbox_.verify([&id](window handle)
 	{
-		titleIdInputbox = new inputbox(frm, "Input id of the desired title", "Download Title");
-
-		inputbox::text id("<bold>Title ID</>");
-		titleIdInputbox->min_width_entry_field(200);
-		titleIdInputbox->verify([&id](window handle)
+		if (id.value().empty() || id.value().length() != 16)
 		{
-			if (id.value().empty())
-			{
-				msgbox mb(handle, "Invalid input");
-				mb << L"Title ID should not be empty";
-				mb.show();
-				return false; //verification failed
-			}
-			return true; //verification passed
-		});
-
-		if (titleIdInputbox->show_modal(id))
-		{
-			MapleMain::DownloadContent("", id.value());
+			msgbox mb(handle, "Invalid title id");
+			mb << L"Title ID should be at least 16 characters";
+			mb.show();
+			return false; //verification failed
 		}
+		return true; //verification passed
+	});
 
-		titleIdInputbox = nullptr;
+	if (id_inputbox_.show_modal(id))
+	{
+		MapleMain::DownloadContent("", id.value());
 	}
 }
 
@@ -83,41 +78,49 @@ void UIMain::OnDecryptContentClick(const nana::arg_click& ei)
 
 int UIMain::Init()
 {
-	UIMain ui;
+	UIMain uim;
+
+	//lock window size
+	API::track_window_size(uim, uim.size(), false);
+	API::track_window_size(uim, uim.size(), true);
 
 	//set icon from resource
 	wstring app_path(4096, '\0');
 	app_path.resize(GetModuleFileNameW(0, &app_path.front(), (DWORD)app_path.size()));
-	ui.frm.icon(paint::image(app_path));
+	uim.icon(paint::image(app_path));
 
 	//design main form
-	ui.frm.events().destroy([&]() { ui.OnFormDestroy(); });
-	ui.frm.caption("MapleSeed++ " + std::string(GEN_VERSION_STRING));
-	ui.frm.bgcolor(colors::white);
+	uim.events().destroy([&]() { uim.OnFormDestroy(); });
+	uim.caption("MapleSeed++ " + std::string(GEN_VERSION_STRING));
+	uim.bgcolor(colors::white);
 
 	//design toggle console button
-	button btn0(ui.frm, ui.btn_def_sz);
+	nana::button btn0{ uim, uim.btn_def_sz };
 	btn0.caption("Toggle CLI");
-	btn0.events().click([&](const nana::arg_click& ei) { ui.OnToggleConsoleClick(ei); });
+	btn0.events().click([&](const nana::arg_click& ei) { uim.OnToggleConsoleClick(ei); });
 
 	//design download button
-	button btn1(ui.frm, ui.btn_def_sz);
+	nana::button btn1{ uim, uim.btn_def_sz };
 	btn1.caption("Download Title");
-	btn1.events().click([&](const nana::arg_click& ei) { ui.OnDownloadTitleClick(ei); });
+	btn1.events().click([&](const nana::arg_click& ei) { uim.OnDownloadTitleClick(ei); });
 
 	//design decrypt button
-	button btn2(ui.frm, ui.btn_def_sz);
+	nana::button btn2{ uim, uim.btn_def_sz };
 	btn2.caption("Decrypt Content");
-	btn2.events().click([&](const nana::arg_click& ei) { ui.OnDecryptContentClick(ei); });
+	btn2.events().click([&](const nana::arg_click& ei) { uim.OnDecryptContentClick(ei); });
+
+	//design progress bar
+	nana::progress pgbar{ uim };
+	
 
 	//set element placement
-	nana::place plc(ui.frm);
+	nana::place plc(uim);
 	plc.div("<vert abc>");
 	plc.field("abc") << btn0 << btn1 << btn2;
 	plc.collocate();
 
-	ui.frm.show();
-	UIMain::IsVisible = true;
+	uim.show();
+	uim.IsVisible = true;
 
 	nana::exec();
 	return 0;

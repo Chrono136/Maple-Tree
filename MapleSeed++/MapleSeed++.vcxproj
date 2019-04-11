@@ -46,11 +46,10 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(SolutionDir)libs\boost_1.67.0\include;$(SolutionDir)libs\openssl64_1.1.1b\include;$(SolutionDir)libs\nana_1.7.0\include;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)\libs\openssl64_1.1.1b;$(SolutionDir)\libs\boost_1.67.0;$(SolutionDir)\libs\nana_1.7.0;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)libs\boost_1.69.0;$(SolutionDir)libs\openssl64_1.1.1b\include;$(SolutionDir)libs\nana_1.7.0\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)\libs\openssl64_1.1.1b;$(SolutionDir)\libs\boost_1.69.0;$(SolutionDir)\libs\nana_1.7.0;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)\bin\</OutDir>
     <IntDir>$(SolutionDir)\bin\int\$(Platform)_$(Configuration)\</IntDir>
-    <TargetName>$(ProjectName)_$(Platform)D</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug Static|x64'">
     <LinkIncremental>false</LinkIncremental>

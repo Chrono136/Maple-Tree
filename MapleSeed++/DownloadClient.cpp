@@ -78,7 +78,7 @@ void MapleSeed::DownloadClient::DownloadFile(const char *url, const char*fn)
 		buf = new char[bLen];
 		std::ifstream is(fn, std::ifstream::binary);
 		is.seekg(0, is.end);
-		len = is.tellg();
+		len = (u32)is.tellg();
 		is.seekg(0, is.beg);
 		while (is)
 			is.read(buf, bLen);
@@ -191,8 +191,7 @@ void MapleSeed::DownloadClient::DownloadData(const char *url, const char* fileNa
 				auto _min = to_string(read) + " bytes ";
 				auto _max = to_string(rsize) + " bytes ";
 				auto str = string(fileName) + string(" | ") + _min + string("/ ") + _max;
-				//UIMain::ProgressUpdateCallback(read, rsize, str.c_str());
-				//boost::thread([&] {UIMain::ProgressUpdateCallback(read, rsize, str.c_str()); });
+				UIMain::ProgressUpdateCallback(read, rsize, str.c_str());
 			}
 		}
 		else

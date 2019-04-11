@@ -1,15 +1,13 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 #include "TitleInfo.h"
 
 static map<int,TitleInfo*> database;
 static vector<std::thread> threads;
-std::string TitleInfo::outputDir;
 
 TitleInfo::TitleInfo(char * str, size_t len)
 {
 	try {
 		ParseTitleInfo(str, len);
-		SetDirectory(outputDir);
 	}
 	catch (std::exception const& e)
 	{
@@ -41,7 +39,10 @@ TitleInfo * TitleInfo::ParseTitleInfo(const char * str, size_t len)
 	try {
 		struct json_token t;
 
-		for (int i = 0; json_scanf_array_elem(str, (int)len, "", i, &t) > 0; i++) {
+		string _str(str);
+		UTF16toUnicode(_str);
+
+		for (int i = 0; json_scanf_array_elem(_str.c_str(), (int)len, "", i, &t) > 0; i++) {
 			json_scanf(t.ptr, t.len, "{uid: %Q}", &uid);
 			json_scanf(t.ptr, t.len, "{ID: %Q}", &id);
 			json_scanf(t.ptr, t.len, "{Key: %Q}", &key);
@@ -103,9 +104,7 @@ char * TitleInfo::GenerateTicket(TitleInfo * ti)
 	if (ti)
 	{
 		MapleTicket mt = MapleTicket::Create(ti);
-
-		auto dir = TitleInfo::outputDir + string("/[")
-			+ string(mt.info->region) + string("] ") + string(mt.info->name);
+		auto dir = mt.info->GetLibraryPath();
 
 		if (DirExists(dir.c_str()))
 		{
@@ -121,24 +120,21 @@ char * TitleInfo::GenerateTicket(TitleInfo * ti)
 	return nullptr;
 }
 
-void TitleInfo::SetDirectory(std::string output_root)
+string TitleInfo::GetLibraryPath()
 {
-	if (name != NULL && region != NULL)
-		workingDir = string(output_root) + string("/[") + string(region) + string("] ") + string(name);
+	auto base = Library::GetBaseDirectory();
+	auto nam = string("[") + string(region) + string("]") + string(name);
 
-	boost::filesystem::path dir(workingDir);
-	if (boost::filesystem::create_directory(dir)) {
-		WriteLine("Created directory '%s'", workingDir.c_str());
-	}
+	return base + string("/") + nam;
 }
 
-#pragma comment(lib,"Urlmon.lib")
-int TitleInfo::DownloadContent()
+int TitleInfo::Download()
 {
 	string baseURL = string("http://ccs.cdn.wup.shop.nintendo.net/ccs/download/");
+	auto workingDir = GetLibraryPath();
 
-	auto _dir = std::wstring(s2ws(workingDir));
-	if (CreateDirectory(_dir.c_str(), NULL) || ERROR_ALREADY_EXISTS == GetLastError()) {}
+	if (!DirExists(workingDir.c_str()))
+		create_directory(workingDir);
 
 #pragma region Setup TMD
 	char* TMD = GenerateTMD(workingDir, id);
@@ -160,16 +156,15 @@ int TitleInfo::DownloadContent()
 		sprintf(str, "%08X", bs32(tmd->Contents[i].ID));
 		auto contentID = string(str);
 
-		string contentPath = string(outputDir) + string("/") + contentID;
+		auto contentPath = workingDir + string("/") + contentID;
 		auto downloadURL = baseURL + titleID + string("/") + contentID;
 
-		auto filePath = workingDir + string("/") + contentID;
 		auto size = bs64(tmd->Contents[i].Size);
 
-		if (!CommonTools::ContentValid(filePath, size, NULL))
+		if (!CommonTools::ContentValid(contentPath, (unsigned long)size, NULL))
 		{
 			printf("Downloading Content (%s) #%u of %u... (%lu)\n", contentID.c_str(), i + 1, contentCount, (unsigned long)size);
-			auto dc = DownloadClient(downloadURL.c_str(), filePath.c_str(), (unsigned long)size, 1, 1);
+			auto dc = DownloadClient(downloadURL.c_str(), contentPath.c_str(), (unsigned long)size, 1, 1);
 		}
 		else
 		{
@@ -179,4 +174,24 @@ int TitleInfo::DownloadContent()
 
 	cout << rang::style::bold << "Download Complete!!" << rang::style::reset << endl;
 	return 0;
+}
+
+void TitleInfo::Decrypt()
+{
+	_chdir(this->GetLibraryPath().c_str());
+
+	if (!FileExists(".\\tmd"))
+	{
+		WriteLineRed("tmd file is missing. Decryption failed!");
+		return;
+	}
+
+	if (!FileExists(".\\cetk"))
+	{
+		WriteLineRed("cetk file is missing. Decryption failed!");
+		return;
+	}
+
+	startDecryption(3, "tmd", "cetk", 0);
+	_chdir(Library::GetBaseDirectory().c_str());
 }

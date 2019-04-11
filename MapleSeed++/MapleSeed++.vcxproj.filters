@@ -22,6 +22,9 @@
     <Filter Include="GUI">
       <UniqueIdentifier>{aea04024-4cf9-4835-be51-b78542757120}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resources">
+      <UniqueIdentifier>{73cc4dd1-f6a2-47b6-9000-aece191d11d0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MapleTicket.h">
@@ -49,16 +52,20 @@
     <ClInclude Include="Tools.h">
       <Filter>Common</Filter>
     </ClInclude>
-    <ClInclude Include="gen-versioninfo.h" />
     <ClInclude Include="UIMain.h">
       <Filter>GUI</Filter>
     </ClInclude>
     <ClInclude Include="ThreadManager.h">
       <Filter>Common</Filter>
     </ClInclude>
-    <ClInclude Include="resource.h" />
     <ClInclude Include="Library.h">
       <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="gen-versioninfo.h">
+      <Filter>Resources</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -96,10 +103,16 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="MapleSeed++.rc" />
+    <Image Include="..\default.png">
+      <Filter>Resources</Filter>
+    </Image>
+    <Image Include="..\MapleSeed.ico">
+      <Filter>Resources</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="..\default.png" />
-    <Image Include="..\MapleSeed.ico" />
+    <ResourceCompile Include="MapleSeed++.rc">
+      <Filter>Resources</Filter>
+    </ResourceCompile>
   </ItemGroup>
 </Project>

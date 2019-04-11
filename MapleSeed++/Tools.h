@@ -6,6 +6,10 @@ namespace CommonTools
 	void WriteLineBold(char const* const _format, ...);
 	void WriteLineRed(char const * const fmt, ...);
 
+	void ReplaceAll(std::string& str, const std::string& from, const std::string& to);
+
+	void UTF16toUnicode(string &str);
+
 	void ParseUrl(std::string url, std::string &serverName, std::string &filepath, std::string &filename);
 
 	bool ContentValid(std::string filePath, unsigned long len, unsigned char* s);

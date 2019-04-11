@@ -18,12 +18,10 @@ namespace MapleSeed
 		static char * GenerateTicket(std::string id);
 		static char * GenerateTicket(TitleInfo * ti);
 
-		void SetDirectory(std::string output_root);
+		string GetLibraryPath();
 
-		int DownloadContent();
-
-		std::string workingDir;
-		static std::string outputDir;
+		int Download();
+		void Decrypt();
 
 		char* uid;
 		char* id;

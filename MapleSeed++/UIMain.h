@@ -8,16 +8,19 @@ public:
 	void OnFormDestroy();
 
 	void OnToggleConsoleClick(const nana::arg_click& ei);
-
 	void OnDownloadTitleClick(const nana::arg_click& ei);
-
 	void OnDecryptContentClick(const nana::arg_click& ei);
+	void OnSelectLibraryClick(const nana::arg_click& ei);
+
+	void UpdateCoverArt(string code);
 
 	bool IsVisible = false;
 
+	nana::folderbox *curpicker;
+	nana::listbox *librarylist;
 	nana::progress *progressbar;
-
 	nana::label *messagelabel;
+	nana::picture *coverart;
 
 	static void ProgressUpdateCallback(unsigned long min, unsigned long max, const char *data)
 	{

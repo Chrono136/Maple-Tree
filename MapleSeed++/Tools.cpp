@@ -2,6 +2,81 @@
 #include "Tools.h"
 
 
+/*Very hacky. But no other method/library would work*/
+void CommonTools::UTF16toUnicode(string &str)
+{
+	ReplaceAll(str, "\\u00c0", "À");
+	ReplaceAll(str, "\\u00c1", "Á");
+	ReplaceAll(str, "\\u00c2", "Â");
+	ReplaceAll(str, "\\u00c3", "Ã");
+	ReplaceAll(str, "\\u00c4", "Ä");
+	ReplaceAll(str, "\\u00c5", "Å");
+	ReplaceAll(str, "\\u00c6", "Æ");
+	ReplaceAll(str, "\\u00c7", "Ç");
+	ReplaceAll(str, "\\u00c8", "È");
+	ReplaceAll(str, "\\u00c9", "É");
+	ReplaceAll(str, "\\u00ca", "Ê");
+	ReplaceAll(str, "\\u00cb", "Ë");
+	ReplaceAll(str, "\\u00cc", "Ì");
+	ReplaceAll(str, "\\u00cd", "Í");
+	ReplaceAll(str, "\\u00ce", "Î");
+	ReplaceAll(str, "\\u00cf", "Ï");
+	ReplaceAll(str, "\\u00d1", "Ñ");
+	ReplaceAll(str, "\\u00d2", "Ò");
+	ReplaceAll(str, "\\u00d3", "Ó");
+	ReplaceAll(str, "\\u00d4", "Ô");
+	ReplaceAll(str, "\\u00d5", "Õ");
+	ReplaceAll(str, "\\u00d6", "Ö");
+	ReplaceAll(str, "\\u00d8", "Ø");
+	ReplaceAll(str, "\\u00d9", "Ù");
+	ReplaceAll(str, "\\u00da", "Ú");
+	ReplaceAll(str, "\\u00db", "Û");
+	ReplaceAll(str, "\\u00dc", "Ü");
+	ReplaceAll(str, "\\u00dd", "Ý");
+	ReplaceAll(str, "\\u00df", "ß");
+	ReplaceAll(str, "\\u00e0", "à");
+	ReplaceAll(str, "\\u00e1", "á");
+	ReplaceAll(str, "\\u00e2", "â");
+	ReplaceAll(str, "\\u00e3", "ã");
+	ReplaceAll(str, "\\u00e4", "ä");
+	ReplaceAll(str, "\\u00e5", "å");
+	ReplaceAll(str, "\\u00e6", "æ");
+	ReplaceAll(str, "\\u00e7", "ç");
+	ReplaceAll(str, "\\u00e8", "è");
+	ReplaceAll(str, "\\u00e9", "é");
+	ReplaceAll(str, "\\u00ea", "ê");
+	ReplaceAll(str, "\\u00eb", "ë");
+	ReplaceAll(str, "\\u00ec", "ì");
+	ReplaceAll(str, "\\u00ed", "í");
+	ReplaceAll(str, "\\u00ee", "î");
+	ReplaceAll(str, "\\u00ef", "ï");
+	ReplaceAll(str, "\\u00f0", "ð");
+	ReplaceAll(str, "\\u00f1", "ñ");
+	ReplaceAll(str, "\\u00f2", "ò");
+	ReplaceAll(str, "\\u00f3", "ó");
+	ReplaceAll(str, "\\u00f4", "ô");
+	ReplaceAll(str, "\\u00f5", "õ");
+	ReplaceAll(str, "\\u00f6", "ö");
+	ReplaceAll(str, "\\u00f8", "ø");
+	ReplaceAll(str, "\\u00f9", "ù");
+	ReplaceAll(str, "\\u00fa", "ú");
+	ReplaceAll(str, "\\u00fb", "û");
+	ReplaceAll(str, "\\u00fc", "ü");
+	ReplaceAll(str, "\\u00fd", "ý");
+	ReplaceAll(str, "\\u00ff", "ÿ");
+}
+
+void CommonTools::ReplaceAll(std::string& str, const std::string& from, const std::string& to)
+{
+	if (from.empty())
+		return;
+	size_t start_pos = 0;
+	while ((start_pos = str.find(from, start_pos)) != std::string::npos) {
+		str.replace(start_pos, from.length(), to);
+		start_pos += to.length();
+	}
+}
+
 void CommonTools::ParseUrl(std::string url, std::string &serverName, std::string &filepath, std::string &filename)
 {
 	string::size_type n;

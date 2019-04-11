@@ -1,8 +1,23 @@
 ﻿#include "stdafx.h"
 #include "TitleInfo.h"
 
-static map<int,TitleInfo*> database;
-static vector<std::thread> threads;
+
+static map<string, TitleInfo*> database;
+
+TitleInfo::TitleInfo(const char *id)
+{
+	try {
+		string url = string("http://api.tsumes.com/title/" + string(id));
+		auto jd = DownloadBytes(url.c_str());
+		if (jd.data == nullptr) return;
+
+		ParseTitleInfo(jd.data, jd.len);
+	}
+	catch (std::exception const& e)
+	{
+		std::cerr << "Error: " << e.what() << std::endl;
+	}
+}
 
 TitleInfo::TitleInfo(char * str, size_t len)
 {
@@ -37,10 +52,10 @@ TitleInfo * TitleInfo::GetTitleInfo(const char * id)
 TitleInfo * TitleInfo::ParseTitleInfo(const char * str, size_t len)
 {
 	try {
-		struct json_token t;
-
 		string _str(str);
 		UTF16toUnicode(_str);
+
+		struct json_token t;
 
 		for (int i = 0; json_scanf_array_elem(_str.c_str(), (int)len, "", i, &t) > 0; i++) {
 			json_scanf(t.ptr, t.len, "{uid: %Q}", &uid);
@@ -57,7 +72,7 @@ TitleInfo * TitleInfo::ParseTitleInfo(const char * str, size_t len)
 			json_scanf(t.ptr, t.len, "{CompanyCode: %Q}", &ccode);
 			json_scanf(t.ptr, t.len, "{ImageLocation: %Q}", &iloc);
 			json_scanf(t.ptr, t.len, "{Notes: %Q}", &notes);
-			database[strtol(id, NULL, 0)] = this;
+			database[id] = this;
 		}
 
 		return this;
@@ -120,12 +135,73 @@ char * TitleInfo::GenerateTicket(TitleInfo * ti)
 	return nullptr;
 }
 
+string TitleInfo::SetLibraryPath(string path)
+{
+	auto p = filesystem::absolute(path);
+
+	return LibraryPath = p.generic_string();
+}
+
 string TitleInfo::GetLibraryPath()
 {
 	auto base = Library::GetBaseDirectory();
 	auto nam = string("[") + string(region) + string("]") + string(name);
+	auto basenam = filesystem::absolute(base + string("/") + nam).generic_string();
 
-	return base + string("/") + nam;
+	if (DirExists(LibraryPath.c_str()))
+		return LibraryPath;
+
+	return basenam;
+}
+
+string TitleInfo::GetMetaXmlFile()
+{
+	auto libpath = GetLibraryPath();
+	auto metaxml = libpath + string("/meta/meta.xml");
+
+	if (!FileExists(metaxml))
+	{
+		WriteLineRed("Error locating meta.xml (%s)", metaxml);
+		return "";
+	}
+
+	return metaxml;
+}
+
+string TitleInfo::GetProductCode()
+{
+	auto metaxml = GetMetaXmlFile();
+
+	if (FileExists(metaxml))
+	{
+		auto value = Library::ref->GetMetaXmlValue(metaxml, "product_code");
+
+		auto product_code = value.substr(6);
+
+		return product_code;
+	}
+
+	return "default";
+}
+
+string TitleInfo::GetCoverArt()
+{
+	auto code(GetProductCode());
+
+	auto temp_dir(std::filesystem::temp_directory_path().generic_string() + string("mapleseed/"));
+	auto cover = temp_dir + string(code + ".bmp");
+
+	if (!DirExists(temp_dir.c_str()))
+		create_directory(temp_dir);
+
+	if (!FileExists(cover))
+	{
+		string url = string("http://pixxy.in/cover/?code=") + code + string("&region=") + region;
+
+		DownloadClient().DownloadFile(url.c_str(), cover.c_str());
+	}
+
+	return cover;
 }
 
 int TitleInfo::Download()

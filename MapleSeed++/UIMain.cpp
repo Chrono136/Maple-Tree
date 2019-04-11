@@ -108,6 +108,9 @@ void UIMain::OnSelectLibraryClick(const nana::arg_click& ei)
 	auto paths = picker.show();
 	if (!paths.empty())
 	{
+		librarylist->clear();
+		Library::ref->_db = std::move(*new vector<TitleInfo*>);
+
 		for (nana::folderbox::path_type & p : paths)
 		{
 			messagelabel->caption("<center bold>" + Library::ref->BaseDirectory + "</>");
@@ -115,12 +118,10 @@ void UIMain::OnSelectLibraryClick(const nana::arg_click& ei)
 			Library::ref->SaveBaseDirectory(p.generic_string());
 			Library::ref->Load();
 
-			librarylist->clear();
-
 			for (int i = 0; i < Library::ref->_db.size(); i++)
 			{
 				auto item = Library::ref->_db[i];
-				librarylist->at(0).append({ item->id, item->name, item->region });
+				librarylist->at(0).append(*item, true);
 			}
 		}
 	}
@@ -128,22 +129,30 @@ void UIMain::OnSelectLibraryClick(const nana::arg_click& ei)
 	curpicker = nullptr;
 }
 
-void UIMain::UpdateCoverArt(string code)
+//Overload the operator<< for oresolver to resolve the person type
+listbox::oresolver& operator<<(listbox::oresolver& ores, const TitleInfo& ti)
 {
-	auto temp = std::filesystem::temp_directory_path().generic_string() + string(code + ".bmp");
+	return ores << ti.id << ti.name << ti.region;
+}
 
-	if (!FileExists(temp))
+void UIMain::UpdateCoverArt(const arg_listbox& ei)
+{
+	auto item = ei.item;
+	if (!item.empty())
 	{
-		string url = string("https://art.gametdb.com/wiiu/coverM/US/") + code + string(".jpg");
+		auto & itm = item.value<TitleInfo>();
+		string cover = itm.GetCoverArt();
 
-		DownloadClient().DownloadFile(url.c_str(), temp.c_str());
+		nana::paint::image img_bg;
+		if (img_bg.open(cover.c_str()))
+		{
+			auto image = new drawing{ *coverart };
+
+			image->clear();
+			image->draw([img_bg](nana::paint::graphics& graph) {img_bg.stretch(rectangle{ img_bg.size() }, graph, rectangle{ graph.size() }); });
+			image->update();
+		}
 	}
-
-	nana::paint::image img_bg;
-	img_bg.open(temp.c_str());
-	drawing{ *coverart }.draw([img_bg](nana::paint::graphics& graph) {
-		img_bg.stretch(rectangle{ img_bg.size() }, graph, rectangle{ graph.size() });
-	});
 }
 
 int UIMain::Init()
@@ -196,9 +205,11 @@ int UIMain::Init()
 	nana::button btn3{ uim };
 	btn3.caption("Select Library");
 	btn3.events().click([&](const nana::arg_click& ei) {
-		btn3.enabled(false);
-		uim.OnSelectLibraryClick(ei);
-		btn3.enabled(true);
+		pool.push([&] {
+			btn3.enabled(false);
+			uim.OnSelectLibraryClick(ei);
+			btn3.enabled(true);
+		});
 	});
 
 	//design progress bar
@@ -209,18 +220,11 @@ int UIMain::Init()
 	//design cover art
 	nana::picture pic{ uim };
 	uim.coverart = &pic;
-	auto temp = std::filesystem::temp_directory_path().generic_string() + string("msca.bmp");
-	if (!FileExists(temp))
-		DownloadClient().DownloadFile("http://pixxy.in/default.bmp", temp.c_str());
-	nana::paint::image img_bg;
-	img_bg.open(temp.c_str());
-	drawing{ pic }.draw([img_bg](nana::paint::graphics& graph) {
-		img_bg.stretch(rectangle{ img_bg.size() }, graph, rectangle{ graph.size() });
-	});
+	uim.UpdateCoverArt(arg_listbox(NULL));
 
 	//design title list
 	nana::listbox list{ uim };
-	//list.events().selected([&] {uim.UpdateCoverArt("AQUE01"); });
+	list.events().selected([&](const arg_listbox& ei) {uim.UpdateCoverArt(ei); });
 	uim.librarylist = &list;
 	list.append_header("ID");
 	list.append_header("Name");
@@ -228,8 +232,10 @@ int UIMain::Init()
 	for (int i = 0; i < Library::ref->_db.size(); i++)
 	{
 		auto item = Library::ref->_db[i];
-		list.at(0).append({ item->id, item->name, item->region });
+		list.at(0).append(*item, true);
 	}
+	if (list.size_item(0) > 0)
+		uim.UpdateCoverArt(arg_listbox(list.at(0).at(0)));
 
 	//design directory label
 	nana::label lbl{ uim };
@@ -241,7 +247,7 @@ int UIMain::Init()
 	nana::place plc_{ uim };
 	plc_.div("vertical"
 		"<weight=5% <><weight=500 gap=5 btns><>>"
-		"<weight=85% arrange=[60%,40%] mid>"
+		"<weight=85% arrange=[65%,35%] mid>"
 		"<weight=5% pgbar>"
 		"<weight=5% lbl>"
 	);

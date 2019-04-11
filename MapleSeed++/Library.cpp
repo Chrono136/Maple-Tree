@@ -24,6 +24,7 @@ Library::~Library()
 
 void Library::Load()
 {
+	nana::threads::pool pool;
 	recursive_directory_iterator dir(BaseDirectory), end;
 	while (dir != end)
 	{
@@ -31,8 +32,12 @@ void Library::Load()
 		{
 			WriteLine("Loading: '%s'", dir->path().generic_string().c_str());
 			string title_id(GetMetaXmlValue(dir->path().generic_string(), "title_id"));
-			auto ti = TitleInfo::GetTitleInfo(title_id.c_str());
-			_db.push_back(std::move(ti));
+
+			auto ti = new TitleInfo(title_id.c_str());
+			ti->SetLibraryPath(dir->path().parent_path().parent_path().generic_string());
+			ti->GetCoverArt();
+
+			_db.push_back(ti);
 		}
 		++dir;
 	}

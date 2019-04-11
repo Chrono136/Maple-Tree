@@ -12,7 +12,7 @@ public:
 	void OnDecryptContentClick(const nana::arg_click& ei);
 	void OnSelectLibraryClick(const nana::arg_click& ei);
 
-	void UpdateCoverArt(string code);
+	void UpdateCoverArt(const arg_listbox&);
 
 	bool IsVisible = false;
 

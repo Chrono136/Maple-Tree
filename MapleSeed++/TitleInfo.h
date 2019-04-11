@@ -12,7 +12,7 @@ namespace MapleSeed
 
 		static TitleInfo * GetTitleInfo(const char * id);
 
-		static char * GenerateTMD(std::string working_dir, std::string _id);
+		static char * GenerateTMD(std::string _librarypath, std::string _id, string version = "");
 		static char * GenerateTicket(std::string id);
 		static char * GenerateTicket(TitleInfo * ti);
 
@@ -23,24 +23,27 @@ namespace MapleSeed
 		string GetMetaXmlFile();
 		string GetProductCode();
 		string GetCoverArt();
+		void UpdateContentType();
 
-		int Download();
+		int Download(string version = "");
 		void Decrypt();
 
-		char* uid;
-		char* id;
-		char* key;
-		char* name;
-		char* region;
-		char* versions;
-		char* hasdlc;
-		char* haspatch;
-		char* contenttype;
-		char* cdn;
-		char* pcode;
-		char* ccode;
-		char* iloc;
-		char* notes;
+		MapleSeed::ContentType _type;
+
+		const char* uid;
+		const char* id;
+		const char* key;
+		const char* name;
+		const char* region;
+		const char* versions;
+		const char* hasdlc;
+		const char* haspatch;
+		const char* contenttype;
+		const char* cdn;
+		const char* pcode;
+		const char* ccode;
+		const char* iloc;
+		const char* notes;
 
 	private:
 		string LibraryPath = "";

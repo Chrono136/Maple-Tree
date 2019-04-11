@@ -4,10 +4,14 @@
 
 static map<string, TitleInfo*> database;
 
-TitleInfo::TitleInfo(const char *id)
+TitleInfo::TitleInfo(const char *_id)
 {
 	try {
-		string url = string("http://api.tsumes.com/title/" + string(id));
+		string url = string("http://api.tsumes.com/title/" + string(_id));
+
+		if (_id[7] == 'e' || _id[7] == 'E')
+			url = string("http://api.tsumes.com/titlekey/" + string(_id));
+
 		auto jd = DownloadBytes(url.c_str());
 		if (jd.data == nullptr) return;
 
@@ -75,6 +79,8 @@ TitleInfo * TitleInfo::ParseTitleInfo(const char * str, size_t len)
 			database[id] = this;
 		}
 
+		if (id) UpdateContentType();
+
 		return this;
 	}
 	catch (std::exception const& e)
@@ -84,13 +90,13 @@ TitleInfo * TitleInfo::ParseTitleInfo(const char * str, size_t len)
 	}
 }
 
-char * TitleInfo::GenerateTMD(std::string working_dir, std::string __id)
+char * TitleInfo::GenerateTMD(std::string _librarypath, std::string id, string version)
 {
-	string _id(__id);
-	std::transform(_id.begin(), _id.end(), _id.begin(), ::tolower);
+	string tmdPath = _librarypath + string("/tmd");
+	string tmdURL = string("http://ccs.cdn.wup.shop.nintendo.net/ccs/download/") + id + string("/tmd");
 
-	string tmdPath = working_dir + string("/tmd");
-	string tmdURL = (string("http://api.tsumes.com/title/") + _id + string("/tmd"));
+	if (!version.empty())
+		tmdURL += string(".") + version;
 
 	DownloadClient dc_tmd;
 	if (!FileExists(tmdPath))
@@ -121,15 +127,15 @@ char * TitleInfo::GenerateTicket(TitleInfo * ti)
 		MapleTicket mt = MapleTicket::Create(ti);
 		auto dir = mt.info->GetLibraryPath();
 
-		if (DirExists(dir.c_str()))
-		{
-			char* data = mt.data;
-			int len = mt.len;
+		if (!DirExists(dir.c_str()))
+			create_directory(dir);
 
-			SaveFile((dir + string("/cetk")).c_str(), data, len);
+		char* data = mt.data;
+		int len = mt.len;
 
-			return data;
-		}
+		SaveFile((dir + string("/cetk")).c_str(), data, len);
+
+		return data;
 	}
 	
 	return nullptr;
@@ -144,14 +150,14 @@ string TitleInfo::SetLibraryPath(string path)
 
 string TitleInfo::GetLibraryPath()
 {
-	auto base = Library::GetBaseDirectory();
-	auto nam = string("[") + string(region) + string("]") + string(name);
-	auto basenam = filesystem::absolute(base + string("/") + nam).generic_string();
+	//auto base = Library::GetBaseDirectory();
+	//auto nam = string("[") + string(region) + string("]") + string(name);
+	//auto basenam = filesystem::absolute(base + string("/") + nam).generic_string();
 
-	if (DirExists(LibraryPath.c_str()))
-		return LibraryPath;
+	if (!DirExists(LibraryPath.c_str()))
+		create_directory(LibraryPath);
 
-	return basenam;
+	return LibraryPath;
 }
 
 string TitleInfo::GetMetaXmlFile()
@@ -204,36 +210,48 @@ string TitleInfo::GetCoverArt()
 	return cover;
 }
 
-int TitleInfo::Download()
+void TitleInfo::UpdateContentType()
+{
+	switch (string(id).at(7))
+	{
+	case 'e':
+	case 'E':
+		_type = ContentType::Patch;
+		SetLibraryPath(Library::GetBaseDirectory() + string("/[Update]") + string("[") + string(region) + string("]") + string(name));
+		break;
+
+	case 'c':
+	case 'C':
+		_type = ContentType::DLC;
+		SetLibraryPath(Library::GetBaseDirectory() + string("/[DLC]") + string("[") + string(region) + string("]") + string(name));
+		break;
+
+	case '0':
+		_type = ContentType::Game;
+		SetLibraryPath(Library::GetBaseDirectory() + string("/[") + string(region) + string("]") + string(name));
+		break;
+	}
+}
+
+int TitleInfo::Download(string version)
 {
 	string baseURL = string("http://ccs.cdn.wup.shop.nintendo.net/ccs/download/");
 	auto workingDir = GetLibraryPath();
 
-	if (!DirExists(workingDir.c_str()))
-		create_directory(workingDir);
-
-#pragma region Setup TMD
-	char* TMD = GenerateTMD(workingDir, id);
+	char* TMD = GenerateTMD(workingDir, id, version);
 	TitleMetaData* tmd = (TitleMetaData*)TMD;
-#pragma endregion
 
-#pragma region Setup Ticket
 	GenerateTicket(this);
-#pragma endregion
 
 	u16 contentCount = bs16(tmd->ContentCount);
 	for (int i = 0; i < contentCount; i++)
 	{
 		char str[1024];
-		
-		sprintf(str, "00050000%08X", (unsigned int)bs64(tmd->TitleID));
-		auto titleID = string(str);
-		
 		sprintf(str, "%08X", bs32(tmd->Contents[i].ID));
 		auto contentID = string(str);
 
 		auto contentPath = workingDir + string("/") + contentID;
-		auto downloadURL = baseURL + titleID + string("/") + contentID;
+		auto downloadURL = baseURL + id + string("/") + contentID;
 
 		auto size = bs64(tmd->Contents[i].Size);
 

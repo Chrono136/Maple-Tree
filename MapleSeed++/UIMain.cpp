@@ -129,6 +129,45 @@ void UIMain::OnSelectLibraryClick(const nana::arg_click& ei)
 	curpicker = nullptr;
 }
 
+void UIMain::OnUpdateContentClick(const nana::arg_click & ei)
+{
+	nana::inputbox id_inputbox_{ *this, "Input title id", "Download Title Update" };
+
+	inputbox::text id("<bold>Title ID</>");
+	id_inputbox_.min_width_entry_field(200);
+	id_inputbox_.verify([&id](window handle)
+	{
+		if (id.value().empty() || id.value().length() != 16)
+		{
+			msgbox mb(handle, "Invalid title id");
+			mb << L"Title ID should be at least 16 characters";
+			mb.show();
+			return false;
+		}
+		return true;
+	});
+
+	if (id_inputbox_.show_modal(id))
+	{
+		auto _id("0005000e" + id.value().substr(8));
+		auto ti = TitleInfo(_id.c_str());
+		ti.Download();
+		ti.Decrypt();
+	}
+}
+
+void UIMain::OnDlcContentClick(const nana::arg_click & ei)
+{
+	for (auto item : librarylist->at(0))
+	{
+		if (item.selected())
+		{
+			auto & itm = item.value<TitleInfo>();
+			//MapleSeed::MapleMain::DownloadContent("0005000c" + string(itm.id).substr(8), "");
+		}
+	}
+}
+
 //Overload the operator<< for oresolver to resolve the person type
 listbox::oresolver& operator<<(listbox::oresolver& ores, const TitleInfo& ti)
 {
@@ -174,6 +213,7 @@ int UIMain::Init()
 	app_path.resize(GetModuleFileNameW(0, &app_path.front(), (DWORD)app_path.size()));
 	uim.icon(paint::image(app_path));
 
+#pragma region Buttons
 	//design toggle console button
 	nana::button btn0{ uim };
 	btn0.caption("Toggle CLI");
@@ -212,6 +252,29 @@ int UIMain::Init()
 		});
 	});
 
+	//design update content button
+	nana::button btn4{ uim };
+	btn4.caption("Download Update");
+	btn4.events().click([&](const nana::arg_click& ei) {
+		pool.push([&] {
+			btn4.enabled(false);
+			uim.OnUpdateContentClick(ei);
+			btn4.enabled(true);
+		});
+	});
+
+	//design update content button
+	nana::button btn5{ uim };
+	btn5.caption("Download DLC");
+	btn5.events().click([&](const nana::arg_click& ei) {
+		pool.push([&] {
+			btn5.enabled(false);
+			uim.OnDlcContentClick(ei);
+			btn5.enabled(true);
+		});
+	});
+#pragma endregion
+
 	//design progress bar
 	nana::progress pgbar{ uim };
 	uim.progressbar = &pgbar;
@@ -237,6 +300,15 @@ int UIMain::Init()
 	if (list.size_item(0) > 0)
 		uim.UpdateCoverArt(arg_listbox(list.at(0).at(0)));
 
+	//define menu
+	auto handler = [](menu::item_proxy& ip) {};
+	menu m;
+	//m.append("Download Update", handler);
+	list.events().mouse_up([&](const arg_mouse& arg) {
+		if (mouse::right_button != arg.button) return;
+		m.popup_await(list, arg.pos.x, arg.pos.y);
+	});
+
 	//design directory label
 	nana::label lbl{ uim };
 	uim.messagelabel = &lbl;
@@ -246,12 +318,12 @@ int UIMain::Init()
 	//set element placement
 	nana::place plc_{ uim };
 	plc_.div("vertical"
-		"<weight=5% <><weight=500 gap=5 btns><>>"
+		"<weight=5% <><weight=90% gap=5 btns><>>"
 		"<weight=85% arrange=[65%,35%] mid>"
 		"<weight=5% pgbar>"
 		"<weight=5% lbl>"
 	);
-	plc_["btns"] << btn0 << btn1 << btn2 << btn3;
+	plc_["btns"] << btn0 << btn1 << btn2 << btn4 << btn3;
 	plc_["mid"] << list << pic;
 	plc_["pgbar"] << pgbar;
 	plc_["lbl"] << lbl;

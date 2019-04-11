@@ -11,6 +11,8 @@ public:
 	void OnDownloadTitleClick(const nana::arg_click& ei);
 	void OnDecryptContentClick(const nana::arg_click& ei);
 	void OnSelectLibraryClick(const nana::arg_click& ei);
+	void OnUpdateContentClick(const nana::arg_click& ei);
+	void OnDlcContentClick(const nana::arg_click& ei);
 
 	void UpdateCoverArt(const arg_listbox&);
 

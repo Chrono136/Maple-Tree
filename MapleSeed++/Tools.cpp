@@ -5,6 +5,7 @@
 /*Very hacky. But no other method/library would work*/
 void CommonTools::UTF16toUnicode(string &str)
 {
+	ReplaceAll(str, "\\n", " ");
 	ReplaceAll(str, "\\u00c0", "À");
 	ReplaceAll(str, "\\u00c1", "Á");
 	ReplaceAll(str, "\\u00c2", "Â");

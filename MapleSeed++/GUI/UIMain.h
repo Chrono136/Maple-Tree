@@ -24,13 +24,14 @@ public:
 	nana::label *messagelabel;
 	nana::picture *coverart;
 
-	static void ProgressUpdateCallback(unsigned long min, unsigned long max, const char *data)
+	static void ProgressUpdateCallback(string fileName, unsigned long min, unsigned long max)
 	{
-		if (UIMain::mainForm && UIMain::mainForm->progressbar)
+		if (UIMain::mainForm)
 		{
-			UIMain::mainForm->progressbar->amount(max);
+			auto str = string(fileName) + string(" | ") + to_string(min) + string(" / ") + to_string(max);
+
 			UIMain::mainForm->progressbar->value(min);
-			UIMain::mainForm->messagelabel->caption(data);
+			UIMain::mainForm->messagelabel->caption(str);
 		}
 	}
 

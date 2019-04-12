@@ -24,91 +24,77 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="MapleTicket.h">
-      <Filter>WiiU</Filter>
-    </ClInclude>
-    <ClInclude Include="targetver.h">
-      <Filter>Properties</Filter>
-    </ClInclude>
     <ClInclude Include="stdafx.h">
       <Filter>Properties</Filter>
     </ClInclude>
-    <ClInclude Include="DownloadClient.h">
-      <Filter>Network</Filter>
-    </ClInclude>
-    <ClInclude Include="MapleMini.h" />
     <ClInclude Include="ThirdParty\frozen.h">
       <Filter>ThirdParty</Filter>
     </ClInclude>
-    <ClInclude Include="ThirdParty\rang.hpp">
-      <Filter>ThirdParty</Filter>
+    <ClInclude Include="Network\DownloadClient.h">
+      <Filter>Network</Filter>
     </ClInclude>
-    <ClInclude Include="Tools.h">
+    <ClInclude Include="Database\Library.h">
       <Filter>Common</Filter>
     </ClInclude>
-    <ClInclude Include="UIMain.h">
+    <ClInclude Include="Threads\ThreadManager.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="WiiU\MapleTicket.h">
+      <Filter>WiiU</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\Tools.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Properties\gen-versioninfo.h">
+      <Filter>Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="Properties\resource.h">
+      <Filter>Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="MapleSeed\MapleMini.h" />
+    <ClInclude Include="GUI\UIMain.h">
       <Filter>GUI</Filter>
     </ClInclude>
-    <ClInclude Include="ThreadManager.h">
-      <Filter>Common</Filter>
-    </ClInclude>
-    <ClInclude Include="Library.h">
-      <Filter>Common</Filter>
-    </ClInclude>
-    <ClInclude Include="resource.h">
-      <Filter>Resources</Filter>
-    </ClInclude>
-    <ClInclude Include="gen-versioninfo.h">
-      <Filter>Resources</Filter>
-    </ClInclude>
-    <ClInclude Include="TitleInfo.h">
+    <ClInclude Include="Database\Info\TitleInfo.h">
       <Filter>WiiU</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="MapleMini.cpp" />
-    <ClCompile Include="MapleTicket.cpp">
+    <ClCompile Include="ThirdParty\frozen.c">
+      <Filter>ThirdParty</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="ThirdParty\cdecrypt.cpp">
+      <Filter>ThirdParty</Filter>
+    </ClCompile>
+    <ClCompile Include="Network\DownloadClient.cpp">
+      <Filter>Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Database\Library.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="Threads\ThreadManager.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="WiiU\MapleTicket.cpp">
       <Filter>WiiU</Filter>
+    </ClCompile>
+    <ClCompile Include="Common\Tools.cpp">
+      <Filter>Common</Filter>
     </ClCompile>
     <ClCompile Include="stdafx.cpp">
       <Filter>Properties</Filter>
     </ClCompile>
-    <ClCompile Include="DownloadClient.cpp">
-      <Filter>Network</Filter>
-    </ClCompile>
-    <ClCompile Include="ThirdParty\frozen.c">
-      <Filter>ThirdParty</Filter>
-    </ClCompile>
-    <ClCompile Include="Tools.cpp">
-      <Filter>Common</Filter>
-    </ClCompile>
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="UIMain.cpp">
+    <ClCompile Include="MapleSeed\MapleMini.cpp" />
+    <ClCompile Include="GUI\UIMain.cpp">
       <Filter>GUI</Filter>
     </ClCompile>
-    <ClCompile Include="ThreadManager.cpp">
-      <Filter>Common</Filter>
-    </ClCompile>
-    <ClCompile Include="ThirdParty\cdecrypt.cpp">
-      <Filter>ThirdParty</Filter>
-    </ClCompile>
-    <ClCompile Include="Library.cpp">
-      <Filter>Common</Filter>
-    </ClCompile>
-    <ClCompile Include="TitleInfo.cpp">
+    <ClCompile Include="Database\Info\TitleInfo.cpp">
       <Filter>WiiU</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="..\default.png">
-      <Filter>Resources</Filter>
-    </Image>
-    <Image Include="..\MapleSeed.ico">
-      <Filter>Resources</Filter>
-    </Image>
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="MapleSeed++.rc">
+    <ResourceCompile Include="Properties\MapleSeed++.rc">
       <Filter>Resources</Filter>
     </ResourceCompile>
   </ItemGroup>

@@ -7,23 +7,17 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MapleSeed++", "MapleSeed++\
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		Debug Static|x64 = Debug Static|x64
-		Debug Static|x86 = Debug Static|x86
 		Debug|x64 = Debug|x64
-		Debug|x86 = Debug|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{702AF608-BC81-4990-8E54-92A5DD94199B}.Debug Static|x64.ActiveCfg = Debug|x64
-		{702AF608-BC81-4990-8E54-92A5DD94199B}.Debug Static|x64.Build.0 = Debug|x64
-		{702AF608-BC81-4990-8E54-92A5DD94199B}.Debug Static|x86.ActiveCfg = Debug Static|x64
 		{702AF608-BC81-4990-8E54-92A5DD94199B}.Debug|x64.ActiveCfg = Debug|x64
 		{702AF608-BC81-4990-8E54-92A5DD94199B}.Debug|x64.Build.0 = Debug|x64
-		{702AF608-BC81-4990-8E54-92A5DD94199B}.Debug|x86.ActiveCfg = Debug|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
+		Qt5Version = 5.12.2
 		SolutionGuid = {43F7582F-FCE9-4B2E-AAFF-CE79B70E671E}
 	EndGlobalSection
 EndGlobal

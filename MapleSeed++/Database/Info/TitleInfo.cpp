@@ -266,7 +266,7 @@ int TitleInfo::Download(string version)
 		}
 	}
 
-	cout << rang::style::bold << "Download Complete!!" << rang::style::reset << endl;
+	std::cout << "Download Complete!!" << std::endl;
 	return 0;
 }
 

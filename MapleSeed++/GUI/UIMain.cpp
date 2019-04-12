@@ -67,10 +67,8 @@ void UIMain::OnDownloadTitleClick(const nana::arg_click& ei)
 
 	if (id_inputbox_.show_modal(id))
 	{
-		auto ti = TitleInfo::GetTitleInfo(id.value().c_str());
-		ti->Download();
-		ti->Decrypt();
-		librarylist->at(0).append({ ti->id, ti->name, ti->region });
+		MapleMain::DownloadContent(id.value());
+		librarylist->at(0).append(TitleInfo::GetTitleInfo(id.value().c_str()));
 	}
 }
 
@@ -131,28 +129,23 @@ void UIMain::OnSelectLibraryClick(const nana::arg_click& ei)
 
 void UIMain::OnUpdateContentClick(const nana::arg_click & ei)
 {
-	nana::inputbox id_inputbox_{ *this, "Input title id", "Download Title Update" };
+	nana::inputbox input{ *this, "Input version", "Download Title Update" };
 
-	inputbox::text id("<bold>Title ID</>");
-	id_inputbox_.min_width_entry_field(200);
-	id_inputbox_.verify([&id](window handle)
+	inputbox::text vt("<bold>Title Version</>");
+	input.min_width_entry_field(200);
+	input.verify([&vt](window handle) { return true; });
+
+	if (input.show_modal(vt))
 	{
-		if (id.value().empty() || id.value().length() != 16)
+		for (auto item : librarylist->at(0))
 		{
-			msgbox mb(handle, "Invalid title id");
-			mb << L"Title ID should be at least 16 characters";
-			mb.show();
-			return false;
+			if (item.selected())
+			{
+				auto & ti = item.value<TitleInfo>();
+				string _id = string("0005000e") + string(ti.id).substr(8);
+				MapleMain::DownloadContent(_id, vt.value());
+			}
 		}
-		return true;
-	});
-
-	if (id_inputbox_.show_modal(id))
-	{
-		auto _id("0005000e" + id.value().substr(8));
-		auto ti = TitleInfo(_id.c_str());
-		ti.Download();
-		ti.Decrypt();
 	}
 }
 
@@ -293,21 +286,9 @@ int UIMain::Init()
 	list.append_header("Name");
 	list.append_header("Region");
 	for (int i = 0; i < Library::ref->_db.size(); i++)
-	{
-		auto item = Library::ref->_db[i];
-		list.at(0).append(*item, true);
-	}
+		list.at(0).append(*Library::ref->_db[i], true);
 	if (list.size_item(0) > 0)
 		uim.UpdateCoverArt(arg_listbox(list.at(0).at(0)));
-
-	//define menu
-	auto handler = [](menu::item_proxy& ip) {};
-	menu m;
-	//m.append("Download Update", handler);
-	list.events().mouse_up([&](const arg_mouse& arg) {
-		if (mouse::right_button != arg.button) return;
-		m.popup_await(list, arg.pos.x, arg.pos.y);
-	});
 
 	//design directory label
 	nana::label lbl{ uim };

@@ -218,7 +218,7 @@ void CommonTools::WriteLine(char const * const fmt, ...)
 	va_start(args, fmt);
 	vsprintf(buffer, fmt, args);
 
-	cout << buffer << rang::style::reset << endl;
+	cout << buffer << endl;
 
 	va_end(args);
 }
@@ -231,7 +231,7 @@ void CommonTools::WriteLineBold(char const * const fmt, ...)
 	va_start(args, fmt);
 	vsprintf(buffer, fmt, args);
 
-	cout << rang::style::bold << buffer << rang::style::reset << endl;
+	cout << buffer << endl;
 
 	va_end(args);
 }
@@ -244,7 +244,7 @@ void CommonTools::WriteLineRed(char const * const fmt, ...)
 	va_start(args, fmt);
 	vsprintf(buffer, fmt, args);
 
-	cout << rang::fg::red << fmt << rang::style::reset << endl;
+	cout << fmt << endl;
 
 	va_end(args);
 }

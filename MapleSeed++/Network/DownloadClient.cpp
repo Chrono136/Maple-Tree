@@ -174,24 +174,17 @@ void MapleSeed::DownloadClient::DownloadData(const char *url, const char* fileNa
 		if (resume)
 		{
 			boost::progress_display progress(rsize);
+			UIMain::mainForm->progressbar->amount(rsize);
+
 			while (boost::asio::read(socket, response, boost::asio::transfer_at_least(1), error))
 			{
-				if (error)
-				{
-					WriteLineRed(error.message().c_str());
-				}
-
 				outFile << &response;
 				
 				auto read = (unsigned long)outFile.tellp();
-				auto sread = std::to_string(read / 1024);
 
 				progress += read - progress.count();
 
-				auto _min = to_string(read) + " bytes ";
-				auto _max = to_string(rsize) + " bytes ";
-				auto str = string(fileName) + string(" | ") + _min + string("/ ") + _max;
-				UIMain::ProgressUpdateCallback(read, rsize, str.c_str());
+				UIMain::ProgressUpdateCallback(fileName, read, rsize);
 			}
 		}
 		else

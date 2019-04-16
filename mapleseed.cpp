@@ -31,7 +31,7 @@ void MapleSeed::initialize()
         config->save();
 
     gameLibrary->init(config->getBaseDirectory());
-    //ui->statusbar->showMessage("Environment setup complete", 5);
+    ui->statusbar->showMessage("Environment setup complete");
 }
 
 void MapleSeed::defineActions()

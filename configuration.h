@@ -13,13 +13,17 @@ class Configuration {
 public:
     explicit Configuration(QString configpath = "") {
         if (configpath.isEmpty())
-            configpath = getTempDirectory("config.json").path();
-        configFile = new QFile(this->configPath = configpath);
+            configpath = getTempDirectory("").filePath("settings.json");
+        this->configPath = configpath;
     }
-    ~Configuration(){
-        save();
-        configFile->close();
-        delete configFile;
+    ~Configuration() {
+        if (getKey("ConfigType") == "Temporary"){
+            if (this->getBaseDirectory() != QDir::currentPath()){
+                QDir().rmdir(this->getBaseDirectory());
+            }
+        }else {
+            save();
+        }
     }
 
     void setKey(QString key, QString value){
@@ -44,10 +48,12 @@ public:
     }
 
     void load(){
-        configFile->seek(0);
-        QJsonDocument doc = QJsonDocument::fromJson(configFile->readAll());
+        QFile file(this->configPath);
+        file.open(QIODevice::ReadOnly);
+        QJsonDocument doc = QJsonDocument::fromJson(file.readAll());
 
         if (doc.isNull()){
+            file.close();
             return;
         }
 
@@ -61,9 +67,12 @@ public:
                 }
             }
         }
+        file.close();
     }
 
     void save(){
+        QFile file(this->configPath);
+        file.open(QIODevice::WriteOnly);
         QVariantMap vmap;
         QMapIterator<QString, QString> i(configMap);
 
@@ -75,8 +84,7 @@ public:
         QJsonDocument json = QJsonDocument::fromVariant(vmap);
         QByteArray bytearray(json.toJson(QJsonDocument::Indented));
 
-        configFile->remove();
-        configFile->write(bytearray);
+        file.write(bytearray);
     }
 
     static QDir getTempDirectory(QString folder)
@@ -91,7 +99,6 @@ public:
 private:
     QString configPath;
     QMap<QString, QString> configMap;
-    QFile *configFile;
 };
 
 #endif // CONFIGURATION_H

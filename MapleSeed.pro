@@ -47,7 +47,8 @@ HEADERS += \
     titleinfoitem.h \
     ticket.h \
     decrypt.h \
-    configuration.h
+    configuration.h \
+    versioninfo.h
 
 FORMS += \
         mainwindow.ui

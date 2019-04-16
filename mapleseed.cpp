@@ -1,21 +1,17 @@
 #include "mapleseed.h"
 #include "ui_mainwindow.h"
+#include "versioninfo.h"
 
 MapleSeed::MapleSeed(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    this->setWindowTitle("MapleSeed++ 1.0.0");
+    this->setWindowTitle("MapleSeed++ " + QString(GEN_VERSION_STRING));
     initialize();
 }
 
 MapleSeed::~MapleSeed()
 {
-    if (ui->actionConfigTemporary->isChecked()){
-        if (config->getBaseDirectory() != QDir::currentPath()){
-            QDir().rmdir(config->getBaseDirectory());
-        }
-    }
-
+    delete config;
     delete ui;
     delete decrypt;
     delete downloadManager;

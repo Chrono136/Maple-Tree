@@ -108,13 +108,13 @@ border: 1px solid black;
      <enum>QFrame::Box</enum>
     </property>
     <property name="frameShadow">
-     <enum>QFrame::Sunken</enum>
+     <enum>QFrame::Plain</enum>
     </property>
     <property name="lineWidth">
-     <number>1</number>
+     <number>2</number>
     </property>
     <property name="midLineWidth">
-     <number>2</number>
+     <number>0</number>
     </property>
     <property name="text">
      <string/>

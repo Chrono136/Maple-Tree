@@ -97,8 +97,8 @@ void TitleInfo::init()
         return;
     }
 
-    connect(DownloadManager::getSelf(), &DownloadManager::downloadSuccessful, this, &TitleInfo::downloadJsonSuccessful);
     DownloadManager::getSelf()->downloadSingle(jsonurl, filepath);
+    downloadJsonSuccessful(filepath);
 }
 
 void TitleInfo::decryptContent(Decrypt *decrypt)

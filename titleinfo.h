@@ -40,6 +40,7 @@ private:
     TitleMetaData *getTMD(QString version);
     void parseJson(QByteArray byteArry, QString filepath);
     void setTitleType();
+    void downloadJsonSuccessful(QString filepath);
 
     QString id;
     QMap<QString, QString> info;
@@ -50,7 +51,6 @@ private:
 signals:
 
 public slots:
-    void downloadJsonSuccessful(QString filepath);
 };
 
 #endif // TITLEBASE_H

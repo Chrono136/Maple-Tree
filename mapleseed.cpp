@@ -31,12 +31,6 @@ void MapleSeed::initialize()
         config->save();
 
     gameLibrary->init(config->getBaseDirectory());
-
-    if (ui->listWidget->count() > 0){
-        auto item = ui->listWidget->item(0);
-        TitleInfoItem *itm = reinterpret_cast<TitleInfoItem*>(item);
-        ui->label->setPixmap(QPixmap(itm->getItem()->getCoverArt()));
-    }
     //ui->statusbar->showMessage("Environment setup complete", 5);
 }
 
@@ -137,6 +131,10 @@ QDir *MapleSeed::selectDirectory()
 
 void MapleSeed::updateListview(TitleInfo *tb)
 {
+    if (ui->listWidget->count() == 1){
+        ui->listWidget->setCurrentRow(0);
+    }
+
     TitleInfoItem *tii = new TitleInfoItem(tb);
     tii->setText(tii->getItem()->getFormatName());
     this->ui->listWidget->addItem(tii);
@@ -188,7 +186,6 @@ void MapleSeed::updateProgress(qint64 bytesReceived, qint64 bytesTotal, QTime qt
 void MapleSeed::itemSelectionChanged()
 {
     auto items = ui->listWidget->selectedItems();
-
     if (items.count() <= 0)
         return;
 

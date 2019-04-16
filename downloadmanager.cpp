@@ -17,24 +17,6 @@ QFile *DownloadManager::downloadSingle(const QUrl &url, const QString filepath)
     return &output;
 }
 
-void DownloadManager::append(const QStringList &urls, const QString filepath)
-{
-    for (const QString &urlAsString : urls)
-        append(QUrl::fromEncoded(urlAsString.toLocal8Bit()), filepath);
-
-    if (downloadQueue.isEmpty())
-        QTimer::singleShot(0, this, &DownloadManager::_downloadFinished);
-}
-
-void DownloadManager::append(const QUrl &url, const QString filepath)
-{
-    if (downloadQueue.isEmpty())
-        QTimer::singleShot(0, this, &DownloadManager::_startNextDownload);
-
-    downloadQueue.enqueue({filepath, url});
-    ++totalCount;
-}
-
 DownloadManager *DownloadManager::getSelf()
 {
     return self;

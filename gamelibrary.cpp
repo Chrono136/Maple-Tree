@@ -1,12 +1,12 @@
 #include "gamelibrary.h"
 
-GameLibrary::GameLibrary(QString *str, QObject *parent) : QObject(parent)
+GameLibrary::GameLibrary(QObject *parent) : QObject(parent)
 {
-    this->baseDirectory = QString(*str);
 }
 
-void GameLibrary::init()
+void GameLibrary::init(QString path)
 {
+    this->baseDirectory = QDir(path).absolutePath();
     QDir dir = QDir(this->baseDirectory);
 
     if (!dir.exists())
@@ -23,15 +23,12 @@ void GameLibrary::init()
     while (it.hasNext())
     {
         QString filepath(it.filePath());
-        QtConcurrent::run([&]
+        QFileInfo metaxml(filepath);
+        if (metaxml.fileName().contains("meta.xml"))
         {
-            QFileInfo metaxml(filepath);
-            if (metaxml.fileName().contains("meta.xml"))
-            {
-                library.append(TitleInfo::Create(metaxml, this->baseDirectory));
-                emit changed(library.last());
-            }
-        });
+            library.append(TitleInfo::Create(metaxml, this->baseDirectory));
+            emit changed(library.last());
+        }
         it.next();
     }
 }

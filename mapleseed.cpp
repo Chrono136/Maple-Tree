@@ -6,7 +6,7 @@ MapleSeed::MapleSeed(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWind
 {
     ui->setupUi(this);
     this->setWindowTitle("MapleSeed++ " + QString(GEN_VERSION_STRING));
-    initialize();
+    QtConcurrent::run([&]{initialize();});
 }
 
 MapleSeed::~MapleSeed()
@@ -21,26 +21,23 @@ MapleSeed::~MapleSeed()
 void MapleSeed::initialize()
 {
     ui->statusbar->showMessage("Setting up enviornment variables");
-
-    config = new Configuration();
-    config->load();
-
+    config = new Configuration;
     decrypt = new Decrypt;
     downloadManager = new DownloadManager;
-
-    QString baseDir(config->getBaseDirectory());
-    gameLibrary = new GameLibrary(&baseDir, this);
-    gameLibrary->init();
+    gameLibrary = new GameLibrary;
 
     defineActions();
+    if (!config->load())
+        config->save();
+
+    gameLibrary->init(config->getBaseDirectory());
 
     if (ui->listWidget->count() > 0){
         auto item = ui->listWidget->item(0);
         TitleInfoItem *itm = reinterpret_cast<TitleInfoItem*>(item);
         ui->label->setPixmap(QPixmap(itm->getItem()->getCoverArt()));
     }
-
-    ui->statusbar->showMessage("Environment setup complete", 5);
+    //ui->statusbar->showMessage("Environment setup complete", 5);
 }
 
 void MapleSeed::defineActions()
@@ -77,8 +74,7 @@ void MapleSeed::menuChangeLibrary()
     config->setBaseDirectory(dir->path());
 
     ui->listWidget->clear();
-    gameLibrary->baseDirectory = dir->path();
-    gameLibrary->init();
+    gameLibrary->init(dir->path());
 
     if (ui->listWidget->count() > 0){
         auto item = ui->listWidget->item(0);

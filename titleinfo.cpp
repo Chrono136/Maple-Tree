@@ -98,7 +98,7 @@ void TitleInfo::init()
     }
 
     connect(DownloadManager::getSelf(), &DownloadManager::downloadSuccessful, this, &TitleInfo::downloadJsonSuccessful);
-    DownloadManager::getSelf()->append(jsonurl, filepath);
+    DownloadManager::getSelf()->downloadSingle(jsonurl, filepath);
 }
 
 void TitleInfo::decryptContent(Decrypt *decrypt)
@@ -160,7 +160,7 @@ QString TitleInfo::getCoverArt() const
     if (!QFile(cover).exists())
     {
         QString url = QString("http://pixxy.in/cover/?code=") + code + QString("&region=") + this->getRegion();
-        DownloadManager::getSelf()->append(url, cover);
+        DownloadManager::getSelf()->downloadSingle(url, cover);
     }
 
     return cover;

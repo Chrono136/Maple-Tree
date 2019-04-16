@@ -14,11 +14,11 @@ class GameLibrary : public QObject
 {
     Q_OBJECT
 public:
-    explicit GameLibrary(QString *dir = nullptr, QObject *parent = nullptr);
+    explicit GameLibrary(QObject *parent = nullptr);
 
     QVector<TitleInfo*> library;
 
-    void init();
+    void init(QString path);
 
     QString baseDirectory;
 

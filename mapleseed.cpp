@@ -30,20 +30,24 @@ void MapleSeed::initialize()
     if (!config->load())
         config->save();
 
-    QtConcurrent::run([=]{gameLibrary->init(config->getBaseDirectory());});
-    //gameLibrary->init(config->getBaseDirectory());
+    gameLibrary->init(config->getBaseDirectory());
     ui->statusbar->showMessage("Environment setup complete");
 }
 
 void MapleSeed::defineActions()
 {
+    connect(decrypt, &Decrypt::decryptStarted, this, &MapleSeed::disableMenubar);
+    connect(decrypt, &Decrypt::decryptFinished, this, &MapleSeed::enableMenubar);
     connect(decrypt, &Decrypt::progressReport, this, &MapleSeed::updateDecryptProgress);
 
     connect(gameLibrary, &GameLibrary::changed, this, &MapleSeed::updateListview);
 
     connect(downloadManager, &DownloadManager::downloadStarted, this, &MapleSeed::downloadStarted);
+    connect(downloadManager, &DownloadManager::downloadStarted, this, &MapleSeed::disableMenubar);
     connect(downloadManager, &DownloadManager::downloadSuccessful, this, &MapleSeed::downloadSuccessful);
+    connect(downloadManager, &DownloadManager::downloadSuccessful, this, &MapleSeed::enableMenubar);
     connect(downloadManager, &DownloadManager::downloadError, this, &MapleSeed::downloadError);
+    connect(downloadManager, &DownloadManager::downloadError, this, &MapleSeed::enableMenubar);
     connect(downloadManager, &DownloadManager::downloadProgress, this, &MapleSeed::updateDownloadProgress);
 
     connect(ui->actionQuit, &QAction::triggered, this, &MapleSeed::menuQuit);
@@ -128,6 +132,16 @@ QDir *MapleSeed::selectDirectory()
         return new QDir(directories[0]);
     }
     return nullptr;
+}
+
+void MapleSeed::disableMenubar()
+{
+    this->ui->menubar->setEnabled(false);
+}
+
+void MapleSeed::enableMenubar()
+{
+    this->ui->menubar->setEnabled(true);
 }
 
 void MapleSeed::updateListview(TitleInfo *tb)

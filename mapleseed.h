@@ -42,6 +42,8 @@ private:
     QDir *selectDirectory();
 
 public slots:
+    void disableMenubar();
+    void enableMenubar();
     void updateListview(TitleInfo * tb);
     void downloadStarted(QString filename);
     void downloadSuccessful(QString fileName);

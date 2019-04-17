@@ -4,20 +4,19 @@
 #include <QObject>
 #include "titleinfo.h"
 
-class Ticket : public QObject
-{
-    Q_OBJECT
-public:
-    explicit Ticket(QObject *parent = nullptr);
+class Ticket : public QObject {
+  Q_OBJECT
+ public:
+  explicit Ticket(QObject *parent = nullptr);
 
-    static void Create(TitleInfo *ti);
+  static void Create(TitleInfo *ti);
 
-    QByteArray data;
-    qulonglong len;
+  QByteArray data;
+  qulonglong len;
 
-signals:
+ signals:
 
-public slots:
+ public slots:
 };
 
-#endif // TICKET_H
+#endif  // TICKET_H

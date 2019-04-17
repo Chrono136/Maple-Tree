@@ -1,58 +1,58 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include <QMainWindow>
 #include <QFileDialog>
-#include <QtConcurrent>
-#include <QInputDialog>
-#include <QPixmap>
 #include <QGraphicsPixmapItem>
-#include "gamelibrary.h"
-#include "downloadmanager.h"
-#include "titleinfoitem.h"
+#include <QInputDialog>
+#include <QMainWindow>
+#include <QPixmap>
+#include <QtConcurrent>
 #include "configuration.h"
+#include "downloadmanager.h"
+#include "gamelibrary.h"
+#include "titleinfoitem.h"
 
 namespace Ui {
 class MainWindow;
 }
 
-class MapleSeed : public QMainWindow
-{
-    Q_OBJECT
+class MapleSeed : public QMainWindow {
+  Q_OBJECT
 
-public:
-    explicit MapleSeed(QWidget *parent = nullptr);
-    ~MapleSeed();
+ public:
+  explicit MapleSeed(QWidget *parent = nullptr);
+  ~MapleSeed();
 
-    Configuration *config;
-    Decrypt *decrypt;
-    GameLibrary *gameLibrary;
-    DownloadManager *downloadManager;
+  Configuration *config;
+  Decrypt *decrypt;
+  GameLibrary *gameLibrary;
+  DownloadManager *downloadManager;
 
-private:
-    Ui::MainWindow *ui;
+ private:
+  Ui::MainWindow *ui;
 
-    void initialize();
-    void defineActions();
+  void initialize();
+  void defineActions();
 
-    void menuQuit();
-    void menuChangeLibrary();
-    void decryptContent();
-    void startDownload();
-    QDir *selectDirectory();
+  void menuQuit();
+  void menuChangeLibrary();
+  void decryptContent();
+  void startDownload();
+  QDir *selectDirectory();
 
-public slots:
-    void disableMenubar();
-    void enableMenubar();
-    void updateListview(TitleInfo * tb);
-    void downloadStarted(QString filename);
-    void downloadSuccessful(QString fileName);
-    void downloadError(QString errorString);
-    void updateDownloadProgress(qint64 bytesReceived, qint64 bytesTotal, QTime qtime);
-    void updateDecryptProgress(qint64 min, qint64 max);
-    void itemSelectionChanged();
-    void actionConfigTemporary(bool checked);
-    void actionConfigPersistent(bool checked);
+ public slots:
+  void disableMenubar();
+  void enableMenubar();
+  void updateListview(TitleInfo *tb);
+  void downloadStarted(QString filename);
+  void downloadSuccessful(QString fileName);
+  void downloadError(QString errorString);
+  void updateDownloadProgress(qint64 bytesReceived, qint64 bytesTotal,
+                              QTime qtime);
+  void updateDecryptProgress(qint64 min, qint64 max);
+  void itemSelectionChanged();
+  void actionConfigTemporary(bool checked);
+  void actionConfigPersistent(bool checked);
 };
 
-#endif // MAINWINDOW_H
+#endif  // MAINWINDOW_H

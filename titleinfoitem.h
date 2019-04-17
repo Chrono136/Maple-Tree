@@ -4,17 +4,16 @@
 #include <QListWidgetItem>
 #include "titleinfo.h"
 
-class TitleInfoItem : public QListWidgetItem
-{
-public:
-    TitleInfoItem(TitleInfo *tb){
-        this->setText(tb->getFormatName());
-        this->item=tb;
-    }
-    TitleInfo *getItem() const { return this->item; }
+class TitleInfoItem : public QListWidgetItem {
+ public:
+  TitleInfoItem(TitleInfo *tb) {
+    this->setText(tb->getFormatName());
+    this->item = tb;
+  }
+  TitleInfo *getItem() const { return this->item; }
 
-private:
-    TitleInfo *item;
+ private:
+  TitleInfo *item;
 };
 
-#endif // TITLEINFOITEM_H
+#endif  // TITLEINFOITEM_H

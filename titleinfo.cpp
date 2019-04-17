@@ -28,7 +28,7 @@ TitleInfo *TitleInfo::DownloadCreate(QString id, QString basedir)
     Ticket::Create(ti);
 
     quint16 contentCount = bs16(tmd->ContentCount);
-    if (contentCount > 100) return nullptr;
+    if (contentCount > 1000) return nullptr;
     for (int i = 0; i < contentCount; i++)
     {
         QString contentID = QString().sprintf("%08x", bs32(tmd->Contents[i].ID));

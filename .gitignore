@@ -7,3 +7,4 @@
 bin
 *.aps
 bin-dynamic
+bin-static

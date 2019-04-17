@@ -13,8 +13,18 @@ QFile *DownloadManager::downloadSingle(const QUrl &url, const QString filepath)
     ++totalCount;
     block = true;
     _startNextDownload();
+    _downloadFinished();
     block = false;
     return &output;
+}
+
+void DownloadManager::append(const QUrl &url, const QString filepath)
+{
+    if (downloadQueue.isEmpty())
+        QTimer::singleShot(0, this, &DownloadManager::_startNextDownload);
+
+    downloadQueue.enqueue({filepath, url});
+    ++totalCount;
 }
 
 DownloadManager *DownloadManager::getSelf()
@@ -41,7 +51,7 @@ void DownloadManager::_startNextDownload()
     if (!output.open(QIODevice::WriteOnly)) {
         emit downloadError("_startNextDownload():"+output.errorString());
         _startNextDownload();
-        return;                 // skip this download
+        return;
     }
 
     QNetworkRequest request(url);
@@ -56,7 +66,6 @@ void DownloadManager::_startNextDownload()
     if (block){
         connect(currentDownload, &QNetworkReply::finished, &loop, &QEventLoop::quit);
         loop.exec();
-        _downloadFinished();
     } else {
         connect(currentDownload, &QNetworkReply::finished, this, &DownloadManager::_downloadFinished);
     }

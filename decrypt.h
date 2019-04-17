@@ -16,7 +16,8 @@ class Decrypt : public QObject
 #pragma pack(push, 1)
 
 #define bs16(s) static_cast<quint16>( ((s)>>8) | ((s)<<8) )
-#define bs32(s) static_cast<quint32>( (((s)&0xFF0000)>>8) | (((s)&0xFF00)<<8) | ((s)>>24) | ((s)<<24) )
+#define bs32(s) (quint32)( (((s)&0xFF0000)>>8) | (((s)&0xFF00)<<8) | ((s)>>24) | ((s)<<24) )
+//#define bs32(s) static_cast<quint32>( (((s)&0xFF0000)>>8) | (((s)&0xFF00)<<8) | ((s)>>24) | ((s)<<24) )
 
     Q_OBJECT
 public:
@@ -28,8 +29,9 @@ public:
     static qulonglong bs64( qulonglong i );
 
 signals:
-    void decryptStart(QString id);
-    void decryptComplete(QString id);
+    void decryptStarted();
+    void decryptFinished();
+    void progressReport(quint32 min, quint32 max);
 
 public slots:
 

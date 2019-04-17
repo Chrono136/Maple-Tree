@@ -29,7 +29,8 @@ public:
     QString getDirectory() const;
     QString getFormatName() const;
     QString getBaseDirectory() const;
-    QString getCoverArt() const;
+    QString getCoverArtPath() const;
+    QString getCoverArtUrl() const;
     QString getID() const;
     QString getKey() const;
     QString getName() const;
@@ -40,7 +41,7 @@ private:
     TitleMetaData *getTMD(QString version);
     void parseJson(QByteArray byteArry, QString filepath);
     void setTitleType();
-    void downloadJsonSuccessful(QString filepath);
+    void downloadJsonSuccessful(QString filepath, bool downloadCover = false);
 
     QString id;
     QMap<QString, QString> info;

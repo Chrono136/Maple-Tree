@@ -11,24 +11,23 @@ void GameLibrary::init(QString path)
 
     if (!dir.exists())
     {
-        QMessageBox mb;
-        mb.setWindowTitle("Directory Error!!");
-        mb.setText("Invalid directory!!");
-        mb.setStandardButtons(QMessageBox::Ok);
-        mb.setIcon(QMessageBox::Critical);
+        QMessageBox::critical(nullptr, "directory error", "GameLibrary::init(QString path): invalid directory: "+dir.path());
         return;
     }
 
-    QDirIterator it(dir.path(), QStringList() << "meta.xml", QDir::NoFilter, QDirIterator::Subdirectories);
-    while (it.hasNext())
-    {
-        QString filepath(it.filePath());
-        QFileInfo metaxml(filepath);
-        if (metaxml.fileName().contains("meta.xml"))
+    QtConcurrent::run([=]{
+        QDirIterator it(dir.path(), QStringList() << "meta.xml", QDir::NoFilter, QDirIterator::Subdirectories);
+        while (it.hasNext())
         {
-            library.append(TitleInfo::Create(metaxml, this->baseDirectory));
-            emit changed(library.last());
+            QString filepath(it.filePath());
+            QFileInfo metaxml(filepath);
+            if (metaxml.fileName().contains("meta.xml"))
+            {
+                auto titleinfo = TitleInfo::Create(metaxml, this->baseDirectory);
+                library.append(titleinfo);
+                emit changed(titleinfo);
+            }
+            it.next();
         }
-        it.next();
-    }
+    });
 }

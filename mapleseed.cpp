@@ -6,7 +6,7 @@ MapleSeed::MapleSeed(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWind
 {
     ui->setupUi(this);
     this->setWindowTitle("MapleSeed++ " + QString(GEN_VERSION_STRING));
-    QtConcurrent::run([&]{initialize();});
+    initialize();
 }
 
 MapleSeed::~MapleSeed()
@@ -30,22 +30,21 @@ void MapleSeed::initialize()
     if (!config->load())
         config->save();
 
-    gameLibrary->init(config->getBaseDirectory());
+    QtConcurrent::run([=]{gameLibrary->init(config->getBaseDirectory());});
+    //gameLibrary->init(config->getBaseDirectory());
     ui->statusbar->showMessage("Environment setup complete");
 }
 
 void MapleSeed::defineActions()
 {
-    connect(decrypt, &Decrypt::decryptStart, this, [=](QString id){ui->statusbar->showMessage("Decrypt started: "+id);});
-    connect(decrypt, &Decrypt::decryptComplete, this, [=](QString id){ui->statusbar->showMessage("Decrypt complete: "+id);});
+    connect(decrypt, &Decrypt::progressReport, this, &MapleSeed::updateDecryptProgress);
 
     connect(gameLibrary, &GameLibrary::changed, this, &MapleSeed::updateListview);
 
     connect(downloadManager, &DownloadManager::downloadStarted, this, &MapleSeed::downloadStarted);
     connect(downloadManager, &DownloadManager::downloadSuccessful, this, &MapleSeed::downloadSuccessful);
-    connect(downloadManager, &DownloadManager::downloadFinished, this, &MapleSeed::downloadFinished);
     connect(downloadManager, &DownloadManager::downloadError, this, &MapleSeed::downloadError);
-    connect(downloadManager, &DownloadManager::downloadProgress, this, &MapleSeed::updateProgress);
+    connect(downloadManager, &DownloadManager::downloadProgress, this, &MapleSeed::updateDownloadProgress);
 
     connect(ui->actionQuit, &QAction::triggered, this, &MapleSeed::menuQuit);
     connect(ui->actionChange_Library, &QAction::triggered, this, &MapleSeed::menuChangeLibrary);
@@ -73,7 +72,7 @@ void MapleSeed::menuChangeLibrary()
     if (ui->listWidget->count() > 0){
         auto item = ui->listWidget->item(0);
         TitleInfoItem *itm = reinterpret_cast<TitleInfoItem*>(item);
-        ui->label->setPixmap(QPixmap(itm->getItem()->getCoverArt()));
+        ui->label->setPixmap(QPixmap(itm->getItem()->getCoverArtPath()));
     }
 
     ui->statusbar->showMessage("Game library has been updated to: "+dir->path());
@@ -96,9 +95,9 @@ void MapleSeed::decryptContent()
         return;
     }
 
-    ui->statusbar->showMessage("Decrypt directory: "+dir->path());
-    decrypt->start(dir->path());
-    ui->statusbar->showMessage("Decrypt complete: "+dir->path());
+    auto path = dir->path();
+    ui->statusbar->showMessage("Decrypt: "+path);
+    QtConcurrent::run([=]{decrypt->start(path);});
     delete dir;
 }
 
@@ -113,7 +112,9 @@ void MapleSeed::startDownload()
         return;
     }
     TitleInfo *ti = TitleInfo::DownloadCreate(text, gameLibrary->baseDirectory);
-    ti->decryptContent(decrypt);
+    if (ti == nullptr) return;
+    auto dir = QString(ti->getDirectory());
+    QtConcurrent::run([=]{ti->decryptContent(decrypt);});
 }
 
 QDir *MapleSeed::selectDirectory()
@@ -146,11 +147,6 @@ void MapleSeed::downloadStarted(QString filename)
     this->ui->statusbar->showMessage("Downloading: "+filename);
 }
 
-void MapleSeed::downloadFinished(qint32 downloadedCount, qint32 totalcount)
-{
-    this->ui->statusbar->showMessage("Download finished: "+QString().number(downloadedCount) +" out of "+QString().number(totalcount));
-}
-
 void MapleSeed::downloadSuccessful(QString fileName)
 {
     this->ui->progressBar->setValue(0);
@@ -163,7 +159,7 @@ void MapleSeed::downloadError(QString errorString)
     this->statusBar()->showMessage(errorString);
 }
 
-void MapleSeed::updateProgress(qint64 bytesReceived, qint64 bytesTotal, QTime qtime)
+void MapleSeed::updateDownloadProgress(qint64 bytesReceived, qint64 bytesTotal, QTime qtime)
 {
     this->ui->progressBar->setRange(0, static_cast<int>(bytesTotal));
     this->ui->progressBar->setValue(static_cast<int>(bytesReceived));
@@ -183,6 +179,13 @@ void MapleSeed::updateProgress(qint64 bytesReceived, qint64 bytesTotal, QTime qt
     this->ui->progressBar->setFormat("%p%   /   "+QString::fromLatin1("%1 %2").arg(speed, 3, 'f', 1).arg(unit));
 }
 
+void MapleSeed::updateDecryptProgress(qint64 min, qint64 max)
+{
+    this->ui->progressBar->setValue(static_cast<int>(min));
+    this->ui->progressBar->setRange(0, static_cast<int>(max));
+    this->ui->progressBar->setFormat("%p%");
+}
+
 void MapleSeed::itemSelectionChanged()
 {
     auto items = ui->listWidget->selectedItems();
@@ -190,7 +193,7 @@ void MapleSeed::itemSelectionChanged()
         return;
 
     TitleInfoItem *tii = reinterpret_cast<TitleInfoItem*>(items[0]);
-    ui->label->setPixmap(QPixmap(tii->getItem()->getCoverArt()));
+    ui->label->setPixmap(QPixmap(tii->getItem()->getCoverArtPath()));
 }
 
 void MapleSeed::actionConfigTemporary(bool checked)

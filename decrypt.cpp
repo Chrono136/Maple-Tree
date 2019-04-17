@@ -314,7 +314,6 @@ qint32 Decrypt::doDecrypt(qint32 argc, const char *arg1, const char *arg2, bool 
 
     if (bs64(tmd->Contents[0].Size) != static_cast<qulonglong>(CNTLen))
     {
-        //printf("Size of content:%u is wrong: %u:%I64u\n", bs32(tmd->Contents[0].ID), CNTLen, bs64(tmd->Contents[0].Size));
         printf("Size of content:%u is wrong: %u:%llu\n", bs32(tmd->Contents[0].ID), CNTLen, bs64(tmd->Contents[0].Size));
         return EXIT_FAILURE;
     }
@@ -362,8 +361,7 @@ qint32 Decrypt::doDecrypt(qint32 argc, const char *arg1, const char *arg2, bool 
         }
     }
 
-    emit decryptStart(QString().sprintf("%08X", bs64(tmd->TitleID)));
-
+    emit decryptStarted();
     for (quint32 i = 1; i < Entries; ++i)
     {
         if (level)
@@ -441,7 +439,8 @@ qint32 Decrypt::doDecrypt(qint32 argc, const char *arg1, const char *arg2, bool 
                 fclose(cnt);
             }
         }
+        progressReport(i, Entries-1);
     }
-    emit decryptComplete(QString().sprintf("%08X", bs64(tmd->TitleID)));
+    emit decryptFinished();
     return EXIT_SUCCESS;
 }

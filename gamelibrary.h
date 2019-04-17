@@ -22,6 +22,8 @@ public:
 
     QString baseDirectory;
 
+    static GameLibrary *self;
+
 signals:
     void changed(TitleInfo *);
 

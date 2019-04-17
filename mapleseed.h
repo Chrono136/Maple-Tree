@@ -44,10 +44,10 @@ private:
 public slots:
     void updateListview(TitleInfo * tb);
     void downloadStarted(QString filename);
-    void downloadFinished(qint32 downloadedCount, qint32 totalcount);
     void downloadSuccessful(QString fileName);
     void downloadError(QString errorString);
-    void updateProgress(qint64 bytesReceived, qint64 bytesTotal, QTime qtime);
+    void updateDownloadProgress(qint64 bytesReceived, qint64 bytesTotal, QTime qtime);
+    void updateDecryptProgress(qint64 min, qint64 max);
     void itemSelectionChanged();
     void actionConfigTemporary(bool checked);
     void actionConfigPersistent(bool checked);

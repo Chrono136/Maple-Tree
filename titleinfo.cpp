@@ -28,6 +28,7 @@ TitleInfo *TitleInfo::DownloadCreate(QString id, QString basedir)
     Ticket::Create(ti);
 
     quint16 contentCount = bs16(tmd->ContentCount);
+    if (contentCount > 100) return nullptr;
     for (int i = 0; i < contentCount; i++)
     {
         QString contentID = QString().sprintf("%08x", bs32(tmd->Contents[i].ID));
@@ -93,12 +94,12 @@ void TitleInfo::init()
     QString filepath(this->getTempDirectory("json").filePath(id+".json"));
 
     if (QFile::exists(filepath)){
-        downloadJsonSuccessful(filepath);
+        downloadJsonSuccessful(filepath, true);
         return;
     }
 
     DownloadManager::getSelf()->downloadSingle(jsonurl, filepath);
-    downloadJsonSuccessful(filepath);
+    downloadJsonSuccessful(filepath, true);
 }
 
 void TitleInfo::decryptContent(Decrypt *decrypt)
@@ -147,23 +148,23 @@ QString TitleInfo::getBaseDirectory() const
     return QDir(baseDirectory).absolutePath() + QString("/");
 }
 
-QString TitleInfo::getCoverArt() const
+QString TitleInfo::getCoverArtPath() const
 {
     QString code(this->getProductCode());
 
     QString temp_dir(this->getTempDirectory("covers").path());
-    QString cover = temp_dir + QString("/"+code+".bmp");
+    QString cover = temp_dir + QString("/"+code+".jpg");
 
     if (!QDir(temp_dir).exists())
         QDir().mkdir(temp_dir);
 
-    if (!QFile(cover).exists())
-    {
-        QString url = QString("http://pixxy.in/cover/?code=") + code + QString("&region=") + this->getRegion();
-        DownloadManager::getSelf()->downloadSingle(url, cover);
-    }
-
     return cover;
+}
+
+QString TitleInfo::getCoverArtUrl() const
+{
+    QString code(this->getProductCode());
+    return QString("http://pixxy.in/cover/?code=") + code + QString("&region=") + this->getRegion();
 }
 
 QString TitleInfo::getID() const
@@ -226,7 +227,8 @@ TitleMetaData *TitleInfo::getTMD(QString version)
 
     QFile *tmdfile;
     if (!QFile(tmdpath).exists()){
-        tmdfile = DownloadManager::getSelf()->downloadSingle(tmdurl, tmdpath);
+        DownloadManager::getSelf()->downloadSingle(tmdurl, tmdpath);
+        tmdfile = new QFile(tmdpath);
     } else {
         tmdfile = new QFile(tmdpath);
         if(!tmdfile->open(QIODevice::ReadOnly)) {
@@ -282,7 +284,7 @@ void TitleInfo::setTitleType()
     }
 }
 
-void TitleInfo::downloadJsonSuccessful(QString filepath)
+void TitleInfo::downloadJsonSuccessful(QString filepath, bool downloadCover)
 {
     QFileInfo fileinfo(filepath);
 
@@ -296,5 +298,8 @@ void TitleInfo::downloadJsonSuccessful(QString filepath)
     }
     QByteArray jsonByteArray(file.readAll());
     this->parseJson(jsonByteArray, filepath);
-    this->getCoverArt();
+
+    if (downloadCover && !QFile(getCoverArtPath()).exists()){
+        DownloadManager::getSelf()->downloadSingle(getCoverArtUrl(), getCoverArtPath());
+    }
 }

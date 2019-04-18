@@ -75,10 +75,10 @@ class Configuration {
   }
 
   static QDir getTempDirectory(QString folder) {
-    QDir tempDir(
-        QDir(QDir::tempPath()).filePath(QCoreApplication::applicationName()));
+    QDir tempDir(QDir(QDir::tempPath()).filePath(QCoreApplication::applicationName()));
     QDir dir(QDir(tempDir).filePath(folder));
-    if (!dir.exists()) QDir().mkdir(dir.path());
+    if (!dir.exists())
+      QDir().mkdir(dir.path());
     return dir;
   }
 

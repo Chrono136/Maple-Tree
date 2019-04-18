@@ -2,28 +2,29 @@
 #include "downloadmanager.h"
 #include "ticket.h"
 
-TitleInfo::TitleInfo(QObject *parent) : QObject(parent) {}
+TitleInfo::TitleInfo(QObject* parent) : QObject(parent) {}
 
-TitleInfo *TitleInfo::Create(QString id, QString basedir) {
-  TitleInfo *titleBase = new TitleInfo;
+TitleInfo* TitleInfo::Create(QString id, QString basedir) {
+  TitleInfo* titleBase = new TitleInfo;
   titleBase->baseDirectory = basedir;
   titleBase->id = id;
   titleBase->init();
   return titleBase;
 }
 
-TitleInfo *TitleInfo::Create(QFileInfo metaxml, QString basedir) {
+TitleInfo* TitleInfo::Create(QFileInfo metaxml, QString basedir) {
   return Create(getXmlValue(metaxml, "title_id"), basedir);
 }
 
-TitleInfo *TitleInfo::DownloadCreate(QString id, QString basedir) {
+TitleInfo* TitleInfo::DownloadCreate(QString id, QString basedir) {
   QString baseURL("http://ccs.cdn.wup.shop.nintendo.net/ccs/download/");
-  TitleInfo *ti = Create(id, basedir);
-  TitleMetaData *tmd = ti->getTMD("");
+  TitleInfo* ti = Create(id, basedir);
+  TitleMetaData* tmd = ti->getTMD("");
   Ticket::Create(ti);
 
   quint16 contentCount = bs16(tmd->ContentCount);
-  if (contentCount > 1000) return nullptr;
+  if (contentCount > 1000)
+    return nullptr;
   for (int i = 0; i < contentCount; i++) {
     QString contentID = QString().sprintf("%08x", bs32(tmd->Contents[i].ID));
     QString contentPath = QDir(ti->getDirectory()).filePath(contentID);
@@ -51,7 +52,8 @@ QString TitleInfo::getXmlValue(QFileInfo metaxml, QString field) {
     for (int i = 0; i < rates.size(); i++) {
       QDomNode n = rates.item(i);
       QDomElement title_id = n.firstChildElement(field);
-      if (title_id.isNull()) continue;
+      if (title_id.isNull())
+        continue;
       value = title_id.text();
     }
   }
@@ -62,7 +64,8 @@ QDir TitleInfo::getTempDirectory(QString folder) {
   QDir tempDir(
       QDir(QDir::tempPath()).filePath(QCoreApplication::applicationName()));
   QDir dir(QDir(tempDir).filePath(folder));
-  if (!dir.exists()) QDir().mkdir(dir.path());
+  if (!dir.exists())
+    QDir().mkdir(dir.path());
   return dir;
 }
 
@@ -94,7 +97,7 @@ void TitleInfo::init() {
   downloadJsonSuccessful(filepath, true);
 }
 
-void TitleInfo::decryptContent(Decrypt *decrypt) {
+void TitleInfo::decryptContent(Decrypt* decrypt) {
   QString tmd = QDir(this->getDirectory()).filePath("tmd");
   QString cetk = QDir(this->getDirectory()).filePath("cetk");
 
@@ -146,7 +149,8 @@ QString TitleInfo::getCoverArtPath() const {
   QString temp_dir(this->getTempDirectory("covers").path());
   QString cover = temp_dir + QString("/" + code + ".jpg");
 
-  if (!QDir(temp_dir).exists()) QDir().mkdir(temp_dir);
+  if (!QDir(temp_dir).exists())
+    QDir().mkdir(temp_dir);
 
   return cover;
 }
@@ -197,14 +201,15 @@ QString TitleInfo::getProductCode() const {
   }
 }
 
-TitleMetaData *TitleInfo::getTMD(QString version) {
+TitleMetaData* TitleInfo::getTMD(QString version) {
   QString tmdpath(this->getDirectory() + "/tmd");
   QString tmdurl("http://ccs.cdn.wup.shop.nintendo.net/ccs/download/" + id +
                  "/tmd");
 
-  if (!version.isEmpty()) tmdurl += "." + version;
+  if (!version.isEmpty())
+    tmdurl += "." + version;
 
-  QFile *tmdfile;
+  QFile* tmdfile;
   if (!QFile(tmdpath).exists()) {
     DownloadManager::getSelf()->downloadSingle(tmdurl, tmdpath);
     tmdfile = new QFile(tmdpath);
@@ -217,10 +222,10 @@ TitleMetaData *TitleInfo::getTMD(QString version) {
     }
   }
   if (tmdfile) {
-    char *data = new char[static_cast<qulonglong>(tmdfile->size())];
+    char* data = new char[static_cast<qulonglong>(tmdfile->size())];
     tmdfile->read(data, tmdfile->size());
     tmdfile->close();
-    return reinterpret_cast<TitleMetaData *>(data);
+    return reinterpret_cast<TitleMetaData*>(data);
   }
   return nullptr;
 }
@@ -246,7 +251,8 @@ void TitleInfo::parseJson(QByteArray byteArry, QString filepath) {
 }
 
 void TitleInfo::setTitleType() {
-  if (id.size() <= 0) return;
+  if (id.size() <= 0)
+    return;
 
   QChar ch = id.data()[7];
   if (ch == 'e' || ch == 'E') {
@@ -261,7 +267,8 @@ void TitleInfo::setTitleType() {
 void TitleInfo::downloadJsonSuccessful(QString filepath, bool downloadCover) {
   QFileInfo fileinfo(filepath);
 
-  if (fileinfo.suffix() != "json") return;
+  if (fileinfo.suffix() != "json")
+    return;
 
   QFile file(filepath);
   if (!file.open(QIODevice::ReadOnly)) {

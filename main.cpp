@@ -1,7 +1,7 @@
 #include <QApplication>
 #include "mapleseed.h"
 
-int main(int argc, char *argv[]) {
+int main(int argc, char* argv[]) {
   QApplication a(argc, argv);
   MapleSeed w;
   w.show();

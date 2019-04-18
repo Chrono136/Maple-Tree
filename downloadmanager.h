@@ -8,11 +8,11 @@
 class DownloadManager : public QObject {
   Q_OBJECT
  public:
-  explicit DownloadManager(QObject *parent = nullptr);
+  explicit DownloadManager(QObject* parent = nullptr);
 
-  QFile *downloadSingle(const QUrl &url, const QString filepath);
-  void append(const QUrl &url, const QString filepath);
-  static DownloadManager *getSelf();
+  QFile* downloadSingle(const QUrl& url, const QString filepath);
+  void append(const QUrl& url, const QString filepath);
+  static DownloadManager* getSelf();
 
  signals:
   void downloadStarted(QString filename);
@@ -31,10 +31,10 @@ class DownloadManager : public QObject {
   bool isHttpRedirect() const;
   void reportRedirect();
 
-  static DownloadManager *self;
+  static DownloadManager* self;
   QNetworkAccessManager manager;
   QQueue<QPair<QString, QUrl>> downloadQueue;
-  QNetworkReply *currentDownload = nullptr;
+  QNetworkReply* currentDownload = nullptr;
   QFile output;
   QTime downloadTime;
 

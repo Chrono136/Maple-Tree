@@ -20,16 +20,16 @@ class MapleSeed : public QMainWindow {
   Q_OBJECT
 
  public:
-  explicit MapleSeed(QWidget *parent = nullptr);
+  explicit MapleSeed(QWidget* parent = nullptr);
   ~MapleSeed();
 
-  Configuration *config;
-  Decrypt *decrypt;
-  GameLibrary *gameLibrary;
-  DownloadManager *downloadManager;
+  Configuration* config;
+  Decrypt* decrypt;
+  GameLibrary* gameLibrary;
+  DownloadManager* downloadManager;
 
  private:
-  Ui::MainWindow *ui;
+  Ui::MainWindow* ui;
 
   void initialize();
   void defineActions();
@@ -38,12 +38,12 @@ class MapleSeed : public QMainWindow {
   void menuChangeLibrary();
   void decryptContent();
   void startDownload();
-  QDir *selectDirectory();
+  QDir* selectDirectory();
 
  public slots:
   void disableMenubar();
   void enableMenubar();
-  void updateListview(TitleInfo *tb);
+  void updateListview(TitleInfo* tb);
   void downloadStarted(QString filename);
   void downloadSuccessful(QString fileName);
   void downloadError(QString errorString);

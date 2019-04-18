@@ -7,9 +7,9 @@
 class Ticket : public QObject {
   Q_OBJECT
  public:
-  explicit Ticket(QObject *parent = nullptr);
+  explicit Ticket(QObject* parent = nullptr);
 
-  static void Create(TitleInfo *ti);
+  static void Create(TitleInfo* ti);
 
   QByteArray data;
   qulonglong len;

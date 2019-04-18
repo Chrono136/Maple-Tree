@@ -1,12 +1,12 @@
 #include "downloadmanager.h"
 
-DownloadManager *DownloadManager::self;
+DownloadManager* DownloadManager::self;
 
-DownloadManager::DownloadManager(QObject *parent) : QObject(parent) {
+DownloadManager::DownloadManager(QObject* parent) : QObject(parent) {
   DownloadManager::self = this;
 }
 
-QFile *DownloadManager::downloadSingle(const QUrl &url,
+QFile* DownloadManager::downloadSingle(const QUrl& url,
                                        const QString filepath) {
   downloadQueue.enqueue({filepath, url});
   ++totalCount;
@@ -17,7 +17,7 @@ QFile *DownloadManager::downloadSingle(const QUrl &url,
   return &output;
 }
 
-void DownloadManager::append(const QUrl &url, const QString filepath) {
+void DownloadManager::append(const QUrl& url, const QString filepath) {
   if (downloadQueue.isEmpty())
     QTimer::singleShot(0, this, &DownloadManager::_startNextDownload);
 
@@ -25,7 +25,7 @@ void DownloadManager::append(const QUrl &url, const QString filepath) {
   ++totalCount;
 }
 
-DownloadManager *DownloadManager::getSelf() { return self; }
+DownloadManager* DownloadManager::getSelf() { return self; }
 
 void DownloadManager::_startNextDownload() {
   if (downloadQueue.isEmpty()) {
@@ -38,7 +38,8 @@ void DownloadManager::_startNextDownload() {
   QString dir(QFileInfo(filename).dir().path());
   QUrl url = pair.second;
 
-  if (!QDir(dir).exists()) QDir().mkdir(dir);
+  if (!QDir(dir).exists())
+    QDir().mkdir(dir);
 
   output.setFileName(filename);
   if (!output.open(QIODevice::WriteOnly)) {
@@ -100,7 +101,7 @@ void DownloadManager::_downloadReadyRead() {
 bool DownloadManager::isHttpRedirect() const {
   int statusCode =
       currentDownload->attribute(QNetworkRequest::HttpStatusCodeAttribute)
-          .toInt();
+      .toInt();
   return statusCode == 301 || statusCode == 302 || statusCode == 303 ||
          statusCode == 305 || statusCode == 307 || statusCode == 308;
 }
@@ -110,8 +111,10 @@ void DownloadManager::reportRedirect() {
 
   QVariant target =
       currentDownload->attribute(QNetworkRequest::RedirectionTargetAttribute);
-  if (!target.isValid()) return;
+  if (!target.isValid())
+    return;
 
   QUrl redirectUrl = target.toUrl();
-  if (redirectUrl.isRelative()) redirectUrl = requestUrl.resolved(redirectUrl);
+  if (redirectUrl.isRelative())
+    redirectUrl = requestUrl.resolved(redirectUrl);
 }

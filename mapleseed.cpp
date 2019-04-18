@@ -2,8 +2,8 @@
 #include "ui_mainwindow.h"
 #include "versioninfo.h"
 
-MapleSeed::MapleSeed(QWidget *parent)
-    : QMainWindow(parent), ui(new Ui::MainWindow) {
+MapleSeed::MapleSeed(QWidget* parent)
+  : QMainWindow(parent), ui(new Ui::MainWindow) {
   ui->setupUi(this);
   this->setWindowTitle("MapleSeed++ " + QString(GEN_VERSION_STRING));
   initialize();
@@ -25,7 +25,8 @@ void MapleSeed::initialize() {
   gameLibrary = new GameLibrary;
 
   defineActions();
-  if (!config->load()) config->save();
+  if (!config->load())
+    config->save();
 
   gameLibrary->init(config->getBaseDirectory());
   ui->statusbar->showMessage("Environment setup complete");
@@ -72,8 +73,9 @@ void MapleSeed::defineActions() {
 void MapleSeed::menuQuit() { QApplication::quit(); }
 
 void MapleSeed::menuChangeLibrary() {
-  QDir *dir = this->selectDirectory();
-  if (dir == nullptr) return;
+  QDir* dir = this->selectDirectory();
+  if (dir == nullptr)
+    return;
   config->setBaseDirectory(dir->path());
 
   ui->listWidget->clear();
@@ -81,7 +83,7 @@ void MapleSeed::menuChangeLibrary() {
 
   if (ui->listWidget->count() > 0) {
     auto item = ui->listWidget->item(0);
-    TitleInfoItem *itm = reinterpret_cast<TitleInfoItem *>(item);
+    TitleInfoItem* itm = reinterpret_cast<TitleInfoItem*>(item);
     ui->label->setPixmap(QPixmap(itm->getItem()->getCoverArtPath()));
   }
 
@@ -91,8 +93,9 @@ void MapleSeed::menuChangeLibrary() {
 }
 
 void MapleSeed::decryptContent() {
-  QDir *dir = this->selectDirectory();
-  if (dir == nullptr) return;
+  QDir* dir = this->selectDirectory();
+  if (dir == nullptr)
+    return;
   QFileInfo tmd(dir->filePath("tmd"));
   QFileInfo cetk(dir->filePath("cetk"));
 
@@ -109,7 +112,7 @@ void MapleSeed::decryptContent() {
 
   auto path = dir->path();
   ui->statusbar->showMessage("Decrypt: " + path);
-  QtConcurrent::run([=] { decrypt->start(path); });
+  QtConcurrent::run([ = ] { decrypt->start(path); });
   delete dir;
 }
 
@@ -118,20 +121,22 @@ void MapleSeed::startDownload() {
   QString text =
       QInputDialog::getText(this, tr("Download Title"), tr("Title ID:"),
                             QLineEdit::Normal, nullptr, &ok);
-  if (!ok) return;
+  if (!ok)
+    return;
   if (text.isEmpty() || text.count() != 16) {
     QMessageBox::information(
         this, "Download Title Error",
         "Invalid title id. Please verify your title id is 16 characters");
     return;
   }
-  TitleInfo *ti = TitleInfo::DownloadCreate(text, gameLibrary->baseDirectory);
-  if (ti == nullptr) return;
+  TitleInfo* ti = TitleInfo::DownloadCreate(text, gameLibrary->baseDirectory);
+  if (ti == nullptr)
+    return;
   auto dir = QString(ti->getDirectory());
-  QtConcurrent::run([=] { ti->decryptContent(decrypt); });
+  QtConcurrent::run([ = ] { ti->decryptContent(decrypt); });
 }
 
-QDir *MapleSeed::selectDirectory() {
+QDir* MapleSeed::selectDirectory() {
   QFileDialog dialog;
   dialog.setFileMode(QFileDialog::DirectoryOnly);
   dialog.setOption(QFileDialog::ShowDirsOnly);
@@ -146,12 +151,12 @@ void MapleSeed::disableMenubar() { this->ui->menubar->setEnabled(false); }
 
 void MapleSeed::enableMenubar() { this->ui->menubar->setEnabled(true); }
 
-void MapleSeed::updateListview(TitleInfo *tb) {
+void MapleSeed::updateListview(TitleInfo* tb) {
   if (ui->listWidget->count() == 1) {
     ui->listWidget->setCurrentRow(0);
   }
 
-  TitleInfoItem *tii = new TitleInfoItem(tb);
+  TitleInfoItem* tii = new TitleInfoItem(tb);
   tii->setText(tii->getItem()->getFormatName());
   this->ui->listWidget->addItem(tii);
   this->ui->statusbar->showMessage("Added to library: " + tb->getFormatName());
@@ -201,9 +206,10 @@ void MapleSeed::updateDecryptProgress(qint64 min, qint64 max) {
 
 void MapleSeed::itemSelectionChanged() {
   auto items = ui->listWidget->selectedItems();
-  if (items.count() <= 0) return;
+  if (items.count() <= 0)
+    return;
 
-  TitleInfoItem *tii = reinterpret_cast<TitleInfoItem *>(items[0]);
+  TitleInfoItem* tii = reinterpret_cast<TitleInfoItem*>(items[0]);
   ui->label->setPixmap(QPixmap(tii->getItem()->getCoverArtPath()));
 }
 

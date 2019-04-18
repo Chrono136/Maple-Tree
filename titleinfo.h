@@ -15,16 +15,16 @@ typedef Decrypt::TitleMetaData TitleMetaData;
 class TitleInfo : public QObject {
   Q_OBJECT
  public:
-  explicit TitleInfo(QObject *parent = nullptr);
+  explicit TitleInfo(QObject* parent = nullptr);
 
-  static TitleInfo *Create(QString id, QString basedir);
-  static TitleInfo *Create(QFileInfo metaxml, QString basedir);
-  static TitleInfo *DownloadCreate(QString id, QString basedir);
+  static TitleInfo* Create(QString id, QString basedir);
+  static TitleInfo* Create(QFileInfo metaxml, QString basedir);
+  static TitleInfo* DownloadCreate(QString id, QString basedir);
   static QString getXmlValue(QFileInfo metaxml, QString field);
   static QDir getTempDirectory(QString folder);
 
   void init();
-  void decryptContent(Decrypt *decrypt);
+  void decryptContent(Decrypt* decrypt);
   QString getDirectory() const;
   QString getFormatName() const;
   QString getBaseDirectory() const;
@@ -37,7 +37,7 @@ class TitleInfo : public QObject {
   QString getProductCode() const;
 
  private:
-  TitleMetaData *getTMD(QString version);
+  TitleMetaData* getTMD(QString version);
   void parseJson(QByteArray byteArry, QString filepath);
   void setTitleType();
   void downloadJsonSuccessful(QString filepath, bool downloadCover = false);

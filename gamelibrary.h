@@ -13,18 +13,18 @@
 class GameLibrary : public QObject {
   Q_OBJECT
  public:
-  explicit GameLibrary(QObject *parent = nullptr);
+  explicit GameLibrary(QObject* parent = nullptr);
 
-  QVector<TitleInfo *> library;
+  QVector<TitleInfo*> library;
 
   void init(QString path);
 
   QString baseDirectory;
 
-  static GameLibrary *self;
+  static GameLibrary* self;
 
  signals:
-  void changed(TitleInfo *);
+  void changed(TitleInfo*);
 
  public slots:
 };

@@ -1,10 +1,10 @@
 #include "ticket.h"
 
-Ticket::Ticket(QObject *parent) : QObject(parent) {}
+Ticket::Ticket(QObject* parent) : QObject(parent) {}
 
-void Ticket::Create(TitleInfo *ti) {
+void Ticket::Create(TitleInfo* ti) {
   if (ti && !ti->getID().isEmpty() && !ti->getKey().isEmpty()) {
-    Ticket *ticket = new Ticket;
+    Ticket* ticket = new Ticket;
     QByteArray test(800, ' ');
 
     // ticket->data.insert(0x1E6,

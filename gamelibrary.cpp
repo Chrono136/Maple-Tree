@@ -1,6 +1,6 @@
 #include "gamelibrary.h"
 
-GameLibrary::GameLibrary(QObject *parent) : QObject(parent) {}
+GameLibrary::GameLibrary(QObject* parent) : QObject(parent) {}
 
 void GameLibrary::init(QString path) {
   this->baseDirectory = QDir(path).absolutePath();
@@ -13,7 +13,7 @@ void GameLibrary::init(QString path) {
     return;
   }
 
-  QtConcurrent::run([=] {
+  QtConcurrent::run([ = ] {
     QDirIterator it(dir.path(), QStringList() << "meta.xml", QDir::NoFilter,
                     QDirIterator::Subdirectories);
     while (it.hasNext()) {

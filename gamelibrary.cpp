@@ -2,7 +2,7 @@
 
 GameLibrary::GameLibrary(QObject* parent) : QObject(parent) {}
 
-void GameLibrary::init(QString path) {
+void GameLibrary::init(const QString& path) {
   this->baseDirectory = QDir(path).absolutePath();
   QDir dir = QDir(this->baseDirectory);
 

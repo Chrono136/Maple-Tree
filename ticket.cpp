@@ -1,11 +1,12 @@
 #include "ticket.h"
 
-Ticket::Ticket(QObject* parent) : QObject(parent) {}
+Ticket::Ticket(QObject* parent) : QObject(parent) {
+  len = 0;
+}
 
 void Ticket::Create(TitleInfo* ti) {
   if (ti && !ti->getID().isEmpty() && !ti->getKey().isEmpty()) {
-    Ticket* ticket = new Ticket;
-    QByteArray test(800, ' ');
+    auto ticket = new Ticket;
 
     // ticket->data.insert(0x1E6,
     // QByteArray::fromHex(ti->getVersions().toLatin1()));

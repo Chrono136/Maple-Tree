@@ -6,8 +6,7 @@ DownloadManager::DownloadManager(QObject* parent) : QObject(parent) {
   DownloadManager::self = this;
 }
 
-QFile* DownloadManager::downloadSingle(const QUrl& url,
-                                       const QString filepath) {
+QFile* DownloadManager::downloadSingle(const QUrl& url, const QString& filepath) {
   downloadQueue.enqueue({filepath, url});
   ++totalCount;
   block = true;
@@ -17,7 +16,7 @@ QFile* DownloadManager::downloadSingle(const QUrl& url,
   return &output;
 }
 
-void DownloadManager::append(const QUrl& url, const QString filepath) {
+void DownloadManager::append(const QUrl& url, const QString& filepath) {
   if (downloadQueue.isEmpty())
     QTimer::singleShot(0, this, &DownloadManager::_startNextDownload);
 

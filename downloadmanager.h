@@ -10,8 +10,8 @@ class DownloadManager : public QObject {
  public:
   explicit DownloadManager(QObject* parent = nullptr);
 
-  QFile* downloadSingle(const QUrl& url, const QString filepath);
-  void append(const QUrl& url, const QString filepath);
+  QFile* downloadSingle(const QUrl& url, const QString& filepath);
+  void append(const QUrl& url, const QString& filepath);
   static DownloadManager* getSelf();
 
  signals:

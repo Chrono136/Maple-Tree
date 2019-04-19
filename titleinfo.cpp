@@ -1,46 +1,49 @@
 #include "titleinfo.h"
+
+#include <utility>
 #include "downloadmanager.h"
 #include "ticket.h"
 
-TitleInfo::TitleInfo(QObject* parent) : QObject(parent) {}
+TitleInfo::TitleInfo(QObject* parent) : QObject(parent) {
+  titleType = TitleType::Game;
+}
 
 TitleInfo* TitleInfo::Create(QString id, QString basedir) {
-  TitleInfo* titleBase = new TitleInfo;
-  titleBase->baseDirectory = basedir;
-  titleBase->id = id;
+  auto* titleBase = new TitleInfo;
+  titleBase->baseDirectory = std::move(basedir);
+  titleBase->id = std::move(id);
   titleBase->init();
   return titleBase;
 }
 
-TitleInfo* TitleInfo::Create(QFileInfo metaxml, QString basedir) {
-  return Create(getXmlValue(metaxml, "title_id"), basedir);
+TitleInfo* TitleInfo::Create(const QFileInfo& metaxml, QString basedir) {
+  return Create(getXmlValue(metaxml, "title_id"), std::move(basedir));
 }
 
-TitleInfo* TitleInfo::DownloadCreate(QString id, QString basedir) {
+TitleInfo* TitleInfo::DownloadCreate(const QString& id, QString basedir) {
   QString baseURL("http://ccs.cdn.wup.shop.nintendo.net/ccs/download/");
-  TitleInfo* ti = Create(id, basedir);
+  TitleInfo* ti = Create(id, std::move(basedir));
   TitleMetaData* tmd = ti->getTMD("");
   Ticket::Create(ti);
 
-  quint16 contentCount = bs16(tmd->ContentCount);
+  auto contentCount = bs16(tmd->ContentCount);
   if (contentCount > 1000)
     return nullptr;
+
   for (int i = 0; i < contentCount; i++) {
     QString contentID = QString().sprintf("%08x", bs32(tmd->Contents[i].ID));
     QString contentPath = QDir(ti->getDirectory()).filePath(contentID);
     QString downloadURL = baseURL + id + QString("/") + contentID;
     qulonglong size = Decrypt::bs64(tmd->Contents[i].Size);
-    if (!QFile(contentPath).exists() ||
-        QFileInfo(contentPath).size() != static_cast<qint64>(size)) {
-      // QString msg = QString("Downloading Content (%1) %2 of %3...
-      // (%4)").arg(contentID).arg(i + 1).arg(contentCount).arg(size);
+    if (!QFile(contentPath).exists() || QFileInfo(contentPath).size() != static_cast<qint64>(size)) {
+      // QString msg = QString("Downloading Content (%1) %2 of %3 (%4)").arg(contentID).arg(i + 1).arg(contentCount).arg(size);
       DownloadManager::getSelf()->downloadSingle(downloadURL, contentPath);
     }
   }
   return ti;
 }
 
-QString TitleInfo::getXmlValue(QFileInfo metaxml, QString field) {
+QString TitleInfo::getXmlValue(const QFileInfo& metaxml, const QString& field) {
   QString value;
   if (QFile(metaxml.filePath()).exists()) {
     QDomDocument doc;
@@ -60,7 +63,7 @@ QString TitleInfo::getXmlValue(QFileInfo metaxml, QString field) {
   return value;
 }
 
-QDir TitleInfo::getTempDirectory(QString folder) {
+QDir TitleInfo::getTempDirectory(const QString& folder) {
   QDir tempDir(
       QDir(QDir::tempPath()).filePath(QCoreApplication::applicationName()));
   QDir dir(QDir(tempDir).filePath(folder));
@@ -164,44 +167,44 @@ QString TitleInfo::getCoverArtUrl() const {
 QString TitleInfo::getID() const {
   if (info.contains("id")) {
     return info["id"];
-  } else {
-    return nullptr;
   }
+  return nullptr;
+
 }
 
 QString TitleInfo::getKey() const {
   if (info.contains("key")) {
     return info["key"];
-  } else {
-    return nullptr;
   }
+  return nullptr;
+
 }
 
 QString TitleInfo::getName() const {
   if (info.contains("name")) {
     return info["name"];
-  } else {
-    return nullptr;
   }
+  return nullptr;
+
 }
 
 QString TitleInfo::getRegion() const {
   if (info.contains("region")) {
     return info["region"];
-  } else {
-    return nullptr;
   }
+  return nullptr;
+
 }
 
 QString TitleInfo::getProductCode() const {
   if (info.contains("productcode")) {
     return info["productcode"].right(4);
-  } else {
-    return nullptr;
   }
+  return nullptr;
+
 }
 
-TitleMetaData* TitleInfo::getTMD(QString version) {
+TitleMetaData* TitleInfo::getTMD(const QString& version) {
   QString tmdpath(this->getDirectory() + "/tmd");
   QString tmdurl("http://ccs.cdn.wup.shop.nintendo.net/ccs/download/" + id +
                  "/tmd");
@@ -230,7 +233,7 @@ TitleMetaData* TitleInfo::getTMD(QString version) {
   return nullptr;
 }
 
-void TitleInfo::parseJson(QByteArray byteArry, QString filepath) {
+void TitleInfo::parseJson(const QByteArray& byteArry, const QString& filepath) {
   QJsonDocument doc = QJsonDocument::fromJson(byteArry);
 
   if (doc.isNull()) {
@@ -240,7 +243,7 @@ void TitleInfo::parseJson(QByteArray byteArry, QString filepath) {
   }
 
   if (doc.isArray()) {
-    for (auto json : doc.array().toVariantList()) {
+    for (const auto& json : doc.array().toVariantList()) {
       QMapIterator<QString, QVariant> i(json.toMap());
       while (i.hasNext()) {
         i.next();
@@ -264,7 +267,7 @@ void TitleInfo::setTitleType() {
   }
 }
 
-void TitleInfo::downloadJsonSuccessful(QString filepath, bool downloadCover) {
+void TitleInfo::downloadJsonSuccessful(const QString& filepath, bool downloadCover) {
   QFileInfo fileinfo(filepath);
 
   if (fileinfo.suffix() != "json")

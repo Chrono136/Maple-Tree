@@ -35,39 +35,25 @@ void MapleSeed::initialize() {
 void MapleSeed::defineActions() {
   connect(decrypt, &Decrypt::decryptStarted, this, &MapleSeed::disableMenubar);
   connect(decrypt, &Decrypt::decryptFinished, this, &MapleSeed::enableMenubar);
-  connect(decrypt, &Decrypt::progressReport, this,
-          &MapleSeed::updateDecryptProgress);
+  connect(decrypt, &Decrypt::progressReport, this, &MapleSeed::updateDecryptProgress);
 
   connect(gameLibrary, &GameLibrary::changed, this, &MapleSeed::updateListview);
 
-  connect(downloadManager, &DownloadManager::downloadStarted, this,
-          &MapleSeed::downloadStarted);
-  connect(downloadManager, &DownloadManager::downloadStarted, this,
-          &MapleSeed::disableMenubar);
-  connect(downloadManager, &DownloadManager::downloadSuccessful, this,
-          &MapleSeed::downloadSuccessful);
-  connect(downloadManager, &DownloadManager::downloadSuccessful, this,
-          &MapleSeed::enableMenubar);
-  connect(downloadManager, &DownloadManager::downloadError, this,
-          &MapleSeed::downloadError);
-  connect(downloadManager, &DownloadManager::downloadError, this,
-          &MapleSeed::enableMenubar);
-  connect(downloadManager, &DownloadManager::downloadProgress, this,
-          &MapleSeed::updateDownloadProgress);
+  connect(downloadManager, &DownloadManager::downloadStarted, this, &MapleSeed::downloadStarted);
+  connect(downloadManager, &DownloadManager::downloadStarted, this, &MapleSeed::disableMenubar);
+  connect(downloadManager, &DownloadManager::downloadSuccessful, this, &MapleSeed::downloadSuccessful);
+  connect(downloadManager, &DownloadManager::downloadSuccessful, this, &MapleSeed::enableMenubar);
+  connect(downloadManager, &DownloadManager::downloadError, this, &MapleSeed::downloadError);
+  connect(downloadManager, &DownloadManager::downloadError, this, &MapleSeed::enableMenubar);
+  connect(downloadManager, &DownloadManager::downloadProgress, this, &MapleSeed::updateDownloadProgress);
 
   connect(ui->actionQuit, &QAction::triggered, this, &MapleSeed::menuQuit);
-  connect(ui->actionChange_Library, &QAction::triggered, this,
-          &MapleSeed::menuChangeLibrary);
-  connect(ui->actionDownload_Title, &QAction::triggered, this,
-          &MapleSeed::startDownload);
-  connect(ui->actionDecrypt_Content, &QAction::triggered, this,
-          &MapleSeed::decryptContent);
-  connect(ui->listWidget, &QListWidget::itemSelectionChanged, this,
-          &MapleSeed::itemSelectionChanged);
-  connect(ui->actionConfigTemporary, &QAction::triggered, this,
-          &MapleSeed::actionConfigTemporary);
-  connect(ui->actionConfigPersistent, &QAction::triggered, this,
-          &MapleSeed::actionConfigPersistent);
+  connect(ui->actionChange_Library, &QAction::triggered, this, &MapleSeed::menuChangeLibrary);
+  connect(ui->actionDownload_Title, &QAction::triggered, this, &MapleSeed::startDownload);
+  connect(ui->actionDecrypt_Content, &QAction::triggered, this, &MapleSeed::decryptContent);
+  connect(ui->listWidget, &QListWidget::itemSelectionChanged, this, &MapleSeed::itemSelectionChanged);
+  connect(ui->actionConfigTemporary, &QAction::triggered, this, &MapleSeed::actionConfigTemporary);
+  connect(ui->actionConfigPersistent, &QAction::triggered, this, &MapleSeed::actionConfigPersistent);
 }
 
 void MapleSeed::menuQuit() { QApplication::quit(); }
@@ -76,8 +62,8 @@ void MapleSeed::menuChangeLibrary() {
   QDir* dir = this->selectDirectory();
   if (dir == nullptr)
     return;
-  config->setBaseDirectory(dir->path());
 
+  config->setBaseDirectory(dir->path());
   ui->listWidget->clear();
   gameLibrary->init(dir->path());
 
@@ -96,17 +82,13 @@ void MapleSeed::decryptContent() {
   QDir* dir = this->selectDirectory();
   if (dir == nullptr)
     return;
-  QFileInfo tmd(dir->filePath("tmd"));
-  QFileInfo cetk(dir->filePath("cetk"));
 
-  if (!tmd.exists()) {
-    QMessageBox::critical(this, "Missing file",
-                          +"Missing: " + dir->filePath("/tmd"));
+  if (!QFileInfo(dir->filePath("tmd")).exists()) {
+    QMessageBox::critical(this, "Missing file", +"Missing: " + dir->filePath("/tmd"));
     return;
   }
-  if (!cetk.exists()) {
-    QMessageBox::critical(this, "Missing file",
-                          +"Missing: " + dir->filePath("/cetk"));
+  if (!QFileInfo(dir->filePath("cetk")).exists()) {
+    QMessageBox::critical(this, "Missing file", +"Missing: " + dir->filePath("/cetk"));
     return;
   }
 
@@ -118,17 +100,15 @@ void MapleSeed::decryptContent() {
 
 void MapleSeed::startDownload() {
   bool ok;
-  QString text =
-      QInputDialog::getText(this, tr("Download Title"), tr("Title ID:"),
-                            QLineEdit::Normal, nullptr, &ok);
+  QString text = QInputDialog::getText(this, tr("Download Title"), tr("Title ID:"), QLineEdit::Normal, nullptr, &ok);
   if (!ok)
     return;
+
   if (text.isEmpty() || text.count() != 16) {
-    QMessageBox::information(
-        this, "Download Title Error",
-        "Invalid title id. Please verify your title id is 16 characters");
+    QMessageBox::information(this, "Download Title Error", "Invalid title id. Please verify your title id is 16 characters");
     return;
   }
+
   TitleInfo* ti = TitleInfo::DownloadCreate(text, gameLibrary->baseDirectory);
   if (ti == nullptr)
     return;
@@ -176,8 +156,7 @@ void MapleSeed::downloadError(QString errorString) {
   this->statusBar()->showMessage(errorString);
 }
 
-void MapleSeed::updateDownloadProgress(qint64 bytesReceived, qint64 bytesTotal,
-                                       QTime qtime) {
+void MapleSeed::updateDownloadProgress(qint64 bytesReceived, qint64 bytesTotal, QTime qtime) {
   this->ui->progressBar->setRange(0, static_cast<int>(bytesTotal));
   this->ui->progressBar->setValue(static_cast<int>(bytesReceived));
 
@@ -193,9 +172,7 @@ void MapleSeed::updateDownloadProgress(qint64 bytesReceived, qint64 bytesTotal,
     unit = "MB/s";
   }
 
-  this->ui->progressBar->setFormat(
-      "%p%   /   " +
-      QString::fromLatin1("%1 %2").arg(speed, 3, 'f', 1).arg(unit));
+  this->ui->progressBar->setFormat("%p%   /   " + QString::fromLatin1("%1 %2").arg(speed, 3, 'f', 1).arg(unit));
 }
 
 void MapleSeed::updateDecryptProgress(qint64 min, qint64 max) {

@@ -3,10 +3,10 @@
 Decrypt::Decrypt(QObject* parent) : QObject(parent) {
 }
 
-void Decrypt::start(QString dir, bool confirm) {
-  QDir().setCurrent(dir);
-  this->doDecrypt(3, "tmd", "cetk", confirm);
-  QDir().setCurrent(dir);
+void Decrypt::start(QString basedir) {
+  auto tmd = QString(basedir + "\\tmd");
+  auto cetk = QString(basedir + "\\cetk");
+  this->doDecrypt(tmd.toStdString().c_str(), cetk.toStdString().c_str(), basedir);
 }
 
 quint32 Decrypt::bs24(quint32 i) {
@@ -91,7 +91,7 @@ void Decrypt::hexdump(void* d, qint32 len) {
 }
 
 #define BLOCK_SIZE  0x10000
-void Decrypt::ExtractFileHash(FILE* in, qulonglong PartDataOffset, qulonglong FileOffset, qulonglong Size, char* FileName, quint16 ContentID) {
+void Decrypt::ExtractFileHash(FILE* in, qulonglong PartDataOffset, qulonglong FileOffset, qulonglong Size, const char* FileName, quint16 ContentID) {
   char encdata[BLOCK_SIZE];
   char decdata[BLOCK_SIZE];
   quint8 IV[16];
@@ -167,7 +167,7 @@ void Decrypt::ExtractFileHash(FILE* in, qulonglong PartDataOffset, qulonglong Fi
 #undef BLOCK_SIZE
 
 #define BLOCK_SIZE  0x8000
-void Decrypt::ExtractFile(FILE* in, qulonglong PartDataOffset, qulonglong FileOffset, qulonglong Size, char* FileName, quint16 ContentID) {
+void Decrypt::ExtractFile(FILE* in, qulonglong PartDataOffset, qulonglong FileOffset, qulonglong Size, const char* FileName, quint16 ContentID) {
   char encdata[BLOCK_SIZE];
   char decdata[BLOCK_SIZE];
   qulonglong Wrote = 0;
@@ -212,15 +212,8 @@ void Decrypt::ExtractFile(FILE* in, qulonglong PartDataOffset, qulonglong FileOf
   fclose(out);
 }
 
-qint32 Decrypt::doDecrypt(qint32 argc, const char* arg1, const char* arg2, bool confirm) {
+qint32 Decrypt::doDecrypt(const char* arg1, const char* arg2, QString basedir) {
   printf("CDecrypt v 2.0b by crediar\nModified by Tsumes for MapleSeed++\n");
-  //printf("Built: %s %s\n", __TIME__, __DATE__);
-
-  if (argc != 3) {
-    printf("Usage:\n");
-    printf(" CDecrypt.exe tmd cetk\n\n");
-    return EXIT_SUCCESS;
-  }
 
   quint32 TMDLen;
   char* TMD = _ReadFile(arg1, &TMDLen);
@@ -266,16 +259,13 @@ qint32 Decrypt::doDecrypt(qint32 argc, const char* arg1, const char* arg2, bool 
   memset(iv, 0, sizeof(iv));
 
   QString _str;
-  //_str = basedir+QString().sprintf("/%08x.app", _bs32(tmd->Contents[0].ID));
-
-  char str[1024];
-  sprintf(str, "%08X.app", bs32(tmd->Contents[0].ID));
+  _str = basedir + QString().sprintf("/%08x.app", bs32(tmd->Contents[0].ID));
 
   quint32 CNTLen;
-  char* CNT = _ReadFile(str, &CNTLen);
+  char* CNT = _ReadFile(_str.toStdString().c_str(), &CNTLen);
   if (CNT == static_cast<char*>(nullptr)) {
-    sprintf(str, "%08X", bs32(tmd->Contents[0].ID));
-    CNT = _ReadFile(str, &CNTLen);
+    _str = basedir + QString().sprintf("/%08x", bs32(tmd->Contents[0].ID));
+    CNT = _ReadFile(_str.toStdString().c_str(), &CNTLen);
     if (CNT == static_cast<char*>(nullptr)) {
       printf("Failed to open content:%02X\n", bs32(tmd->Contents[0].ID));
       return EXIT_FAILURE;
@@ -290,8 +280,8 @@ qint32 Decrypt::doDecrypt(qint32 argc, const char* arg1, const char* arg2, bool 
   AES_cbc_encrypt(reinterpret_cast<const quint8*>(CNT), reinterpret_cast<quint8*>(CNT), CNTLen, &_key, reinterpret_cast<quint8*>(iv), AES_DECRYPT);
 
   if (bs32(*reinterpret_cast<quint32*>(CNT)) != 0x46535400) {
-    sprintf(str, "%08X.dec", bs32(tmd->Contents[0].ID));
-    FileDump(str, CNT, CNTLen);
+    _str = basedir + QString().sprintf("/%08x.dec", bs32(tmd->Contents[0].ID));
+    FileDump(_str.toStdString().c_str(), CNT, CNTLen);
     return EXIT_FAILURE;
   }
 
@@ -306,25 +296,14 @@ qint32 Decrypt::doDecrypt(qint32 argc, const char* arg1, const char* arg2, bool 
 
   quint32 Entries = bs32(*reinterpret_cast<quint32*>(CNT + 0x20 + bs32(_fst->EntryCount) * 0x20 + 8));
   quint32 NameOff = 0x20 + bs32(_fst->EntryCount) * 0x20 + Entries * 0x10;
-  //quint32 DirEntries = 0;
 
   printf("FST entries:%u\n", Entries);
 
-  char* Path = new char[1024];
+  QString path = basedir + "\\";
   qint32 Entry[16];
   qint32 LEntry[16];
 
   qint32 level = 0;
-
-  if (confirm) {
-    printf("\n\nStarting decryption for title ID 00050000-%08X", static_cast<quint32>(bs64(tmd->TitleID)));
-    printf("\nPress any key to confirm. Press ESC to cancel.\n");
-    switch (_getch()) {
-      case 27:
-        printf("\nProcess cancelled!!\n");
-        return EXIT_FAILURE;
-    }
-  }
 
   emit decryptStarted();
   for (quint32 i = 1; i < Entries; ++i) {
@@ -343,18 +322,18 @@ qint32 Decrypt::doDecrypt(qint32 argc, const char* arg1, const char* arg2, bool 
         break;
       }
     } else {
-      memset(Path, 0, 1024);
-
       for (qint32 j = 0; j < level; ++j) {
-        if (j)
-          Path[strlen(Path)] = '\\';
-        memcpy(Path + strlen(Path), CNT + NameOff + bs24(fe[Entry[j]].u1.s1.NameOffset), strlen(CNT + NameOff + bs24(fe[Entry[j]].u1.s1.NameOffset)));
-        //_mkdir(Path);
-        QDir().mkdir(Path);
+        if (j) {
+          path.append('\\');
+        }
+        path.append(CNT + NameOff + bs24(fe[Entry[j]].u1.s1.NameOffset));
+        QDir().mkdir(path);
       }
       if (level)
-        Path[strlen(Path)] = '\\';
-      memcpy(Path + strlen(Path), CNT + NameOff + bs24(fe[i].u1.s1.NameOffset), strlen(CNT + NameOff + bs24(fe[i].u1.s1.NameOffset)));
+        if (level) {
+          path.append('\\');
+        }
+      path.append(CNT + NameOff + bs24(fe[i].u1.s1.NameOffset));
 
       quint32 CNTSize = bs32(fe[i].u2.s2.FileLength);
       qulonglong CNTOff = (static_cast<qulonglong>(bs32(fe[i].u2.s2.FileOffset)));
@@ -363,29 +342,30 @@ qint32 Decrypt::doDecrypt(qint32 argc, const char* arg1, const char* arg2, bool 
         CNTOff <<= 5;
       }
 
-      printf("Size:%07X Offset:0x%010llX CID:%02X U:%02X %s\n", CNTSize, CNTOff, bs16(fe[i].ContentID), bs16(fe[i].Flags), Path);
+      printf("Size:%07X Offset:0x%010llX CID:%02X U:%02X %s\n", CNTSize, CNTOff, bs16(fe[i].ContentID), bs16(fe[i].Flags), path.toStdString().c_str());
 
       quint32 ContFileID = bs32(tmd->Contents[bs16(fe[i].ContentID)].ID);
 
-      sprintf(str, "%08X.app", ContFileID);
+      _str = basedir + QString().sprintf("/%08x.app", ContFileID);
 
       if (!(fe[i].u1.s1.Type & 0x80)) {
         FILE* cnt;
-        fopen_s(&cnt, str, "rb");
+        fopen_s(&cnt, _str.toStdString().c_str(), "rb");
         if (cnt == nullptr) {
-          sprintf(str, "%08X", ContFileID);
-          fopen_s(&cnt, str, "rb");
+          _str = basedir + QString().sprintf("/%08x", ContFileID);
+          fopen_s(&cnt, _str.toStdString().c_str(), "rb");
           if (cnt == nullptr) {
-            printf("Could not open:\"%s\"\n", str);
+            printf("Could not open:\"%s\"\n", _str.toStdString().c_str());
             perror("");
             return EXIT_FAILURE;
           }
         }
         if ((bs16(fe[i].Flags) & 0x440)) {
-          ExtractFileHash(cnt, 0, CNTOff, bs32(fe[i].u2.s2.FileLength), Path, bs16(fe[i].ContentID));
+          ExtractFileHash(cnt, 0, CNTOff, bs32(fe[i].u2.s2.FileLength), path.toStdString().c_str(), bs16(fe[i].ContentID));
         } else {
-          ExtractFile(cnt, 0, CNTOff, bs32(fe[i].u2.s2.FileLength), Path, bs16(fe[i].ContentID));
+          ExtractFile(cnt, 0, CNTOff, bs32(fe[i].u2.s2.FileLength), path.toStdString().c_str(), bs16(fe[i].ContentID));
         }
+        path = basedir + "\\";
         fclose(cnt);
       }
     }

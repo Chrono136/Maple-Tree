@@ -26,7 +26,7 @@ class Decrypt : public QObject {
  public:
   explicit Decrypt(QObject* parent = nullptr);
 
-  void start(QString dir, bool confirm = 1);
+  void start(QString basedir);
 
   static quint32 bs24(quint32 i);
   static qulonglong bs64(qulonglong i);
@@ -51,9 +51,9 @@ class Decrypt : public QObject {
   void FileDump(const char* Name, void* Data, quint32 Length);
   char ascii(char s);
   void hexdump(void* d, qint32 len);
-  void ExtractFileHash(FILE* in, qulonglong PartDataOffset, qulonglong FileOffset, qulonglong Size, char* FileName, quint16 ContentID);
-  void ExtractFile(FILE* in, qulonglong PartDataOffset, qulonglong FileOffset, qulonglong Size, char* FileName, quint16 ContentID);
-  qint32 doDecrypt(qint32 argc, const char* arg1, const char* arg2, bool confirm = 1);
+  void ExtractFileHash(FILE* in, qulonglong PartDataOffset, qulonglong FileOffset, qulonglong Size, const char* FileName, quint16 ContentID);
+  void ExtractFile(FILE* in, qulonglong PartDataOffset, qulonglong FileOffset, qulonglong Size, const char* FileName, quint16 ContentID);
+  qint32 doDecrypt(const char* arg1, const char* arg2, QString basedir);
 
   unsigned char WiiUCommenDevKey[16] = { 0x2F, 0x5C, 0x1B, 0x29, 0x44, 0xE7, 0xFD, 0x6F, 0xC3, 0x97, 0x96, 0x4B, 0x05, 0x76, 0x91, 0xFA };
   unsigned char WiiUCommenKey[16] = { 0xD7, 0xB0, 0x04, 0x02, 0x65, 0x9B, 0xA2, 0xAB, 0xD2, 0xCB, 0x0D, 0xB2, 0x7F, 0xA2, 0xB6, 0x56 };

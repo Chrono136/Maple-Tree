@@ -20,7 +20,7 @@ class Configuration {
     this->setBaseDirectory(this->getBaseDirectory());
   }
   ~Configuration() {
-    if (getKey("ConfigType") == "Temporary") {
+    if (getKeyString("ConfigType") == "Temporary") {
       if (this->getBaseDirectory() != QDir::currentPath()) {
         QDir().rmdir(this->getBaseDirectory());
       }
@@ -29,12 +29,13 @@ class Configuration {
     }
   }
 
-  void setKey(QString key, bool value) { jsonObject[key.toLower()] = value; }
+  void setKeyBool(QString key, bool value) { jsonObject[key.toLower()] = value; }
   void setKey(QString key, QString value) { jsonObject[key.toLower()] = value; }
-  QJsonValueRef getKey(QString key) { return jsonObject[key.toLower()]; }
+  bool getKeyBool(QString key) { return jsonObject[key.toLower()].toBool(); }
+  QString getKeyString(QString key) { return jsonObject[key.toLower()].toString(); }
 
   QString getBaseDirectory() {
-    QString baseDir(getKey("BaseDirectory").toString());
+    QString baseDir(getKeyString("BaseDirectory"));
     if (baseDir.isEmpty()) {
       return QDir::currentPath();
     } else {
@@ -58,7 +59,7 @@ class Configuration {
 
     while (it.hasNext()) {
       it.next();
-      jsonObject[it.key().toLower()] = it.value().toString();
+      jsonObject[it.key().toLower()] = it.value().toJsonValue();
     }
     return true;
   }

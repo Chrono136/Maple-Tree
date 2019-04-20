@@ -33,6 +33,7 @@ class MapleSeed : public QMainWindow {
 
   void initialize();
   void defineActions();
+  void defaultConfiguration();
 
   void menuQuit();
   void actionChange_Library();
@@ -56,6 +57,7 @@ class MapleSeed : public QMainWindow {
   void actionConfigTemporary(bool checked);
   void actionConfigPersistent(bool checked);
   void actionVerboseChecked(bool checked);
+  void actionIntegrateCemu(bool checked);
 };
 
 #endif  // MAINWINDOW_H

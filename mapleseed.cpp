@@ -28,8 +28,8 @@ void MapleSeed::initialize() {
   if (!config->load())
     config->save();
 
+  defaultConfiguration();
   gameLibrary->init(config->getBaseDirectory());
-  ui->actionVerbose->setChecked(config->getKey("VerboseLog").toBool());
   this->messageLog("Environment setup complete");
 }
 
@@ -58,6 +58,14 @@ void MapleSeed::defineActions() {
   connect(ui->actionConfigTemporary, &QAction::triggered, this, &MapleSeed::actionConfigTemporary);
   connect(ui->actionConfigPersistent, &QAction::triggered, this, &MapleSeed::actionConfigPersistent);
   connect(ui->actionVerbose, &QAction::triggered, this, &MapleSeed::actionVerboseChecked);
+  connect(ui->actionIntegrateCemu, &QAction::triggered, this, &MapleSeed::actionIntegrateCemu);
+}
+
+void MapleSeed::defaultConfiguration() {
+  ui->actionVerbose->setChecked(config->getKeyBool("VerboseLog"));
+  ui->actionIntegrateCemu->setChecked(config->getKeyBool("IntegrateCemu"));
+  ui->actionConfigTemporary->setChecked(!config->getKeyString("configtype").compare("Temporary"));
+  ui->actionConfigPersistent->setChecked(!config->getKeyString("configtype").compare("Persistent"));
 }
 
 void MapleSeed::menuQuit() { QApplication::quit(); }
@@ -250,5 +258,19 @@ void MapleSeed::actionConfigPersistent(bool checked) {
 }
 
 void MapleSeed::actionVerboseChecked(bool checked) {
-  config->setKey("VerboseLog", checked);
+  config->setKeyBool("VerboseLog", checked);
+}
+
+void MapleSeed::actionIntegrateCemu(bool checked) {
+  config->setKeyBool("IntegrateCemu", checked);
+
+  if (checked && !QFile(config->getKeyString("IntegrateCemu")).exists()) {
+    QFileDialog dialog;
+    dialog.setNameFilter("cemu.exe");
+    dialog.setFileMode(QFileDialog::ExistingFile);
+    if (dialog.exec()) {
+      QStringList files(dialog.selectedFiles());
+      config->setKey("CemuPath", QFileInfo(files[0]).absoluteFilePath());
+    }
+  }
 }

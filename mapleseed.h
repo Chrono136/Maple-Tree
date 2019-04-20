@@ -35,24 +35,26 @@ class MapleSeed : public QMainWindow {
   void defineActions();
 
   void menuQuit();
-  void menuChangeLibrary();
+  void actionChange_Library();
+  void actionDownload_Title();
+  void actionUpdate();
   void decryptContent();
-  void startDownload();
   QDir* selectDirectory();
 
  public slots:
+  void messageLog(QString msg, bool verbose = false);
   void disableMenubar();
   void enableMenubar();
   void updateListview(TitleInfo* tb);
   void downloadStarted(QString filename);
   void downloadSuccessful(QString fileName);
   void downloadError(QString errorString);
-  void updateDownloadProgress(qint64 bytesReceived, qint64 bytesTotal,
-                              QTime qtime);
+  void updateDownloadProgress(qint64 bytesReceived, qint64 bytesTotal, QTime qtime);
   void updateDecryptProgress(qint64 min, qint64 max);
   void itemSelectionChanged();
   void actionConfigTemporary(bool checked);
   void actionConfigPersistent(bool checked);
+  void actionVerboseChecked(bool checked);
 };
 
 #endif  // MAINWINDOW_H

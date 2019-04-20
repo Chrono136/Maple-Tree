@@ -6,10 +6,11 @@ DownloadManager::DownloadManager(QObject* parent) : QObject(parent) {
   DownloadManager::self = this;
 }
 
-QFile* DownloadManager::downloadSingle(const QUrl& url, const QString& filepath) {
+QFile* DownloadManager::downloadSingle(const QUrl& url, const QString& filepath, qulonglong totalsize) {
   downloadQueue.enqueue({filepath, url});
   ++totalCount;
   block = true;
+  totalSize = totalsize;
   _startNextDownload();
   _downloadFinished();
   block = false;
@@ -49,27 +50,22 @@ void DownloadManager::_startNextDownload() {
 
   QNetworkRequest request(url);
   currentDownload = manager.get(request);
-  connect(currentDownload, &QNetworkReply::readyRead, this,
-          &DownloadManager::_downloadReadyRead);
-  connect(currentDownload, &QNetworkReply::downloadProgress, this,
-          &DownloadManager::_downloadProgress);
+  connect(currentDownload, &QNetworkReply::readyRead, this, &DownloadManager::_downloadReadyRead);
+  connect(currentDownload, &QNetworkReply::downloadProgress, this, &DownloadManager::_downloadProgress);
 
   downloadTime.start();
   emit downloadStarted(filename);
 
   QEventLoop loop;
   if (block) {
-    connect(currentDownload, &QNetworkReply::finished, &loop,
-            &QEventLoop::quit);
+    connect(currentDownload, &QNetworkReply::finished, &loop, &QEventLoop::quit);
     loop.exec();
   } else {
-    connect(currentDownload, &QNetworkReply::finished, this,
-            &DownloadManager::_downloadFinished);
+    connect(currentDownload, &QNetworkReply::finished, this, &DownloadManager::_downloadFinished);
   }
 }
 
-void DownloadManager::_downloadProgress(qint64 bytesReceived,
-                                        qint64 bytesTotal) {
+void DownloadManager::_downloadProgress(qint64 bytesReceived, qint64 bytesTotal) {
   emit downloadProgress(bytesReceived, bytesTotal, downloadTime);
 }
 

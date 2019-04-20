@@ -18,7 +18,7 @@ MapleSeed::~MapleSeed() {
 }
 
 void MapleSeed::initialize() {
-  ui->statusbar->showMessage("Setting up enviornment variables");
+  this->messageLog("Setting up enviornment variables");
   config = new Configuration;
   decrypt = new Decrypt;
   downloadManager = new DownloadManager;
@@ -29,7 +29,8 @@ void MapleSeed::initialize() {
     config->save();
 
   gameLibrary->init(config->getBaseDirectory());
-  ui->statusbar->showMessage("Environment setup complete");
+  ui->actionVerbose->setChecked(config->getKey("VerboseLog").toBool());
+  this->messageLog("Environment setup complete");
 }
 
 void MapleSeed::defineActions() {
@@ -48,17 +49,19 @@ void MapleSeed::defineActions() {
   connect(downloadManager, &DownloadManager::downloadProgress, this, &MapleSeed::updateDownloadProgress);
 
   connect(ui->actionQuit, &QAction::triggered, this, &MapleSeed::menuQuit);
-  connect(ui->actionChange_Library, &QAction::triggered, this, &MapleSeed::menuChangeLibrary);
-  connect(ui->actionDownload_Title, &QAction::triggered, this, &MapleSeed::startDownload);
+  connect(ui->actionChange_Library, &QAction::triggered, this, &MapleSeed::actionChange_Library);
+  connect(ui->actionDownload_Title, &QAction::triggered, this, &MapleSeed::actionDownload_Title);
+  connect(ui->actionUpdate, &QAction::triggered, this, &MapleSeed::actionUpdate);
   connect(ui->actionDecrypt_Content, &QAction::triggered, this, &MapleSeed::decryptContent);
   connect(ui->listWidget, &QListWidget::itemSelectionChanged, this, &MapleSeed::itemSelectionChanged);
   connect(ui->actionConfigTemporary, &QAction::triggered, this, &MapleSeed::actionConfigTemporary);
   connect(ui->actionConfigPersistent, &QAction::triggered, this, &MapleSeed::actionConfigPersistent);
+  connect(ui->actionVerbose, &QAction::triggered, this, &MapleSeed::actionVerboseChecked);
 }
 
 void MapleSeed::menuQuit() { QApplication::quit(); }
 
-void MapleSeed::menuChangeLibrary() {
+void MapleSeed::actionChange_Library() {
   QDir* dir = this->selectDirectory();
   if (dir == nullptr)
     return;
@@ -73,9 +76,45 @@ void MapleSeed::menuChangeLibrary() {
     ui->label->setPixmap(QPixmap(itm->getItem()->getCoverArtPath()));
   }
 
-  ui->statusbar->showMessage("Game library has been updated to: " +
-                             dir->path());
+  this->messageLog("Game library has been updated to: " + dir->path());
   delete dir;
+}
+
+void MapleSeed::actionDownload_Title() {
+  bool ok;
+  QString value = QInputDialog::getText(this, tr("Download Title"), tr("Title ID:"), QLineEdit::Normal, nullptr, &ok);
+  if (!ok)
+    return;
+
+  if (value.isEmpty() || value.count() != 16) {
+    QMessageBox::information(this, "Download Title Error", "Invalid title id. Please verify your title id is 16 characters");
+    return;
+  }
+
+  TitleInfo* ti = TitleInfo::DownloadCreate(value, gameLibrary->baseDirectory);
+  if (ti == nullptr)
+    return;
+  auto dir = QString(ti->getDirectory());
+  QtConcurrent::run([ = ] { ti->decryptContent(decrypt); });
+}
+
+void MapleSeed::actionUpdate() {
+  bool ok;
+  QString value = QInputDialog::getText(this, tr("Download Update"), tr("Content ID:"), QLineEdit::Normal, nullptr, &ok);
+  if (!ok)
+    return;
+
+  if (value.isEmpty() || value.count() != 16) {
+    QMessageBox::information(this, "Download Update Error", "Invalid content id. Please verify your content id is 16 characters");
+    return;
+  }
+
+  value.replace(7, 1, 'e');
+  TitleInfo* ti = TitleInfo::DownloadCreate(value, gameLibrary->baseDirectory);
+  if (ti == nullptr)
+    return;
+  auto dir = QString(ti->getDirectory());
+  QtConcurrent::run([ = ] { ti->decryptContent(decrypt); });
 }
 
 void MapleSeed::decryptContent() {
@@ -93,27 +132,9 @@ void MapleSeed::decryptContent() {
   }
 
   auto path = dir->path();
-  ui->statusbar->showMessage("Decrypt: " + path);
+  this->messageLog("Decrypt: " + path);
   QtConcurrent::run([ = ] { decrypt->start(path); });
   delete dir;
-}
-
-void MapleSeed::startDownload() {
-  bool ok;
-  QString text = QInputDialog::getText(this, tr("Download Title"), tr("Title ID:"), QLineEdit::Normal, nullptr, &ok);
-  if (!ok)
-    return;
-
-  if (text.isEmpty() || text.count() != 16) {
-    QMessageBox::information(this, "Download Title Error", "Invalid title id. Please verify your title id is 16 characters");
-    return;
-  }
-
-  TitleInfo* ti = TitleInfo::DownloadCreate(text, gameLibrary->baseDirectory);
-  if (ti == nullptr)
-    return;
-  auto dir = QString(ti->getDirectory());
-  QtConcurrent::run([ = ] { ti->decryptContent(decrypt); });
 }
 
 QDir* MapleSeed::selectDirectory() {
@@ -125,6 +146,13 @@ QDir* MapleSeed::selectDirectory() {
     return new QDir(directories[0]);
   }
   return nullptr;
+}
+
+void MapleSeed::messageLog(QString msg, bool verbose) {
+  ui->statusbar->showMessage(msg);
+  if (ui->actionVerbose->isChecked() || verbose) {
+    ui->textEdit->append(msg);
+  }
 }
 
 void MapleSeed::disableMenubar() { this->ui->menubar->setEnabled(false); }
@@ -139,21 +167,22 @@ void MapleSeed::updateListview(TitleInfo* tb) {
   TitleInfoItem* tii = new TitleInfoItem(tb);
   tii->setText(tii->getItem()->getFormatName());
   this->ui->listWidget->addItem(tii);
-  this->ui->statusbar->showMessage("Added to library: " + tb->getFormatName());
+  this->messageLog("Added to library: " + tb->getFormatName(), true);
 }
 
 void MapleSeed::downloadStarted(QString filename) {
-  this->ui->statusbar->showMessage("Downloading: " + filename);
+  this->messageLog("Downloading: " + filename);
 }
 
 void MapleSeed::downloadSuccessful(QString fileName) {
   this->ui->progressBar->setValue(0);
   this->ui->progressBar->setFormat("%p%");
-  this->statusBar()->showMessage("Download successful: " + fileName);
+  this->messageLog("Download successful: " + fileName);
 }
 
 void MapleSeed::downloadError(QString errorString) {
-  this->statusBar()->showMessage(errorString);
+  this->ui->menubar->setEnabled(true);
+  this->messageLog(errorString, true);
 }
 
 void MapleSeed::updateDownloadProgress(qint64 bytesReceived, qint64 bytesTotal, QTime qtime) {
@@ -191,11 +220,15 @@ void MapleSeed::itemSelectionChanged() {
 }
 
 void MapleSeed::actionConfigTemporary(bool checked) {
-  config->setKey("ConfigType", "Temporary");
+  config->setKey("ConfigType", QString("Temporary"));
   ui->actionConfigPersistent->setChecked(!checked);
 }
 
 void MapleSeed::actionConfigPersistent(bool checked) {
-  config->setKey("ConfigType", "Persistent");
+  config->setKey("ConfigType", QString("Persistent"));
   ui->actionConfigTemporary->setChecked(!checked);
+}
+
+void MapleSeed::actionVerboseChecked(bool checked) {
+  config->setKey("VerboseLog", checked);
 }

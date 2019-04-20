@@ -16,7 +16,7 @@ class Configuration {
     if (configpath.isEmpty())
       configpath = getTempDirectory("").filePath("settings.json");
     this->configPath = configpath;
-    this->setKey("ConfigType", "Persistent");
+    this->setKey("ConfigType", QString("Persistent"));
     this->setBaseDirectory(this->getBaseDirectory());
   }
   ~Configuration() {
@@ -29,11 +29,12 @@ class Configuration {
     }
   }
 
+  void setKey(QString key, bool value) { jsonObject[key.toLower()] = value; }
   void setKey(QString key, QString value) { jsonObject[key.toLower()] = value; }
-  QString getKey(QString key) { return jsonObject[key.toLower()].toString(); }
+  QJsonValueRef getKey(QString key) { return jsonObject[key.toLower()]; }
 
   QString getBaseDirectory() {
-    QString baseDir(getKey("BaseDirectory"));
+    QString baseDir(getKey("BaseDirectory").toString());
     if (baseDir.isEmpty()) {
       return QDir::currentPath();
     } else {

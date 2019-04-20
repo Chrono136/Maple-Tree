@@ -30,6 +30,11 @@ TitleInfo* TitleInfo::DownloadCreate(const QString& id, QString basedir) {
   if (contentCount > 1000)
     return nullptr;
 
+  qulonglong totalsize = 0;
+  for (int i = 0; i < contentCount; i++) {
+    totalsize += Decrypt::bs64(tmd->Contents[i].Size);
+  }
+
   for (int i = 0; i < contentCount; i++) {
     QString contentID = QString().sprintf("%08x", bs32(tmd->Contents[i].ID));
     QString contentPath = QDir(ti->getDirectory()).filePath(contentID);

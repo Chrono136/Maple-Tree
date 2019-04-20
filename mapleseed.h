@@ -38,6 +38,7 @@ class MapleSeed : public QMainWindow {
   void actionChange_Library();
   void actionDownload_Title();
   void actionUpdate();
+  void actionDLC();
   void decryptContent();
   QDir* selectDirectory();
 

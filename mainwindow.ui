@@ -297,7 +297,7 @@ border: 1px solid black;
   </action>
   <action name="actionDLC">
    <property name="enabled">
-    <bool>false</bool>
+    <bool>true</bool>
    </property>
    <property name="text">
     <string>DLC</string>

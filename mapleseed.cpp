@@ -52,6 +52,7 @@ void MapleSeed::defineActions() {
   connect(ui->actionChange_Library, &QAction::triggered, this, &MapleSeed::actionChange_Library);
   connect(ui->actionDownload_Title, &QAction::triggered, this, &MapleSeed::actionDownload_Title);
   connect(ui->actionUpdate, &QAction::triggered, this, &MapleSeed::actionUpdate);
+  connect(ui->actionDLC, &QAction::triggered, this, &MapleSeed::actionDLC);
   connect(ui->actionDecrypt_Content, &QAction::triggered, this, &MapleSeed::decryptContent);
   connect(ui->listWidget, &QListWidget::itemSelectionChanged, this, &MapleSeed::itemSelectionChanged);
   connect(ui->actionConfigTemporary, &QAction::triggered, this, &MapleSeed::actionConfigTemporary);
@@ -110,6 +111,25 @@ void MapleSeed::actionUpdate() {
   }
 
   value.replace(7, 1, 'e');
+  TitleInfo* ti = TitleInfo::DownloadCreate(value, gameLibrary->baseDirectory);
+  if (ti == nullptr)
+    return;
+  auto dir = QString(ti->getDirectory());
+  QtConcurrent::run([ = ] { ti->decryptContent(decrypt); });
+}
+
+void MapleSeed::actionDLC() {
+  bool ok;
+  QString value = QInputDialog::getText(this, tr("Download DLC"), tr("Content ID:"), QLineEdit::Normal, nullptr, &ok);
+  if (!ok)
+    return;
+
+  if (value.isEmpty() || value.count() != 16) {
+    QMessageBox::information(this, "Download DLC Error", "Invalid content id. Please verify your content id is 16 characters");
+    return;
+  }
+
+  value.replace(7, 1, 'c');
   TitleInfo* ti = TitleInfo::DownloadCreate(value, gameLibrary->baseDirectory);
   if (ti == nullptr)
     return;

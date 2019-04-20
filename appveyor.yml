@@ -17,4 +17,4 @@ build_script:
 after_build:
   - cd C:\projects\maple-tree\bin\releases
   - set buildname=build%APPVEYOR_BUILD_NUMBER%_%APPVEYOR_REPO_COMMIT:~0,7%
-- 7z a ..\%buildname%_%name%.zip MapleSeed.exe
+  - 7z a ..\%buildname%_%name%.zip MapleSeed.exe

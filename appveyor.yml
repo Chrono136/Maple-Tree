@@ -8,7 +8,6 @@ install:
   - set PATH=%QTDIR%;%QTDIR%\bin;C:\Qt\Tools\mingw530_32\bin;%PATH%;
 
 build_script:
-  - call "C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\vcvarsall.bat" amd64
   - call version.bat
-  - qmake MapleSeed.pro -spec win32-msvc "CONFIG+=qml_debug"
+  - qmake MapleSeed.pro -spec win32-clang-g++ "CONFIG+=qml_debug"
   - C:\Qt\Tools\QtCreator\bin\jom.exe -f Makefile.Debug

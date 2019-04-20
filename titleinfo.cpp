@@ -127,16 +127,13 @@ QString TitleInfo::getDirectory() const {
 QString TitleInfo::getFormatName() const {
   switch (titleType) {
     case TitleType::Patch:
-      return QString("[Update]") + QString("[") + this->getRegion() +
-             QString("]") + this->getName();
+      return QString("[Update]") + QString("[") + this->getRegion() + QString("]") + this->getName();
 
     case TitleType::Dlc:
-      return QString("[DLC]") + QString("[") + this->getRegion() +
-             QString("]") + this->getName();
+      return QString("[DLC]") + QString("[") + this->getRegion() + QString("]") + this->getName();
 
     case TitleType::Game:
-      return QString("[Game]") + QString("[") + this->getRegion() +
-             QString("]") + this->getName();
+      return QString("[Game]") + QString("[") + this->getRegion() + QString("]") + this->getName();
   }
 
   return nullptr;
@@ -206,9 +203,7 @@ QString TitleInfo::getProductCode() const {
 
 TitleMetaData* TitleInfo::getTMD(const QString& version) {
   QString tmdpath(this->getDirectory() + "/tmd");
-  QString tmdurl("http://ccs.cdn.wup.shop.nintendo.net/ccs/download/" + id +
-                 "/tmd");
-
+  QString tmdurl("http://ccs.cdn.wup.shop.nintendo.net/ccs/download/" + id + "/tmd");
   if (!version.isEmpty())
     tmdurl += "." + version;
 
@@ -218,19 +213,15 @@ TitleMetaData* TitleInfo::getTMD(const QString& version) {
     tmdfile = new QFile(tmdpath);
   } else {
     tmdfile = new QFile(tmdpath);
-    if (!tmdfile->open(QIODevice::ReadOnly)) {
-      QMessageBox::information(nullptr,
-                               "*TitleInfo::getTMD():", tmdfile->errorString());
-      return nullptr;
-    }
   }
-  if (tmdfile) {
-    char* data = new char[static_cast<qulonglong>(tmdfile->size())];
-    tmdfile->read(data, tmdfile->size());
-    tmdfile->close();
-    return reinterpret_cast<TitleMetaData*>(data);
+  if (!tmdfile->open(QIODevice::ReadOnly)) {
+    QMessageBox::information(nullptr, "*TitleInfo::getTMD():", tmdfile->errorString());
+    return nullptr;
   }
-  return nullptr;
+  char* data = new char[static_cast<qulonglong>(tmdfile->size())];
+  tmdfile->read(data, tmdfile->size());
+  tmdfile->close();
+  return reinterpret_cast<TitleMetaData*>(data);
 }
 
 void TitleInfo::parseJson(const QByteArray& byteArry, const QString& filepath) {
@@ -260,7 +251,7 @@ void TitleInfo::setTitleType() {
   QChar ch = id.data()[7];
   if (ch == 'e' || ch == 'E') {
     titleType = TitleType::Patch;
-  } else if (ch == 'e' || ch == 'C') {
+  } else if (ch == 'c' || ch == 'C') {
     titleType = TitleType::Dlc;
   } else if (ch == '0') {
     titleType = TitleType::Game;

@@ -5,12 +5,13 @@ branches:
 
 install:
   - set QTDIR=C:\Qt\5.12.2\msvc2017_64
-  - set PATH=%QTDIR%\bin;C:\Qt\Tools\mingw530_32\bin;%PATH%;
+  - set MINGW_PATH=C:\Qt\Tools\mingw530_32
+  - set PATH=%QTDIR%\bin;C:\Qt\Tools\mingw530_32\bin;%PATH%;C:\Program Files (x86)\MSBuild\12.0\bin\;%MINGW_PATH%\bin;
 
 build_script:
   - call version.bat
   - qmake MapleSeed.pro -spec win32-msvc "CONFIG+=qml_debug"
-  - C:\Qt\Tools\QtCreator\bin\jom.exe -f Makefile debug
+  - mingw32-make -j8
 
 artifacts:
   - path: bin\*

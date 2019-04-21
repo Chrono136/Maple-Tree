@@ -13,5 +13,5 @@ build_script:
   - C:\Qt\Tools\QtCreator\bin\jom.exe -f Makefile qmake_all
 
 artifacts:
-  - path: c:\mapleseed\bin\debug\*.exe
+  - path: bin\debug\*.exe
     name: mapleseed

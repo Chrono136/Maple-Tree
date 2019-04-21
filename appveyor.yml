@@ -5,9 +5,9 @@ branches:
 
 install:
   - set QTDIR=C:\Qt\5.12.2\msvc2017_64
-  - set PATH=%QTDIR%;%QTDIR%\bin;C:\Qt\Tools\mingw530_32\bin;%PATH%;C:\Qt\5.12.2\
+  - set PATH=%QTDIR%\bin;C:\Qt\Tools\mingw530_32\bin;%PATH%;
 
 build_script:
   - call version.bat
   - qmake MapleSeed.pro -spec win32-clang-g++ "CONFIG+=qml_debug"
-  - nmake
+  - C:\Qt\Tools\QtCreator\bin\jom.exe -f Makefile qmake_all

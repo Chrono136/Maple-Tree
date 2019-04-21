@@ -3,10 +3,15 @@ branches:
   only:
     - master
 
-install:
-  - set QTDIR=C:\Qt\5.12.2\mingw530_32
-  - set MINGW_PATH=C:\Qt\Tools\mingw530_32
-  - set PATH=%QTDIR%\bin;%PATH%;%MINGW_PATH%\bin;C:\MinGW\bin
+environment:
+  matrix:
+    - platform: amd64
+      qt: msvc2017_64
+    - platform: mingw
+      qt: mingw530_32
+
+init:
+  - if not %platform%==mingw set PATH=C:\Qt\5.12\%qt%\bin;%PATH%
 
 build_script:
   - call version.bat

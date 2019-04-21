@@ -9,7 +9,7 @@ install:
 
 build_script:
   - call version.bat
-  - qmake MapleSeed.pro -spec win32-clang-g++ "CONFIG+=qml_debug"
+  - qmake MapleSeed.pro -spec win32-msvc "CONFIG+=qml_debug"
   - C:\Qt\Tools\QtCreator\bin\jom.exe -f Makefile debug
 
 artifacts:

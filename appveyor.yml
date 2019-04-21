@@ -11,3 +11,6 @@ build_script:
   - call version.bat
   - qmake MapleSeed.pro -spec win32-clang-g++ "CONFIG+=qml_debug"
   - C:\Qt\Tools\QtCreator\bin\jom.exe -f Makefile qmake_all
+
+artifacts:
+  - %APPVEYOR_BUILD_FOLDER%\bin\debug\*.exe

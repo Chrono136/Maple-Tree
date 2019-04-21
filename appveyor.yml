@@ -10,7 +10,7 @@ install:
 
 build_script:
   - call version.bat
-  - qmake MapleSeed.pro -spec win32-msvc "CONFIG+=qml_debug"
+  - qmake MapleSeed.pro "CONFIG+=qml_debug"
   - mingw32-make -j8
 
 artifacts:

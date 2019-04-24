@@ -35,7 +35,7 @@ class Decrypt : public QObject {
   void decryptStarted();
   void decryptFinished();
   void progressReport(quint32 min, quint32 max);
-  void messageRelay(QString msg);
+  void log(QString msg, bool verbose);
 
  public slots:
 

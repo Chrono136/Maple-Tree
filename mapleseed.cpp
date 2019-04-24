@@ -34,12 +34,14 @@ void MapleSeed::initialize() {
 }
 
 void MapleSeed::defineActions() {
+  connect(decrypt, &Decrypt::log, this, &MapleSeed::messageLog);
   connect(decrypt, &Decrypt::decryptStarted, this, &MapleSeed::disableMenubar);
   connect(decrypt, &Decrypt::decryptFinished, this, &MapleSeed::enableMenubar);
   connect(decrypt, &Decrypt::progressReport, this, &MapleSeed::updateDecryptProgress);
 
   connect(gameLibrary, &GameLibrary::changed, this, &MapleSeed::updateListview);
 
+  connect(downloadManager, &DownloadManager::log, this, &MapleSeed::messageLog, Qt::ConnectionType::DirectConnection);
   connect(downloadManager, &DownloadManager::downloadStarted, this, &MapleSeed::downloadStarted);
   connect(downloadManager, &DownloadManager::downloadStarted, this, &MapleSeed::disableMenubar);
   connect(downloadManager, &DownloadManager::downloadSuccessful, this, &MapleSeed::downloadSuccessful);

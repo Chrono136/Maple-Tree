@@ -10,11 +10,12 @@ class DownloadManager : public QObject {
  public:
   explicit DownloadManager(QObject* parent = nullptr);
 
-  QFile* downloadSingle(const QUrl& url, const QString& filepath, qulonglong totalsize = 0);
+  QFile* downloadSingle(const QUrl& url, const QString& filepath, QString msg = "");
   void append(const QUrl& url, const QString& filepath);
   static DownloadManager* getSelf();
 
  signals:
+  void log(QString msg, bool verbose);
   void downloadStarted(QString filename);
   void downloadSuccessful(QString filepath);
   void downloadFinished(qint32 downloadedCount, qint32 totalcount);
@@ -38,7 +39,6 @@ class DownloadManager : public QObject {
   QFile output;
   QTime downloadTime;
 
-  qulonglong totalSize = 0;
   int downloadedCount = 0;
   int totalCount = 0;
   bool block = false;

@@ -36,8 +36,8 @@ TitleInfo* TitleInfo::DownloadCreate(const QString& id, QString basedir) {
     QString downloadURL = baseURL + id + QString("/") + contentID;
     qulonglong size = Decrypt::bs64(tmd->Contents[i].Size);
     if (!QFile(contentPath).exists() || QFileInfo(contentPath).size() != static_cast<qint64>(size)) {
-      // QString msg = QString("Downloading Content (%1) %2 of %3 (%4)").arg(contentID).arg(i + 1).arg(contentCount).arg(size);
-      DownloadManager::getSelf()->downloadSingle(downloadURL, contentPath);
+      QString msg = QString("Downloading Content (%1) %2 of %3 (%4)").arg(contentID).arg(i + 1).arg(contentCount).arg(size);
+      DownloadManager::getSelf()->downloadSingle(downloadURL, contentPath, msg);
     }
   }
   return ti;
@@ -121,19 +121,28 @@ void TitleInfo::decryptContent(Decrypt* decrypt) {
 }
 
 QString TitleInfo::getDirectory() const {
-  return this->baseDirectory + "/" + this->getFormatName();
+  switch (titleType) {
+    case TitleType::Patch:
+      return this->baseDirectory + "/Updates/" + this->getFormatName();
+
+    case TitleType::Dlc:
+      return this->baseDirectory + "/DLC/" + this->getFormatName();
+
+    case TitleType::Game:
+      return this->baseDirectory + "/" + this->getFormatName();
+  }
 }
 
 QString TitleInfo::getFormatName() const {
   switch (titleType) {
     case TitleType::Patch:
-      return QString("[Update]") + QString("[") + this->getRegion() + QString("]") + this->getName();
+      return QString("[") + this->getRegion() + QString("][Update] ") + this->getName();
 
     case TitleType::Dlc:
-      return QString("[DLC]") + QString("[") + this->getRegion() + QString("]") + this->getName();
+      return QString("[") + this->getRegion() + QString("][DLC] ") + this->getName();
 
     case TitleType::Game:
-      return QString("[Game]") + QString("[") + this->getRegion() + QString("]") + this->getName();
+      return QString("[") + this->getRegion() + QString("] ") + this->getName();
   }
 
   return nullptr;

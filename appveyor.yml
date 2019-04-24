@@ -12,6 +12,9 @@ environment:
 
 init:
   - if not %platform%==mingw set PATH=C:\Qt\5.12\%qt%\bin;%PATH%
+    
+install:
+  - set PATH=%PATH%;C:\Qt\Tools\mingw530_32
 
 build_script:
   - call version.bat

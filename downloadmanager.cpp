@@ -6,14 +6,13 @@ DownloadManager::DownloadManager(QObject* parent) : QObject(parent) {
   DownloadManager::self = this;
 }
 
-QFile* DownloadManager::downloadSingle(const QUrl& url, const QString& filepath, qulonglong totalsize) {
+QFile* DownloadManager::downloadSingle(const QUrl& url, const QString& filepath, QString msg) {
   downloadQueue.enqueue({filepath, url});
   ++totalCount;
   block = true;
-  totalSize = totalsize;
+  emit log(msg, true);
   _startNextDownload();
   _downloadFinished();
-  block = false;
   return &output;
 }
 
@@ -60,6 +59,7 @@ void DownloadManager::_startNextDownload() {
   if (block) {
     connect(currentDownload, &QNetworkReply::finished, &loop, &QEventLoop::quit);
     loop.exec();
+    block = false;
   } else {
     connect(currentDownload, &QNetworkReply::finished, this, &DownloadManager::_downloadFinished);
   }

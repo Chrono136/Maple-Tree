@@ -15,6 +15,7 @@ void GameLibrary::init(const QString& path) {
   QtConcurrent::run([ = ] {
     QDirIterator it(dir.path(), QStringList() << "meta.xml", QDir::NoFilter, QDirIterator::Subdirectories);
     while (it.hasNext()) {
+      it.next();
       QString filepath(it.filePath());
       QFileInfo metaxml(filepath);
       if (metaxml.fileName().contains("meta.xml")) {
@@ -24,7 +25,6 @@ void GameLibrary::init(const QString& path) {
           emit changed(titleinfo);
         }
       }
-      it.next();
     }
   });
 }

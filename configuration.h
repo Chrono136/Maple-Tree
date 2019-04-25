@@ -13,8 +13,9 @@
 class Configuration {
  public:
   explicit Configuration(QString configpath = "") {
-    if (configpath.isEmpty())
-      configpath = getTempDirectory("").filePath("settings.json");
+    if (configpath.isEmpty()) {
+      configpath = getPersistentDirectory("").filePath("settings.json");
+    }
     this->configPath = configpath;
     this->setKey("ConfigType", QString("Persistent"));
     this->setBaseDirectory(this->getBaseDirectory());
@@ -23,6 +24,7 @@ class Configuration {
     if (getKeyString("ConfigType") == "Temporary") {
       if (this->getBaseDirectory() != QDir::currentPath()) {
         QDir().rmdir(this->getBaseDirectory());
+        QDir().rmdir(this->getPersistentDirectory("").absolutePath());
       }
     } else {
       save();
@@ -79,13 +81,20 @@ class Configuration {
   static QDir getTempDirectory(QString folder) {
     QDir tempDir(QDir(QDir::tempPath()).filePath(QCoreApplication::applicationName()));
     QDir dir(QDir(tempDir).filePath(folder));
-    if (!dir.exists())
-      QDir().mkdir(dir.path());
+    QDir().mkdir(dir.path());
     return dir;
   }
 
- private:
+  static QDir getPersistentDirectory(QString folder) {
+    QDir tempDir(QDir(QDir::homePath()).filePath(QCoreApplication::applicationName()));
+    QDir dir(QDir(tempDir).filePath(folder));
+    QDir().mkdir(dir.path());
+    return dir;
+  }
+
   QString configPath;
+
+ private:
   QJsonObject jsonObject;
 };
 

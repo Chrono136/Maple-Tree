@@ -25,8 +25,9 @@ void MapleSeed::initialize() {
   gameLibrary = new GameLibrary;
 
   defineActions();
-  if (!config->load())
+  if (!config->load()) {
     config->save();
+  }
 
   defaultConfiguration();
   gameLibrary->init(config->getBaseDirectory());

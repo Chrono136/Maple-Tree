@@ -194,11 +194,10 @@ void MapleSeed::updateListview(TitleInfo* tb) {
   if (ui->listWidget->count() == 1) {
     ui->listWidget->setCurrentRow(0);
   }
-
   TitleInfoItem* tii = new TitleInfoItem(tb);
   tii->setText(tii->getItem()->getFormatName());
   this->ui->listWidget->addItem(tii);
-  this->messageLog("Added to library: " + tb->getFormatName(), true);
+  this->messageLog("Added to library: " + tb->getXmlLocation(), true);
 }
 
 void MapleSeed::downloadStarted(QString filename) {
@@ -259,11 +258,9 @@ void MapleSeed::itemDoubleClicked(QListWidgetItem* itm) {
   QString file(config->getKeyString("cemupath"));
   QString workingdir(QFileInfo(file).dir().path());
   QString rpx(item->getExecutable());
-  auto list = QStringList() << "-g \"" + rpx + "\"";
-  cemuProcess = new QProcess(this);
-  cemuProcess->setArguments(list);
-  cemuProcess->setWorkingDirectory(workingdir);
-  cemuProcess->start(file);
+  process = new QProcess(this);
+  process->setWorkingDirectory(workingdir);
+  process->start(file + " -g \"" + rpx + "\"", QStringList() << "-g \"" + rpx + "\"");
 }
 
 void MapleSeed::actionConfigTemporary(bool checked) {
@@ -282,8 +279,9 @@ void MapleSeed::actionVerboseChecked(bool checked) {
 
 void MapleSeed::actionIntegrateCemu(bool checked) {
   config->setKeyBool("IntegrateCemu", checked);
+  QString cemulocation(config->getKeyString("cemupath"));
 
-  if (checked && !QFile(config->getKeyString("IntegrateCemu")).exists()) {
+  if (checked && !QFile(cemulocation).exists()) {
     QFileDialog dialog;
     dialog.setNameFilter("cemu.exe");
     dialog.setFileMode(QFileDialog::ExistingFile);

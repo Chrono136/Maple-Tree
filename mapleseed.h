@@ -30,7 +30,7 @@ class MapleSeed : public QMainWindow {
 
  private:
   Ui::MainWindow* ui;
-  QProcess* cemuProcess;
+  QProcess* process;
 
   void initialize();
   void defineActions();

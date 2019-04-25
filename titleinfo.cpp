@@ -130,7 +130,6 @@ void TitleInfo::decryptContent(Decrypt* decrypt) {
 
 QString TitleInfo::getDirectory() const {
   QDir dir(this->baseDirectory);
-  QString path;
   switch (titleType) {
     case TitleType::Patch:
       dir = dir.filePath("Updates");
@@ -145,8 +144,7 @@ QString TitleInfo::getDirectory() const {
     case TitleType::Game:
       break;
   }
-  path = dir.filePath(this->getFormatName());
-  return path;
+  return dir.filePath(this->getFormatName());
 }
 
 QString TitleInfo::getFormatName() const {

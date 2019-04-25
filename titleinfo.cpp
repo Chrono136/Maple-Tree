@@ -17,12 +17,17 @@ TitleInfo* TitleInfo::Create(QString id, QString basedir) {
 }
 
 TitleInfo* TitleInfo::Create(const QFileInfo& metaxml, QString basedir) {
-  return Create(getXmlValue(metaxml, "title_id"), std::move(basedir));
+  auto titleInfo = Create(getXmlValue(metaxml, "title_id"), std::move(basedir));
+  titleInfo->meta_xml = metaxml.filePath();
+  return titleInfo;
 }
 
 TitleInfo* TitleInfo::DownloadCreate(const QString& id, QString basedir) {
   QString baseURL("http://ccs.cdn.wup.shop.nintendo.net/ccs/download/");
   TitleInfo* ti = Create(id, std::move(basedir));
+  if (ti->getKey().isEmpty()) {
+    return nullptr;
+  }
   TitleMetaData* tmd = ti->getTMD("");
   Ticket::Create(ti);
 
@@ -73,10 +78,13 @@ QDir TitleInfo::getTempDirectory(const QString& folder) {
 }
 
 void TitleInfo::init() {
+  if (this->attempt >= 3) {
+    QMessageBox::information(nullptr, "Unable to obtain title info", "Content may not exist for this id.");
+    return;
+  }
+
   if (id.isNull() || id.isEmpty() || id.size() <= 0) {
-    QMessageBox::information(
-        nullptr, "Download Title Error",
-        "Invalid title id. Please verify your title id is 16 characters");
+    QMessageBox::information(nullptr, "Download Title Error", "Invalid title id. Please verify your title id is 16 characters");
     return;
   }
 
@@ -121,16 +129,24 @@ void TitleInfo::decryptContent(Decrypt* decrypt) {
 }
 
 QString TitleInfo::getDirectory() const {
+  QDir dir(this->baseDirectory);
+  QString path;
   switch (titleType) {
     case TitleType::Patch:
-      return this->baseDirectory + "/Updates/" + this->getFormatName();
+      dir = dir.filePath("Updates");
+      QDir().mkdir(dir.absolutePath());
+      break;
 
     case TitleType::Dlc:
-      return this->baseDirectory + "/DLC/" + this->getFormatName();
+      dir = dir.filePath("DLC");
+      QDir().mkdir(dir.absolutePath());
+      break;
 
     case TitleType::Game:
-      return this->baseDirectory + "/" + this->getFormatName();
+      break;
   }
+  path = dir.filePath(this->getFormatName());
+  return path;
 }
 
 QString TitleInfo::getFormatName() const {
@@ -168,6 +184,21 @@ QString TitleInfo::getCoverArtUrl() const {
   QString code(this->getProductCode());
   return QString("http://pixxy.in/cover/?code=") + code + QString("&region=") +
          this->getRegion();
+}
+
+QString TitleInfo::getXmlLocation() const {
+  return QString(meta_xml.filePath());
+}
+
+QString TitleInfo::getExecutable() const {
+  QString root = QDir(QDir(this->getXmlLocation()).filePath("../../code")).absolutePath();
+  QDirIterator it(root, QStringList() << "*.rpx", QDir::NoFilter);
+  while (it.hasNext()) {
+    it.next();
+    QString filepath(it.filePath());
+    return filepath;
+  }
+  return nullptr;
 }
 
 QString TitleInfo::getID() const {
@@ -279,9 +310,17 @@ void TitleInfo::downloadJsonSuccessful(const QString& filepath, bool downloadCov
   }
   QByteArray jsonByteArray(file.readAll());
   this->parseJson(jsonByteArray, filepath);
+  file.close();
+
+  if (this->getKey().isEmpty() || this->getName().isEmpty() || this->getRegion().isEmpty()) {
+    if (!QFile(filepath).remove()) {
+      QMessageBox::critical(nullptr, "Could not delete file", "please manually delete " + filepath);
+    }
+    attempt++;
+    this->init();
+  }
 
   if (downloadCover && !QFile(getCoverArtPath()).exists()) {
-    DownloadManager::getSelf()->downloadSingle(getCoverArtUrl(),
-                                               getCoverArtPath());
+    DownloadManager::getSelf()->downloadSingle(getCoverArtUrl(), getCoverArtPath());
   }
 }

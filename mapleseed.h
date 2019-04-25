@@ -30,6 +30,7 @@ class MapleSeed : public QMainWindow {
 
  private:
   Ui::MainWindow* ui;
+  QProcess* cemuProcess;
 
   void initialize();
   void defineActions();
@@ -54,6 +55,7 @@ class MapleSeed : public QMainWindow {
   void updateDownloadProgress(qint64 bytesReceived, qint64 bytesTotal, QTime qtime);
   void updateDecryptProgress(qint64 min, qint64 max);
   void itemSelectionChanged();
+  void itemDoubleClicked(QListWidgetItem* item);
   void actionConfigTemporary(bool checked);
   void actionConfigPersistent(bool checked);
   void actionVerboseChecked(bool checked);

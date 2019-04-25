@@ -30,6 +30,8 @@ class TitleInfo : public QObject {
   QString getBaseDirectory() const;
   QString getCoverArtPath() const;
   QString getCoverArtUrl() const;
+  QString getXmlLocation() const;
+  QString getExecutable() const;
   QString getID() const;
   QString getKey() const;
   QString getName() const;
@@ -47,6 +49,7 @@ class TitleInfo : public QObject {
   QString baseDirectory;
   QFileInfo meta_xml;
   TitleType titleType;
+  quint8 attempt = 0;
 
  signals:
 

@@ -10,9 +10,9 @@ MapleSeed::MapleSeed(QWidget* parent)
 }
 
 MapleSeed::~MapleSeed() {
+  delete decrypt;
   delete config;
   delete ui;
-  delete decrypt;
   delete downloadManager;
   delete gameLibrary;
 }
@@ -57,6 +57,7 @@ void MapleSeed::defineActions() {
   connect(ui->actionDLC, &QAction::triggered, this, &MapleSeed::actionDLC);
   connect(ui->actionDecrypt_Content, &QAction::triggered, this, &MapleSeed::decryptContent);
   connect(ui->listWidget, &QListWidget::itemSelectionChanged, this, &MapleSeed::itemSelectionChanged);
+  connect(ui->listWidget, &QListWidget::itemDoubleClicked, this, &MapleSeed::itemDoubleClicked);
   connect(ui->actionConfigTemporary, &QAction::triggered, this, &MapleSeed::actionConfigTemporary);
   connect(ui->actionConfigPersistent, &QAction::triggered, this, &MapleSeed::actionConfigPersistent);
   connect(ui->actionVerbose, &QAction::triggered, this, &MapleSeed::actionVerboseChecked);
@@ -247,6 +248,22 @@ void MapleSeed::itemSelectionChanged() {
 
   TitleInfoItem* tii = reinterpret_cast<TitleInfoItem*>(items[0]);
   ui->label->setPixmap(QPixmap(tii->getItem()->getCoverArtPath()));
+}
+
+void MapleSeed::itemDoubleClicked(QListWidgetItem* itm) {
+  if (itm == nullptr || !ui->actionIntegrateCemu->isChecked())
+    return;
+
+  auto titleInfoItem = reinterpret_cast<TitleInfoItem*>(itm);
+  TitleInfo* item = titleInfoItem->getItem();
+  QString file(config->getKeyString("cemupath"));
+  QString workingdir(QFileInfo(file).dir().path());
+  QString rpx(item->getExecutable());
+  auto list = QStringList() << "-g \"" + rpx + "\"";
+  cemuProcess = new QProcess(this);
+  cemuProcess->setArguments(list);
+  cemuProcess->setWorkingDirectory(workingdir);
+  cemuProcess->start(file);
 }
 
 void MapleSeed::actionConfigTemporary(bool checked) {

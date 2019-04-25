@@ -18,7 +18,7 @@ void GameLibrary::init(const QString& path) {
       it.next();
       QString filepath(it.filePath());
       QFileInfo metaxml(filepath);
-      if (metaxml.fileName().contains("meta.xml")) {
+      if (metaxml.fileName().contains("meta.xml") && !filepath.contains("[Update]")) {
         auto titleinfo = TitleInfo::Create(metaxml, this->baseDirectory);
         library.append(titleinfo);
         if (titleinfo->getID().at(7) == '0') {

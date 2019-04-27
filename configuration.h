@@ -9,6 +9,7 @@
 #include <QJsonObject>
 #include <QMapIterator>
 #include <QVariant>
+#include <QUrl>
 
 class Configuration {
  public:
@@ -19,6 +20,7 @@ class Configuration {
     this->configPath = configpath;
     this->setKey("ConfigType", QString("Persistent"));
     this->setBaseDirectory(this->getBaseDirectory());
+    Configuration::self = this;
   }
   ~Configuration() {
     if (getKeyString("ConfigType") == "Temporary") {
@@ -35,6 +37,14 @@ class Configuration {
   void setKey(QString key, QString value) { jsonObject[key.toLower()] = value; }
   bool getKeyBool(QString key) { return jsonObject[key.toLower()].toBool(); }
   QString getKeyString(QString key) { return jsonObject[key.toLower()].toString(); }
+
+  QUrl getAPI_Url() {
+    QString url(getKeyString("API_Url"));
+    if (url.isEmpty()) {
+      this->setKey("API_Url", "http://api.pixxy.in/");
+    }
+    return url;
+  }
 
   QString getBaseDirectory() {
     QString baseDir(getKeyString("BaseDirectory"));
@@ -93,6 +103,7 @@ class Configuration {
   }
 
   QString configPath;
+  static Configuration* self;
 
  private:
   QJsonObject jsonObject;

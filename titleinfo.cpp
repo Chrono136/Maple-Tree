@@ -1,6 +1,7 @@
 #include "titleinfo.h"
 
 #include <utility>
+#include "configuration.h"
 #include "downloadmanager.h"
 #include "ticket.h"
 
@@ -89,12 +90,12 @@ void TitleInfo::init() {
   }
 
   setTitleType();
-  QString jsonurl("http://api.tsumes.com/");
+  QUrl url(Configuration::self->getAPI_Url());
 
   if (titleType == TitleType::Game) {
-    jsonurl += QString("title/" + id);
+    url.setPath("title/" + id);
   } else {
-    jsonurl += QString("titlekey/" + id);
+    url.setPath("titlekey/" + id);
   }
 
   QString filepath(this->getTempDirectory("json").filePath(id + ".json"));
@@ -104,7 +105,7 @@ void TitleInfo::init() {
     return;
   }
 
-  DownloadManager::getSelf()->downloadSingle(jsonurl, filepath);
+  DownloadManager::getSelf()->downloadSingle(url, filepath);
   downloadJsonSuccessful(filepath, true);
 }
 

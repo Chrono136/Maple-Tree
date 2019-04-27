@@ -32,6 +32,7 @@ class TitleInfo : public QObject {
   QString getCoverArtUrl() const;
   QString getXmlLocation() const;
   QString getExecutable() const;
+  TitleType getTitleType() const;
   QString getID() const;
   QString getKey() const;
   QString getName() const;

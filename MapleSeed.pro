@@ -38,7 +38,8 @@ SOURCES += \
     titleinfo.cpp \
     ticket.cpp \
     decrypt.cpp \
-    configuration.cpp
+    configuration.cpp \
+    libraryentry.cpp
 
 HEADERS += \
     mapleseed.h \
@@ -49,7 +50,8 @@ HEADERS += \
     ticket.h \
     decrypt.h \
     configuration.h \
-    versioninfo.h
+    versioninfo.h \
+    libraryentry.h
 
 FORMS += \
         mainwindow.ui

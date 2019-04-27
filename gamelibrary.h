@@ -9,22 +9,26 @@
 #include <QVector>
 #include <QtConcurrent>
 #include "titleinfo.h"
+#include "libraryentry.h"
 
 class GameLibrary : public QObject {
   Q_OBJECT
  public:
   explicit GameLibrary(QObject* parent = nullptr);
+  ~GameLibrary();
 
   void init(const QString& path);
+  bool load(QString filepath);
+  bool save(QString filepath);
 
   QString baseDirectory;
 
-  QVector<TitleInfo*> library;
+  QVector<LibraryEntry*> library;
 
   static GameLibrary* self;
 
  signals:
-  void changed(TitleInfo*);
+  void changed(LibraryEntry*);
 
  public slots:
 };

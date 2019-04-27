@@ -48,7 +48,7 @@ class MapleSeed : public QMainWindow {
   void messageLog(QString msg, bool verbose = false);
   void disableMenubar();
   void enableMenubar();
-  void updateListview(TitleInfo* tb);
+  void updateListview(LibraryEntry* tb);
   void downloadStarted(QString filename);
   void downloadSuccessful(QString fileName);
   void downloadError(QString errorString);

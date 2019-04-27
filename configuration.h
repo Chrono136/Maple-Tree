@@ -46,6 +46,12 @@ class Configuration {
     return url;
   }
 
+  QString getLibPath() {
+    QDir dir(this->getPersistentDirectory(""));
+    QString path(dir.filePath("library.json"));
+    return path;
+  }
+
   QString getBaseDirectory() {
     QString baseDir(getKeyString("BaseDirectory"));
     if (baseDir.isEmpty()) {

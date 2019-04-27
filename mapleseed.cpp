@@ -10,11 +10,11 @@ MapleSeed::MapleSeed(QWidget* parent)
 }
 
 MapleSeed::~MapleSeed() {
-  delete decrypt;
-  delete config;
-  delete ui;
-  delete downloadManager;
   delete gameLibrary;
+  delete downloadManager;
+  delete decrypt;
+  delete ui;
+  delete config;
 }
 
 void MapleSeed::initialize() {
@@ -191,14 +191,14 @@ void MapleSeed::disableMenubar() { this->ui->menubar->setEnabled(false); }
 
 void MapleSeed::enableMenubar() { this->ui->menubar->setEnabled(true); }
 
-void MapleSeed::updateListview(TitleInfo* tb) {
+void MapleSeed::updateListview(LibraryEntry* entry) {
   if (ui->listWidget->count() == 1) {
     ui->listWidget->setCurrentRow(0);
   }
-  TitleInfoItem* tii = new TitleInfoItem(tb);
+  TitleInfoItem* tii = new TitleInfoItem(entry->titleInfo);
   tii->setText(tii->getItem()->getFormatName());
   this->ui->listWidget->addItem(tii);
-  this->messageLog("Added to library: " + tb->getXmlLocation(), true);
+  this->messageLog("Added to library: " + entry->metaxml, true);
 }
 
 void MapleSeed::downloadStarted(QString filename) {

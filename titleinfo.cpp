@@ -200,6 +200,10 @@ QString TitleInfo::getExecutable() const {
   return nullptr;
 }
 
+TitleType TitleInfo::getTitleType() const {
+  return titleType;
+}
+
 QString TitleInfo::getID() const {
   if (info.contains("id")) {
     return info["id"];

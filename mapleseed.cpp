@@ -187,6 +187,17 @@ void MapleSeed::messageLog(QString msg, bool verbose) {
   if (ui->actionVerbose->isChecked() || verbose) {
     ui->textEdit->append(msg);
   }
+
+  if (ui->actionVerbose->isChecked()) {
+    QFile file(QCoreApplication::applicationName() + ".log");
+    if (!file.open(QIODevice::Append)) {
+      qWarning("Couldn't open file.");
+      return;
+    }
+    msg += "\n";
+    file.write(msg.toLatin1());
+    file.close();
+  }
 }
 
 void MapleSeed::disableMenubar() { this->ui->menubar->setEnabled(false); }

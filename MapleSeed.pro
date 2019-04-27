@@ -37,7 +37,8 @@ SOURCES += \
     downloadmanager.cpp \
     titleinfo.cpp \
     ticket.cpp \
-    decrypt.cpp
+    decrypt.cpp \
+    configuration.cpp
 
 HEADERS += \
     mapleseed.h \

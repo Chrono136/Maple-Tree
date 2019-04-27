@@ -9,20 +9,20 @@ GameLibrary::~GameLibrary() {
 
 void GameLibrary::init(const QString& path) {
   this->baseDirectory = QDir(path).absolutePath();
-  QDir dir = QDir(this->baseDirectory);
 
-  if (!dir.exists()) {
-    QMessageBox::critical(nullptr, "directory error", "GameLibrary::init(QString path): invalid directory: " + dir.path());
+  if (!QDir(path).exists()) {
+    QMessageBox::critical(nullptr, "directory error", "GameLibrary::init(QString path): invalid directory: " + path);
     return;
   }
 
+  library.clear();
   QtConcurrent::run([ = ] {
-    if (!this->load(Configuration::self->getLibPath())) {
-      QDirIterator it(dir.path(), QStringList() << "meta.xml", QDir::NoFilter, QDirIterator::Subdirectories);
+    if (!load(Configuration::self->getLibPath())) {
+      QDirIterator it(path, QStringList() << "meta.xml", QDir::NoFilter, QDirIterator::Subdirectories);
       while (it.hasNext()) {
         it.next();
         if (it.fileName().contains("meta.xml") && !it.filePath().contains("[Update]")) {
-          auto titleinfo = TitleInfo::Create(it.fileInfo(), this->baseDirectory);
+          auto titleinfo = TitleInfo::Create(it.fileInfo(), path);
           if (titleinfo->getTitleType() == TitleType::Game) {
             LibraryEntry* entry = new LibraryEntry(std::move(titleinfo));
             entry->rpx = entry->titleInfo->getExecutable();
@@ -30,6 +30,7 @@ void GameLibrary::init(const QString& path) {
             entry->metaxml = it.filePath();
             library.append(entry);
             emit changed(entry);
+            log("Added to library: " + entry->metaxml, true);
           }
         }
       }
@@ -50,6 +51,7 @@ bool GameLibrary::load(QString filepath) {
   auto json = loadDoc.object();
 
   if (json.contains("Library") && json["Library"].isArray()) {
+    this->log("Loading library: " + filepath, true);
     QJsonArray array = json["Library"].toArray();
     library.clear();
     library.reserve(array.size());
@@ -88,6 +90,7 @@ bool GameLibrary::save(QString filepath) {
     qWarning("Couldn't open save file.");
     return false;
   }
+  this->log("Saving library: " + filepath, true);
   QJsonDocument saveDoc(json);
   return saveFile.write(saveDoc.toJson());
 }

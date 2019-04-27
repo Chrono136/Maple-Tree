@@ -41,8 +41,9 @@ void MapleSeed::defineActions() {
   connect(decrypt, &Decrypt::progressReport, this, &MapleSeed::updateDecryptProgress);
 
   connect(gameLibrary, &GameLibrary::changed, this, &MapleSeed::updateListview);
+  connect(gameLibrary, &GameLibrary::log, this, &MapleSeed::messageLog);
 
-  connect(downloadManager, &DownloadManager::log, this, &MapleSeed::messageLog, Qt::ConnectionType::DirectConnection);
+  connect(downloadManager, &DownloadManager::log, this, &MapleSeed::messageLog);
   connect(downloadManager, &DownloadManager::downloadStarted, this, &MapleSeed::downloadStarted);
   connect(downloadManager, &DownloadManager::downloadStarted, this, &MapleSeed::disableMenubar);
   connect(downloadManager, &DownloadManager::downloadSuccessful, this, &MapleSeed::downloadSuccessful);
@@ -63,6 +64,7 @@ void MapleSeed::defineActions() {
   connect(ui->actionConfigPersistent, &QAction::triggered, this, &MapleSeed::actionConfigPersistent);
   connect(ui->actionVerbose, &QAction::triggered, this, &MapleSeed::actionVerboseChecked);
   connect(ui->actionIntegrateCemu, &QAction::triggered, this, &MapleSeed::actionIntegrateCemu);
+  connect(ui->actionRefreshLibrary, &QAction::triggered, this, &MapleSeed::actionRefreshLibrary);
 }
 
 void MapleSeed::defaultConfiguration() {
@@ -198,7 +200,6 @@ void MapleSeed::updateListview(LibraryEntry* entry) {
   TitleInfoItem* tii = new TitleInfoItem(entry->titleInfo);
   tii->setText(tii->getItem()->getFormatName());
   this->ui->listWidget->addItem(tii);
-  this->messageLog("Added to library: " + entry->metaxml, true);
 }
 
 void MapleSeed::downloadStarted(QString filename) {
@@ -291,4 +292,11 @@ void MapleSeed::actionIntegrateCemu(bool checked) {
       config->setKey("CemuPath", QFileInfo(files[0]).absoluteFilePath());
     }
   }
+}
+
+void MapleSeed::actionRefreshLibrary() {
+  QString libraryfile(Configuration::self->getLibPath());
+  QFile(libraryfile).remove();
+  ui->listWidget->clear();
+  gameLibrary->init(gameLibrary->baseDirectory);
 }

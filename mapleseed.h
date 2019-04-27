@@ -60,6 +60,7 @@ class MapleSeed : public QMainWindow {
   void actionConfigPersistent(bool checked);
   void actionVerboseChecked(bool checked);
   void actionIntegrateCemu(bool checked);
+  void actionRefreshLibrary();
 };
 
 #endif  // MAINWINDOW_H

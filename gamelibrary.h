@@ -29,6 +29,7 @@ class GameLibrary : public QObject {
 
  signals:
   void changed(LibraryEntry*);
+  void log(QString msg, bool verbose);
 
  public slots:
 };

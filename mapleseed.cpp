@@ -194,8 +194,8 @@ void MapleSeed::messageLog(QString msg, bool verbose) {
       qWarning("Couldn't open file.");
       return;
     }
-    msg += "\n";
-    file.write(msg.toLatin1());
+    QString log(QDateTime::currentDateTime().toString("[MMM dd, yyyy HH:mm:ss ap]") + " " + msg + "\n");
+    file.write(log.toLatin1());
     file.close();
   }
 }

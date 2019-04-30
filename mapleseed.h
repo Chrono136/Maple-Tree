@@ -22,11 +22,13 @@ class MapleSeed : public QMainWindow {
  public:
   explicit MapleSeed(QWidget* parent = nullptr);
   ~MapleSeed();
+  bool actionOffline_ModeIsChecked();
 
   Configuration* config;
   Decrypt* decrypt;
   GameLibrary* gameLibrary;
   DownloadManager* downloadManager;
+  static MapleSeed* self;
 
  private:
   Ui::MainWindow* ui;
@@ -53,7 +55,7 @@ class MapleSeed : public QMainWindow {
   void downloadSuccessful(QString fileName);
   void downloadError(QString errorString);
   void updateDownloadProgress(qint64 bytesReceived, qint64 bytesTotal, QTime qtime);
-  void updateDecryptProgress(qint64 min, qint64 max);
+  void updateBaiscProgress(qint64 min, qint64 max);
   void itemSelectionChanged();
   void itemDoubleClicked(QListWidgetItem* item);
   void actionConfigTemporary(bool checked);
@@ -61,6 +63,8 @@ class MapleSeed : public QMainWindow {
   void actionVerboseChecked(bool checked);
   void actionIntegrateCemu(bool checked);
   void actionRefreshLibrary();
+  void actionOffline_Mode(bool checked);
+  void actionClear_Settings();
 };
 
 #endif  // MAINWINDOW_H

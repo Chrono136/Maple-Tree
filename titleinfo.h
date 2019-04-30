@@ -21,8 +21,6 @@ class TitleInfo : public QObject {
   static TitleInfo* Create(const QFileInfo& metaxml, QString basedir);
   static TitleInfo* DownloadCreate(const QString& id, QString basedir);
   static QString getXmlValue(const QFileInfo& metaxml, const QString& field);
-  static QDir getTempDirectory(const QString& folder);
-
   void init();
   void decryptContent(Decrypt* decrypt);
   QString getDirectory() const;
@@ -39,6 +37,8 @@ class TitleInfo : public QObject {
   QString getRegion() const;
   QString getProductCode() const;
 
+  QMap<QString, QString> info;
+
  private:
   TitleMetaData* getTMD(const QString& version);
   void parseJson(const QByteArray& byteArry, const QString& filepath);
@@ -46,7 +46,6 @@ class TitleInfo : public QObject {
   void downloadJsonSuccessful(const QString& filepath, bool downloadCover = false);
 
   QString id;
-  QMap<QString, QString> info;
   QString baseDirectory;
   QFileInfo meta_xml;
   TitleType titleType;

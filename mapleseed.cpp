@@ -2,19 +2,28 @@
 #include "ui_mainwindow.h"
 #include "versioninfo.h"
 
-MapleSeed::MapleSeed(QWidget* parent)
-  : QMainWindow(parent), ui(new Ui::MainWindow) {
-  ui->setupUi(this);
+MapleSeed* MapleSeed::self;
+
+MapleSeed::MapleSeed(QWidget* parent) : QMainWindow(parent), ui(new Ui::MainWindow) {
+  ui->setupUi(self = this);
   this->setWindowTitle("MapleSeed++ " + QString(GEN_VERSION_STRING));
   initialize();
 }
 
 MapleSeed::~MapleSeed() {
-  delete gameLibrary;
-  delete downloadManager;
-  delete decrypt;
+  if (downloadManager)
+    delete downloadManager;
+  if (decrypt)
+    delete decrypt;
+  if (gameLibrary)
+    delete gameLibrary;
+  if (config)
+    delete config;
   delete ui;
-  delete config;
+}
+
+bool MapleSeed::actionOffline_ModeIsChecked() {
+  return ui->actionOffline_Mode->isChecked();
 }
 
 void MapleSeed::initialize() {
@@ -28,9 +37,9 @@ void MapleSeed::initialize() {
   if (!config->load()) {
     config->save();
   }
-
   defaultConfiguration();
-  gameLibrary->init(config->getBaseDirectory());
+
+  gameLibrary->init(config->getBaseDirectory(), ui->actionOffline_Mode->isChecked());
   this->messageLog("Environment setup complete");
 }
 
@@ -38,8 +47,9 @@ void MapleSeed::defineActions() {
   connect(decrypt, &Decrypt::log, this, &MapleSeed::messageLog);
   connect(decrypt, &Decrypt::decryptStarted, this, &MapleSeed::disableMenubar);
   connect(decrypt, &Decrypt::decryptFinished, this, &MapleSeed::enableMenubar);
-  connect(decrypt, &Decrypt::progressReport, this, &MapleSeed::updateDecryptProgress);
+  connect(decrypt, &Decrypt::progressReport, this, &MapleSeed::updateBaiscProgress);
 
+  connect(gameLibrary, &GameLibrary::progress, this, &MapleSeed::updateBaiscProgress);
   connect(gameLibrary, &GameLibrary::changed, this, &MapleSeed::updateListview);
   connect(gameLibrary, &GameLibrary::log, this, &MapleSeed::messageLog);
 
@@ -65,11 +75,14 @@ void MapleSeed::defineActions() {
   connect(ui->actionVerbose, &QAction::triggered, this, &MapleSeed::actionVerboseChecked);
   connect(ui->actionIntegrateCemu, &QAction::triggered, this, &MapleSeed::actionIntegrateCemu);
   connect(ui->actionRefreshLibrary, &QAction::triggered, this, &MapleSeed::actionRefreshLibrary);
+  connect(ui->actionOffline_Mode, &QAction::triggered, this, &MapleSeed::actionOffline_Mode);
+  connect(ui->actionClear_Settings, &QAction::triggered, this, &MapleSeed::actionClear_Settings);
 }
 
 void MapleSeed::defaultConfiguration() {
   ui->actionVerbose->setChecked(config->getKeyBool("VerboseLog"));
   ui->actionIntegrateCemu->setChecked(config->getKeyBool("IntegrateCemu"));
+  ui->actionOffline_Mode->setChecked(config->getKeyBool("Offline"));
   ui->actionConfigTemporary->setChecked(!config->getKeyString("configtype").compare("Temporary"));
   ui->actionConfigPersistent->setChecked(!config->getKeyString("configtype").compare("Persistent"));
 }
@@ -81,9 +94,9 @@ void MapleSeed::actionChange_Library() {
   if (dir == nullptr)
     return;
 
-  config->setBaseDirectory(dir->path());
   ui->listWidget->clear();
-  gameLibrary->init(dir->path());
+  config->setBaseDirectory(dir->path());
+  gameLibrary->init(dir->path(), false);
 
   if (ui->listWidget->count() > 0) {
     auto item = ui->listWidget->item(0);
@@ -194,7 +207,7 @@ void MapleSeed::messageLog(QString msg, bool verbose) {
       qWarning("Couldn't open file.");
       return;
     }
-    QString log(QDateTime::currentDateTime().toString("[MMM dd, yyyy HH:mm:ss ap]") + " " + msg + "\n");
+    QString log(QDateTime::currentDateTime().toString("[MMM dd, yyyy HH:mm:ss ap] ") + msg + "\n");
     file.write(log.toLatin1());
     file.close();
   }
@@ -247,9 +260,9 @@ void MapleSeed::updateDownloadProgress(qint64 bytesReceived, qint64 bytesTotal, 
   this->ui->progressBar->setFormat("%p%   /   " + QString::fromLatin1("%1 %2").arg(speed, 3, 'f', 1).arg(unit));
 }
 
-void MapleSeed::updateDecryptProgress(qint64 min, qint64 max) {
-  this->ui->progressBar->setValue(static_cast<int>(min));
+void MapleSeed::updateBaiscProgress(qint64 min, qint64 max) {
   this->ui->progressBar->setRange(0, static_cast<int>(max));
+  this->ui->progressBar->setValue(static_cast<int>(min));
   this->ui->progressBar->setFormat("%p%");
 }
 
@@ -306,8 +319,25 @@ void MapleSeed::actionIntegrateCemu(bool checked) {
 }
 
 void MapleSeed::actionRefreshLibrary() {
-  QString libraryfile(Configuration::self->getLibPath());
-  QFile(libraryfile).remove();
+  QFile(Configuration::self->getLibPath()).remove();
   ui->listWidget->clear();
-  gameLibrary->init(gameLibrary->baseDirectory);
+  gameLibrary->init(gameLibrary->baseDirectory, false);
+}
+
+void MapleSeed::actionOffline_Mode(bool checked) {
+  config->setKeyBool("Offline", checked);
+  gameLibrary->offline(checked);
+}
+
+void MapleSeed::actionClear_Settings() {
+  auto reply = QMessageBox::information(this, "Warning!!!", "Do you want to delete all settings and temporary files?\nThis application will close.", QMessageBox::Yes | QMessageBox::No);
+  if (reply == QMessageBox::Yes) {
+    QDir dir(config->getPersistentDirectory());
+    delete gameLibrary;
+    gameLibrary = nullptr;
+    delete config;
+    config = nullptr;
+    dir.removeRecursively();
+    QApplication::quit();
+  }
 }

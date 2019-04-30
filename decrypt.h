@@ -27,9 +27,10 @@ class Decrypt : public QObject {
   explicit Decrypt(QObject* parent = nullptr);
 
   void start(QString basedir);
-
   static quint32 bs24(quint32 i);
   static qulonglong bs64(qulonglong i);
+
+  static Decrypt* self;
 
  signals:
   void decryptStarted();

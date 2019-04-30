@@ -3,7 +3,7 @@
 $files = array();
 $code = $_GET["code"];
 $region = $_GET["region"];
-$covers = glob("$region/$code*.bmp");
+$covers = glob("$region/$code*");
 
 if (sizeof($covers) > 0)
 {
@@ -31,17 +31,15 @@ if (sizeof($covers) > 0)
 		}
 		header("Accept-Ranges: bytes");
 		header('Content-Length: ' . filesize($filepath));
-		//header("Last-Modified: Fri, 03 Mar 2004 06:32:31 GMT");
 		readfile($filepath);
 	}
 }
 else
 {
-	header( "HTTP/1.0 404 Not Found");
+	//header( "HTTP/1.0 404 Not Found");
 	header("Content-type: image/bmp");
 	header('Content-Length: ' . filesize("default.bmp"));
 	header("Accept-Ranges: bytes");
-	//header("Last-Modified: Fri, 03 Mar 2004 06:32:31 GMT");
 	readfile("default.bmp");
 }
 ?>

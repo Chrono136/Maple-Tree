@@ -4,6 +4,7 @@
 #include "configuration.h"
 #include "downloadmanager.h"
 #include "ticket.h"
+#include "gamelibrary.h"
 
 TitleInfo::TitleInfo(QObject* parent) : QObject(parent) {
   titleType = TitleType::Game;
@@ -69,36 +70,42 @@ QString TitleInfo::getXmlValue(const QFileInfo& metaxml, const QString& field) {
   return value;
 }
 
-QDir TitleInfo::getTempDirectory(const QString& folder) {
-  QDir tempDir(
-      QDir(QDir::tempPath()).filePath(QCoreApplication::applicationName()));
-  QDir dir(QDir(tempDir).filePath(folder));
-  if (!dir.exists())
-    QDir().mkdir(dir.path());
-  return dir;
-}
-
 void TitleInfo::init() {
   if (this->attempt >= 3) {
-    QMessageBox::information(nullptr, "Unable to obtain title info", "Content may not exist for this id.");
+    GameLibrary::self->log("TitleInfo::init(): Unable to obtain title info", true);
     return;
   }
 
-  if (id.isNull() || id.isEmpty() || id.size() <= 0) {
-    QMessageBox::information(nullptr, "Download Title Error", "Invalid title id. Please verify your title id is 16 characters");
+  if (id.isEmpty() || id.size() != 16) {
+    GameLibrary::self->log("TitleInfo::init(): Invalid title id. Please verify your title id is 16 characters", true);
     return;
   }
 
   setTitleType();
-  QUrl url(Configuration::self->getAPI_Url());
 
-  if (titleType == TitleType::Game) {
-    url.setPath("title/" + id);
-  } else {
-    url.setPath("titlekey/" + id);
+  if (GameLibrary::self->database.contains(id.toLower())) {
+    info = GameLibrary::self->database[id.toLower()]->info;
+    QString coverPath = getCoverArtPath();
+    if (!QFile(coverPath).exists()) {
+      DownloadManager::getSelf()->downloadSingle(getCoverArtUrl(), coverPath);
+    }
+    return;
   }
 
-  QString filepath(this->getTempDirectory("json").filePath(id + ".json"));
+  QString url(Configuration::self->getAPI_Url().url());
+
+  if (titleType == TitleType::Game) {
+    url += ("title/" + id);
+  } else {
+    url += ("titlekey/" + id);
+  }
+
+  QDir jsonDir(Configuration::self->getPersistentDirectory("json"));
+  if (!QDir().mkdir(jsonDir.path())) {
+    QDir().mkdir(QDir(jsonDir.path()).path());
+    QDir().mkdir(jsonDir.path());
+  }
+  QString filepath(jsonDir.filePath(id + ".json"));
 
   if (QFile::exists(filepath)) {
     downloadJsonSuccessful(filepath, true);
@@ -170,11 +177,8 @@ QString TitleInfo::getBaseDirectory() const {
 QString TitleInfo::getCoverArtPath() const {
   QString code(this->getProductCode());
 
-  QString temp_dir(this->getTempDirectory("covers").path());
-  QString cover = temp_dir + QString("/" + code + ".jpg");
-
-  if (!QDir(temp_dir).exists())
-    QDir().mkdir(temp_dir);
+  QDir temp_dir(Configuration::self->getPersistentDirectory("covers"));
+  QString cover = temp_dir.path() + QString("/" + code + ".jpg");
 
   return cover;
 }
@@ -206,7 +210,7 @@ TitleType TitleInfo::getTitleType() const {
 
 QString TitleInfo::getID() const {
   if (info.contains("id")) {
-    return info["id"];
+    return info["id"].toLower();
   }
   return nullptr;
 
@@ -308,7 +312,7 @@ void TitleInfo::downloadJsonSuccessful(const QString& filepath, bool downloadCov
 
   QFile file(filepath);
   if (!file.open(QIODevice::ReadOnly)) {
-    QMessageBox::information(nullptr, "error", file.errorString());
+    GameLibrary::self->log("TitleInfo::downloadJsonSuccessful: " + file.errorString(), true);
     return;
   }
   QByteArray jsonByteArray(file.readAll());
@@ -317,7 +321,7 @@ void TitleInfo::downloadJsonSuccessful(const QString& filepath, bool downloadCov
 
   if (this->getKey().isEmpty() || this->getName().isEmpty() || this->getRegion().isEmpty()) {
     if (!QFile(filepath).remove()) {
-      QMessageBox::critical(nullptr, "Could not delete file", "please manually delete " + filepath);
+      GameLibrary::self->log("TitleInfo::downloadJsonSuccessful: " + filepath, true);
     }
     attempt++;
     this->init();

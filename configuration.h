@@ -94,17 +94,23 @@ class Configuration {
     return true;
   }
 
-  static QDir getTempDirectory(QString folder) {
+  static QDir getTempDirectory(QString folder = "") {
     QDir tempDir(QDir(QDir::tempPath()).filePath(QCoreApplication::applicationName()));
     QDir dir(QDir(tempDir).filePath(folder));
-    QDir().mkdir(dir.path());
+    if (!QDir().mkdir(dir.path())) {
+      QDir().mkdir(tempDir.path());
+      QDir().mkdir(dir.path());
+    }
     return dir;
   }
 
-  static QDir getPersistentDirectory(QString folder) {
+  static QDir getPersistentDirectory(QString folder = "") {
     QDir tempDir(QDir(QDir::homePath()).filePath(QCoreApplication::applicationName()));
     QDir dir(QDir(tempDir).filePath(folder));
-    QDir().mkdir(dir.path());
+    if (!QDir().mkdir(dir.path())) {
+      QDir().mkdir(tempDir.path());
+      QDir().mkdir(dir.path());
+    }
     return dir;
   }
 

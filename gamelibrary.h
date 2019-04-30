@@ -17,19 +17,22 @@ class GameLibrary : public QObject {
   explicit GameLibrary(QObject* parent = nullptr);
   ~GameLibrary();
 
-  void init(const QString& path);
+  void init(const QString& path, bool checked);
+  void offline(bool checked);
+  void process(QByteArray qbyteArray);
   bool load(QString filepath);
   bool save(QString filepath);
 
   QString baseDirectory;
-
   QVector<LibraryEntry*> library;
+  QMap<QString, TitleInfo*> database;
 
   static GameLibrary* self;
 
  signals:
   void changed(LibraryEntry*);
   void log(QString msg, bool verbose);
+  void progress(quint32 min, quint32 max);
 
  public slots:
 };

@@ -200,6 +200,7 @@ border: 1px solid black;
     </widget>
     <addaction name="menuLog"/>
     <addaction name="menuConfig"/>
+    <addaction name="actionClear_Settings"/>
     <addaction name="separator"/>
     <addaction name="actionQuit"/>
    </widget>
@@ -209,6 +210,8 @@ border: 1px solid black;
     </property>
     <addaction name="actionChange_Library"/>
     <addaction name="actionRefreshLibrary"/>
+    <addaction name="separator"/>
+    <addaction name="actionOffline_Mode"/>
    </widget>
    <widget class="QMenu" name="menuContent">
     <property name="title">
@@ -353,6 +356,19 @@ border: 1px solid black;
   <action name="actionRefreshLibrary">
    <property name="text">
     <string>Refresh</string>
+   </property>
+  </action>
+  <action name="actionOffline_Mode">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Offline Mode</string>
+   </property>
+  </action>
+  <action name="actionClear_Settings">
+   <property name="text">
+    <string>Clear Settings</string>
    </property>
   </action>
  </widget>

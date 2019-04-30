@@ -10,7 +10,8 @@ QFile* DownloadManager::downloadSingle(const QUrl& url, const QString& filepath,
   downloadQueue.enqueue({filepath, url});
   ++totalCount;
   block = true;
-  emit log(msg, true);
+  if (!msg.isEmpty())
+    log(msg, true);
   _startNextDownload();
   _downloadFinished();
   return &output;
@@ -36,13 +37,13 @@ void DownloadManager::_startNextDownload() {
   QString filename = pair.first;
   QString dir(QFileInfo(filename).dir().path());
   QUrl url = pair.second;
-
-  if (!QDir(dir).exists())
-    QDir().mkdir(dir);
+  QDir().mkdir(dir);
 
   output.setFileName(filename);
   if (!output.open(QIODevice::WriteOnly)) {
     emit downloadError("_startNextDownload():" + output.errorString());
+    emit downloadError("_startNextDownload():" + filename);
+    emit downloadError("_startNextDownload():" + url.url());
     _startNextDownload();
     return;
   }
@@ -70,27 +71,40 @@ void DownloadManager::_downloadProgress(qint64 bytesReceived, qint64 bytesTotal)
 }
 
 void DownloadManager::_downloadFinished() {
-  output.close();
+  try {
+    output.close();
 
-  if (currentDownload->error()) {
-    emit downloadError("_downloadFinished():" + currentDownload->errorString());
-    output.remove();
-  } else {
-    if (isHttpRedirect()) {
-      reportRedirect();
-      output.remove();
+    if (currentDownload->error()) {
+      log("_downloadFinished(): " + currentDownload->errorString(), true);
     } else {
-      emit downloadSuccessful(output.fileName());
-      ++downloadedCount;
+      if (isHttpRedirect()) {
+        reportRedirect();
+        output.remove();
+      } else {
+        emit downloadSuccessful(output.fileName());
+        ++downloadedCount;
+      }
     }
-  }
 
-  currentDownload->deleteLater();
-  _startNextDownload();
+    currentDownload->deleteLater();
+    _startNextDownload();
+  } catch (std::errc) {
+    log("_downloadFinished(): " + currentDownload->errorString(), true);
+    log("_downloadFinished(): " + output.errorString(), true);
+    log("_downloadFinished():" + output.fileName(), true);
+    log("_downloadFinished():" + currentDownload->url().url(), true);
+    output.remove();
+  }
 }
 
 void DownloadManager::_downloadReadyRead() {
-  output.write(currentDownload->readAll());
+  try {
+    if (output.isWritable() && currentDownload->isReadable()) {
+      output.write(currentDownload->readAll());
+    }
+  } catch (std::errc) {
+    log("_downloadReadyRead(): " + output.errorString(), true);
+  }
 }
 
 bool DownloadManager::isHttpRedirect() const {

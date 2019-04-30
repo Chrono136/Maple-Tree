@@ -1,6 +1,9 @@
 #include "decrypt.h"
 
+Decrypt* Decrypt::self;
+
 Decrypt::Decrypt(QObject* parent) : QObject(parent) {
+  Decrypt::self = this;
 }
 
 void Decrypt::start(QString basedir) {

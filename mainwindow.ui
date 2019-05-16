@@ -94,6 +94,9 @@
         <height>371</height>
        </rect>
       </property>
+      <property name="contextMenuPolicy">
+       <enum>Qt::CustomContextMenu</enum>
+      </property>
      </widget>
      <widget class="QProgressBar" name="progressBar">
       <property name="geometry">

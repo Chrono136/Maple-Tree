@@ -7,6 +7,7 @@
 #include <QMainWindow>
 #include <QPixmap>
 #include <QtConcurrent>
+#include <QClipboard>
 #include "configuration.h"
 #include "downloadmanager.h"
 #include "gamelibrary.h"
@@ -48,6 +49,7 @@ class MapleSeed : public QMainWindow {
 
  public slots:
   void messageLog(QString msg, bool verbose = false);
+  void showContextMenu(const QPoint& pos);
   void disableMenubar();
   void enableMenubar();
   void updateListview(LibraryEntry* tb);

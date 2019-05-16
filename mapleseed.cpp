@@ -68,6 +68,7 @@ void MapleSeed::defineActions() {
   connect(ui->actionUpdate, &QAction::triggered, this, &MapleSeed::actionUpdate);
   connect(ui->actionDLC, &QAction::triggered, this, &MapleSeed::actionDLC);
   connect(ui->actionDecrypt_Content, &QAction::triggered, this, &MapleSeed::decryptContent);
+  connect(ui->listWidget, &QListWidget::customContextMenuRequested, this, &MapleSeed::showContextMenu);
   connect(ui->listWidget, &QListWidget::itemSelectionChanged, this, &MapleSeed::itemSelectionChanged);
   connect(ui->listWidget, &QListWidget::itemDoubleClicked, this, &MapleSeed::itemDoubleClicked);
   connect(ui->actionConfigTemporary, &QAction::triggered, this, &MapleSeed::actionConfigTemporary);
@@ -211,6 +212,32 @@ void MapleSeed::messageLog(QString msg, bool verbose) {
     file.write(log.toLatin1());
     file.close();
   }
+}
+
+void MapleSeed::showContextMenu(const QPoint& pos) {
+  QPoint globalPos = ui->listWidget->mapToGlobal(pos);
+  if (ui->listWidget->selectedItems().count() == 0) {
+    return;
+  }
+
+  auto itm = ui->listWidget->selectedItems().first();
+  auto tii = reinterpret_cast<TitleInfoItem*>(itm);
+  TitleInfo* item = tii->getItem();
+
+  QMenu menu;
+  menu.addAction(item->getName(), this, [ = ] {})->setEnabled(false);
+  menu.addSeparator();
+  menu.addAction("Decrypt Content", this, [ = ] {
+    item->decryptContent(decrypt);
+  });
+  menu.addAction("Copy ID to Clipboard", this, [ = ] {
+    QClipboard* clipboard = QApplication::clipboard();
+    QString id(item->getID());
+    clipboard->setText(id);
+    this->messageLog(id + " copied to clipboard");
+  });
+
+  menu.exec(globalPos);
 }
 
 void MapleSeed::disableMenubar() { this->ui->menubar->setEnabled(false); }

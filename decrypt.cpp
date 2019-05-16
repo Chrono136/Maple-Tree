@@ -21,23 +21,19 @@ qulonglong Decrypt::bs64(qulonglong i) {
 }
 
 char* Decrypt::_ReadFile(const char* Name, quint32* Length) {
-  FILE* in;
-  fopen_s(&in, Name, "rb");
-  if (in == nullptr)
+  QFile in(Name);
+  if (!in.open(QIODevice::ReadOnly)) {
     return nullptr;
+  }
 
-  fseek(in, 0, SEEK_END);
-  *Length = static_cast<quint32>(ftell(in));
+  *Length = static_cast<quint32>(in.size());
+  QByteArray bytearray(in.readAll());
+  in.close();
 
-  fseek(in, 0, 0);
-
-  char* Data = new char[*Length];
-
-  fread(Data, 1, *Length, in);
-
-  fclose(in);
-
-  return Data;
+  size_t size = static_cast<size_t>(bytearray.size());
+  char* data = new char[size];
+  memcpy(data, bytearray.data(), size);
+  return data;
 }
 
 void Decrypt::FileDump(const char* Name, void* Data, quint32 Length) {

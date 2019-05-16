@@ -5,9 +5,10 @@
 #include <QMessageBox>
 #include <QtConcurrent>
 #include <QDir>
+#include <QFile>
 #include <openssl\aes.h>
 #include <openssl\sha.h>
-#include <conio.h>
+//#include <conio.h>
 
 #ifdef QT_DEBUG
 #pragma comment(lib, "libcryptoMTd.lib")

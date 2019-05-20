@@ -1,9 +1,9 @@
 # MapleSeed Command Line - [![Build status](https://ci.appveyor.com/api/projects/status/d1kt2vhaj0so8pc8?svg=true)](https://ci.appveyor.com/project/Tsume/maple-tree)
 
 
-#### MapleSeed CLI Development Discord
-- Pre-released debug builds will be posted to the #releases channel periodically.
-- https://discord.gg/3CZhJj6
+#### MapleSeed Development Subreddit
+- Pre-released debug builds will be posted here periodically.
+- https://www.reddit.com/r/MapleSeed/
 
 #### Requirements
 - Windows 7 and above

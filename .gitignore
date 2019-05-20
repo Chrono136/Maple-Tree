@@ -9,3 +9,14 @@ bin
 bin-dynamic
 bin-static
 *.user
+/x64
+/release/moc_predefs.h.cbt
+/release/moc_decrypt.cpp
+/release/moc_downloadmanager.cpp
+/release/moc_gamelibrary.cpp
+/release/moc_mapleseed.cpp
+/release/moc_predefs.h
+/release/moc_ticket.cpp
+/release/moc_titleinfo.cpp
+/release/MapleSeed.ilk
+/debug

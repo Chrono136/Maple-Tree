@@ -19,7 +19,7 @@
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <OutputDirectory>debug\</OutputDirectory>
     <ATLMinimizesCRunTimeLibraryUsage>false</ATLMinimizesCRunTimeLibraryUsage>
     <CharacterSet>NotSet</CharacterSet>
@@ -85,7 +85,7 @@
     </ClCompile>
     <Link>
       <AdditionalDependencies>glu32.lib;opengl32.lib;gdi32.lib;user32.lib;qtmaind.lib;Ws2_32.lib;imm32.lib;winmm.lib;Qt5Cored.lib;Qt5Widgetsd.lib;Qt5Guid.lib;Qt5Concurrentd.lib;Qt5Networkd.lib;Qt5Xmld.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(QTDIR)\lib;$(QTDIR)\plugins\platforms;D:\Projects\Libraries\Qt\5.12.2-dynamic-msvc2017-x86_64\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(QTDIR)\lib;$(QTDIR)\plugins\platforms;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalOptions>"/MANIFESTDEPENDENCY:type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' publicKeyToken='6595b64144ccf1df' language='*' processorArchitecture='*'" %(AdditionalOptions)</AdditionalOptions>
       <DataExecutionPrevention>true</DataExecutionPrevention>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -120,6 +120,9 @@
       <QTDIR>D:\Projects\Libraries\Qt\5.12.2-dynamic-msvc2017-x86_64</QTDIR>
       <ExecutionDescription>Uic'ing %(Identity)...</ExecutionDescription>
     </QtUic>
+    <PreBuildEvent>
+      <Command>copy "$(QTDIR)\lib\libcryptoMDd.dll" "$(TargetDir)libcryptoMDd.dll"</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -178,11 +181,15 @@
       <IncludePath>.\GeneratedFiles\$(ConfigurationName);.\GeneratedFiles;.;..\Libraries\Qt\5.12.2-dynamic-msvc2017-x86_64\include;..\Libraries\Qt\5.12.2-dynamic-msvc2017-x86_64\include\QtWidgets;..\Libraries\Qt\5.12.2-dynamic-msvc2017-x86_64\include\QtGui;..\Libraries\Qt\5.12.2-dynamic-msvc2017-x86_64\include\QtXml;..\Libraries\Qt\5.12.2-dynamic-msvc2017-x86_64\include\QtNetwork;..\Libraries\Qt\5.12.2-dynamic-msvc2017-x86_64\include\QtConcurrent;..\Libraries\Qt\5.12.2-dynamic-msvc2017-x86_64\include\QtCore;release;..\Libraries\Qt\5.12.2-dynamic-msvc2017-x86_64\mkspecs\win32-msvc;$(QTDIR)\include\QtCore;$(QTDIR)\include\QtWidgets;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtANGLE;$(QTDIR)\include\QtConcurrent;$(QTDIR)\include\QtNetwork;$(QTDIR)\include\QtXml;%(AdditionalIncludeDirectories)</IncludePath>
     </QtMoc>
     <PreBuildEvent>
-      <Command>version.bat</Command>
+      <Command>$(SolutionDir)deploy\version.bat</Command>
     </PreBuildEvent>
     <PreBuildEvent>
-      <Message>Update Git Version Info</Message>
+      <Message>Updating Git Version Info</Message>
     </PreBuildEvent>
+    <PostBuildEvent>
+      <Command>$(SolutionDir)deploy\build.cmd</Command>
+      <Message>Creating installer</Message>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="configuration.cpp" />

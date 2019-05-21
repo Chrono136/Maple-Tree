@@ -69,9 +69,6 @@
     <ClInclude Include="configuration.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <QtMoc Include="decrypt.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
     <QtMoc Include="downloadmanager.h">
       <Filter>Header Files</Filter>
     </QtMoc>
@@ -87,35 +84,20 @@
     <QtMoc Include="ticket.h">
       <Filter>Header Files</Filter>
     </QtMoc>
-    <QtMoc Include="titleinfo.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-    <ClInclude Include="titleinfoitem.h">
+    <ClInclude Include="versioninfo.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="versioninfo.h">
+    <ClInclude Include="titleinfoitem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    
-    
-    
-    
-    
-    
-    
-    
     <CustomBuild Include="debug\moc_predefs.h.cbt">
       <Filter>Generated Files</Filter>
     </CustomBuild>
     <CustomBuild Include="release\moc_predefs.h.cbt">
       <Filter>Generated Files</Filter>
     </CustomBuild>
-    
-    
-    
-    
     <ClInclude Include="ui_mainwindow.h">
       <Filter>Generated Files</Filter>
     </ClInclude>
@@ -127,5 +109,13 @@
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="resources\mapleseed.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <QtMoc Include="titleinfo.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="decrypt.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
   </ItemGroup>
 </Project>

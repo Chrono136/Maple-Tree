@@ -1,8 +1,8 @@
 #ifndef DOWNLOADMANAGER_H
 #define DOWNLOADMANAGER_H
 
-#include <QtConcurrent>
 #include <QtCore>
+#include <QtConcurrent>
 #include <QtNetwork>
 
 class DownloadManager : public QObject {

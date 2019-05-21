@@ -9,7 +9,7 @@ Decrypt::Decrypt(QObject* parent) : QObject(parent) {
 void Decrypt::start(QString basedir) {
 	auto tmd = QString(basedir + "\\tmd");
 	auto cetk = QString(basedir + "\\cetk");
-	this->doDecrypt(tmd.toStdString().c_str(), cetk.toStdString().c_str(), basedir);
+	this->doDecrypt(tmd, cetk, basedir);
 }
 
 quint32 Decrypt::bs24(quint32 i) {
@@ -20,7 +20,7 @@ qulonglong Decrypt::bs64(qulonglong i) {
 	return static_cast<qulonglong>(((static_cast<qulonglong>(bs32(i & 0xFFFFFFFF))) << 32) | (bs32(i >> 32)));
 }
 
-char* Decrypt::_ReadFile(const char* Name, quint32 * Length) {
+char* Decrypt::_ReadFile(QString Name, quint32 * Length) {
 	QFile in(Name);
 	if (!in.open(QIODevice::ReadOnly)) {
 		return nullptr;
@@ -211,18 +211,18 @@ void Decrypt::ExtractFile(FILE * in, qulonglong PartDataOffset, qulonglong FileO
 	fclose(out);
 }
 
-qint32 Decrypt::doDecrypt(const char* arg1, const char* arg2, QString basedir) {
+qint32 Decrypt::doDecrypt(QString qtmd, QString qcetk, QString basedir) {
 	//printf("CDecrypt v 2.0b by crediar\nModified by Tsumes for MapleSeed++\n");
 
 	quint32 TMDLen;
-	char* TMD = _ReadFile(arg1, &TMDLen);
+	char* TMD = _ReadFile(qtmd, &TMDLen);
 	if (TMD == nullptr) {
 		emit log(QString("Failed to open tmd"), false);
 		return EXIT_FAILURE;
 	}
 
 	quint32 TIKLen;
-	char* TIK = _ReadFile(arg2, &TIKLen);
+	char* TIK = _ReadFile(qcetk, &TIKLen);
 	if (TIK == nullptr) {
 		emit log(QString("Failed to open cetk"), false);
 		return EXIT_FAILURE;
@@ -259,14 +259,15 @@ qint32 Decrypt::doDecrypt(const char* arg1, const char* arg2, QString basedir) {
 	char iv[16];
 	memset(iv, 0, sizeof(iv));
 
+	const char* __str__;
 	QString _str;
 	_str = basedir + QString().sprintf("/%08x.app", bs32(tmd->Contents[0].ID));
 
 	quint32 CNTLen;
-	char* CNT = _ReadFile(_str.toStdString().c_str(), &CNTLen);
+	char* CNT = _ReadFile(_str, &CNTLen);
 	if (CNT == static_cast<char*>(nullptr)) {
 		_str = basedir + QString().sprintf("/%08x", bs32(tmd->Contents[0].ID));
-		CNT = _ReadFile(_str.toStdString().c_str(), &CNTLen);
+		CNT = _ReadFile(_str, &CNTLen);
 		if (CNT == static_cast<char*>(nullptr)) {
 			emit log(QString("Failed to open content:%1").arg(bs32(tmd->Contents[0].ID)), false);
 			return EXIT_FAILURE;
@@ -282,7 +283,8 @@ qint32 Decrypt::doDecrypt(const char* arg1, const char* arg2, QString basedir) {
 
 	if (bs32(*reinterpret_cast<quint32*>(CNT)) != 0x46535400) {
 		_str = basedir + QString().sprintf("/%08x.dec", bs32(tmd->Contents[0].ID));
-		FileDump(_str.toStdString().c_str(), CNT, CNTLen);
+		__str__ = std::string(_str.toUtf8().constData(), _str.toUtf8().length()).c_str();
+		FileDump(__str__, CNT, CNTLen);
 		return EXIT_FAILURE;
 	}
 
@@ -356,10 +358,12 @@ qint32 Decrypt::doDecrypt(const char* arg1, const char* arg2, QString basedir) {
 			auto fei = fe[i];
 			if (!(fei.u1.s1.Type & 0x80)) {
 				FILE* cnt;
-				fopen_s(&cnt, _str.toStdString().c_str(), "rb");
+				__str__ = std::string(_str.toUtf8().constData(), _str.toUtf8().length()).c_str();
+				fopen_s(&cnt, __str__, "rb");
 				if (cnt == nullptr) {
 					_str = basedir + QString().sprintf("/%08x", ContFileID);
-					fopen_s(&cnt, _str.toStdString().c_str(), "rb");
+					__str__ = std::string(_str.toUtf8().constData(), _str.toUtf8().length()).c_str();
+					fopen_s(&cnt, __str__, "rb");
 					if (cnt == nullptr) {
 						emit log(QString("Could not open:\"%1\"").arg(_str), false);
 						continue;
@@ -367,11 +371,13 @@ qint32 Decrypt::doDecrypt(const char* arg1, const char* arg2, QString basedir) {
 				}
 				if ((bs16(fei.Flags) & 0x440)) {
 					QString output(dir.filePath(Path));
-					ExtractFileHash(cnt, 0, CNTOff, bs32(fei.u2.s2.FileLength), output.toStdString().c_str(), bs16(fei.ContentID));
+					__str__ = std::string(output.toUtf8().constData(), output.toUtf8().length()).c_str();
+					ExtractFileHash(cnt, 0, CNTOff, bs32(fei.u2.s2.FileLength), __str__, bs16(fei.ContentID));
 				}
 				else {
 					QString output(dir.filePath(Path));
-					ExtractFile(cnt, 0, CNTOff, bs32(fei.u2.s2.FileLength), output.toStdString().c_str(), bs16(fei.ContentID));
+					__str__ = std::string(output.toUtf8().constData(), output.toUtf8().length()).c_str();
+					ExtractFile(cnt, 0, CNTOff, bs32(fei.u2.s2.FileLength), __str__, bs16(fei.ContentID));
 				}
 				fclose(cnt);
 			}

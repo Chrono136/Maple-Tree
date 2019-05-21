@@ -28,13 +28,13 @@
     <PrimaryOutput>MapleSeed</PrimaryOutput>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
-    <PlatformToolset>v141</PlatformToolset>
     <OutputDirectory>release\</OutputDirectory>
     <ATLMinimizesCRunTimeLibraryUsage>false</ATLMinimizesCRunTimeLibraryUsage>
     <CharacterSet>NotSet</CharacterSet>
     <ConfigurationType>Application</ConfigurationType>
     <IntermediateDirectory>release\</IntermediateDirectory>
     <PrimaryOutput>MapleSeed</PrimaryOutput>
+    <PlatformToolset>v142</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <PropertyGroup Condition="'$(QtMsBuild)'=='' or !Exists('$(QtMsBuild)\qt.targets')">
@@ -67,7 +67,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>.\GeneratedFiles\$(ConfigurationName);.\GeneratedFiles;.;..\Libraries\Qt\5.12.2-dynamic-msvc2017-x86_64\include;..\Libraries\Qt\5.12.2-dynamic-msvc2017-x86_64\include\QtWidgets;..\Libraries\Qt\5.12.2-dynamic-msvc2017-x86_64\include\QtGui;..\Libraries\Qt\5.12.2-dynamic-msvc2017-x86_64\include\QtXml;..\Libraries\Qt\5.12.2-dynamic-msvc2017-x86_64\include\QtNetwork;..\Libraries\Qt\5.12.2-dynamic-msvc2017-x86_64\include\QtConcurrent;..\Libraries\Qt\5.12.2-dynamic-msvc2017-x86_64\include\QtCore;debug;..\Libraries\Qt\5.12.2-dynamic-msvc2017-x86_64\mkspecs\win32-msvc;$(QTDIR)\include\QtWinExtras;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\GeneratedFiles\$(ConfigurationName);.\GeneratedFiles;.;..\Libraries\Qt\5.12.2-dynamic-msvc2017-x86_64\include;..\Libraries\Qt\5.12.2-dynamic-msvc2017-x86_64\include\QtWidgets;..\Libraries\Qt\5.12.2-dynamic-msvc2017-x86_64\include\QtGui;..\Libraries\Qt\5.12.2-dynamic-msvc2017-x86_64\include\QtXml;..\Libraries\Qt\5.12.2-dynamic-msvc2017-x86_64\include\QtNetwork;..\Libraries\Qt\5.12.2-dynamic-msvc2017-x86_64\include\QtConcurrent;..\Libraries\Qt\5.12.2-dynamic-msvc2017-x86_64\include\QtCore;debug;..\Libraries\Qt\5.12.2-dynamic-msvc2017-x86_64\mkspecs\win32-msvc;$(QTDIR)\include\QtCore;$(QTDIR)\include\QtWidgets;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtANGLE;$(QTDIR)\include\QtConcurrent;$(QTDIR)\include\QtNetwork;$(QTDIR)\include\QtXml;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>-Zc:rvalueCast -Zc:inline -Zc:strictStrings -Zc:throwingNew -Zc:referenceBinding -Zc:__cplusplus -w34100 -w34189 -w44996 -w44456 -w44457 -w44458 %(AdditionalOptions)</AdditionalOptions>
       <AssemblerListingLocation>debug\</AssemblerListingLocation>
       <BrowseInformation>false</BrowseInformation>
@@ -75,7 +75,7 @@
       <DisableSpecificWarnings>4577;4467;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <ExceptionHandling>Sync</ExceptionHandling>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>_WINDOWS;UNICODE;_UNICODE;WIN32;_ENABLE_EXTENDED_ALIGNED_STORAGE;WIN64;QT_DEPRECATED_WARNINGS;QT_DISABLE_DEPRECATED_BEFORE=0x060000;QT_WINEXTRAS_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_WINDOWS;UNICODE;_UNICODE;WIN32;_ENABLE_EXTENDED_ALIGNED_STORAGE;WIN64;QT_DEPRECATED_WARNINGS;QT_DISABLE_DEPRECATED_BEFORE=0x060000;QT_CORE_LIB;QT_WIDGETS_LIB;QT_GUI_LIB;QT_CONCURRENT_LIB;QT_NETWORK_LIB;QT_XML_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PreprocessToFile>false</PreprocessToFile>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <SuppressStartupBanner>true</SuppressStartupBanner>
@@ -84,7 +84,7 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>glu32.lib;opengl32.lib;gdi32.lib;user32.lib;qtmaind.lib;Ws2_32.lib;imm32.lib;winmm.lib;Qt5Cored.lib;Qt5Widgetsd.lib;Qt5Guid.lib;Qt5Xmld.lib;Qt5Networkd.lib;Qt5Concurrentd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>glu32.lib;opengl32.lib;gdi32.lib;user32.lib;qtmaind.lib;Ws2_32.lib;imm32.lib;winmm.lib;Qt5Cored.lib;Qt5Widgetsd.lib;Qt5Guid.lib;Qt5Concurrentd.lib;Qt5Networkd.lib;Qt5Xmld.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(QTDIR)\lib;$(QTDIR)\plugins\platforms;D:\Projects\Libraries\Qt\5.12.2-dynamic-msvc2017-x86_64\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalOptions>"/MANIFESTDEPENDENCY:type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' publicKeyToken='6595b64144ccf1df' language='*' processorArchitecture='*'" %(AdditionalOptions)</AdditionalOptions>
       <DataExecutionPrevention>true</DataExecutionPrevention>
@@ -106,13 +106,13 @@
     <QtMoc>
       <QTDIR>D:\Projects\Libraries\Qt\5.12.2-dynamic-msvc2017-x86_64</QTDIR>
       <OutputFile>$(Configuration)\moc_%(Filename).cpp</OutputFile>
-      <Define>_WINDOWS;UNICODE;_UNICODE;WIN32;_ENABLE_EXTENDED_ALIGNED_STORAGE;WIN64;QT_DEPRECATED_WARNINGS;QT_DISABLE_DEPRECATED_BEFORE=0x060000;QT_WINEXTRAS_LIB;%(PreprocessorDefinitions)</Define>
+      <Define>_WINDOWS;UNICODE;_UNICODE;WIN32;_ENABLE_EXTENDED_ALIGNED_STORAGE;WIN64;QT_DEPRECATED_WARNINGS;QT_DISABLE_DEPRECATED_BEFORE=0x060000;QT_CORE_LIB;QT_WIDGETS_LIB;QT_GUI_LIB;QT_CONCURRENT_LIB;QT_NETWORK_LIB;QT_XML_LIB;%(PreprocessorDefinitions)</Define>
       <CompilerFlavor>msvc</CompilerFlavor>
       <Include>./$(Configuration)/moc_predefs.h</Include>
       <ExecutionDescription>Moc'ing %(Identity)...</ExecutionDescription>
       <InputFile>%(FullPath)</InputFile>
       <DynamicSource>output</DynamicSource>
-      <IncludePath>.\GeneratedFiles\$(ConfigurationName);.\GeneratedFiles;.;..\Libraries\Qt\5.12.2-dynamic-msvc2017-x86_64\include;..\Libraries\Qt\5.12.2-dynamic-msvc2017-x86_64\include\QtWidgets;..\Libraries\Qt\5.12.2-dynamic-msvc2017-x86_64\include\QtGui;..\Libraries\Qt\5.12.2-dynamic-msvc2017-x86_64\include\QtXml;..\Libraries\Qt\5.12.2-dynamic-msvc2017-x86_64\include\QtNetwork;..\Libraries\Qt\5.12.2-dynamic-msvc2017-x86_64\include\QtConcurrent;..\Libraries\Qt\5.12.2-dynamic-msvc2017-x86_64\include\QtCore;debug;..\Libraries\Qt\5.12.2-dynamic-msvc2017-x86_64\mkspecs\win32-msvc;$(QTDIR)\include\QtWinExtras;%(AdditionalIncludeDirectories)</IncludePath>
+      <IncludePath>.\GeneratedFiles\$(ConfigurationName);.\GeneratedFiles;.;..\Libraries\Qt\5.12.2-dynamic-msvc2017-x86_64\include;..\Libraries\Qt\5.12.2-dynamic-msvc2017-x86_64\include\QtWidgets;..\Libraries\Qt\5.12.2-dynamic-msvc2017-x86_64\include\QtGui;..\Libraries\Qt\5.12.2-dynamic-msvc2017-x86_64\include\QtXml;..\Libraries\Qt\5.12.2-dynamic-msvc2017-x86_64\include\QtNetwork;..\Libraries\Qt\5.12.2-dynamic-msvc2017-x86_64\include\QtConcurrent;..\Libraries\Qt\5.12.2-dynamic-msvc2017-x86_64\include\QtCore;debug;..\Libraries\Qt\5.12.2-dynamic-msvc2017-x86_64\mkspecs\win32-msvc;$(QTDIR)\include\QtCore;$(QTDIR)\include\QtWidgets;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtANGLE;$(QTDIR)\include\QtConcurrent;$(QTDIR)\include\QtNetwork;$(QTDIR)\include\QtXml;%(AdditionalIncludeDirectories)</IncludePath>
     </QtMoc>
     <QtUic>
       <OutputFile>ui_mainwindow.h</OutputFile>
@@ -123,7 +123,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>.\GeneratedFiles\$(ConfigurationName);.\GeneratedFiles;.;..\Libraries\Qt\5.12.2-dynamic-msvc2017-x86_64\include;..\Libraries\Qt\5.12.2-dynamic-msvc2017-x86_64\include\QtWidgets;..\Libraries\Qt\5.12.2-dynamic-msvc2017-x86_64\include\QtGui;..\Libraries\Qt\5.12.2-dynamic-msvc2017-x86_64\include\QtXml;..\Libraries\Qt\5.12.2-dynamic-msvc2017-x86_64\include\QtNetwork;..\Libraries\Qt\5.12.2-dynamic-msvc2017-x86_64\include\QtConcurrent;..\Libraries\Qt\5.12.2-dynamic-msvc2017-x86_64\include\QtCore;release;..\Libraries\Qt\5.12.2-dynamic-msvc2017-x86_64\mkspecs\win32-msvc;$(QTDIR)\include\QtWinExtras;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\GeneratedFiles\$(ConfigurationName);.\GeneratedFiles;.;..\Libraries\Qt\5.12.2-dynamic-msvc2017-x86_64\include;..\Libraries\Qt\5.12.2-dynamic-msvc2017-x86_64\include\QtWidgets;..\Libraries\Qt\5.12.2-dynamic-msvc2017-x86_64\include\QtGui;..\Libraries\Qt\5.12.2-dynamic-msvc2017-x86_64\include\QtXml;..\Libraries\Qt\5.12.2-dynamic-msvc2017-x86_64\include\QtNetwork;..\Libraries\Qt\5.12.2-dynamic-msvc2017-x86_64\include\QtConcurrent;..\Libraries\Qt\5.12.2-dynamic-msvc2017-x86_64\include\QtCore;release;..\Libraries\Qt\5.12.2-dynamic-msvc2017-x86_64\mkspecs\win32-msvc;$(QTDIR)\include\QtCore;$(QTDIR)\include\QtWidgets;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtANGLE;$(QTDIR)\include\QtConcurrent;$(QTDIR)\include\QtNetwork;$(QTDIR)\include\QtXml;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>-Zc:rvalueCast -Zc:inline -Zc:strictStrings -Zc:throwingNew -Zc:referenceBinding -Zc:__cplusplus -w34100 -w34189 -w44996 -w44456 -w44457 -w44458 %(AdditionalOptions)</AdditionalOptions>
       <AssemblerListingLocation>release\</AssemblerListingLocation>
       <BrowseInformation>false</BrowseInformation>
@@ -131,16 +131,16 @@
       <DisableSpecificWarnings>4577;4467;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <ExceptionHandling>Sync</ExceptionHandling>
       <Optimization>MaxSpeed</Optimization>
-      <PreprocessorDefinitions>_WINDOWS;UNICODE;_UNICODE;WIN32;_ENABLE_EXTENDED_ALIGNED_STORAGE;WIN64;QT_DEPRECATED_WARNINGS;QT_DISABLE_DEPRECATED_BEFORE=0x060000;QT_NO_DEBUG;NDEBUG;QT_WINEXTRAS_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_WINDOWS;UNICODE;_UNICODE;WIN32;_ENABLE_EXTENDED_ALIGNED_STORAGE;WIN64;QT_DEPRECATED_WARNINGS;QT_DISABLE_DEPRECATED_BEFORE=0x060000;QT_NO_DEBUG;NDEBUG;QT_CORE_LIB;QT_WIDGETS_LIB;QT_GUI_LIB;QT_CONCURRENT_LIB;QT_NETWORK_LIB;QT_XML_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PreprocessToFile>false</PreprocessToFile>
-      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
       <WarningLevel>Level3</WarningLevel>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>$(QTDIR)\lib\Qt5Widgets.lib;$(QTDIR)\lib\Qt5Gui.lib;$(QTDIR)\lib\Qt5Xml.lib;$(QTDIR)\lib\Qt5Network.lib;$(QTDIR)\lib\Qt5Concurrent.lib;$(QTDIR)\lib\Qt5Core.lib;glu32.lib;opengl32.lib;gdi32.lib;user32.lib;$(QTDIR)\lib\qtmain.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>glu32.lib;opengl32.lib;gdi32.lib;user32.lib;qtmain.lib;Qt5Core.lib;Qt5Widgets.lib;Qt5Gui.lib;Qt5Concurrent.lib;Qt5Network.lib;Qt5Xml.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(QTDIR)\lib;$(QTDIR)\plugins\platforms;D:\Projects\Libraries\Qt\5.12.2-dynamic-msvc2017-x86_64\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalOptions>"/MANIFESTDEPENDENCY:type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' publicKeyToken='6595b64144ccf1df' language='*' processorArchitecture='*'" %(AdditionalOptions)</AdditionalOptions>
       <DataExecutionPrevention>true</DataExecutionPrevention>
@@ -169,13 +169,13 @@
     <QtMoc>
       <QTDIR>D:\Projects\Libraries\Qt\5.12.2-dynamic-msvc2017-x86_64</QTDIR>
       <OutputFile>$(Configuration)\moc_%(Filename).cpp</OutputFile>
-      <Define>_WINDOWS;UNICODE;_UNICODE;WIN32;_ENABLE_EXTENDED_ALIGNED_STORAGE;WIN64;QT_DEPRECATED_WARNINGS;QT_DISABLE_DEPRECATED_BEFORE=0x060000;QT_NO_DEBUG;NDEBUG;QT_WINEXTRAS_LIB;%(PreprocessorDefinitions)</Define>
+      <Define>_WINDOWS;UNICODE;_UNICODE;WIN32;_ENABLE_EXTENDED_ALIGNED_STORAGE;WIN64;QT_DEPRECATED_WARNINGS;QT_DISABLE_DEPRECATED_BEFORE=0x060000;QT_NO_DEBUG;NDEBUG;QT_CORE_LIB;QT_WIDGETS_LIB;QT_GUI_LIB;QT_CONCURRENT_LIB;QT_NETWORK_LIB;QT_XML_LIB;%(PreprocessorDefinitions)</Define>
       <CompilerFlavor>msvc</CompilerFlavor>
       <Include>./$(Configuration)/moc_predefs.h</Include>
       <ExecutionDescription>Moc'ing %(Identity)...</ExecutionDescription>
       <InputFile>%(FullPath)</InputFile>
       <DynamicSource>output</DynamicSource>
-      <IncludePath>.\GeneratedFiles\$(ConfigurationName);.\GeneratedFiles;.;..\Libraries\Qt\5.12.2-dynamic-msvc2017-x86_64\include;..\Libraries\Qt\5.12.2-dynamic-msvc2017-x86_64\include\QtWidgets;..\Libraries\Qt\5.12.2-dynamic-msvc2017-x86_64\include\QtGui;..\Libraries\Qt\5.12.2-dynamic-msvc2017-x86_64\include\QtXml;..\Libraries\Qt\5.12.2-dynamic-msvc2017-x86_64\include\QtNetwork;..\Libraries\Qt\5.12.2-dynamic-msvc2017-x86_64\include\QtConcurrent;..\Libraries\Qt\5.12.2-dynamic-msvc2017-x86_64\include\QtCore;release;..\Libraries\Qt\5.12.2-dynamic-msvc2017-x86_64\mkspecs\win32-msvc;$(QTDIR)\include\QtWinExtras;%(AdditionalIncludeDirectories)</IncludePath>
+      <IncludePath>.\GeneratedFiles\$(ConfigurationName);.\GeneratedFiles;.;..\Libraries\Qt\5.12.2-dynamic-msvc2017-x86_64\include;..\Libraries\Qt\5.12.2-dynamic-msvc2017-x86_64\include\QtWidgets;..\Libraries\Qt\5.12.2-dynamic-msvc2017-x86_64\include\QtGui;..\Libraries\Qt\5.12.2-dynamic-msvc2017-x86_64\include\QtXml;..\Libraries\Qt\5.12.2-dynamic-msvc2017-x86_64\include\QtNetwork;..\Libraries\Qt\5.12.2-dynamic-msvc2017-x86_64\include\QtConcurrent;..\Libraries\Qt\5.12.2-dynamic-msvc2017-x86_64\include\QtCore;release;..\Libraries\Qt\5.12.2-dynamic-msvc2017-x86_64\mkspecs\win32-msvc;$(QTDIR)\include\QtCore;$(QTDIR)\include\QtWidgets;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtANGLE;$(QTDIR)\include\QtConcurrent;$(QTDIR)\include\QtNetwork;$(QTDIR)\include\QtXml;%(AdditionalIncludeDirectories)</IncludePath>
     </QtMoc>
     <PreBuildEvent>
       <Command>version.bat</Command>
@@ -198,6 +198,8 @@
   <ItemGroup>
     <ClInclude Include="configuration.h" />
     <QtMoc Include="decrypt.h">
+      <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.\GeneratedFiles\$(ConfigurationName);.\GeneratedFiles;.;.\..\Libraries\Qt\5.12.2-dynamic-msvc2017-x86_64\include;.\..\Libraries\Qt\5.12.2-dynamic-msvc2017-x86_64\include\QtWidgets;.\..\Libraries\Qt\5.12.2-dynamic-msvc2017-x86_64\include\QtGui;.\..\Libraries\Qt\5.12.2-dynamic-msvc2017-x86_64\include\QtXml;.\..\Libraries\Qt\5.12.2-dynamic-msvc2017-x86_64\include\QtNetwork;.\..\Libraries\Qt\5.12.2-dynamic-msvc2017-x86_64\include\QtConcurrent;.\..\Libraries\Qt\5.12.2-dynamic-msvc2017-x86_64\include\QtCore;.\debug;.\..\Libraries\Qt\5.12.2-dynamic-msvc2017-x86_64\mkspecs\win32-msvc;$(QTDIR)\include\QtConcurrent;$(QTDIR)\include\QtCore;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtANGLE;$(QTDIR)\include\QtNetwork;$(QTDIR)\include\QtWidgets;$(QTDIR)\include\QtXml</IncludePath>
+      <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.\GeneratedFiles\$(ConfigurationName);.\GeneratedFiles;.;.\..\Libraries\Qt\5.12.2-dynamic-msvc2017-x86_64\include;.\..\Libraries\Qt\5.12.2-dynamic-msvc2017-x86_64\include\QtWidgets;.\..\Libraries\Qt\5.12.2-dynamic-msvc2017-x86_64\include\QtGui;.\..\Libraries\Qt\5.12.2-dynamic-msvc2017-x86_64\include\QtXml;.\..\Libraries\Qt\5.12.2-dynamic-msvc2017-x86_64\include\QtNetwork;.\..\Libraries\Qt\5.12.2-dynamic-msvc2017-x86_64\include\QtConcurrent;.\..\Libraries\Qt\5.12.2-dynamic-msvc2017-x86_64\include\QtCore;.\release;.\..\Libraries\Qt\5.12.2-dynamic-msvc2017-x86_64\mkspecs\win32-msvc;$(QTDIR)\include\QtConcurrent;$(QTDIR)\include\QtCore;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtANGLE;$(QTDIR)\include\QtNetwork;$(QTDIR)\include\QtWidgets;$(QTDIR)\include\QtXml</IncludePath>
     </QtMoc>
     <QtMoc Include="downloadmanager.h">
     </QtMoc>
@@ -209,6 +211,8 @@
     <QtMoc Include="ticket.h">
     </QtMoc>
     <QtMoc Include="titleinfo.h">
+      <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.\GeneratedFiles\$(ConfigurationName);.\GeneratedFiles;.;.\..\Libraries\Qt\5.12.2-dynamic-msvc2017-x86_64\include;.\..\Libraries\Qt\5.12.2-dynamic-msvc2017-x86_64\include\QtWidgets;.\..\Libraries\Qt\5.12.2-dynamic-msvc2017-x86_64\include\QtGui;.\..\Libraries\Qt\5.12.2-dynamic-msvc2017-x86_64\include\QtXml;.\..\Libraries\Qt\5.12.2-dynamic-msvc2017-x86_64\include\QtNetwork;.\..\Libraries\Qt\5.12.2-dynamic-msvc2017-x86_64\include\QtConcurrent;.\..\Libraries\Qt\5.12.2-dynamic-msvc2017-x86_64\include\QtCore;.\debug;.\..\Libraries\Qt\5.12.2-dynamic-msvc2017-x86_64\mkspecs\win32-msvc;$(QTDIR)\include\QtConcurrent;$(QTDIR)\include\QtCore;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtANGLE;$(QTDIR)\include\QtNetwork;$(QTDIR)\include\QtWidgets;$(QTDIR)\include\QtXml</IncludePath>
+      <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.\GeneratedFiles\$(ConfigurationName);.\GeneratedFiles;.;.\..\Libraries\Qt\5.12.2-dynamic-msvc2017-x86_64\include;.\..\Libraries\Qt\5.12.2-dynamic-msvc2017-x86_64\include\QtWidgets;.\..\Libraries\Qt\5.12.2-dynamic-msvc2017-x86_64\include\QtGui;.\..\Libraries\Qt\5.12.2-dynamic-msvc2017-x86_64\include\QtXml;.\..\Libraries\Qt\5.12.2-dynamic-msvc2017-x86_64\include\QtNetwork;.\..\Libraries\Qt\5.12.2-dynamic-msvc2017-x86_64\include\QtConcurrent;.\..\Libraries\Qt\5.12.2-dynamic-msvc2017-x86_64\include\QtCore;.\release;.\..\Libraries\Qt\5.12.2-dynamic-msvc2017-x86_64\mkspecs\win32-msvc;$(QTDIR)\include\QtConcurrent;$(QTDIR)\include\QtCore;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtANGLE;$(QTDIR)\include\QtNetwork;$(QTDIR)\include\QtWidgets;$(QTDIR)\include\QtXml</IncludePath>
     </QtMoc>
     <ClInclude Include="titleinfoitem.h" />
     <ClInclude Include="versioninfo.h" />

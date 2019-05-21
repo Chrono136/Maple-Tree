@@ -43,7 +43,8 @@ TitleInfo* TitleInfo::DownloadCreate(const QString& id, QString basedir) {
 		qulonglong size = Decrypt::bs64(tmd->Contents[i].Size);
 		if (!QFile(contentPath).exists() || QFileInfo(contentPath).size() != static_cast<qint64>(size)) {
 			QString msg = QString("Downloading Content (%1) %2 of %3 (%4)").arg(contentID).arg(i + 1).arg(contentCount).arg(size);
-			DownloadManager::getSelf()->downloadSingle(downloadURL, contentPath, msg);
+			QFile* file = DownloadManager::getSelf()->downloadSingle(downloadURL, contentPath, msg);
+			file->close();
 		}
 	}
 	return ti;

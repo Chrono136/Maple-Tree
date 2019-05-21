@@ -48,12 +48,12 @@ private:
 	qulonglong H0Count = 0;
 	qulonglong H0Fail = 0;
 
-	char* _ReadFile(QString Name, quint32 * Length);
-	void FileDump(const char* Name, void* Data, quint32 Length);
+	char* _ReadFile(QString file, quint32* len);
+	void FileDump(QString file, void* data, quint32 len);
 	char ascii(char s);
 	void hexdump(void* d, qint32 len);
-	void ExtractFileHash(FILE * in, qulonglong PartDataOffset, qulonglong FileOffset, qulonglong Size, const char* FileName, quint16 ContentID);
-	void ExtractFile(FILE * in, qulonglong PartDataOffset, qulonglong FileOffset, qulonglong Size, const char* FileName, quint16 ContentID);
+	void ExtractFileHash(QFile* in, qulonglong PartDataOffset, qulonglong FileOffset, qulonglong Size, QString FileName, quint16 ContentID);
+	void ExtractFile(QFile* in, qulonglong PartDataOffset, qulonglong FileOffset, qulonglong Size, QString FileName, quint16 ContentID);
 	qint32 doDecrypt(QString qtmd, QString qcetk, QString basedir);
 
 	unsigned char WiiUCommenDevKey[16] = { 0x2F, 0x5C, 0x1B, 0x29, 0x44, 0xE7, 0xFD, 0x6F, 0xC3, 0x97, 0x96, 0x4B, 0x05, 0x76, 0x91, 0xFA };

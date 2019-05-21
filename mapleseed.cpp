@@ -123,8 +123,13 @@ void MapleSeed::actionDownload_Title() {
   TitleInfo* ti = TitleInfo::DownloadCreate(value, gameLibrary->baseDirectory);
   if (ti == nullptr)
     return;
-  auto dir = QString(ti->getDirectory());
-  QtConcurrent::run([ = ] { ti->decryptContent(decrypt); });
+  
+  QMessageBox msgBox;
+  msgBox.setText("Decrypt downloaded content?");
+  msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+  msgBox.setDefaultButton(QMessageBox::Yes);
+  if (msgBox.exec() == QMessageBox::Yes)
+	  QtConcurrent::run([=] { ti->decryptContent(decrypt); });
 }
 
 void MapleSeed::actionUpdate() {

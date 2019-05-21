@@ -20,13 +20,13 @@ qulonglong Decrypt::bs64(qulonglong i) {
 	return static_cast<qulonglong>(((static_cast<qulonglong>(bs32(i & 0xFFFFFFFF))) << 32) | (bs32(i >> 32)));
 }
 
-char* Decrypt::_ReadFile(QString Name, quint32 * Length) {
-	QFile in(Name);
+char* Decrypt::_ReadFile(QString file, quint32 * len) {
+	QFile in(file);
 	if (!in.open(QIODevice::ReadOnly)) {
 		return nullptr;
 	}
 
-	*Length = static_cast<quint32>(in.size());
+	*len = static_cast<quint32>(in.size());
 	QByteArray bytearray(in.readAll());
 	in.close();
 
@@ -36,27 +36,27 @@ char* Decrypt::_ReadFile(QString Name, quint32 * Length) {
 	return data;
 }
 
-void Decrypt::FileDump(const char* Name, void* Data, quint32 Length) {
-	if (Data == nullptr) {
-		printf("zero ptr");
+void Decrypt::FileDump(QString file, void* data, quint32 len) {
+	if (data == nullptr) {
+		emit log("FileDump() zero ptr", true);
 		return;
 	}
-	if (Length == 0) {
-		printf("zero sz");
-		return;
-	}
-	FILE* Out;
-	fopen_s(&Out, Name, "wb");
-	if (Out == nullptr) {
-		perror("");
+	if (len == 0) {
+		emit log("FileDump() zero sz", true);
 		return;
 	}
 
-	if (fwrite(Data, 1, Length, Out) != Length) {
-		perror("");
+	QFile out(file);
+	if (!out.open(QIODevice::WriteOnly)) {
+		emit log("FileDump() error:" + out.errorString(), true);
+		return;
+	}
+	
+	if (out.isWritable()) {
+		out.write(QByteArray((const char*)data, len));
 	}
 
-	fclose(Out);
+	out.close();
 }
 
 char Decrypt::ascii(char s) {
@@ -90,7 +90,7 @@ void Decrypt::hexdump(void* d, qint32 len) {
 }
 
 #define BLOCK_SIZE  0x10000
-void Decrypt::ExtractFileHash(FILE * in, qulonglong PartDataOffset, qulonglong FileOffset, qulonglong Size, const char* FileName, quint16 ContentID) {
+void Decrypt::ExtractFileHash(QFile * in, qulonglong PartDataOffset, qulonglong FileOffset, qulonglong Size, QString FileName, quint16 ContentID) {
 	char encdata[BLOCK_SIZE];
 	char decdata[BLOCK_SIZE];
 	quint8 IV[16];
@@ -102,11 +102,9 @@ void Decrypt::ExtractFileHash(FILE * in, qulonglong PartDataOffset, qulonglong F
 	qulonglong WriteSize = 0xFC00;  // Hash block size
 	qulonglong Block = (FileOffset / 0xFC00) & 0xF;
 
-	FILE * out;
-	fopen_s(&out, FileName, "wb");
-	if (out == nullptr) {
-		printf("Could not create \"%s\"\n", FileName);
-		perror("");
+	QFile* out = new QFile(FileName);
+	if (!out->open(QIODevice::WriteOnly)) {
+		emit log("FileDump() error:" + out->errorString(), true);
 		exit(0);
 	}
 
@@ -116,12 +114,12 @@ void Decrypt::ExtractFileHash(FILE * in, qulonglong PartDataOffset, qulonglong F
 	if (soffset + Size > WriteSize)
 		WriteSize = WriteSize - soffset;
 
-	_fseeki64(in, static_cast<qlonglong>(PartDataOffset + roffset), SEEK_SET);
+	in->seek(static_cast<qlonglong>(PartDataOffset + roffset));
 	while (Size > 0) {
 		if (WriteSize > Size)
 			WriteSize = Size;
 
-		fread(encdata, sizeof(char), BLOCK_SIZE, in);
+		in->read(encdata, BLOCK_SIZE);
 
 		memset(IV, 0, sizeof(IV));
 		IV[1] = static_cast<quint8>(ContentID);
@@ -143,11 +141,11 @@ void Decrypt::ExtractFileHash(FILE * in, qulonglong PartDataOffset, qulonglong F
 			hexdump(hash, SHA_DIGEST_LENGTH);
 			hexdump(Hashes, 0x100);
 			hexdump(decdata, 0x100);
-			printf("Failed to verify H0 hash\n");
-			exit(0);
+			emit log("Failed to verify H0 hash: " + out->fileName(), true);
+			return;
 		}
 
-		Size -= fwrite(decdata + soffset, sizeof(char), WriteSize, out);
+		Size -= out->write(decdata + soffset, WriteSize);
 
 		Wrote += WriteSize;
 
@@ -161,12 +159,13 @@ void Decrypt::ExtractFileHash(FILE * in, qulonglong PartDataOffset, qulonglong F
 		}
 	}
 
-	fclose(out);
+	out->close();
+	delete out;
 }
 #undef BLOCK_SIZE
 
 #define BLOCK_SIZE  0x8000
-void Decrypt::ExtractFile(FILE * in, qulonglong PartDataOffset, qulonglong FileOffset, qulonglong Size, const char* FileName, quint16 ContentID) {
+void Decrypt::ExtractFile(QFile * in, qulonglong PartDataOffset, qulonglong FileOffset, qulonglong Size, QString FileName, quint16 ContentID) {
 	char encdata[BLOCK_SIZE];
 	char decdata[BLOCK_SIZE];
 	qulonglong Wrote = 0;
@@ -176,11 +175,9 @@ void Decrypt::ExtractFile(FILE * in, qulonglong PartDataOffset, qulonglong FileO
 	qulonglong soffset = FileOffset - (FileOffset / BLOCK_SIZE * BLOCK_SIZE);
 	//printf("Extracting:\"%s\" RealOffset:%08llX RealOffset:%08llX\n", FileName, roffset, soffset );
 
-	FILE * out;
-	fopen_s(&out, FileName, "wb");
-	if (out == nullptr) {
-		printf("Could not create \"%s\"\n", FileName);
-		perror("");
+	QFile* out = new QFile(FileName);
+	if (!out->open(QIODevice::WriteOnly)) {
+		emit log("FileDump() error:" + out->errorString(), true);
 		exit(0);
 	}
 	quint8 IV[16];
@@ -191,15 +188,16 @@ void Decrypt::ExtractFile(FILE * in, qulonglong PartDataOffset, qulonglong FileO
 	if (soffset + Size > WriteSize)
 		WriteSize = WriteSize - soffset;
 
-	_fseeki64(in, static_cast<qlonglong>(PartDataOffset + roffset), SEEK_SET);
+	in->seek(static_cast<qlonglong>(PartDataOffset + roffset));
 
 	while (Size > 0) {
 		if (WriteSize > Size)
 			WriteSize = Size;
 
-		fread(encdata, sizeof(char), BLOCK_SIZE, in);
+		in->read(encdata, BLOCK_SIZE);
+
 		AES_cbc_encrypt(reinterpret_cast<const quint8*>(encdata), reinterpret_cast<quint8*>(decdata), BLOCK_SIZE, &_key, IV, AES_DECRYPT);
-		Size -= fwrite(decdata + soffset, sizeof(char), WriteSize, out);
+		Size -= out->write(decdata + soffset, WriteSize);
 		Wrote += WriteSize;
 
 		if (soffset) {
@@ -208,11 +206,12 @@ void Decrypt::ExtractFile(FILE * in, qulonglong PartDataOffset, qulonglong FileO
 		}
 	}
 
-	fclose(out);
+	out->close();
+	delete out;
 }
 
 qint32 Decrypt::doDecrypt(QString qtmd, QString qcetk, QString basedir) {
-	//printf("CDecrypt v 2.0b by crediar\nModified by Tsumes for MapleSeed++\n");
+	emit log("Original CDecrypt v2.0b written by crediar", true);
 
 	quint32 TMDLen;
 	char* TMD = _ReadFile(qtmd, &TMDLen);
@@ -259,7 +258,6 @@ qint32 Decrypt::doDecrypt(QString qtmd, QString qcetk, QString basedir) {
 	char iv[16];
 	memset(iv, 0, sizeof(iv));
 
-	const char* __str__;
 	QString _str;
 	_str = basedir + QString().sprintf("/%08x.app", bs32(tmd->Contents[0].ID));
 
@@ -283,8 +281,7 @@ qint32 Decrypt::doDecrypt(QString qtmd, QString qcetk, QString basedir) {
 
 	if (bs32(*reinterpret_cast<quint32*>(CNT)) != 0x46535400) {
 		_str = basedir + QString().sprintf("/%08x.dec", bs32(tmd->Contents[0].ID));
-		__str__ = std::string(_str.toUtf8().constData(), _str.toUtf8().length()).c_str();
-		FileDump(__str__, CNT, CNTLen);
+		FileDump(_str, CNT, CNTLen);
 		return EXIT_FAILURE;
 	}
 
@@ -357,29 +354,23 @@ qint32 Decrypt::doDecrypt(QString qtmd, QString qcetk, QString basedir) {
 
 			auto fei = fe[i];
 			if (!(fei.u1.s1.Type & 0x80)) {
-				FILE* cnt;
-				__str__ = std::string(_str.toUtf8().constData(), _str.toUtf8().length()).c_str();
-				fopen_s(&cnt, __str__, "rb");
-				if (cnt == nullptr) {
-					_str = basedir + QString().sprintf("/%08x", ContFileID);
-					__str__ = std::string(_str.toUtf8().constData(), _str.toUtf8().length()).c_str();
-					fopen_s(&cnt, __str__, "rb");
-					if (cnt == nullptr) {
+				QFile* in = new QFile(_str);
+				if (!in->open(QIODevice::ReadOnly)) {
+					in = new QFile(_str = basedir + QString().sprintf("/%08x", ContFileID));
+					if (!in->open(QIODevice::ReadOnly)) {
 						emit log(QString("Could not open:\"%1\"").arg(_str), false);
 						continue;
 					}
 				}
+				QString output(dir.filePath(Path));
 				if ((bs16(fei.Flags) & 0x440)) {
-					QString output(dir.filePath(Path));
-					__str__ = std::string(output.toUtf8().constData(), output.toUtf8().length()).c_str();
-					ExtractFileHash(cnt, 0, CNTOff, bs32(fei.u2.s2.FileLength), __str__, bs16(fei.ContentID));
+					ExtractFileHash(in, 0, CNTOff, bs32(fei.u2.s2.FileLength), output, bs16(fei.ContentID));
 				}
 				else {
-					QString output(dir.filePath(Path));
-					__str__ = std::string(output.toUtf8().constData(), output.toUtf8().length()).c_str();
-					ExtractFile(cnt, 0, CNTOff, bs32(fei.u2.s2.FileLength), __str__, bs16(fei.ContentID));
+					ExtractFile(in, 0, CNTOff, bs32(fei.u2.s2.FileLength), output, bs16(fei.ContentID));
 				}
-				fclose(cnt);
+				in->close();
+				delete in;
 			}
 		}
 		progressReport(i, Entries - 1);

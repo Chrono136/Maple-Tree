@@ -1,9 +1,10 @@
 SET RELEASE=%CD%\release\
-SET OUTPUT=%CD%\deploy\
+SET DEPLOY=%CD%\deploy\
 SET QT=D:\Projects\Libraries\Qt\5.12.2-dynamic-msvc2017-x86_64
 CD %RELEASE%
 CALL %QT%\bin\windeployqt.exe MapleSeed.exe
-copy %QT%\lib\libcrypto.dll libcrypto.dll
+::copy %DEPLOY%\titlekeys.json titlekeys.json
+::copy %DEPLOY%\titles.json titles.json
 rmdir /s /q plugins
 mkdir plugins
 move bearer plugins
@@ -29,4 +30,4 @@ FOR /F "tokens=*" %%A IN ('"git rev-list --all --count"') DO (
 
 SET FILEOUT=MapleSeed-%fVERSION%-%ccVERSION%-%cVERSION%
 CALL "C:\Program Files\7-Zip\7z.exe" a %FILEOUT%.zip *
-CALL "C:\Program Files (x86)\Inno Setup 6\iscc.exe" /O"%RELEASE%" /F"%FILEOUT%" "%OUTPUT%mapleseed.iss"
+CALL "C:\Program Files (x86)\Inno Setup 6\iscc.exe" /O"%RELEASE%" /F"%FILEOUT%" "%DEPLOY%mapleseed.iss"

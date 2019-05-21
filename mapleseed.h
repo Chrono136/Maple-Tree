@@ -25,10 +25,10 @@ class MapleSeed : public QMainWindow {
   ~MapleSeed();
   bool actionOffline_ModeIsChecked();
 
-  Configuration* config;
-  Decrypt* decrypt;
-  GameLibrary* gameLibrary;
-  DownloadManager* downloadManager;
+  Configuration* config = new Configuration;
+  Decrypt* decrypt = new Decrypt;
+  DownloadManager* downloadManager = new DownloadManager;
+  GameLibrary* gameLibrary = new GameLibrary;
   static MapleSeed* self;
 
  private:
@@ -57,6 +57,7 @@ class MapleSeed : public QMainWindow {
   void downloadSuccessful(QString fileName);
   void downloadError(QString errorString);
   void updateDownloadProgress(qint64 bytesReceived, qint64 bytesTotal, QTime qtime);
+  void updateProgress(qint64 min, qint64 max, int curfile, int maxfile);
   void updateBaiscProgress(qint64 min, qint64 max);
   void itemSelectionChanged();
   void itemDoubleClicked(QListWidgetItem* item);

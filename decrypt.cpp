@@ -10,6 +10,7 @@ void Decrypt::start(QString basedir) {
 	auto tmd = QString(basedir + "\\tmd");
 	auto cetk = QString(basedir + "\\cetk");
 	this->doDecrypt(tmd, cetk, basedir);
+	emit log("Decrypt Complete " + basedir, true);
 }
 
 quint32 Decrypt::bs24(quint32 i) {
@@ -90,7 +91,7 @@ void Decrypt::hexdump(void* d, qint32 len) {
 }
 
 #define BLOCK_SIZE  0x10000
-void Decrypt::ExtractFileHash(QFile * in, qulonglong PartDataOffset, qulonglong FileOffset, qulonglong Size, QString FileName, quint16 ContentID) {
+void Decrypt::ExtractFileHash(QFile * in, qulonglong PartDataOffset, qulonglong FileOffset, qulonglong Size, QString FileName, quint16 ContentID, int i1, int i2) {
 	char encdata[BLOCK_SIZE];
 	char decdata[BLOCK_SIZE];
 	quint8 IV[16];
@@ -99,6 +100,7 @@ void Decrypt::ExtractFileHash(QFile * in, qulonglong PartDataOffset, qulonglong 
 	quint8 Hashes[0x400];
 
 	qulonglong Wrote = 0;
+	qulonglong totsz = Size;
 	qulonglong WriteSize = 0xFC00;  // Hash block size
 	qulonglong Block = (FileOffset / 0xFC00) & 0xF;
 
@@ -157,6 +159,7 @@ void Decrypt::ExtractFileHash(QFile * in, qulonglong PartDataOffset, qulonglong 
 			WriteSize = 0xFC00;
 			soffset = 0;
 		}
+		emit progressReport2(Wrote, totsz, i1, i2);
 	}
 
 	out->close();
@@ -165,10 +168,11 @@ void Decrypt::ExtractFileHash(QFile * in, qulonglong PartDataOffset, qulonglong 
 #undef BLOCK_SIZE
 
 #define BLOCK_SIZE  0x8000
-void Decrypt::ExtractFile(QFile * in, qulonglong PartDataOffset, qulonglong FileOffset, qulonglong Size, QString FileName, quint16 ContentID) {
+void Decrypt::ExtractFile(QFile * in, qulonglong PartDataOffset, qulonglong FileOffset, qulonglong Size, QString FileName, quint16 ContentID, int i1, int i2) {
 	char encdata[BLOCK_SIZE];
 	char decdata[BLOCK_SIZE];
 	qulonglong Wrote = 0;
+	qulonglong totsz = Size;
 
 	//calc real offset
 	qulonglong roffset = FileOffset / BLOCK_SIZE * BLOCK_SIZE;
@@ -204,6 +208,7 @@ void Decrypt::ExtractFile(QFile * in, qulonglong PartDataOffset, qulonglong File
 			WriteSize = BLOCK_SIZE;
 			soffset = 0;
 		}
+		emit progressReport2(Wrote, totsz, i1, i2);
 	}
 
 	out->close();
@@ -349,7 +354,6 @@ qint32 Decrypt::doDecrypt(QString qtmd, QString qcetk, QString basedir) {
 			emit log(msg.arg(CNTSize).arg(CNTOff).arg(bs16(fe[i].ContentID)).arg(bs16(fe[i].Flags)).arg(Path), false);
 
 			quint32 ContFileID = bs32(tmd->Contents[bs16(fe[i].ContentID)].ID);
-
 			_str = basedir + QString().sprintf("/%08x.app", ContFileID);
 
 			auto fei = fe[i];
@@ -364,17 +368,18 @@ qint32 Decrypt::doDecrypt(QString qtmd, QString qcetk, QString basedir) {
 				}
 				QString output(dir.filePath(Path));
 				if ((bs16(fei.Flags) & 0x440)) {
-					ExtractFileHash(in, 0, CNTOff, bs32(fei.u2.s2.FileLength), output, bs16(fei.ContentID));
+					ExtractFileHash(in, 0, CNTOff, bs32(fei.u2.s2.FileLength), output, bs16(fei.ContentID), i, Entries - 1);
 				}
 				else {
-					ExtractFile(in, 0, CNTOff, bs32(fei.u2.s2.FileLength), output, bs16(fei.ContentID));
+					ExtractFile(in, 0, CNTOff, bs32(fei.u2.s2.FileLength), output, bs16(fei.ContentID), i, Entries - 1);
 				}
 				in->close();
 				delete in;
 			}
 		}
-		progressReport(i, Entries - 1);
+		//emit progressReport(i, Entries - 1);
 	}
+	emit progressReport(0, 100);
 	emit decryptFinished();
 	return EXIT_SUCCESS;
 }

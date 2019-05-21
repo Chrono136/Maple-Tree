@@ -28,10 +28,6 @@ bool MapleSeed::actionOffline_ModeIsChecked() {
 
 void MapleSeed::initialize() {
   this->messageLog("Setting up enviornment variables");
-  config = new Configuration;
-  decrypt = new Decrypt;
-  downloadManager = new DownloadManager;
-  gameLibrary = new GameLibrary;
 
   defineActions();
   if (!config->load()) {
@@ -48,6 +44,7 @@ void MapleSeed::defineActions() {
   connect(decrypt, &Decrypt::decryptStarted, this, &MapleSeed::disableMenubar);
   connect(decrypt, &Decrypt::decryptFinished, this, &MapleSeed::enableMenubar);
   connect(decrypt, &Decrypt::progressReport, this, &MapleSeed::updateBaiscProgress);
+  connect(decrypt, &Decrypt::progressReport2, this, &MapleSeed::updateProgress);
 
   connect(gameLibrary, &GameLibrary::progress, this, &MapleSeed::updateBaiscProgress);
   connect(gameLibrary, &GameLibrary::changed, this, &MapleSeed::updateListview);
@@ -124,12 +121,7 @@ void MapleSeed::actionDownload_Title() {
   if (ti == nullptr)
     return;
   
-  QMessageBox msgBox;
-  msgBox.setText("Decrypt downloaded content?");
-  msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
-  msgBox.setDefaultButton(QMessageBox::Yes);
-  if (msgBox.exec() == QMessageBox::Yes)
-	  QtConcurrent::run([=] { ti->decryptContent(decrypt); });
+  QtConcurrent::run([=] { ti->decryptContent(decrypt); });
 }
 
 void MapleSeed::actionUpdate() {
@@ -233,7 +225,7 @@ void MapleSeed::showContextMenu(const QPoint& pos) {
   menu.addAction(item->getName(), this, [ = ] {})->setEnabled(false);
   menu.addSeparator();
   menu.addAction("Decrypt Content", this, [ = ] {
-    item->decryptContent(decrypt);
+	  QtConcurrent::run([=] {item->decryptContent(decrypt); });
   });
   menu.addAction("Copy ID to Clipboard", this, [ = ] {
     QClipboard* clipboard = QApplication::clipboard();
@@ -289,13 +281,24 @@ void MapleSeed::updateDownloadProgress(qint64 bytesReceived, qint64 bytesTotal, 
     unit = "MB/s";
   }
 
-  this->ui->progressBar->setFormat("%p%   /   " + QString::fromLatin1("%1 %2").arg(speed, 3, 'f', 1).arg(unit));
+  this->ui->progressBar->setFormat("%p% " + 
+	  config->size_human(bytesReceived) + " / " + config->size_human(bytesTotal) + " | " +
+	  QString::fromLatin1("%1 %2").arg(speed, 3, 'f', 1).arg(unit));
+}
+
+void MapleSeed::updateProgress(qint64 min, qint64 max, int curfile, int maxfiles) {
+	float per = (static_cast<float>(min) / static_cast<float>(max)) * 100;
+	this->ui->progressBar->setRange(0, static_cast<int>(100));
+	this->ui->progressBar->setValue(static_cast<int>(per));
+	this->ui->progressBar->setFormat(QString::number(per, 'G', 3) + "% " + 
+		config->size_human(min) + " / " + config->size_human(max) + " | " +
+		QString::number(curfile) + " / " + QString::number(maxfiles) + " files");
 }
 
 void MapleSeed::updateBaiscProgress(qint64 min, qint64 max) {
   this->ui->progressBar->setRange(0, static_cast<int>(max));
   this->ui->progressBar->setValue(static_cast<int>(min));
-  this->ui->progressBar->setFormat("%p%");
+  this->ui->progressBar->setFormat("%p% / %v of %m bytes");
 }
 
 void MapleSeed::itemSelectionChanged() {

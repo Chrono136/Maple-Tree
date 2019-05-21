@@ -114,6 +114,23 @@ class Configuration {
     return dir;
   }
 
+  static QString size_human(float size)
+  {
+	  float num = size;
+	  QStringList list;
+	  list << "KB" << "MB" << "GB" << "TB";
+
+	  QStringListIterator i(list);
+	  QString unit("bytes");
+
+	  while (num >= 1024.0 && i.hasNext())
+	  {
+		  unit = i.next();
+		  num /= 1024.0;
+	  }
+	  return QString().setNum(num, 'f', 2) + " " + unit;
+  }
+
   QString configPath;
   static Configuration* self;
 

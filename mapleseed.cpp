@@ -28,6 +28,7 @@ bool MapleSeed::actionOffline_ModeIsChecked() {
 
 void MapleSeed::initialize() {
   this->messageLog("Setting up enviornment variables");
+  config->decrypt = this->decrypt;
 
   defineActions();
   if (!config->load()) {
@@ -117,11 +118,7 @@ void MapleSeed::actionDownload_Title() {
     return;
   }
 
-  TitleInfo* ti = TitleInfo::DownloadCreate(value, gameLibrary->baseDirectory);
-  if (ti == nullptr)
-    return;
-  
-  QtConcurrent::run([=] { ti->decryptContent(decrypt); });
+  TitleInfo::DownloadCreate(value, gameLibrary->baseDirectory);
 }
 
 void MapleSeed::actionUpdate() {
@@ -135,12 +132,7 @@ void MapleSeed::actionUpdate() {
     return;
   }
 
-  value.replace(7, 1, 'e');
-  TitleInfo* ti = TitleInfo::DownloadCreate(value, gameLibrary->baseDirectory);
-  if (ti == nullptr)
-    return;
-  auto dir = QString(ti->getDirectory());
-  QtConcurrent::run([ = ] { ti->decryptContent(decrypt); });
+  TitleInfo::DownloadCreate(value.replace(7, 1, 'e'), gameLibrary->baseDirectory);
 }
 
 void MapleSeed::actionDLC() {
@@ -154,12 +146,7 @@ void MapleSeed::actionDLC() {
     return;
   }
 
-  value.replace(7, 1, 'c');
-  TitleInfo* ti = TitleInfo::DownloadCreate(value, gameLibrary->baseDirectory);
-  if (ti == nullptr)
-    return;
-  auto dir = QString(ti->getDirectory());
-  QtConcurrent::run([ = ] { ti->decryptContent(decrypt); });
+  TitleInfo::DownloadCreate(value.replace(7, 1, 'c'), gameLibrary->baseDirectory);
 }
 
 void MapleSeed::decryptContent() {
@@ -223,16 +210,24 @@ void MapleSeed::showContextMenu(const QPoint& pos) {
 
   QMenu menu;
   menu.addAction(item->getName(), this, [ = ] {})->setEnabled(false);
+
   menu.addSeparator();
-  menu.addAction("Decrypt Content", this, [ = ] {
-	  QtConcurrent::run([=] {item->decryptContent(decrypt); });
-  });
-  menu.addAction("Copy ID to Clipboard", this, [ = ] {
-    QClipboard* clipboard = QApplication::clipboard();
-    QString id(item->getID());
-    clipboard->setText(id);
-    this->messageLog(id + " copied to clipboard");
-  });
+  menu.addAction("Download Game", this, [=] { item->download(); });
+  if (TitleInfo::ValidId(item->getID().replace(7, 1, 'c'))) {
+	  menu.addAction("Download DLC", this, [=] { item->downloadDlc(); });
+  }
+  if (TitleInfo::ValidId(item->getID().replace(7, 1, 'e'))) {
+	  menu.addAction("Download Patch", this, [=] { item->downloadPatch(); });
+  }
+
+  menu.addSeparator();
+  menu.addAction("Decrypt Content", this, [=] { QtConcurrent::run([=] {item->decryptContent(decrypt); }); });
+  menu.addAction("Copy ID to Clipboard", this, [=] {
+	  QClipboard* clipboard = QApplication::clipboard();
+	  QString id(item->getID());
+	  clipboard->setText(id);
+	  this->messageLog(id + " copied to clipboard");
+	  });
 
   menu.exec(globalPos);
 }

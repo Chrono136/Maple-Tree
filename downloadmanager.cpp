@@ -98,6 +98,7 @@ void DownloadManager::_downloadFinished() {
 		log("_downloadFinished():" + currentDownload->url().url(), true);
 		output.remove();
 	}
+	emit downloadProgress(0, 100, downloadTime);
 }
 
 void DownloadManager::_downloadReadyRead() {

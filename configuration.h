@@ -10,6 +10,7 @@
 #include <QMapIterator>
 #include <QVariant>
 #include <QUrl>
+#include "decrypt.h"
 
 class Configuration {
  public:
@@ -132,6 +133,7 @@ class Configuration {
   }
 
   QString configPath;
+  Decrypt* decrypt;
   static Configuration* self;
 
  private:

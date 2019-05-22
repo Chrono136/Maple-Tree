@@ -21,8 +21,12 @@ public:
 	static TitleInfo* Create(const QFileInfo& metaxml, QString basedir);
 	static TitleInfo* DownloadCreate(const QString& id, QString basedir);
 	static QString getXmlValue(const QFileInfo& metaxml, const QString& field);
+	static bool ValidId(QString id);
 	void init();
-	void decryptContent(Decrypt* decrypt);
+	TitleInfo* download(QString version = "");
+	TitleInfo* downloadDlc();
+	TitleInfo* downloadPatch(QString version = "");
+	void decryptContent(Decrypt* decrypt = NULL);
 	QString getDirectory() const;
 	QString getFormatName() const;
 	QString getBaseDirectory() const;

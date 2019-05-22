@@ -73,7 +73,7 @@ void GameLibrary::offline(bool checked) {
     file1.close();
 
 
-    QFile file2(titles);
+    QFile file2(titlekeys);
     if (!file2.open(QIODevice::ReadOnly)) {
       log("GameLibrary::offline(bool): " + file2.errorString(), true);
       return;

@@ -26,27 +26,7 @@ TitleInfo* TitleInfo::Create(const QFileInfo& metaxml, QString basedir) {
 TitleInfo* TitleInfo::DownloadCreate(const QString& id, QString basedir) {
 	QString baseURL("http://ccs.cdn.wup.shop.nintendo.net/ccs/download/");
 	TitleInfo* ti = Create(id, std::move(basedir));
-	if (ti->getKey().isEmpty()) {
-		return nullptr;
-	}
-	TitleMetaData* tmd = ti->getTMD("");
-	Ticket::Create(ti);
-
-	auto contentCount = bs16(tmd->ContentCount);
-	if (contentCount > 1000)
-		return nullptr;
-
-	for (int i = 0; i < contentCount; i++) {
-		QString contentID = QString().sprintf("%08x", bs32(tmd->Contents[i].ID));
-		QString contentPath = QDir(ti->getDirectory()).filePath(contentID);
-		QString downloadURL = baseURL + id + QString("/") + contentID;
-		qulonglong size = Decrypt::bs64(tmd->Contents[i].Size);
-		if (!QFile(contentPath).exists() || QFileInfo(contentPath).size() != static_cast<qint64>(size)) {
-			QString msg = QString("Downloading Content (%1) %2 of %3 (%4)").arg(contentID).arg(i + 1).arg(contentCount).arg(size);
-			QFile* file = DownloadManager::getSelf()->downloadSingle(downloadURL, contentPath, msg);
-			file->close();
-		}
-	}
+	ti->download();
 	return ti;
 }
 
@@ -70,6 +50,18 @@ QString TitleInfo::getXmlValue(const QFileInfo & metaxml, const QString & field)
 	return value;
 }
 
+bool TitleInfo::ValidId(QString id)
+{
+	if (GameLibrary::self->database.contains(id.toLower())) {
+		return true;
+	}
+	if (id.isEmpty() || id.size() != 16) {
+		return true;
+	}
+
+	return false;
+}
+
 void TitleInfo::init() {
 	if (this->attempt >= 3) {
 		GameLibrary::self->log("TitleInfo::init(): Unable to obtain title info", true);
@@ -77,7 +69,7 @@ void TitleInfo::init() {
 	}
 
 	if (id.isEmpty() || id.size() != 16) {
-		GameLibrary::self->log("TitleInfo::init(): Invalid title id. Please verify your title id is 16 characters", true);
+		GameLibrary::self->log("TitleInfo::init(): Invalid title id.", true);
 		return;
 	}
 
@@ -117,6 +109,52 @@ void TitleInfo::init() {
 	downloadJsonSuccessful(filepath, true);
 }
 
+TitleInfo* TitleInfo::download(QString version)
+{
+	QString baseURL("http://ccs.cdn.wup.shop.nintendo.net/ccs/download/");
+	if (getKey().isEmpty()) {
+		GameLibrary::self->log("TitleInfo::download(): Invalid title key", true);
+		return nullptr;
+	}
+	TitleMetaData* tmd = getTMD(version);
+	Ticket::Create(this);
+
+	auto contentCount = bs16(tmd->ContentCount);
+	if (contentCount > 1000)
+		return nullptr;
+
+	for (int i = 0; i < contentCount; i++) {
+		QString contentID = QString().sprintf("%08x", bs32(tmd->Contents[i].ID));
+		QString contentPath = QDir(getDirectory()).filePath(contentID);
+		QString downloadURL = baseURL + id + QString("/") + contentID;
+		qulonglong size = Decrypt::bs64(tmd->Contents[i].Size);
+		if (!QFile(contentPath).exists() || QFileInfo(contentPath).size() != static_cast<qint64>(size)) {
+			QString msg = QString("Downloading Content (%1) %2 of %3 (%4)").arg(contentID).arg(i + 1).arg(contentCount).arg(size);
+			QFile* file = DownloadManager::getSelf()->downloadSingle(downloadURL, contentPath, msg);
+			file->close();
+		}
+	}
+
+	QtConcurrent::run([=] { decryptContent(); });
+	return this;
+}
+
+TitleInfo* TitleInfo::downloadDlc()
+{
+	QString id(getID().replace(7, 1, 'e'));
+	TitleInfo* info(Create(id, getBaseDirectory()));
+	info->download();
+	return info;
+}
+
+TitleInfo* TitleInfo::downloadPatch(QString version)
+{
+	QString id(getID().replace(7, 1, 'c'));
+	TitleInfo* info(Create(id, getBaseDirectory()));
+	info->download(version);
+	return info;
+}
+
 void TitleInfo::decryptContent(Decrypt * decrypt) {
 	QString tmd = QDir(this->getDirectory()).filePath("tmd");
 	QString cetk = QDir(this->getDirectory()).filePath("cetk");
@@ -133,7 +171,9 @@ void TitleInfo::decryptContent(Decrypt * decrypt) {
 			"cetk not found, decryption failed:" + this->getDirectory());
 		return;
 	}
-
+	if (decrypt == NULL) {
+		decrypt = Configuration::self->decrypt;
+	}
 	decrypt->start(this->getDirectory());
 }
 

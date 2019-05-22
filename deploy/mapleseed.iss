@@ -44,18 +44,18 @@ Name: "quicklaunchicon"; Description: "{cm:CreateQuickLaunchIcon}"; GroupDescrip
 
 [Files]
 Source: "D:\Projects\MapleSeed\release\MapleSeed.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "D:\Projects\MapleSeed\release\vc_redist.x64.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "D:\Projects\MapleSeed\release\plugins\*"; DestDir: "{app}\plugins"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "D:\Projects\MapleSeed\release\redist\vcredist_x64.exe"; DestDir: "{app}\redist"; Flags: ignoreversion
-Source: "D:\Projects\MapleSeed\release\libcrypto.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "D:\Projects\MapleSeed\release\msvcp140.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "D:\Projects\MapleSeed\release\translations\*"; DestDir: "{app}\translations"; Flags: ignoreversion
 Source: "D:\Projects\MapleSeed\release\Qt5Core.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "D:\Projects\MapleSeed\release\Qt5Gui.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "D:\Projects\MapleSeed\release\Qt5Network.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "D:\Projects\MapleSeed\release\Qt5Svg.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "D:\Projects\MapleSeed\release\Qt5Widgets.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "D:\Projects\MapleSeed\release\Qt5Xml.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "D:\Projects\MapleSeed\release\vccorlib140.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "D:\Projects\MapleSeed\release\vcruntime140.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\openssl11\bin64\libcryptoMD.dll"; DestDir: "{app}"; Flags: ignoreversion
+;Source: "D:\Projects\MapleSeed\release\titlekeys.json"; DestDir: "{app}"; Flags: ignoreversion
+;Source: "D:\Projects\MapleSeed\release\titles.json"; DestDir: "{app}"; Flags: ignoreversion
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
@@ -65,8 +65,8 @@ Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: de
 Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: quicklaunchicon
 
 [Run]
-Filename: {app}\redist\vcredist_x64.exe; \
-Parameters: "msiexec /q /i vcredist_x64.msi /install /passive /norestart"; \
+Filename: {app}\vc_redist.x64.exe; \
+Parameters: "msiexec /q /i vc_redist.x64.msi /install /passive /norestart"; \
 StatusMsg: "Installing VC++ 2019 Redistributables..."
 
 [Run]

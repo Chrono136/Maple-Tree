@@ -354,30 +354,29 @@ qint32 Decrypt::doDecrypt(QString qtmd, QString qcetk, QString basedir) {
 			emit log(msg.arg(CNTSize).arg(CNTOff).arg(bs16(fe[i].ContentID)).arg(bs16(fe[i].Flags)).arg(Path), false);
 
 			quint32 ContFileID = bs32(tmd->Contents[bs16(fe[i].ContentID)].ID);
-			_str = basedir + QString().sprintf("/%08x.app", ContFileID);
 
 			auto fei = fe[i];
 			if (!(fei.u1.s1.Type & 0x80)) {
-				QFile* in = new QFile(_str);
+				QString filepath = basedir + QString().sprintf("/%08x", ContFileID);
+				QFile* in = new QFile(filepath);
 				if (!in->open(QIODevice::ReadOnly)) {
-					in = new QFile(_str = basedir + QString().sprintf("/%08x", ContFileID));
-					if (!in->open(QIODevice::ReadOnly)) {
-						emit log(QString("Could not open:\"%1\"").arg(_str), false);
-						continue;
-					}
+					emit log(QString("Could not open:\"%1\"").arg(filepath), false);
+					continue;
 				}
 				QString output(dir.filePath(Path));
+				QFile outputFile(output);
 				if ((bs16(fei.Flags) & 0x440)) {
-					ExtractFileHash(in, 0, CNTOff, bs32(fei.u2.s2.FileLength), output, bs16(fei.ContentID), i, Entries - 1);
+					if (!outputFile.exists() || outputFile.size() != bs32(fei.u2.s2.FileLength))
+						ExtractFileHash(in, 0, CNTOff, bs32(fei.u2.s2.FileLength), output, bs16(fei.ContentID), i, Entries - 1);
 				}
 				else {
-					ExtractFile(in, 0, CNTOff, bs32(fei.u2.s2.FileLength), output, bs16(fei.ContentID), i, Entries - 1);
+					if (!outputFile.exists() || outputFile.size() != bs32(fei.u2.s2.FileLength))
+						ExtractFile(in, 0, CNTOff, bs32(fei.u2.s2.FileLength), output, bs16(fei.ContentID), i, Entries - 1);
 				}
 				in->close();
 				delete in;
 			}
 		}
-		//emit progressReport(i, Entries - 1);
 	}
 	emit progressReport(0, 100);
 	emit decryptFinished();

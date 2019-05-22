@@ -10,9 +10,9 @@
 #include <openssl\sha.h>
 
 #ifdef QT_DEBUG
-#pragma comment(lib, "libcryptoMDd.lib")
+#pragma comment(lib, "libcryptoMTd.lib")
 #else
-#pragma comment(lib, "libcrypto.lib")
+#pragma comment(lib, "libcryptoMT.lib")
 #endif
 
 class Decrypt : public QObject {

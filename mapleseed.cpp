@@ -221,7 +221,8 @@ void MapleSeed::showContextMenu(const QPoint& pos) {
   }
 
   menu.addSeparator();
-  menu.addAction("Decrypt Content", this, [=] { QtConcurrent::run([=] {item->decryptContent(decrypt); }); });
+  if (QFile(QDir(item->getDirectory()).filePath("tmd")).exists() && QFile(QDir(item->getDirectory()).filePath("cetk")).exists())
+	  menu.addAction("Decrypt Content", this, [=] { QtConcurrent::run([=] {item->decryptContent(); }); });
   menu.addAction("Copy ID to Clipboard", this, [=] {
 	  QClipboard* clipboard = QApplication::clipboard();
 	  QString id(item->getID());

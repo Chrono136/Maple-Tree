@@ -49,7 +49,14 @@ void MapleSeed::defineActions() {
 
   connect(gameLibrary, &GameLibrary::progress, this, &MapleSeed::updateBaiscProgress);
   connect(gameLibrary, &GameLibrary::changed, this, &MapleSeed::updateListview);
+  connect(gameLibrary, &GameLibrary::addTitle, this, &MapleSeed::updateTitleList);
   connect(gameLibrary, &GameLibrary::log, this, &MapleSeed::messageLog);
+  connect(ui->listWidget, &QListWidget::customContextMenuRequested, this, &MapleSeed::showContextMenuLibrary);
+  connect(ui->listWidget, &QListWidget::itemSelectionChanged, this, &MapleSeed::itemSelectionChanged);
+  connect(ui->listWidget, &QListWidget::itemDoubleClicked, this, &MapleSeed::itemDoubleClicked);
+  connect(ui->titlelistWidget, &QListWidget::customContextMenuRequested, this, &MapleSeed::showContextMenuTitles);
+  connect(ui->searchInput, &QLineEdit::textEdited, this, &MapleSeed::filter);
+  connect(ui->regionBox, &QComboBox::currentTextChanged, this, &MapleSeed::filter);
 
   connect(downloadManager, &DownloadManager::log, this, &MapleSeed::messageLog);
   connect(downloadManager, &DownloadManager::downloadStarted, this, &MapleSeed::downloadStarted);
@@ -66,9 +73,6 @@ void MapleSeed::defineActions() {
   connect(ui->actionUpdate, &QAction::triggered, this, &MapleSeed::actionUpdate);
   connect(ui->actionDLC, &QAction::triggered, this, &MapleSeed::actionDLC);
   connect(ui->actionDecrypt_Content, &QAction::triggered, this, &MapleSeed::decryptContent);
-  connect(ui->listWidget, &QListWidget::customContextMenuRequested, this, &MapleSeed::showContextMenu);
-  connect(ui->listWidget, &QListWidget::itemSelectionChanged, this, &MapleSeed::itemSelectionChanged);
-  connect(ui->listWidget, &QListWidget::itemDoubleClicked, this, &MapleSeed::itemDoubleClicked);
   connect(ui->actionConfigTemporary, &QAction::triggered, this, &MapleSeed::actionConfigTemporary);
   connect(ui->actionConfigPersistent, &QAction::triggered, this, &MapleSeed::actionConfigPersistent);
   connect(ui->actionVerbose, &QAction::triggered, this, &MapleSeed::actionVerboseChecked);
@@ -198,13 +202,23 @@ void MapleSeed::messageLog(QString msg, bool verbose) {
   }
 }
 
-void MapleSeed::showContextMenu(const QPoint& pos) {
-  QPoint globalPos = ui->listWidget->mapToGlobal(pos);
-  if (ui->listWidget->selectedItems().count() == 0) {
+void MapleSeed::showContextMenuLibrary(const QPoint& pos)
+{
+	showContextMenu(ui->listWidget, pos);
+}
+
+void MapleSeed::showContextMenuTitles(const QPoint& pos)
+{
+	showContextMenu(ui->titlelistWidget, pos);
+}
+
+void MapleSeed::showContextMenu(QListWidget* list, const QPoint& pos) {
+  QPoint globalPos = list->mapToGlobal(pos);
+  if (list->selectedItems().count() == 0) {
     return;
   }
+  auto itm = list->selectedItems().first();
 
-  auto itm = ui->listWidget->selectedItems().first();
   auto tii = reinterpret_cast<TitleInfoItem*>(itm);
   TitleInfo* item = tii->getItem();
 
@@ -244,6 +258,15 @@ void MapleSeed::updateListview(LibraryEntry* entry) {
   TitleInfoItem* tii = new TitleInfoItem(entry->titleInfo);
   tii->setText(tii->getItem()->getFormatName());
   this->ui->listWidget->addItem(tii);
+}
+
+void MapleSeed::updateTitleList(LibraryEntry* entry) {
+	if (ui->titlelistWidget->count() == 1) {
+		ui->titlelistWidget->setCurrentRow(0);
+	}
+	TitleInfoItem* tii = new TitleInfoItem(entry->titleInfo);
+	tii->setText(tii->getItem()->getFormatName());
+	this->ui->titlelistWidget->addItem(tii);
 }
 
 void MapleSeed::downloadStarted(QString filename) {
@@ -371,4 +394,29 @@ void MapleSeed::actionClear_Settings() {
     dir.removeRecursively();
     QApplication::quit();
   }
+}
+
+void MapleSeed::filter(QString filter_string)
+{
+	hide_all();
+	QString searchString;
+	QList<QListWidgetItem*> matches;
+
+	if (filter_string == ui->regionBox->currentText()) {
+		searchString.append("*" + ui->regionBox->currentText() + "*");
+	}
+	else {
+		searchString.append("*" + ui->regionBox->currentText() + "*" + filter_string);
+	}
+	searchString.append("*");
+	matches.append(ui->titlelistWidget->findItems(searchString, Qt::MatchFlag::MatchWildcard));
+
+	for (QListWidgetItem* item : matches)
+		item->setHidden(false);
+}
+
+void MapleSeed::hide_all()
+{
+	for (int row(0); row < ui->titlelistWidget->count(); row++)
+		ui->titlelistWidget->item(row)->setHidden(true);
 }

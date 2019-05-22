@@ -99,8 +99,12 @@ void GameLibrary::process(QByteArray qbyteArray) {
         titleinfo->info[i.key().toLower()] = i.value().toString();
       }
       QString id(titleinfo->getID());
-      if (!titleinfo->getID().isEmpty() && !database.contains(id))
+	  if (!titleinfo->getID().isEmpty() && !database.contains(id)) {
         database[id] = std::move(titleinfo);
+		LibraryEntry* entry = new LibraryEntry(database[id]);
+		emit addTitle(entry);
+		log("Added to title list: " + entry->titleInfo->getName(), false);
+	  }
       progress(value++, max);
     }
   }

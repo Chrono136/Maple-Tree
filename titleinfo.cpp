@@ -111,6 +111,7 @@ void TitleInfo::init() {
 
 TitleInfo* TitleInfo::download(QString version)
 {
+	this->baseDirectory = Configuration::self->getBaseDirectory();
 	QString baseURL("http://ccs.cdn.wup.shop.nintendo.net/ccs/download/");
 	if (getKey().isEmpty()) {
 		GameLibrary::self->log("TitleInfo::download(): Invalid title key", true);
@@ -126,10 +127,11 @@ TitleInfo* TitleInfo::download(QString version)
 	for (int i = 0; i < contentCount; i++) {
 		QString contentID = QString().sprintf("%08x", bs32(tmd->Contents[i].ID));
 		QString contentPath = QDir(getDirectory()).filePath(contentID);
-		QString downloadURL = baseURL + id + QString("/") + contentID;
+		QString downloadURL = baseURL + getID() + QString("/") + contentID;
 		qulonglong size = Decrypt::bs64(tmd->Contents[i].Size);
 		if (!QFile(contentPath).exists() || QFileInfo(contentPath).size() != static_cast<qint64>(size)) {
-			QString msg = QString("Downloading Content (%1) %2 of %3 (%4)").arg(contentID).arg(i + 1).arg(contentCount).arg(size);
+			QString sz(Configuration::self->size_human(size));
+			QString msg = QString("Downloading Content (%1) %2 of %3 (%4)").arg(contentID).arg(i + 1).arg(contentCount).arg(sz);
 			QFile* file = DownloadManager::getSelf()->downloadSingle(downloadURL, contentPath, msg);
 			file->close();
 		}
@@ -290,7 +292,7 @@ QString TitleInfo::getProductCode() const {
 
 TitleMetaData* TitleInfo::getTMD(const QString & version) {
 	QString tmdpath(this->getDirectory() + "/tmd");
-	QString tmdurl("http://ccs.cdn.wup.shop.nintendo.net/ccs/download/" + id + "/tmd");
+	QString tmdurl("http://ccs.cdn.wup.shop.nintendo.net/ccs/download/" + getID() + "/tmd");
 	if (!version.isEmpty())
 		tmdurl += "." + version;
 

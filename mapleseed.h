@@ -49,10 +49,13 @@ class MapleSeed : public QMainWindow {
 
  public slots:
   void messageLog(QString msg, bool verbose = false);
-  void showContextMenu(const QPoint& pos);
+  void showContextMenuLibrary(const QPoint& pos);
+  void showContextMenuTitles(const QPoint& pos);
+  void showContextMenu(QListWidget*, const QPoint& pos);
   void disableMenubar();
   void enableMenubar();
   void updateListview(LibraryEntry* tb);
+  void updateTitleList(LibraryEntry* entry);
   void downloadStarted(QString filename);
   void downloadSuccessful(QString fileName);
   void downloadError(QString errorString);
@@ -68,6 +71,8 @@ class MapleSeed : public QMainWindow {
   void actionRefreshLibrary();
   void actionOffline_Mode(bool checked);
   void actionClear_Settings();
+  void filter(QString filter_string);
+  void hide_all();
 };
 
 #endif  // MAINWINDOW_H

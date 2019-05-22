@@ -63,6 +63,7 @@ class MapleSeed : public QMainWindow {
   void updateProgress(qint64 min, qint64 max, int curfile, int maxfile);
   void updateBaiscProgress(qint64 min, qint64 max);
   void itemSelectionChanged();
+  void TitleSelectionChanged();
   void itemDoubleClicked(QListWidgetItem* item);
   void actionConfigTemporary(bool checked);
   void actionConfigPersistent(bool checked);

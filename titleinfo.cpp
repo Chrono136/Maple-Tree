@@ -219,9 +219,17 @@ QString TitleInfo::getBaseDirectory() const {
 
 QString TitleInfo::getCoverArtPath() const {
 	QString code(this->getProductCode());
+	QString cover;
 
-	QDir temp_dir(Configuration::self->getPersistentDirectory("covers"));
-	QString cover = temp_dir.path() + QString("/" + code + ".jpg");
+	QDir directory("covers");
+	QStringList nameFilter("*" + code + "*.jpg");
+	QStringList txtFilesAndDirectories = directory.entryList(nameFilter);
+	if (txtFilesAndDirectories.count() > 0){
+		cover = directory.filePath(txtFilesAndDirectories.first());
+	}
+	else {
+		cover = directory.filePath("!.jpg");
+	}
 
 	return cover;
 }

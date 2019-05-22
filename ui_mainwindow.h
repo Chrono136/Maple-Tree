@@ -48,7 +48,6 @@ public:
     QWidget *centralwidget;
     QTabWidget *tabWidget;
     QWidget *tab;
-    QLabel *label;
     QListWidget *listWidget;
     QWidget *tab_3;
     QLineEdit *searchInput;
@@ -57,6 +56,7 @@ public:
     QWidget *tab_2;
     QTextEdit *textEdit;
     QProgressBar *progressBar;
+    QLabel *label;
     QMenuBar *menubar;
     QMenu *menuFile;
     QMenu *menuLog;
@@ -72,7 +72,7 @@ public:
     {
         if (MainWindow->objectName().isEmpty())
             MainWindow->setObjectName(QString::fromUtf8("MainWindow"));
-        MainWindow->resize(854, 510);
+        MainWindow->resize(882, 510);
         MainWindow->setMinimumSize(QSize(854, 510));
         MainWindow->setMaximumSize(QSize(906, 510));
         MainWindow->setAutoFillBackground(false);
@@ -123,39 +123,31 @@ public:
         centralwidget->setObjectName(QString::fromUtf8("centralwidget"));
         tabWidget = new QTabWidget(centralwidget);
         tabWidget->setObjectName(QString::fromUtf8("tabWidget"));
-        tabWidget->setGeometry(QRect(0, 0, 861, 415));
+        tabWidget->setGeometry(QRect(0, 0, 595, 415));
         tabWidget->setUsesScrollButtons(true);
         tab = new QWidget();
         tab->setObjectName(QString::fromUtf8("tab"));
-        label = new QLabel(tab);
-        label->setObjectName(QString::fromUtf8("label"));
-        label->setGeometry(QRect(580, 10, 261, 371));
-        label->setMinimumSize(QSize(0, 0));
-        label->setFrameShape(QFrame::Box);
-        label->setFrameShadow(QFrame::Plain);
-        label->setLineWidth(2);
-        label->setMidLineWidth(0);
-        label->setScaledContents(true);
         listWidget = new QListWidget(tab);
         listWidget->setObjectName(QString::fromUtf8("listWidget"));
-        listWidget->setGeometry(QRect(10, 10, 561, 371));
+        listWidget->setGeometry(QRect(10, 10, 571, 371));
         listWidget->setContextMenuPolicy(Qt::CustomContextMenu);
         tabWidget->addTab(tab, QString());
         tab_3 = new QWidget();
         tab_3->setObjectName(QString::fromUtf8("tab_3"));
         searchInput = new QLineEdit(tab_3);
         searchInput->setObjectName(QString::fromUtf8("searchInput"));
-        searchInput->setGeometry(QRect(10, 10, 751, 22));
+        searchInput->setGeometry(QRect(10, 10, 501, 22));
         titlelistWidget = new QListWidget(tab_3);
         titlelistWidget->setObjectName(QString::fromUtf8("titlelistWidget"));
-        titlelistWidget->setGeometry(QRect(10, 40, 831, 341));
+        titlelistWidget->setGeometry(QRect(10, 40, 571, 341));
         titlelistWidget->setContextMenuPolicy(Qt::CustomContextMenu);
         regionBox = new QComboBox(tab_3);
         regionBox->addItem(QString());
         regionBox->addItem(QString());
         regionBox->addItem(QString());
+        regionBox->addItem(QString());
         regionBox->setObjectName(QString::fromUtf8("regionBox"));
-        regionBox->setGeometry(QRect(770, 10, 71, 22));
+        regionBox->setGeometry(QRect(520, 10, 61, 22));
         QFont font;
         font.setBold(true);
         font.setWeight(75);
@@ -168,13 +160,13 @@ public:
         tab_2->setObjectName(QString::fromUtf8("tab_2"));
         textEdit = new QTextEdit(tab_2);
         textEdit->setObjectName(QString::fromUtf8("textEdit"));
-        textEdit->setGeometry(QRect(0, 0, 851, 421));
+        textEdit->setGeometry(QRect(0, 0, 591, 421));
         textEdit->setFrameShape(QFrame::NoFrame);
         textEdit->setReadOnly(true);
         tabWidget->addTab(tab_2, QString());
         progressBar = new QProgressBar(centralwidget);
         progressBar->setObjectName(QString::fromUtf8("progressBar"));
-        progressBar->setGeometry(QRect(10, 420, 831, 28));
+        progressBar->setGeometry(QRect(10, 420, 861, 28));
         progressBar->setAutoFillBackground(false);
         progressBar->setStyleSheet(QString::fromUtf8("QProgressBar {\n"
 "border: 1px solid black;\n"
@@ -193,10 +185,19 @@ public:
         progressBar->setOrientation(Qt::Horizontal);
         progressBar->setInvertedAppearance(false);
         progressBar->setTextDirection(QProgressBar::TopToBottom);
+        label = new QLabel(centralwidget);
+        label->setObjectName(QString::fromUtf8("label"));
+        label->setGeometry(QRect(600, 25, 271, 386));
+        label->setMinimumSize(QSize(0, 0));
+        label->setFrameShape(QFrame::Box);
+        label->setFrameShadow(QFrame::Plain);
+        label->setLineWidth(2);
+        label->setMidLineWidth(0);
+        label->setScaledContents(true);
         MainWindow->setCentralWidget(centralwidget);
         menubar = new QMenuBar(MainWindow);
         menubar->setObjectName(QString::fromUtf8("menubar"));
-        menubar->setGeometry(QRect(0, 0, 854, 26));
+        menubar->setGeometry(QRect(0, 0, 882, 26));
         menuFile = new QMenu(menubar);
         menuFile->setObjectName(QString::fromUtf8("menuFile"));
         menuLog = new QMenu(menuFile);
@@ -285,15 +286,16 @@ public:
         actionRefreshLibrary->setText(QApplication::translate("MainWindow", "Refresh", nullptr));
         actionOffline_Mode->setText(QApplication::translate("MainWindow", "Offline Mode", nullptr));
         actionClear_Settings->setText(QApplication::translate("MainWindow", "Clear Settings", nullptr));
-        label->setText(QString());
         tabWidget->setTabText(tabWidget->indexOf(tab), QApplication::translate("MainWindow", "Main", nullptr));
-        regionBox->setItemText(0, QApplication::translate("MainWindow", "USA", nullptr));
-        regionBox->setItemText(1, QApplication::translate("MainWindow", "EUR", nullptr));
-        regionBox->setItemText(2, QApplication::translate("MainWindow", "JAP", nullptr));
+        regionBox->setItemText(0, QString());
+        regionBox->setItemText(1, QApplication::translate("MainWindow", "USA", nullptr));
+        regionBox->setItemText(2, QApplication::translate("MainWindow", "EUR", nullptr));
+        regionBox->setItemText(3, QApplication::translate("MainWindow", "JAP", nullptr));
 
         tabWidget->setTabText(tabWidget->indexOf(tab_3), QApplication::translate("MainWindow", "Titles", nullptr));
         tabWidget->setTabText(tabWidget->indexOf(tab_2), QApplication::translate("MainWindow", "Log", nullptr));
         progressBar->setFormat(QApplication::translate("MainWindow", "%p%", nullptr));
+        label->setText(QString());
         menuFile->setTitle(QApplication::translate("MainWindow", "File", nullptr));
         menuLog->setTitle(QApplication::translate("MainWindow", "Log", nullptr));
         menuConfig->setTitle(QApplication::translate("MainWindow", "Config", nullptr));

@@ -54,6 +54,7 @@ void MapleSeed::defineActions() {
   connect(ui->listWidget, &QListWidget::customContextMenuRequested, this, &MapleSeed::showContextMenuLibrary);
   connect(ui->listWidget, &QListWidget::itemSelectionChanged, this, &MapleSeed::itemSelectionChanged);
   connect(ui->listWidget, &QListWidget::itemDoubleClicked, this, &MapleSeed::itemDoubleClicked);
+  connect(ui->titlelistWidget, &QListWidget::itemSelectionChanged, this, &MapleSeed::TitleSelectionChanged);
   connect(ui->titlelistWidget, &QListWidget::customContextMenuRequested, this, &MapleSeed::showContextMenuTitles);
   connect(ui->searchInput, &QLineEdit::textEdited, this, &MapleSeed::filter);
   connect(ui->regionBox, &QComboBox::currentTextChanged, this, &MapleSeed::filter);
@@ -327,6 +328,15 @@ void MapleSeed::itemSelectionChanged() {
 
   TitleInfoItem* tii = reinterpret_cast<TitleInfoItem*>(items[0]);
   ui->label->setPixmap(QPixmap(tii->getItem()->getCoverArtPath()));
+}
+
+void MapleSeed::TitleSelectionChanged() {
+	auto items = ui->titlelistWidget->selectedItems();
+	if (items.count() <= 0)
+		return;
+
+	TitleInfoItem* tii = reinterpret_cast<TitleInfoItem*>(items[0]);
+	ui->label->setPixmap(QPixmap(tii->getItem()->getCoverArtPath()));
 }
 
 void MapleSeed::itemDoubleClicked(QListWidgetItem* itm) {

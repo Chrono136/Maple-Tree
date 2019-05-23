@@ -66,8 +66,6 @@ public slots:
 	void itemSelectionChanged();
 	void TitleSelectionChanged();
 	void itemDoubleClicked(QListWidgetItem* item);
-	void actionConfigTemporary(bool checked);
-	void actionConfigPersistent(bool checked);
 	void actionVerboseChecked(bool checked);
 	void actionIntegrateCemu(bool checked);
 	void actionRefreshLibrary();

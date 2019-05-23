@@ -72,8 +72,6 @@ void MapleSeed::defineActions() {
 	connect(ui->actionUpdate, &QAction::triggered, this, &MapleSeed::actionUpdate);
 	connect(ui->actionDLC, &QAction::triggered, this, &MapleSeed::actionDLC);
 	connect(ui->actionDecrypt_Content, &QAction::triggered, this, &MapleSeed::decryptContent);
-	connect(ui->actionConfigTemporary, &QAction::triggered, this, &MapleSeed::actionConfigTemporary);
-	connect(ui->actionConfigPersistent, &QAction::triggered, this, &MapleSeed::actionConfigPersistent);
 	connect(ui->actionVerbose, &QAction::triggered, this, &MapleSeed::actionVerboseChecked);
 	connect(ui->actionIntegrateCemu, &QAction::triggered, this, &MapleSeed::actionIntegrateCemu);
 	connect(ui->actionRefreshLibrary, &QAction::triggered, this, &MapleSeed::actionRefreshLibrary);
@@ -88,8 +86,6 @@ void MapleSeed::defaultConfiguration() {
   ui->actionVerbose->setChecked(config->getKeyBool("VerboseLog"));
   ui->actionIntegrateCemu->setChecked(config->getKeyBool("IntegrateCemu"));
   ui->actionOffline_Mode->setChecked(config->getKeyBool("Offline"));
-  ui->actionConfigTemporary->setChecked(!config->getKeyString("configtype").compare("Temporary"));
-  ui->actionConfigPersistent->setChecked(!config->getKeyString("configtype").compare("Persistent"));
 }
 
 void MapleSeed::menuQuit() { QApplication::quit(); }
@@ -372,16 +368,6 @@ void MapleSeed::itemDoubleClicked(QListWidgetItem* itm) {
   process = new QProcess(this);
   process->setWorkingDirectory(workingdir);
   process->start(file + " -g \"" + rpx + "\"", QStringList() << "-g \"" + rpx + "\"");
-}
-
-void MapleSeed::actionConfigTemporary(bool checked) {
-  config->setKey("ConfigType", QString("Temporary"));
-  ui->actionConfigPersistent->setChecked(!checked);
-}
-
-void MapleSeed::actionConfigPersistent(bool checked) {
-  config->setKey("ConfigType", QString("Persistent"));
-  ui->actionConfigTemporary->setChecked(!checked);
 }
 
 void MapleSeed::actionVerboseChecked(bool checked) {

@@ -63,7 +63,6 @@ public:
     QMenuBar *menubar;
     QMenu *menuFile;
     QMenu *menuLog;
-    QMenu *menuConfig;
     QMenu *menuGame_Library;
     QMenu *menuContent;
     QMenu *menuDownload;
@@ -214,9 +213,6 @@ public:
         menuLog = new QMenu(menuFile);
         menuLog->setObjectName(QString::fromUtf8("menuLog"));
         menuLog->setEnabled(true);
-        menuConfig = new QMenu(menuFile);
-        menuConfig->setObjectName(QString::fromUtf8("menuConfig"));
-        menuConfig->setEnabled(true);
         menuGame_Library = new QMenu(menubar);
         menuGame_Library->setObjectName(QString::fromUtf8("menuGame_Library"));
         menuContent = new QMenu(menubar);
@@ -237,13 +233,10 @@ public:
         menubar->addAction(menuContent->menuAction());
         menubar->addAction(menuCemu->menuAction());
         menuFile->addAction(menuLog->menuAction());
-        menuFile->addAction(menuConfig->menuAction());
         menuFile->addAction(actionClear_Settings);
         menuFile->addSeparator();
         menuFile->addAction(actionQuit);
         menuLog->addAction(actionVerbose);
-        menuConfig->addAction(actionConfigTemporary);
-        menuConfig->addAction(actionConfigPersistent);
         menuGame_Library->addAction(actionChange_Library);
         menuGame_Library->addAction(actionRefreshLibrary);
         menuGame_Library->addSeparator();
@@ -318,7 +311,6 @@ public:
         label->setText(QString());
         menuFile->setTitle(QApplication::translate("MainWindow", "File", nullptr));
         menuLog->setTitle(QApplication::translate("MainWindow", "Log", nullptr));
-        menuConfig->setTitle(QApplication::translate("MainWindow", "Config", nullptr));
         menuGame_Library->setTitle(QApplication::translate("MainWindow", "Library", nullptr));
         menuContent->setTitle(QApplication::translate("MainWindow", "Content", nullptr));
         menuDownload->setTitle(QApplication::translate("MainWindow", "Download", nullptr));

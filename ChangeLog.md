@@ -9,6 +9,7 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 - Context menu disabled during operations
+- Removed config options. All settings are persistent
 
 
 ## [1.0.0-515] - 2019-05-23

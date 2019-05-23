@@ -54,6 +54,11 @@ void GameLibrary::init(const QString& directory) {
 	QtConcurrent::run([=] { this->setupLibrary(); });
 }
 
+void GameLibrary::setupLibrary(bool force)
+{
+	return setupLibrary(this->baseDirectory, force);
+}
+
 void GameLibrary::setupLibrary(QString directory, bool force) {
 	library.clear();
 	if (!directory.isEmpty()) {

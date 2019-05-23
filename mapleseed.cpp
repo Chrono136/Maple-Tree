@@ -391,7 +391,7 @@ void MapleSeed::actionIntegrateCemu(bool checked) {
 void MapleSeed::actionRefreshLibrary() {
   QFile(Configuration::self->getLibPath()).remove();
   ui->listWidget->clear();
-  QtConcurrent::run([=] { gameLibrary->setupLibrary(); });
+  QtConcurrent::run([=] { gameLibrary->setupLibrary(true); });
 }
 
 void MapleSeed::actionClear_Settings() {

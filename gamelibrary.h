@@ -18,7 +18,8 @@ public:
 	~GameLibrary();
 
 	void init(const QString& directory);
-	void setupLibrary(QString directory = "", bool force = false);
+	void setupLibrary(bool force = false);
+	void setupLibrary(QString directory, bool force);
 	void process(QByteArray qbyteArray);
 	bool load(QString filepath);
 	bool save(QString filepath);

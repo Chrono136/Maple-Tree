@@ -190,9 +190,12 @@ void MapleSeed::showContextMenu(QListWidget* list, const QPoint& pos) {
   if (!entry) {
 	  return;
   }
+  QString name(QFileInfo(entry->directory).baseName());
+  if (name.isEmpty()) {
+	  name = item->getName();
+  }
 
   QMenu menu;
-  QString name(QFileInfo(entry->directory).baseName());
   menu.addAction(name, this, [] {})->setEnabled(false);
 
   menu.addSeparator();

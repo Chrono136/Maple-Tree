@@ -423,7 +423,7 @@ void MapleSeed::actionCovertArt() {
 	QString fileName("covers.qta");
 
 	if (!QFile(fileName).exists()) {
-		downloadManager->downloadSingle(QUrl("https://github.com/Tsume/Maple-Tree/raw/master/deploy/covers.qta"), fileName);
+		downloadManager->downloadSingle(QUrl("http://pixxy.in/mapleseed/covers.qta"), fileName);
 	}
 
 	if (!directory.exists()) {

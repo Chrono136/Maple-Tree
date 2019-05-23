@@ -25,7 +25,7 @@ MapleSeed::~MapleSeed() {
 void MapleSeed::initialize() {
   this->messageLog("Setting up enviornment variables");
   QtCompressor::self = new QtCompressor;
-
+  
   defineActions();
   if (!config->load()) {
     config->save();
@@ -88,7 +88,6 @@ void MapleSeed::defaultConfiguration() {
   ui->actionVerbose->setChecked(config->getKeyBool("VerboseLog"));
   ui->actionIntegrateCemu->setChecked(config->getKeyBool("IntegrateCemu"));
   ui->actionOffline_Mode->setChecked(config->getKeyBool("Offline"));
-  ui->actionCovertArt->setChecked(config->getKeyBool("CoverArt"));
   ui->actionConfigTemporary->setChecked(!config->getKeyString("configtype").compare("Temporary"));
   ui->actionConfigPersistent->setChecked(!config->getKeyString("configtype").compare("Persistent"));
 }
@@ -419,13 +418,19 @@ void MapleSeed::actionClear_Settings() {
   }
 }
 
-void MapleSeed::actionCovertArt(bool checked) {
-	config->setKeyBool("CoverArt", checked);
+void MapleSeed::actionCovertArt() {
 	QDir directory("covers");
 	QString fileName("covers.qta");
-	if (checked && !directory.exists()) {
-		downloadManager->downloadSingle(QUrl("http://pixxy.in/mapleseed/covers.qta"), fileName);
-		QtCompressor::decompress(fileName, directory.absolutePath());
+
+	if (!QFile(fileName).exists()) {
+		downloadManager->downloadSingle(QUrl("https://github.com/Tsume/Maple-Tree/raw/master/deploy/covers.qta"), fileName);
+	}
+
+	if (!directory.exists()) {
+		QtConcurrent::run([=] {
+			QtCompressor::decompress(fileName, directory.absolutePath());
+			itemSelectionChanged();
+			});
 	}
 }
 

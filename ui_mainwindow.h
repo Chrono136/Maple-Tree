@@ -125,7 +125,7 @@ public:
         actionClear_Settings->setObjectName(QString::fromUtf8("actionClear_Settings"));
         actionCovertArt = new QAction(MainWindow);
         actionCovertArt->setObjectName(QString::fromUtf8("actionCovertArt"));
-        actionCovertArt->setCheckable(true);
+        actionCovertArt->setCheckable(false);
         actionCompress = new QAction(MainWindow);
         actionCompress->setObjectName(QString::fromUtf8("actionCompress"));
         actionDecompress = new QAction(MainWindow);

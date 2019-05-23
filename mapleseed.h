@@ -72,7 +72,7 @@ public slots:
 	void actionRefreshLibrary();
 	void actionOffline_Mode(bool checked);
 	void actionClear_Settings();
-	void actionCovertArt(bool checked);
+	void actionCovertArt();
 	void filter(QString filter_string);
 	void actionCompress();
 	void actionDecompress();

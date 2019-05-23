@@ -10,6 +10,7 @@ All notable changes to this project will be documented in this file.
 ### Changed
 - Context menu disabled during operations
 - Context menu displays directory name
+- List item no longer auto selected
 
 ### Removed
 - config options (All settings are persistent)

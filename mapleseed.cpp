@@ -269,18 +269,12 @@ void MapleSeed::enableMenubar() {
 }
 
 void MapleSeed::updateListview(LibraryEntry* entry) {
-  if (ui->listWidget->count() == 1) {
-    ui->listWidget->setCurrentRow(0);
-  }
   TitleInfoItem* tii = new TitleInfoItem(entry);
   tii->setText(tii->getItem()->titleInfo->getFormatName());
   this->ui->listWidget->addItem(tii);
 }
 
 void MapleSeed::updateTitleList(LibraryEntry* entry) {
-	if (ui->titlelistWidget->count() == 1) {
-		ui->titlelistWidget->setCurrentRow(0);
-	}
 	TitleInfoItem* tii = new TitleInfoItem(entry);
 	tii->setText(tii->getItem()->titleInfo->getFormatName());
 	this->ui->titlelistWidget->addItem(tii);

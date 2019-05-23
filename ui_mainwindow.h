@@ -32,11 +32,8 @@ class Ui_MainWindow
 public:
     QAction *actionQuit;
     QAction *actionChange_Library;
-    QAction *actionDownload_Title;
     QAction *actionDecrypt_Content;
     QAction *actionVerbose;
-    QAction *actionUpdate;
-    QAction *actionDLC;
     QAction *actionBackup;
     QAction *actionImport;
     QAction *actionIntegrateCemu;
@@ -62,7 +59,6 @@ public:
     QMenu *menuLog;
     QMenu *menuGame_Library;
     QMenu *menuContent;
-    QMenu *menuDownload;
     QMenu *menuCemu;
     QMenu *menuSave_Data;
     QStatusBar *statusbar;
@@ -80,8 +76,6 @@ public:
         actionQuit->setObjectName(QString::fromUtf8("actionQuit"));
         actionChange_Library = new QAction(MainWindow);
         actionChange_Library->setObjectName(QString::fromUtf8("actionChange_Library"));
-        actionDownload_Title = new QAction(MainWindow);
-        actionDownload_Title->setObjectName(QString::fromUtf8("actionDownload_Title"));
         actionDecrypt_Content = new QAction(MainWindow);
         actionDecrypt_Content->setObjectName(QString::fromUtf8("actionDecrypt_Content"));
         actionDecrypt_Content->setCheckable(false);
@@ -89,12 +83,6 @@ public:
         actionVerbose->setObjectName(QString::fromUtf8("actionVerbose"));
         actionVerbose->setCheckable(true);
         actionVerbose->setEnabled(true);
-        actionUpdate = new QAction(MainWindow);
-        actionUpdate->setObjectName(QString::fromUtf8("actionUpdate"));
-        actionUpdate->setEnabled(true);
-        actionDLC = new QAction(MainWindow);
-        actionDLC->setObjectName(QString::fromUtf8("actionDLC"));
-        actionDLC->setEnabled(true);
         actionBackup = new QAction(MainWindow);
         actionBackup->setObjectName(QString::fromUtf8("actionBackup"));
         actionBackup->setEnabled(false);
@@ -206,8 +194,6 @@ public:
         menuGame_Library->setObjectName(QString::fromUtf8("menuGame_Library"));
         menuContent = new QMenu(menubar);
         menuContent->setObjectName(QString::fromUtf8("menuContent"));
-        menuDownload = new QMenu(menuContent);
-        menuDownload->setObjectName(QString::fromUtf8("menuDownload"));
         menuCemu = new QMenu(menubar);
         menuCemu->setObjectName(QString::fromUtf8("menuCemu"));
         menuSave_Data = new QMenu(menuCemu);
@@ -230,15 +216,11 @@ public:
         menuGame_Library->addAction(actionRefreshLibrary);
         menuGame_Library->addSeparator();
         menuContent->addAction(actionDecrypt_Content);
-        menuContent->addAction(menuDownload->menuAction());
         menuContent->addSeparator();
         menuContent->addAction(actionCovertArt);
         menuContent->addSeparator();
         menuContent->addAction(actionCompress);
         menuContent->addAction(actionDecompress);
-        menuDownload->addAction(actionDownload_Title);
-        menuDownload->addAction(actionUpdate);
-        menuDownload->addAction(actionDLC);
         menuCemu->addAction(actionIntegrateCemu);
         menuCemu->addAction(menuSave_Data->menuAction());
         menuSave_Data->addAction(actionBackup);
@@ -271,11 +253,8 @@ public:
 #ifndef QT_NO_SHORTCUT
         actionChange_Library->setShortcut(QApplication::translate("MainWindow", "Ctrl+L", nullptr));
 #endif // QT_NO_SHORTCUT
-        actionDownload_Title->setText(QApplication::translate("MainWindow", "Title", nullptr));
         actionDecrypt_Content->setText(QApplication::translate("MainWindow", "Decrypt", nullptr));
         actionVerbose->setText(QApplication::translate("MainWindow", "Verbose", nullptr));
-        actionUpdate->setText(QApplication::translate("MainWindow", "Update", nullptr));
-        actionDLC->setText(QApplication::translate("MainWindow", "DLC", nullptr));
         actionBackup->setText(QApplication::translate("MainWindow", "Backup", nullptr));
         actionImport->setText(QApplication::translate("MainWindow", "Import", nullptr));
         actionIntegrateCemu->setText(QApplication::translate("MainWindow", "Integrate", nullptr));
@@ -298,7 +277,6 @@ public:
         menuLog->setTitle(QApplication::translate("MainWindow", "Log", nullptr));
         menuGame_Library->setTitle(QApplication::translate("MainWindow", "Library", nullptr));
         menuContent->setTitle(QApplication::translate("MainWindow", "Content", nullptr));
-        menuDownload->setTitle(QApplication::translate("MainWindow", "Download", nullptr));
         menuCemu->setTitle(QApplication::translate("MainWindow", "Cemu", nullptr));
         menuSave_Data->setTitle(QApplication::translate("MainWindow", "Save Data", nullptr));
     } // retranslateUi

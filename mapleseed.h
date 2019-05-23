@@ -40,9 +40,6 @@ private:
 
 	void menuQuit();
 	void actionChange_Library();
-	void actionDownload_Title();
-	void actionUpdate();
-	void actionDLC();
 	void decryptContent();
 	QDir* selectDirectory();
 	QFileInfo selectFile();

@@ -290,16 +290,7 @@ border: 1px solid black;
     <property name="title">
      <string>Content</string>
     </property>
-    <widget class="QMenu" name="menuDownload">
-     <property name="title">
-      <string>Download</string>
-     </property>
-     <addaction name="actionDownload_Title"/>
-     <addaction name="actionUpdate"/>
-     <addaction name="actionDLC"/>
-    </widget>
     <addaction name="actionDecrypt_Content"/>
-    <addaction name="menuDownload"/>
     <addaction name="separator"/>
     <addaction name="actionCovertArt"/>
     <addaction name="separator"/>
@@ -349,11 +340,6 @@ border: 1px solid black;
     <string>Ctrl+L</string>
    </property>
   </action>
-  <action name="actionDownload_Title">
-   <property name="text">
-    <string>Title</string>
-   </property>
-  </action>
   <action name="actionDecrypt_Content">
    <property name="checkable">
     <bool>false</bool>
@@ -371,22 +357,6 @@ border: 1px solid black;
    </property>
    <property name="text">
     <string>Verbose</string>
-   </property>
-  </action>
-  <action name="actionUpdate">
-   <property name="enabled">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Update</string>
-   </property>
-  </action>
-  <action name="actionDLC">
-   <property name="enabled">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>DLC</string>
    </property>
   </action>
   <action name="actionBackup">

@@ -15,6 +15,7 @@ All notable changes to this project will be documented in this file.
 ### Removed
 - config options (All settings are persistent)
 - offline toggle option
+- download, update, and dlc menu options (replaced by context menu options)
 
 ### Fixed
 - Crash when canceling directory select for compression

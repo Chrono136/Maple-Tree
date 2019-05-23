@@ -72,9 +72,6 @@ void MapleSeed::defineActions() {
 
 	connect(ui->actionQuit, &QAction::triggered, this, &MapleSeed::menuQuit);
 	connect(ui->actionChange_Library, &QAction::triggered, this, &MapleSeed::actionChange_Library);
-	connect(ui->actionDownload_Title, &QAction::triggered, this, &MapleSeed::actionDownload_Title);
-	connect(ui->actionUpdate, &QAction::triggered, this, &MapleSeed::actionUpdate);
-	connect(ui->actionDLC, &QAction::triggered, this, &MapleSeed::actionDLC);
 	connect(ui->actionDecrypt_Content, &QAction::triggered, this, &MapleSeed::decryptContent);
 	connect(ui->actionVerbose, &QAction::triggered, this, &MapleSeed::actionVerboseChecked);
 	connect(ui->actionIntegrateCemu, &QAction::triggered, this, &MapleSeed::actionIntegrateCemu);
@@ -102,48 +99,6 @@ void MapleSeed::actionChange_Library() {
   ui->listWidget->clear();
   config->setBaseDirectory(directory);
   QtConcurrent::run([=] { gameLibrary->setupLibrary(directory, true); });
-}
-
-void MapleSeed::actionDownload_Title() {
-  bool ok;
-  QString value = QInputDialog::getText(this, tr("Download Title"), tr("Title ID:"), QLineEdit::Normal, nullptr, &ok);
-  if (!ok)
-    return;
-
-  if (value.isEmpty() || value.count() != 16) {
-    QMessageBox::information(this, "Download Title Error", "Invalid title id. Please verify your title id is 16 characters");
-    return;
-  }
-
-  TitleInfo::DownloadCreate(value, gameLibrary->baseDirectory);
-}
-
-void MapleSeed::actionUpdate() {
-  bool ok;
-  QString value = QInputDialog::getText(this, tr("Download Update"), tr("Content ID:"), QLineEdit::Normal, nullptr, &ok);
-  if (!ok)
-    return;
-
-  if (value.isEmpty() || value.count() != 16) {
-    QMessageBox::information(this, "Download Update Error", "Invalid content id. Please verify your content id is 16 characters");
-    return;
-  }
-
-  TitleInfo::DownloadCreate(value.replace(7, 1, 'e'), gameLibrary->baseDirectory);
-}
-
-void MapleSeed::actionDLC() {
-  bool ok;
-  QString value = QInputDialog::getText(this, tr("Download DLC"), tr("Content ID:"), QLineEdit::Normal, nullptr, &ok);
-  if (!ok)
-    return;
-
-  if (value.isEmpty() || value.count() != 16) {
-    QMessageBox::information(this, "Download DLC Error", "Invalid content id. Please verify your content id is 16 characters");
-    return;
-  }
-
-  TitleInfo::DownloadCreate(value.replace(7, 1, 'c'), gameLibrary->baseDirectory);
 }
 
 void MapleSeed::decryptContent() {

@@ -9,7 +9,7 @@ SET QT=D:\Projects\Libraries\Qt\5.12.3-msvc2019-x86_64
 FOR /F "tokens=*" %%A IN ('"git describe --tags --abbrev=0"') DO (SET fVERSION=%%A)
 FOR /F "tokens=*" %%A IN ('"git rev-list --all --count"') DO (SET ccVERSION=%%A)
 FOR /F "tokens=*" %%A IN ('"git rev-parse --short HEAD"') DO (SET cVERSION=%%A)
-SET FILEOUT=MapleSeed-%fVERSION%-%ccVERSION%-%cVERSION%
+SET FILEOUT=MapleSeed-%fVERSION%.%ccVERSION%
 
 windeployqt --dir %RELEASE% --plugindir %RELEASE%plugins %RELEASE%MapleSeed.exe
 ::copy C:\openssl11\bin64\libcryptoMD.dll libcryptoMD.dll

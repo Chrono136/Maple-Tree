@@ -46,6 +46,7 @@ private:
 	void decryptContent();
 	QDir* selectDirectory();
 	QFileInfo selectFile();
+	void CopyToClipboard(QString text);
 
 public slots:
 	void messageLog(QString msg, bool verbose = false);

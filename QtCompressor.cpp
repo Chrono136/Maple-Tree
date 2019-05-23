@@ -49,11 +49,9 @@ bool QtCompressor::handleCompress(QString sourceFolder, QString prefex)
 	if (!dir.exists())
 		return false;
 
-	//1 - list all folders inside the current folder
 	dir.setFilter(QDir::NoDotAndDotDot | QDir::Dirs);
 	QFileInfoList foldersList = dir.entryInfoList();
 
-	//2 - For each folder in list: call the same function with folders' paths
 	for (int i = 0; i < foldersList.length(); i++)
 	{
 		QString folderName = foldersList.at(i).fileName();
@@ -63,11 +61,9 @@ bool QtCompressor::handleCompress(QString sourceFolder, QString prefex)
 		handleCompress(folderPath, newPrefex);
 	}
 
-	//3 - List all files inside the current folder
 	dir.setFilter(QDir::NoDotAndDotDot | QDir::Files);
 	QFileInfoList filesList = dir.entryInfoList();
 
-	//4- For each file in list: add file path and compressed binary data
 	for (int i = 0; i < filesList.length(); i++)
 	{
 		QFile file(dir.absolutePath() + "/" + filesList.at(i).fileName());

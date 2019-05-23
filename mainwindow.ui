@@ -322,6 +322,7 @@ border: 1px solid black;
      </property>
      <addaction name="actionBackup"/>
      <addaction name="actionImport"/>
+     <addaction name="separator"/>
     </widget>
     <addaction name="actionIntegrateCemu"/>
     <addaction name="menuSave_Data"/>

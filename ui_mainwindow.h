@@ -262,6 +262,7 @@ public:
         menuCemu->addAction(menuSave_Data->menuAction());
         menuSave_Data->addAction(actionBackup);
         menuSave_Data->addAction(actionImport);
+        menuSave_Data->addSeparator();
 
         retranslateUi(MainWindow);
 

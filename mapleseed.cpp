@@ -197,6 +197,13 @@ QFileInfo MapleSeed::selectFile()
 	return nullptr;
 }
 
+void MapleSeed::CopyToClipboard(QString text)
+{
+	QClipboard* clipboard = QApplication::clipboard();
+	clipboard->setText(text);
+	this->messageLog(text + " copied to clipboard", true);
+}
+
 void MapleSeed::messageLog(QString msg, bool verbose) {
   ui->statusbar->showMessage(msg);
   if (ui->actionVerbose->isChecked() || verbose) {
@@ -239,7 +246,9 @@ void MapleSeed::showContextMenu(QListWidget* list, const QPoint& pos) {
   menu.addAction(item->getName(), this, [ = ] {})->setEnabled(false);
 
   menu.addSeparator();
-  menu.addAction("Download Game", this, [=] { item->download(); });
+  if (TitleInfo::ValidId(item->getID().replace(7, 1, '0'))) {
+	  menu.addAction("Download Game", this, [=] { item->download(); });
+  }
   if (TitleInfo::ValidId(item->getID().replace(7, 1, 'c'))) {
 	  menu.addAction("Download DLC", this, [=] { item->downloadDlc(); });
   }
@@ -250,19 +259,19 @@ void MapleSeed::showContextMenu(QListWidget* list, const QPoint& pos) {
   menu.addSeparator();
   if (QFile(QDir(item->getDirectory()).filePath("tmd")).exists() && QFile(QDir(item->getDirectory()).filePath("cetk")).exists())
 	  menu.addAction("Decrypt Content", this, [=] { QtConcurrent::run([=] {item->decryptContent(); }); });
-  menu.addAction("Copy ID to Clipboard", this, [=] {
-	  QClipboard* clipboard = QApplication::clipboard();
-	  QString id(item->getID());
-	  clipboard->setText(id);
-	  this->messageLog(id + " copied to clipboard");
-	  });
+  menu.addAction("Copy ID to Clipboard", this, [=] { CopyToClipboard(item->getID()); });
 
+  menu.setEnabled(ui->menubar->isEnabled());
   menu.exec(globalPos);
 }
 
-void MapleSeed::disableMenubar() { this->ui->menubar->setEnabled(false); }
+void MapleSeed::disableMenubar() { 
+	ui->menubar->setEnabled(false);
+}
 
-void MapleSeed::enableMenubar() { this->ui->menubar->setEnabled(true); }
+void MapleSeed::enableMenubar() { 
+	ui->menubar->setEnabled(true);
+}
 
 void MapleSeed::updateListview(LibraryEntry* entry) {
   if (ui->listWidget->count() == 1) {

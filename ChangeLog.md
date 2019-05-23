@@ -3,6 +3,14 @@ All notable changes to this project will be documented in this file.
 
 ## [Alpha Release]
 
+## [1.0.0-5**] - 2019-05-**
+### Added
+- 
+
+### Changed
+- Context menu disabled during operations
+
+
 ## [1.0.0-515] - 2019-05-23
 ### Added
 - Compress & Decompress option(No use yet, intended for future save file feature)

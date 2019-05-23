@@ -15,6 +15,8 @@ All notable changes to this project will be documented in this file.
 - config options (All settings are persistent)
 - offline toggle option
 
+### Fixed
+- Crash when canceling directory select for compression
 
 ## [1.0.0-515] - 2019-05-23
 ### Added

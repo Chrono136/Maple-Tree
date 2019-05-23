@@ -96,19 +96,12 @@ void MapleSeed::actionChange_Library() {
   QDir* dir = this->selectDirectory();
   if (dir == nullptr)
     return;
-
-  config->setBaseDirectory(dir->path());
-  gameLibrary->setupLibrary(dir->path());
+  QString directory(dir->path());
+  delete dir;
 
   ui->listWidget->clear();
-  if (ui->listWidget->count() > 0) {
-    auto item = ui->listWidget->item(0);
-    TitleInfoItem* itm = reinterpret_cast<TitleInfoItem*>(item);
-    ui->label->setPixmap(QPixmap(itm->getItem()->getCoverArtPath()));
-  }
-
-  this->messageLog("Game library has been updated to: " + dir->path());
-  delete dir;
+  config->setBaseDirectory(directory);
+  QtConcurrent::run([=] { gameLibrary->setupLibrary(directory, true); });
 }
 
 void MapleSeed::actionDownload_Title() {
@@ -237,8 +230,8 @@ void MapleSeed::showContextMenu(QListWidget* list, const QPoint& pos) {
   }
   auto itm = list->selectedItems().first();
   auto tii = reinterpret_cast<TitleInfoItem*>(itm);
-  TitleInfo* item = tii->getItem();
-  LibraryEntry* entry = gameLibrary->library[item->getID()];
+  LibraryEntry* entry = tii->getItem();
+  TitleInfo* item = entry->titleInfo;
   if (!entry) {
 	  return;
   }
@@ -279,8 +272,8 @@ void MapleSeed::updateListview(LibraryEntry* entry) {
   if (ui->listWidget->count() == 1) {
     ui->listWidget->setCurrentRow(0);
   }
-  TitleInfoItem* tii = new TitleInfoItem(entry->titleInfo);
-  tii->setText(tii->getItem()->getFormatName());
+  TitleInfoItem* tii = new TitleInfoItem(entry);
+  tii->setText(tii->getItem()->titleInfo->getFormatName());
   this->ui->listWidget->addItem(tii);
 }
 
@@ -288,8 +281,8 @@ void MapleSeed::updateTitleList(LibraryEntry* entry) {
 	if (ui->titlelistWidget->count() == 1) {
 		ui->titlelistWidget->setCurrentRow(0);
 	}
-	TitleInfoItem* tii = new TitleInfoItem(entry->titleInfo);
-	tii->setText(tii->getItem()->getFormatName());
+	TitleInfoItem* tii = new TitleInfoItem(entry);
+	tii->setText(tii->getItem()->titleInfo->getFormatName());
 	this->ui->titlelistWidget->addItem(tii);
 }
 
@@ -350,7 +343,7 @@ void MapleSeed::itemSelectionChanged() {
     return;
 
   TitleInfoItem* tii = reinterpret_cast<TitleInfoItem*>(items[0]);
-  ui->label->setPixmap(QPixmap(tii->getItem()->getCoverArtPath()));
+  ui->label->setPixmap(QPixmap(tii->getItem()->titleInfo->getCoverArtPath()));
 }
 
 void MapleSeed::TitleSelectionChanged() {
@@ -359,7 +352,7 @@ void MapleSeed::TitleSelectionChanged() {
 		return;
 
 	TitleInfoItem* tii = reinterpret_cast<TitleInfoItem*>(items[0]);
-	ui->label->setPixmap(QPixmap(tii->getItem()->getCoverArtPath()));
+	ui->label->setPixmap(QPixmap(tii->getItem()->titleInfo->getCoverArtPath()));
 }
 
 void MapleSeed::itemDoubleClicked(QListWidgetItem* itm) {
@@ -367,13 +360,13 @@ void MapleSeed::itemDoubleClicked(QListWidgetItem* itm) {
     return;
 
   auto titleInfoItem = reinterpret_cast<TitleInfoItem*>(itm);
-  TitleInfo* item = titleInfoItem->getItem();
+  TitleInfo* item = titleInfoItem->getItem()->titleInfo;
   QString file(config->getKeyString("cemupath"));
   QString workingdir(QFileInfo(file).dir().path());
   QString rpx(item->getExecutable());
   process = new QProcess(this);
   process->setWorkingDirectory(workingdir);
-  process->start(file + " -g \"" + rpx + "\"", QStringList() << "-g \"" + rpx + "\"");
+  process->start(file + " -g \"" + rpx + "\"", QStringList() << " -g \"" + rpx + "\"");
 }
 
 void MapleSeed::actionVerboseChecked(bool checked) {
@@ -454,15 +447,19 @@ void MapleSeed::filter(QString filter_string)
 void MapleSeed::actionCompress()
 {
 	QDir* directory(this->selectDirectory());
-	QString path(directory->absolutePath());
-	QtConcurrent::run([=] { QtCompressor::compress(path, path + ".qta"); });
-	delete directory;
+	if (directory) {
+		QString path(directory->absolutePath());
+		QtConcurrent::run([=] { QtCompressor::compress(path, path + ".qta"); });
+		delete directory;
+	}
 }
 
 void MapleSeed::actionDecompress()
 {
 	QFileInfo info(this->selectFile());
-	QString filename = info.absoluteFilePath();
-	QString dir = info.absoluteDir().filePath(info.baseName());
-	QtConcurrent::run([=] { QtCompressor::decompress(filename, dir); });
+	if (info.exists()) {
+		QString filename = info.absoluteFilePath();
+		QString dir = info.absoluteDir().filePath(info.baseName());
+		QtConcurrent::run([=] { QtCompressor::decompress(filename, dir); });
+	}
 }

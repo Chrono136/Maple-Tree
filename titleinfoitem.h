@@ -6,14 +6,14 @@
 
 class TitleInfoItem : public QListWidgetItem {
  public:
-  TitleInfoItem(TitleInfo* tb) {
-    this->setText(tb->getFormatName());
-    this->item = tb;
+  TitleInfoItem(LibraryEntry* entry) {
+    this->setText(entry->titleInfo->getFormatName());
+    this->item = entry;
   }
-  TitleInfo* getItem() const { return this->item; }
+  LibraryEntry* getItem() const { return this->item; }
 
  private:
-  TitleInfo* item;
+	 LibraryEntry* item;
 };
 
 #endif  // TITLEINFOITEM_H

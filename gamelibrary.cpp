@@ -54,7 +54,7 @@ void GameLibrary::init(const QString& directory) {
 	QtConcurrent::run([=] { this->setupLibrary(); });
 }
 
-void GameLibrary::setupLibrary(QString directory) {
+void GameLibrary::setupLibrary(QString directory, bool force) {
 	library.clear();
 	if (!directory.isEmpty()) {
 		if (QDir(this->baseDirectory).exists()) {
@@ -65,27 +65,29 @@ void GameLibrary::setupLibrary(QString directory) {
 			return;
 		}
 	}
-
-	if (load(Configuration::self->getLibPath())) {
-		return;
-	}
-	QDirIterator it(this->baseDirectory, QStringList() << "meta.xml", QDir::NoFilter, QDirIterator::Subdirectories);
-	while (it.hasNext()) {
-		it.next();
-		if (!it.fileName().contains("meta.xml") || it.filePath().contains("[Update]") || it.filePath().contains("[DLC]"))
-			continue;
-		auto titleinfo = TitleInfo::Create(it.fileInfo(), this->baseDirectory);
-		if (titleinfo->getTitleType() == TitleType::Game) {
-			LibraryEntry* entry = new LibraryEntry(std::move(titleinfo));
-			entry->rpx = entry->titleInfo->getExecutable();
-			entry->directory = QDir(it.filePath() + "/../../").absolutePath();
-			entry->metaxml = it.filePath();
-			library[entry->titleInfo->getID()] = std::move(entry);
-			emit changed(entry);
-			log("Added to library: " + entry->metaxml, true);
+	if (force) {
+		QDirIterator it(this->baseDirectory, QStringList() << "meta.xml", QDir::NoFilter, QDirIterator::Subdirectories);
+		while (it.hasNext()) {
+			it.next();
+			if (!it.fileName().contains("meta.xml") || it.filePath().contains("[Update]") || it.filePath().contains("[DLC]"))
+				continue;
+			auto titleinfo = TitleInfo::Create(it.fileInfo(), this->baseDirectory);
+			if (titleinfo->getTitleType() == TitleType::Game) {
+				LibraryEntry* entry = new LibraryEntry(std::move(titleinfo));
+				entry->rpx = entry->titleInfo->getExecutable();
+				entry->directory = QDir(it.filePath() + "/../../").absolutePath();
+				entry->metaxml = it.filePath();
+				library[entry->titleInfo->getID()] = std::move(entry);
+				emit changed(entry);
+				log("Added to library: " + entry->metaxml, true);
+			}
 		}
+		this->save(Configuration::self->getLibPath());
 	}
-	this->save(Configuration::self->getLibPath());
+	else {
+		load(Configuration::self->getLibPath());
+	}
+	emit log("Game library updated: " + this->baseDirectory, true);
 }
 
 void GameLibrary::process(QByteArray qbyteArray) {

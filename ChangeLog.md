@@ -9,12 +9,16 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 - Context menu disabled during operations
-- Removed config options. All settings are persistent
+- Context menu displays directory name
+
+### Removed
+- config options (All settings are persistent)
+- offline toggle option
 
 
 ## [1.0.0-515] - 2019-05-23
 ### Added
-- Compress & Decompress option(No use yet, intended for future save file feature)
+- Compress & Decompress option (No use yet, intended for future save file feature)
 
 ### Changed
 - Cover art is an optional one-time download

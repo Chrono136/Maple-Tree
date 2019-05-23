@@ -40,10 +40,7 @@ public:
     QAction *actionBackup;
     QAction *actionImport;
     QAction *actionIntegrateCemu;
-    QAction *actionConfigTemporary;
-    QAction *actionConfigPersistent;
     QAction *actionRefreshLibrary;
-    QAction *actionOffline_Mode;
     QAction *actionClear_Settings;
     QAction *actionCovertArt;
     QAction *actionCompress;
@@ -108,18 +105,8 @@ public:
         actionIntegrateCemu->setObjectName(QString::fromUtf8("actionIntegrateCemu"));
         actionIntegrateCemu->setCheckable(true);
         actionIntegrateCemu->setEnabled(true);
-        actionConfigTemporary = new QAction(MainWindow);
-        actionConfigTemporary->setObjectName(QString::fromUtf8("actionConfigTemporary"));
-        actionConfigTemporary->setCheckable(true);
-        actionConfigPersistent = new QAction(MainWindow);
-        actionConfigPersistent->setObjectName(QString::fromUtf8("actionConfigPersistent"));
-        actionConfigPersistent->setCheckable(true);
-        actionConfigPersistent->setChecked(false);
         actionRefreshLibrary = new QAction(MainWindow);
         actionRefreshLibrary->setObjectName(QString::fromUtf8("actionRefreshLibrary"));
-        actionOffline_Mode = new QAction(MainWindow);
-        actionOffline_Mode->setObjectName(QString::fromUtf8("actionOffline_Mode"));
-        actionOffline_Mode->setCheckable(true);
         actionClear_Settings = new QAction(MainWindow);
         actionClear_Settings->setObjectName(QString::fromUtf8("actionClear_Settings"));
         actionCovertArt = new QAction(MainWindow);
@@ -141,6 +128,7 @@ public:
         listWidget->setObjectName(QString::fromUtf8("listWidget"));
         listWidget->setGeometry(QRect(10, 10, 571, 371));
         listWidget->setContextMenuPolicy(Qt::CustomContextMenu);
+        listWidget->setSortingEnabled(true);
         tabWidget->addTab(tab, QString());
         tab_3 = new QWidget();
         tab_3->setObjectName(QString::fromUtf8("tab_3"));
@@ -151,6 +139,7 @@ public:
         titlelistWidget->setObjectName(QString::fromUtf8("titlelistWidget"));
         titlelistWidget->setGeometry(QRect(10, 40, 571, 341));
         titlelistWidget->setContextMenuPolicy(Qt::CustomContextMenu);
+        titlelistWidget->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
         regionBox = new QComboBox(tab_3);
         regionBox->addItem(QString());
         regionBox->addItem(QString());
@@ -240,7 +229,6 @@ public:
         menuGame_Library->addAction(actionChange_Library);
         menuGame_Library->addAction(actionRefreshLibrary);
         menuGame_Library->addSeparator();
-        menuGame_Library->addAction(actionOffline_Mode);
         menuContent->addAction(actionDecrypt_Content);
         menuContent->addAction(menuDownload->menuAction());
         menuContent->addSeparator();
@@ -291,10 +279,7 @@ public:
         actionBackup->setText(QApplication::translate("MainWindow", "Backup", nullptr));
         actionImport->setText(QApplication::translate("MainWindow", "Import", nullptr));
         actionIntegrateCemu->setText(QApplication::translate("MainWindow", "Integrate", nullptr));
-        actionConfigTemporary->setText(QApplication::translate("MainWindow", "Temporary", nullptr));
-        actionConfigPersistent->setText(QApplication::translate("MainWindow", "Persistent", nullptr));
         actionRefreshLibrary->setText(QApplication::translate("MainWindow", "Refresh", nullptr));
-        actionOffline_Mode->setText(QApplication::translate("MainWindow", "Offline Mode", nullptr));
         actionClear_Settings->setText(QApplication::translate("MainWindow", "Clear Settings", nullptr));
         actionCovertArt->setText(QApplication::translate("MainWindow", "Cover Art", nullptr));
         actionCompress->setText(QApplication::translate("MainWindow", "Compress", nullptr));

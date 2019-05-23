@@ -77,10 +77,6 @@ void TitleInfo::init() {
 
 	if (GameLibrary::self->database.contains(id.toLower())) {
 		info = GameLibrary::self->database[id.toLower()]->info;
-		QString coverPath = getCoverArtPath();
-		if (!QFile(coverPath).exists()) {
-			//DownloadManager::getSelf()->downloadSingle(getCoverArtUrl(), coverPath);
-		}
 		return;
 	}
 

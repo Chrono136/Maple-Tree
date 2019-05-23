@@ -202,6 +202,7 @@
     <ClCompile Include="libraryentry.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="mapleseed.cpp" />
+    <ClCompile Include="QtCompressor.cpp" />
     <ClCompile Include="ticket.cpp" />
     <ClCompile Include="titleinfo.cpp" />
   </ItemGroup>
@@ -223,6 +224,10 @@
     <QtMoc Include="titleinfo.h">
       <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.\GeneratedFiles\$(ConfigurationName);.\GeneratedFiles;.;.\..\Libraries\Qt\5.12.2-dynamic-msvc2017-x86_64\include;.\..\Libraries\Qt\5.12.2-dynamic-msvc2017-x86_64\include\QtWidgets;.\..\Libraries\Qt\5.12.2-dynamic-msvc2017-x86_64\include\QtGui;.\..\Libraries\Qt\5.12.2-dynamic-msvc2017-x86_64\include\QtXml;.\..\Libraries\Qt\5.12.2-dynamic-msvc2017-x86_64\include\QtNetwork;.\..\Libraries\Qt\5.12.2-dynamic-msvc2017-x86_64\include\QtConcurrent;.\..\Libraries\Qt\5.12.2-dynamic-msvc2017-x86_64\include\QtCore;.\debug;.\..\Libraries\Qt\5.12.2-dynamic-msvc2017-x86_64\mkspecs\win32-msvc;$(QTDIR)\include\QtConcurrent;$(QTDIR)\include\QtCore;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtANGLE;$(QTDIR)\include\QtNetwork;$(QTDIR)\include\QtWidgets;$(QTDIR)\include\QtXml</IncludePath>
       <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.\GeneratedFiles\$(ConfigurationName);.\GeneratedFiles;.;.\..\Libraries\Qt\5.12.2-dynamic-msvc2017-x86_64\include;.\..\Libraries\Qt\5.12.2-dynamic-msvc2017-x86_64\include\QtWidgets;.\..\Libraries\Qt\5.12.2-dynamic-msvc2017-x86_64\include\QtGui;.\..\Libraries\Qt\5.12.2-dynamic-msvc2017-x86_64\include\QtXml;.\..\Libraries\Qt\5.12.2-dynamic-msvc2017-x86_64\include\QtNetwork;.\..\Libraries\Qt\5.12.2-dynamic-msvc2017-x86_64\include\QtConcurrent;.\..\Libraries\Qt\5.12.2-dynamic-msvc2017-x86_64\include\QtCore;.\release;.\..\Libraries\Qt\5.12.2-dynamic-msvc2017-x86_64\mkspecs\win32-msvc;$(QTDIR)\include\QtConcurrent;$(QTDIR)\include\QtCore;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtANGLE;$(QTDIR)\include\QtNetwork;$(QTDIR)\include\QtWidgets;$(QTDIR)\include\QtXml</IncludePath>
+    </QtMoc>
+    <QtMoc Include="QtCompressor.h">
+      <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(Configuration);.\GeneratedFiles\$(ConfigurationName);.\GeneratedFiles;.;$(QTDIR)\mkspecs\win32-msvc;$(QTDIR)\include;$(QTDIR)\include\QtCore;$(QTDIR)\include\QtWidgets;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtConcurrent;$(QTDIR)\include\QtNetwork;$(QTDIR)\include\QtXml;C:\openssl11\include64</IncludePath>
+      <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.\GeneratedFiles\$(ConfigurationName);.\GeneratedFiles;.;$(QTDIR)\include;$(QTDIR)\mkspecs\win32-msvc;$(QTDIR)\include\QtCore;$(QTDIR)\include\QtWidgets;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtANGLE;$(QTDIR)\include\QtConcurrent;$(QTDIR)\include\QtNetwork;$(QTDIR)\include\QtXml;$(Configuration);C:\openssl11\include64</IncludePath>
     </QtMoc>
     <ClInclude Include="titleinfoitem.h" />
     <ClInclude Include="versioninfo.h" />

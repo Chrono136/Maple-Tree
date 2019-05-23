@@ -13,8 +13,8 @@ MapleSeed::MapleSeed(QWidget* parent) : QMainWindow(parent), ui(new Ui::MainWind
 MapleSeed::~MapleSeed() {
   if (downloadManager)
     delete downloadManager;
-  if (decrypt)
-    delete decrypt;
+  if (config->decrypt)
+    delete config->decrypt;
   if (gameLibrary)
     delete gameLibrary;
   if (config)
@@ -22,13 +22,9 @@ MapleSeed::~MapleSeed() {
   delete ui;
 }
 
-bool MapleSeed::actionOffline_ModeIsChecked() {
-  return ui->actionOffline_Mode->isChecked();
-}
-
 void MapleSeed::initialize() {
   this->messageLog("Setting up enviornment variables");
-  config->decrypt = this->decrypt;
+  QtCompressor::self = new QtCompressor;
 
   defineActions();
   if (!config->load()) {
@@ -41,52 +37,58 @@ void MapleSeed::initialize() {
 }
 
 void MapleSeed::defineActions() {
-  connect(decrypt, &Decrypt::log, this, &MapleSeed::messageLog);
-  connect(decrypt, &Decrypt::decryptStarted, this, &MapleSeed::disableMenubar);
-  connect(decrypt, &Decrypt::decryptFinished, this, &MapleSeed::enableMenubar);
-  connect(decrypt, &Decrypt::progressReport, this, &MapleSeed::updateBaiscProgress);
-  connect(decrypt, &Decrypt::progressReport2, this, &MapleSeed::updateProgress);
+	connect(QtCompressor::self, &QtCompressor::updateProgress, this, &MapleSeed::updateBaiscProgress);
 
-  connect(gameLibrary, &GameLibrary::progress, this, &MapleSeed::updateBaiscProgress);
-  connect(gameLibrary, &GameLibrary::changed, this, &MapleSeed::updateListview);
-  connect(gameLibrary, &GameLibrary::addTitle, this, &MapleSeed::updateTitleList);
-  connect(gameLibrary, &GameLibrary::log, this, &MapleSeed::messageLog);
-  connect(ui->listWidget, &QListWidget::customContextMenuRequested, this, &MapleSeed::showContextMenuLibrary);
-  connect(ui->listWidget, &QListWidget::itemSelectionChanged, this, &MapleSeed::itemSelectionChanged);
-  connect(ui->listWidget, &QListWidget::itemDoubleClicked, this, &MapleSeed::itemDoubleClicked);
-  connect(ui->titlelistWidget, &QListWidget::itemSelectionChanged, this, &MapleSeed::TitleSelectionChanged);
-  connect(ui->titlelistWidget, &QListWidget::customContextMenuRequested, this, &MapleSeed::showContextMenuTitles);
-  connect(ui->searchInput, &QLineEdit::textEdited, this, &MapleSeed::filter);
-  connect(ui->regionBox, &QComboBox::currentTextChanged, this, &MapleSeed::filter);
+	connect(config->decrypt, &Decrypt::log, this, &MapleSeed::messageLog);
+	connect(config->decrypt, &Decrypt::decryptStarted, this, &MapleSeed::disableMenubar);
+	connect(config->decrypt, &Decrypt::decryptFinished, this, &MapleSeed::enableMenubar);
+	connect(config->decrypt, &Decrypt::progressReport, this, &MapleSeed::updateBaiscProgress);
+	connect(config->decrypt, &Decrypt::progressReport2, this, &MapleSeed::updateProgress);
 
-  connect(downloadManager, &DownloadManager::log, this, &MapleSeed::messageLog);
-  connect(downloadManager, &DownloadManager::downloadStarted, this, &MapleSeed::downloadStarted);
-  connect(downloadManager, &DownloadManager::downloadStarted, this, &MapleSeed::disableMenubar);
-  connect(downloadManager, &DownloadManager::downloadSuccessful, this, &MapleSeed::downloadSuccessful);
-  connect(downloadManager, &DownloadManager::downloadSuccessful, this, &MapleSeed::enableMenubar);
-  connect(downloadManager, &DownloadManager::downloadError, this, &MapleSeed::downloadError);
-  connect(downloadManager, &DownloadManager::downloadError, this, &MapleSeed::enableMenubar);
-  connect(downloadManager, &DownloadManager::downloadProgress, this, &MapleSeed::updateDownloadProgress);
+	connect(gameLibrary, &GameLibrary::progress, this, &MapleSeed::updateBaiscProgress);
+	connect(gameLibrary, &GameLibrary::changed, this, &MapleSeed::updateListview);
+	connect(gameLibrary, &GameLibrary::addTitle, this, &MapleSeed::updateTitleList);
+	connect(gameLibrary, &GameLibrary::log, this, &MapleSeed::messageLog);
+	connect(ui->listWidget, &QListWidget::customContextMenuRequested, this, &MapleSeed::showContextMenuLibrary);
+	connect(ui->listWidget, &QListWidget::itemSelectionChanged, this, &MapleSeed::itemSelectionChanged);
+	connect(ui->listWidget, &QListWidget::itemDoubleClicked, this, &MapleSeed::itemDoubleClicked);
+	connect(ui->titlelistWidget, &QListWidget::itemSelectionChanged, this, &MapleSeed::TitleSelectionChanged);
+	connect(ui->titlelistWidget, &QListWidget::customContextMenuRequested, this, &MapleSeed::showContextMenuTitles);
+	connect(ui->searchInput, &QLineEdit::textEdited, this, &MapleSeed::filter);
+	connect(ui->regionBox, &QComboBox::currentTextChanged, this, &MapleSeed::filter);
 
-  connect(ui->actionQuit, &QAction::triggered, this, &MapleSeed::menuQuit);
-  connect(ui->actionChange_Library, &QAction::triggered, this, &MapleSeed::actionChange_Library);
-  connect(ui->actionDownload_Title, &QAction::triggered, this, &MapleSeed::actionDownload_Title);
-  connect(ui->actionUpdate, &QAction::triggered, this, &MapleSeed::actionUpdate);
-  connect(ui->actionDLC, &QAction::triggered, this, &MapleSeed::actionDLC);
-  connect(ui->actionDecrypt_Content, &QAction::triggered, this, &MapleSeed::decryptContent);
-  connect(ui->actionConfigTemporary, &QAction::triggered, this, &MapleSeed::actionConfigTemporary);
-  connect(ui->actionConfigPersistent, &QAction::triggered, this, &MapleSeed::actionConfigPersistent);
-  connect(ui->actionVerbose, &QAction::triggered, this, &MapleSeed::actionVerboseChecked);
-  connect(ui->actionIntegrateCemu, &QAction::triggered, this, &MapleSeed::actionIntegrateCemu);
-  connect(ui->actionRefreshLibrary, &QAction::triggered, this, &MapleSeed::actionRefreshLibrary);
-  connect(ui->actionOffline_Mode, &QAction::triggered, this, &MapleSeed::actionOffline_Mode);
-  connect(ui->actionClear_Settings, &QAction::triggered, this, &MapleSeed::actionClear_Settings);
+	connect(downloadManager, &DownloadManager::log, this, &MapleSeed::messageLog);
+	connect(downloadManager, &DownloadManager::downloadStarted, this, &MapleSeed::downloadStarted);
+	connect(downloadManager, &DownloadManager::downloadStarted, this, &MapleSeed::disableMenubar);
+	connect(downloadManager, &DownloadManager::downloadSuccessful, this, &MapleSeed::downloadSuccessful);
+	connect(downloadManager, &DownloadManager::downloadSuccessful, this, &MapleSeed::enableMenubar);
+	connect(downloadManager, &DownloadManager::downloadError, this, &MapleSeed::downloadError);
+	connect(downloadManager, &DownloadManager::downloadError, this, &MapleSeed::enableMenubar);
+	connect(downloadManager, &DownloadManager::downloadProgress, this, &MapleSeed::updateDownloadProgress);
+
+	connect(ui->actionQuit, &QAction::triggered, this, &MapleSeed::menuQuit);
+	connect(ui->actionChange_Library, &QAction::triggered, this, &MapleSeed::actionChange_Library);
+	connect(ui->actionDownload_Title, &QAction::triggered, this, &MapleSeed::actionDownload_Title);
+	connect(ui->actionUpdate, &QAction::triggered, this, &MapleSeed::actionUpdate);
+	connect(ui->actionDLC, &QAction::triggered, this, &MapleSeed::actionDLC);
+	connect(ui->actionDecrypt_Content, &QAction::triggered, this, &MapleSeed::decryptContent);
+	connect(ui->actionConfigTemporary, &QAction::triggered, this, &MapleSeed::actionConfigTemporary);
+	connect(ui->actionConfigPersistent, &QAction::triggered, this, &MapleSeed::actionConfigPersistent);
+	connect(ui->actionVerbose, &QAction::triggered, this, &MapleSeed::actionVerboseChecked);
+	connect(ui->actionIntegrateCemu, &QAction::triggered, this, &MapleSeed::actionIntegrateCemu);
+	connect(ui->actionRefreshLibrary, &QAction::triggered, this, &MapleSeed::actionRefreshLibrary);
+	connect(ui->actionOffline_Mode, &QAction::triggered, this, &MapleSeed::actionOffline_Mode);
+	connect(ui->actionClear_Settings, &QAction::triggered, this, &MapleSeed::actionClear_Settings);
+	connect(ui->actionCovertArt, &QAction::triggered, this, &MapleSeed::actionCovertArt);
+	connect(ui->actionCompress, &QAction::triggered, this, &MapleSeed::actionCompress);
+	connect(ui->actionDecompress, &QAction::triggered, this, &MapleSeed::actionDecompress);
 }
 
 void MapleSeed::defaultConfiguration() {
   ui->actionVerbose->setChecked(config->getKeyBool("VerboseLog"));
   ui->actionIntegrateCemu->setChecked(config->getKeyBool("IntegrateCemu"));
   ui->actionOffline_Mode->setChecked(config->getKeyBool("Offline"));
+  ui->actionCovertArt->setChecked(config->getKeyBool("CoverArt"));
   ui->actionConfigTemporary->setChecked(!config->getKeyString("configtype").compare("Temporary"));
   ui->actionConfigPersistent->setChecked(!config->getKeyString("configtype").compare("Persistent"));
 }
@@ -170,7 +172,7 @@ void MapleSeed::decryptContent() {
 
   auto path = dir->path();
   this->messageLog("Decrypt: " + path);
-  QtConcurrent::run([ = ] { decrypt->start(path); });
+  QtConcurrent::run([ = ] { config->decrypt->start(path); });
   delete dir;
 }
 
@@ -179,10 +181,21 @@ QDir* MapleSeed::selectDirectory() {
   dialog.setFileMode(QFileDialog::DirectoryOnly);
   dialog.setOption(QFileDialog::ShowDirsOnly);
   if (dialog.exec()) {
-    QStringList directories(dialog.selectedFiles());
-    return new QDir(directories[0]);
+    QStringList entries(dialog.selectedFiles());
+    return new QDir(entries.first());
   }
   return nullptr;
+}
+
+QFileInfo MapleSeed::selectFile()
+{
+	QFileDialog dialog;
+	dialog.setNameFilter("*.qta");
+	if (dialog.exec()) {
+		QStringList entries(dialog.selectedFiles());
+		return entries.first();
+	}
+	return nullptr;
 }
 
 void MapleSeed::messageLog(QString msg, bool verbose) {
@@ -318,7 +331,7 @@ void MapleSeed::updateProgress(qint64 min, qint64 max, int curfile, int maxfiles
 void MapleSeed::updateBaiscProgress(qint64 min, qint64 max) {
   this->ui->progressBar->setRange(0, static_cast<int>(max));
   this->ui->progressBar->setValue(static_cast<int>(min));
-  this->ui->progressBar->setFormat("%p% / %v of %m bytes");
+  this->ui->progressBar->setFormat("%p% / %v of %m");
 }
 
 void MapleSeed::itemSelectionChanged() {
@@ -406,9 +419,21 @@ void MapleSeed::actionClear_Settings() {
   }
 }
 
+void MapleSeed::actionCovertArt(bool checked) {
+	config->setKeyBool("CoverArt", checked);
+	QDir directory("covers");
+	QString fileName("covers.qta");
+	if (checked && !directory.exists()) {
+		downloadManager->downloadSingle(QUrl("http://pixxy.in/mapleseed/covers.qta"), fileName);
+		QtCompressor::decompress(fileName, directory.absolutePath());
+	}
+}
+
 void MapleSeed::filter(QString filter_string)
 {
-	hide_all();
+	for (int row(0); row < ui->titlelistWidget->count(); row++)
+		ui->titlelistWidget->item(row)->setHidden(true);
+
 	QString searchString;
 	QList<QListWidgetItem*> matches;
 
@@ -425,8 +450,18 @@ void MapleSeed::filter(QString filter_string)
 		item->setHidden(false);
 }
 
-void MapleSeed::hide_all()
+void MapleSeed::actionCompress()
 {
-	for (int row(0); row < ui->titlelistWidget->count(); row++)
-		ui->titlelistWidget->item(row)->setHidden(true);
+	QDir* directory(this->selectDirectory());
+	QString path(directory->absolutePath());
+	QtConcurrent::run([=] { QtCompressor::compress(path, path + ".qta"); });
+	delete directory;
+}
+
+void MapleSeed::actionDecompress()
+{
+	QFileInfo info(this->selectFile());
+	QString filename = info.absoluteFilePath();
+	QString dir = info.absoluteDir().filePath(info.baseName());
+	QtConcurrent::run([=] { QtCompressor::decompress(filename, dir); });
 }

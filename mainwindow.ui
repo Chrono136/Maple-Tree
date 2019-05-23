@@ -306,6 +306,11 @@ border: 1px solid black;
     </widget>
     <addaction name="actionDecrypt_Content"/>
     <addaction name="menuDownload"/>
+    <addaction name="separator"/>
+    <addaction name="actionCovertArt"/>
+    <addaction name="separator"/>
+    <addaction name="actionCompress"/>
+    <addaction name="actionDecompress"/>
    </widget>
    <widget class="QMenu" name="menuCemu">
     <property name="title">
@@ -355,6 +360,9 @@ border: 1px solid black;
    </property>
   </action>
   <action name="actionDecrypt_Content">
+   <property name="checkable">
+    <bool>false</bool>
+   </property>
    <property name="text">
     <string>Decrypt</string>
    </property>
@@ -448,6 +456,24 @@ border: 1px solid black;
   <action name="actionClear_Settings">
    <property name="text">
     <string>Clear Settings</string>
+   </property>
+  </action>
+  <action name="actionCovertArt">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Cover Art</string>
+   </property>
+  </action>
+  <action name="actionCompress">
+   <property name="text">
+    <string>Compress</string>
+   </property>
+  </action>
+  <action name="actionDecompress">
+   <property name="text">
+    <string>Decompress</string>
    </property>
   </action>
  </widget>

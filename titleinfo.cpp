@@ -223,9 +223,9 @@ QString TitleInfo::getCoverArtPath() const {
 
 	QDir directory("covers");
 	QStringList nameFilter("*" + code + "*.jpg");
-	QStringList txtFilesAndDirectories = directory.entryList(nameFilter);
-	if (txtFilesAndDirectories.count() > 0){
-		cover = directory.filePath(txtFilesAndDirectories.first());
+	QStringList list = directory.entryList(nameFilter);
+	if (list.count() > 0){
+		cover = directory.filePath(list.first());
 	}
 	else {
 		cover = directory.filePath("!.jpg");

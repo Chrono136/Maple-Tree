@@ -47,6 +47,7 @@ Source: "D:\Projects\MapleSeed\release\MapleSeed.exe"; DestDir: "{app}"; Flags: 
 Source: "D:\Projects\MapleSeed\release\vc_redist.x64.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "D:\Projects\MapleSeed\release\plugins\*"; DestDir: "{app}\plugins"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "D:\Projects\MapleSeed\release\translations\*"; DestDir: "{app}\translations"; Flags: ignoreversion
+;Source: "D:\Projects\MapleSeed\deploy\covers\*"; DestDir: "{app}\covers"; Flags: ignoreversion
 Source: "D:\Projects\MapleSeed\release\Qt5Core.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "D:\Projects\MapleSeed\release\Qt5Gui.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "D:\Projects\MapleSeed\release\Qt5Network.dll"; DestDir: "{app}"; Flags: ignoreversion
@@ -71,4 +72,3 @@ StatusMsg: "Installing VC++ 2019 Redistributables..."
 
 [Run]
 Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent
-

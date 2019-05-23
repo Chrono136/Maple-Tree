@@ -45,6 +45,9 @@ public:
     QAction *actionRefreshLibrary;
     QAction *actionOffline_Mode;
     QAction *actionClear_Settings;
+    QAction *actionCovertArt;
+    QAction *actionCompress;
+    QAction *actionDecompress;
     QWidget *centralwidget;
     QTabWidget *tabWidget;
     QWidget *tab;
@@ -85,6 +88,7 @@ public:
         actionDownload_Title->setObjectName(QString::fromUtf8("actionDownload_Title"));
         actionDecrypt_Content = new QAction(MainWindow);
         actionDecrypt_Content->setObjectName(QString::fromUtf8("actionDecrypt_Content"));
+        actionDecrypt_Content->setCheckable(false);
         actionVerbose = new QAction(MainWindow);
         actionVerbose->setObjectName(QString::fromUtf8("actionVerbose"));
         actionVerbose->setCheckable(true);
@@ -119,6 +123,13 @@ public:
         actionOffline_Mode->setCheckable(true);
         actionClear_Settings = new QAction(MainWindow);
         actionClear_Settings->setObjectName(QString::fromUtf8("actionClear_Settings"));
+        actionCovertArt = new QAction(MainWindow);
+        actionCovertArt->setObjectName(QString::fromUtf8("actionCovertArt"));
+        actionCovertArt->setCheckable(true);
+        actionCompress = new QAction(MainWindow);
+        actionCompress->setObjectName(QString::fromUtf8("actionCompress"));
+        actionDecompress = new QAction(MainWindow);
+        actionDecompress->setObjectName(QString::fromUtf8("actionDecompress"));
         centralwidget = new QWidget(MainWindow);
         centralwidget->setObjectName(QString::fromUtf8("centralwidget"));
         tabWidget = new QTabWidget(centralwidget);
@@ -239,6 +250,11 @@ public:
         menuGame_Library->addAction(actionOffline_Mode);
         menuContent->addAction(actionDecrypt_Content);
         menuContent->addAction(menuDownload->menuAction());
+        menuContent->addSeparator();
+        menuContent->addAction(actionCovertArt);
+        menuContent->addSeparator();
+        menuContent->addAction(actionCompress);
+        menuContent->addAction(actionDecompress);
         menuDownload->addAction(actionDownload_Title);
         menuDownload->addAction(actionUpdate);
         menuDownload->addAction(actionDLC);
@@ -286,6 +302,9 @@ public:
         actionRefreshLibrary->setText(QApplication::translate("MainWindow", "Refresh", nullptr));
         actionOffline_Mode->setText(QApplication::translate("MainWindow", "Offline Mode", nullptr));
         actionClear_Settings->setText(QApplication::translate("MainWindow", "Clear Settings", nullptr));
+        actionCovertArt->setText(QApplication::translate("MainWindow", "Cover Art", nullptr));
+        actionCompress->setText(QApplication::translate("MainWindow", "Compress", nullptr));
+        actionDecompress->setText(QApplication::translate("MainWindow", "Decompress", nullptr));
         tabWidget->setTabText(tabWidget->indexOf(tab), QApplication::translate("MainWindow", "Main", nullptr));
         regionBox->setItemText(0, QString());
         regionBox->setItemText(1, QApplication::translate("MainWindow", "USA", nullptr));

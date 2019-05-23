@@ -132,9 +132,14 @@ class Configuration {
 	  return QString().setNum(num, 'f', 2) + " " + unit;
   }
 
-  QString configPath;
-  Decrypt* decrypt;
+  static void log(QString message, bool verbose = false) {
+	  emit self->decrypt->log(message, verbose);
+  }
+
   static Configuration* self;
+
+  QString configPath;
+  Decrypt* decrypt = new Decrypt;
 
  private:
   QJsonObject jsonObject;

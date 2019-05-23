@@ -128,9 +128,6 @@
     </QtMoc>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="ChangeLog.txt" />
-  </ItemGroup>
-  <ItemGroup>
     <Image Include="resources\sprout.ico" />
   </ItemGroup>
 </Project>

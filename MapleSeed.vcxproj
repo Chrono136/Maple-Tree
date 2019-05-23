@@ -260,9 +260,6 @@
     <ResourceCompile Include="resources\mapleseed.rc" />
   </ItemGroup>
   <ItemGroup>
-    <Text Include="ChangeLog.txt" />
-  </ItemGroup>
-  <ItemGroup>
     <Image Include="resources\sprout.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

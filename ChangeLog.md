@@ -3,12 +3,13 @@ All notable changes to this project will be documented in this file.
 
 ## [Alpha Release]
 
-## [1.0.0-512] - 2019-05-23
+## [1.0.0-515] - 2019-05-23
 ### Added
 - Compress & Decompress option(No use yet, intended for future save file feature)
 
 ### Changed
 - Cover art is an optional one-time download
+- Cover art package URL
 
 
 ## [1.0.0-504] - 2019-05-22

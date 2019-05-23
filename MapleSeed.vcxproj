@@ -187,7 +187,7 @@
       <Command>$(SolutionDir)deploy\version.bat</Command>
     </PreBuildEvent>
     <PreBuildEvent>
-      <Message>Updating Git Version Info</Message>
+      <Message>Updating Version Info</Message>
     </PreBuildEvent>
     <PostBuildEvent>
       <Command>$(SolutionDir)deploy\build.cmd</Command>

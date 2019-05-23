@@ -93,6 +93,9 @@
     <ClInclude Include="titleinfoitem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="resources\resource.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="debug\moc_predefs.h.cbt">
@@ -123,5 +126,11 @@
     <QtMoc Include="QtCompressor.h">
       <Filter>Header Files</Filter>
     </QtMoc>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="ChangeLog.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="resources\sprout.ico" />
   </ItemGroup>
 </Project>

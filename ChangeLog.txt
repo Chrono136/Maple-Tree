@@ -1,0 +1,32 @@
+# Changelog
+All notable changes to this project will be documented in this file.
+
+## [Alpha Release]
+
+## [1.0.0-5**] - 2019-05-23
+### Changed
+- 
+
+## [1.0.0-504] - 2019-05-22
+### Added
+- Client side title list and search input
+
+### Changed
+- Cover art are local instead of downloaded on-demand
+
+
+## [1.0.0-497] - 2019-05-21
+### Changed
+- Context menu decrypt option visiblity based on tmd & cetk existence
+- Decrypt skips files that exist and match the supposed file size
+
+### Fixed
+- Unresponsive UI when decrypting large files
+
+
+## [1.0.0-493] - 2019-05-20
+### Added
+- Game, Patch, DLC right click context menu options
+
+### Changed
+- Decrypt FILE using to QFile

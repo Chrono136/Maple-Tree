@@ -1,7 +1,8 @@
 ::SET VCINSTALLDIR=C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\
-SET RELEASE=D:\Projects\MapleSeed\bin\release\
-SET DEPLOY=D:\Projects\MapleSeed\deploy\
-SET BINARIES=%RELEASE%..\..\Binaries\
+SET BASE=D:\Projects\MapleSeed\
+SET RELEASE=%BASE%bin\release\
+SET DEPLOY=%BASE%deploy\
+SET BINARIES=%BASE%..\Binaries\
 
 FOR /F "tokens=*" %%A IN ('"git describe --tags --abbrev=0"') DO (SET fVERSION=%%A)
 FOR /F "tokens=*" %%A IN ('"git rev-list --all --count"') DO (SET ccVERSION=%%A)
@@ -10,7 +11,7 @@ SET FILEOUT=MapleSeed-%fVERSION%.%ccVERSION%
 
 windeployqt --dir %RELEASE% --plugindir %RELEASE%plugins %RELEASE%MapleSeed.exe
 copy C:\OpenSSL-Win64\bin\libcrypto-1_1-x64.dll %RELEASE%libcrypto-1_1-x64.dll
-copy D:\Projects\MapleSeed\bin\deploy\titlekeys.json %RELEASE%titlekeys.json
+copy D:\Projects\MapleSeed\deploy\titlekeys.json %RELEASE%titlekeys.json
 del /S %RELEASE%Makefile
 del /S %RELEASE%*.Debug
 del /S %RELEASE%*.Release

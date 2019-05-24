@@ -47,7 +47,7 @@ Source: "D:\Projects\MapleSeed\bin\release\MapleSeed.exe"; DestDir: "{app}"; Fla
 Source: "D:\Projects\MapleSeed\bin\release\plugins\*"; DestDir: "{app}\plugins"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "D:\Projects\MapleSeed\bin\release\translations\*"; DestDir: "{app}\translations"; Flags: ignoreversion
 Source: "D:\Projects\MapleSeed\bin\release\*.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "D:\Projects\MapleSeed\bin\deploy\titlekeys.json"; DestDir: "{app}"; Flags: ignoreversion
+Source: "D:\Projects\MapleSeed\deploy\titlekeys.json"; DestDir: "{app}"; Flags: ignoreversion
 ;Source: "D:\Projects\MapleSeed\bin\release\vc_redist.x64.exe"; DestDir: "{app}"; Flags: ignoreversion
 ;Source: "D:\Projects\MapleSeed\bin\release\Qt5Gui.dll"; DestDir: "{app}"; Flags: ignoreversion
 ;Source: "D:\Projects\MapleSeed\bin\release\Qt5Network.dll"; DestDir: "{app}"; Flags: ignoreversion

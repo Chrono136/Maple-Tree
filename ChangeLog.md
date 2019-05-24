@@ -22,6 +22,7 @@ All notable changes to this project will be documented in this file.
 ### Fixed
 - Crash when canceling directory select for compression
 - Refresh & Change library returned empty or caused crashes
+- All database entries title type returning as Game
 
 
 ## [1.0.0-515] - 2019-05-23

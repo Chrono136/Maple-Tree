@@ -37,8 +37,10 @@ void GameLibrary::init(const QString& directory) {
     }
     QByteArray byteArray(qfile.readAll());
     qfile.close();
-    QtConcurrent::run([=] { setupDatabase(byteArray); });
-    QtConcurrent::run([=] { setupLibrary(); });
+    QtConcurrent::run([=] {
+        setupDatabase(byteArray);
+        setupLibrary();
+    });
 }
 
 void GameLibrary::setupLibrary(bool force)
@@ -58,28 +60,42 @@ void GameLibrary::setupLibrary(QString directory, bool force) {
         }
     }
     if (force) {
-        QDirIterator it(this->baseDirectory, QStringList() << "meta.xml", QDir::NoFilter, QDirIterator::Subdirectories);
-        while (it.hasNext()) {
-            it.next();
-            if (!it.fileName().contains("meta.xml") || it.filePath().contains("[Update]") || it.filePath().contains("[DLC]"))
-                continue;
-            auto titleinfo = TitleInfo::Create(it.fileInfo(), this->baseDirectory);
-            if (titleinfo->getTitleType() == TitleType::Game) {
-                LibraryEntry* entry = new LibraryEntry(std::move(titleinfo));
-                entry->rpx = entry->titleInfo->getExecutable();
-                entry->directory = QDir(it.filePath() + "/../../").absolutePath();
-                entry->metaxml = it.filePath();
-                library[entry->titleInfo->getID()] = std::move(entry);
-                emit changed(library[entry->titleInfo->getID()]);
-                log("Added to library: " + library[entry->titleInfo->getID()]->metaxml, true);
-            }
-        }
+        QDir dir(this->baseDirectory);
+        QStringList list(dir.entryList());
+        QtConcurrent::mapped(list, &GameLibrary::processLibItem);
         this->save(Configuration::self->getLibPath());
     }
     else {
-        load(Configuration::self->getLibPath());
+        this->load(Configuration::self->getLibPath());
     }
-    emit log("Game library updated: " + this->baseDirectory, true);
+    emit log("Library loaded: " + this->baseDirectory, true);
+}
+
+QString GameLibrary::processLibItem(const QString &d)
+{
+    auto self = GameLibrary::self;
+    QDir baseDir(QDir(self->baseDirectory).filePath(d));
+    QDir dir(baseDir.filePath("meta"));
+    if (baseDir.path().contains("[Update]") || baseDir.path().contains("[DLC]"))
+        return d;
+    QFileInfo metaxml(dir.filePath("meta.xml"));
+    if (metaxml.exists()){
+        auto titleinfo = TitleInfo::Create(metaxml, self->baseDirectory);
+        if (titleinfo->getTitleType() == TitleType::Game) {
+            LibraryEntry* entry = new LibraryEntry(std::move(titleinfo));
+            entry->rpx = entry->titleInfo->getExecutable();
+            entry->directory = baseDir.absolutePath();
+            entry->metaxml = metaxml.filePath();
+            if (entry->titleInfo->getTitleType() == TitleType::Game) {
+                self->library[entry->titleInfo->getID()] = std::move(entry);
+                emit self->changed(self->library[entry->titleInfo->getID()]);
+                self->log("Added to library: " + self->library[entry->titleInfo->getID()]->metaxml, false);
+            }else {
+                self->log("Skipped, wrong type: " + self->library[entry->titleInfo->getID()]->metaxml, false);
+            }
+        }
+    }
+    return d;
 }
 
 void GameLibrary::setupDatabase(QByteArray qbyteArray) {
@@ -105,7 +121,7 @@ void GameLibrary::setupDatabase(QByteArray qbyteArray) {
                     emit addTitle(entry);
                     log("Added game: " + entry->titleInfo->getFormatName(), false);
                 }else {
-                    log("Skipped, not game: " + entry->titleInfo->getFormatName(), false);
+                    log("Skipped, wrong type: " + entry->titleInfo->getFormatName(), false);
                 }
             }
             progress(value++, max);

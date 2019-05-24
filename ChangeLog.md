@@ -3,6 +3,20 @@ All notable changes to this project will be documented in this file.
 
 ## [Alpha Release]
 
+## [1.0.0-5**] - 2019-05-**
+### Added
+- 
+
+### Changed
+- library sub-directories no longer searched for content
+
+### Removed
+- 
+
+### Fixed
+- 
+
+
 ## [1.0.0-529] - 2019-05-24
 ### Added
 - fallback to current directory on error GameLibrary::init(QString path): invalid directory

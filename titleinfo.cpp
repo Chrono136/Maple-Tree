@@ -63,6 +63,7 @@ bool TitleInfo::ValidId(QString id)
 }
 
 void TitleInfo::init() {
+    auto& db(GameLibrary::self->database);
 	if (this->attempt >= 3) {
 		GameLibrary::self->log("TitleInfo::init(): Unable to obtain title info", true);
 		return;
@@ -71,11 +72,11 @@ void TitleInfo::init() {
 		GameLibrary::self->log("TitleInfo::init(): Invalid title id.", true);
 		return;
     }
-    if (!GameLibrary::self->database.contains(id.toLower())) {
+    if (!db.contains(id.toUpper())) {
         GameLibrary::self->log("TitleInfo::init(): id doesn't exist in titlekeys.json", true);
 		return;
     }
-    info = GameLibrary::self->database[id.toLower()]->info;
+    info = db[id.toUpper()]->info;
 }
 
 TitleInfo* TitleInfo::download(QString version)
@@ -230,7 +231,7 @@ TitleType TitleInfo::getTitleType() {
 
 QString TitleInfo::getID() {
 	if (info.contains("id")) {
-		return info["id"].toLower();
+        return info["id"].toUpper();
 	}
 	return nullptr;
 
@@ -238,7 +239,7 @@ QString TitleInfo::getID() {
 
 QString TitleInfo::getKey() {
 	if (info.contains("key")) {
-		return info["key"];
+        return info["key"].toUpper();
 	}
 	return nullptr;
 

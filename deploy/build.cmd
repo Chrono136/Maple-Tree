@@ -1,5 +1,5 @@
 ::SET VCINSTALLDIR=C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\
-SET RELEASE=D:\Projects\MapleSeed\release\
+SET RELEASE=D:\Projects\MapleSeed\bin\release\
 SET DEPLOY=D:\Projects\MapleSeed\deploy\
 SET BINARIES=%RELEASE%..\..\Binaries\
 
@@ -10,6 +10,7 @@ SET FILEOUT=MapleSeed-%fVERSION%.%ccVERSION%
 
 windeployqt --dir %RELEASE% --plugindir %RELEASE%plugins %RELEASE%MapleSeed.exe
 copy C:\OpenSSL-Win64\bin\libcrypto-1_1-x64.dll %RELEASE%libcrypto-1_1-x64.dll
+copy D:\Projects\MapleSeed\bin\deploy\titlekeys.json %RELEASE%titlekeys.json
 del /S %RELEASE%Makefile
 del /S %RELEASE%*.Debug
 del /S %RELEASE%*.Release

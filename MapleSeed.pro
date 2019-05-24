@@ -31,7 +31,7 @@ DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs depr
 CONFIG += c++11
 
 SOURCES += \
-        main.cpp \
+    main.cpp \
     mapleseed.cpp \
     gamelibrary.cpp \
     downloadmanager.cpp \
@@ -39,7 +39,8 @@ SOURCES += \
     ticket.cpp \
     decrypt.cpp \
     configuration.cpp \
-    libraryentry.cpp
+    libraryentry.cpp \
+    QtCompressor.cpp
 
 HEADERS += \
     mapleseed.h \
@@ -51,7 +52,8 @@ HEADERS += \
     decrypt.h \
     configuration.h \
     versioninfo.h \
-    libraryentry.h
+    libraryentry.h \
+    QtCompressor.h
 
 FORMS += \
         mainwindow.ui

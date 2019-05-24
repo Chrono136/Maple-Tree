@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 
 ## [1.0.0-5**] - 2019-05-**
 ### Added
-- 
+- fallback to current directory on error GameLibrary::init(QString path): invalid directory
 
 ### Changed
 - Context menu disabled during operations
@@ -16,10 +16,13 @@ All notable changes to this project will be documented in this file.
 - config options (All settings are persistent)
 - offline toggle option
 - download, update, and dlc menu options (replaced by context menu options)
+- unified and filtered titlekeys
+- reliance on titlekey API (api.tsumes.com)
 
 ### Fixed
 - Crash when canceling directory select for compression
 - Refresh & Change library returned empty or caused crashes
+
 
 ## [1.0.0-515] - 2019-05-23
 ### Added

@@ -67,42 +67,15 @@ void TitleInfo::init() {
 		GameLibrary::self->log("TitleInfo::init(): Unable to obtain title info", true);
 		return;
 	}
-
 	if (id.isEmpty() || id.size() != 16) {
 		GameLibrary::self->log("TitleInfo::init(): Invalid title id.", true);
 		return;
-	}
-
-	setTitleType();
-
-	if (GameLibrary::self->database.contains(id.toLower())) {
-		info = GameLibrary::self->database[id.toLower()]->info;
+    }
+    if (!GameLibrary::self->database.contains(id.toLower())) {
+        GameLibrary::self->log("TitleInfo::init(): id doesn't exist in titlekeys.json", true);
 		return;
-	}
-
-	QString url(Configuration::self->getAPI_Url().url());
-
-	if (titleType == TitleType::Game) {
-		url += ("title/" + id);
-	}
-	else {
-		url += ("titlekey/" + id);
-	}
-
-	QDir jsonDir(Configuration::self->getPersistentDirectory("json"));
-	if (!QDir().mkdir(jsonDir.path())) {
-		QDir().mkdir(QDir(jsonDir.path()).path());
-		QDir().mkdir(jsonDir.path());
-	}
-	QString filepath(jsonDir.filePath(id + ".json"));
-
-	if (QFile::exists(filepath)) {
-		downloadJsonSuccessful(filepath, true);
-		return;
-	}
-
-	DownloadManager::getSelf()->downloadSingle(url, filepath);
-	downloadJsonSuccessful(filepath, true);
+    }
+    info = GameLibrary::self->database[id.toLower()]->info;
 }
 
 TitleInfo* TitleInfo::download(QString version)
@@ -140,17 +113,17 @@ TitleInfo* TitleInfo::download(QString version)
 TitleInfo* TitleInfo::downloadDlc()
 {
 	QString id(getID().replace(7, 1, 'e'));
-	TitleInfo* info(Create(id, getBaseDirectory()));
-	info->download();
-	return info;
+    TitleInfo* titleInfo(Create(id, getBaseDirectory()));
+    titleInfo->download();
+    return titleInfo;
 }
 
 TitleInfo* TitleInfo::downloadPatch(QString version)
 {
 	QString id(getID().replace(7, 1, 'c'));
-	TitleInfo* info(Create(id, getBaseDirectory()));
-	info->download(version);
-	return info;
+    TitleInfo* titleInfo(Create(id, getBaseDirectory()));
+    titleInfo->download(version);
+    return titleInfo;
 }
 
 void TitleInfo::decryptContent(Decrypt * decrypt) {
@@ -175,7 +148,7 @@ void TitleInfo::decryptContent(Decrypt * decrypt) {
 	decrypt->start(this->getDirectory());
 }
 
-QString TitleInfo::getDirectory() const {
+QString TitleInfo::getDirectory() {
 	QDir dir(this->baseDirectory);
 	switch (titleType) {
 	case TitleType::Patch:
@@ -191,29 +164,28 @@ QString TitleInfo::getDirectory() const {
 	case TitleType::Game:
 		break;
 	}
-	return dir.filePath(this->getFormatName());
+    return dir.filePath(this->getFormatName());
 }
 
-QString TitleInfo::getFormatName() const {
-	switch (titleType) {
+QString TitleInfo::getFormatName() {
+    switch (getTitleType()) {
 	case TitleType::Patch:
 		return QString("[") + this->getRegion() + QString("][Update] ") + this->getName();
-
 	case TitleType::Dlc:
 		return QString("[") + this->getRegion() + QString("][DLC] ") + this->getName();
-
+    case TitleType::Demo:
+        return QString("[") + this->getRegion() + QString("][Demo] ") + this->getName();
 	case TitleType::Game:
 		return QString("[") + this->getRegion() + QString("] ") + this->getName();
 	}
-
 	return nullptr;
 }
 
-QString TitleInfo::getBaseDirectory() const {
+QString TitleInfo::getBaseDirectory() {
 	return QDir(baseDirectory).absolutePath() + QString("/");
 }
 
-QString TitleInfo::getCoverArtPath() const {
+QString TitleInfo::getCoverArtPath() {
 	QString code(this->getProductCode());
 	QString cover;
 
@@ -230,17 +202,17 @@ QString TitleInfo::getCoverArtPath() const {
 	return cover;
 }
 
-QString TitleInfo::getCoverArtUrl() const {
+QString TitleInfo::getCoverArtUrl() {
 	QString code(this->getProductCode());
 	return QString("http://pixxy.in/cover/?code=") + code + QString("&region=") +
 		this->getRegion();
 }
 
-QString TitleInfo::getXmlLocation() const {
+QString TitleInfo::getXmlLocation() {
 	return QString(meta_xml.filePath());
 }
 
-QString TitleInfo::getExecutable() const {
+QString TitleInfo::getExecutable() {
 	QString root = QDir(QDir(this->getXmlLocation()).filePath("../../code")).absolutePath();
 	QDirIterator it(root, QStringList() << "*.rpx", QDir::NoFilter);
 	while (it.hasNext()) {
@@ -251,11 +223,12 @@ QString TitleInfo::getExecutable() const {
 	return nullptr;
 }
 
-TitleType TitleInfo::getTitleType() const {
+TitleType TitleInfo::getTitleType() {
+    setTitleType();
 	return titleType;
 }
 
-QString TitleInfo::getID() const {
+QString TitleInfo::getID() {
 	if (info.contains("id")) {
 		return info["id"].toLower();
 	}
@@ -263,7 +236,7 @@ QString TitleInfo::getID() const {
 
 }
 
-QString TitleInfo::getKey() const {
+QString TitleInfo::getKey() {
 	if (info.contains("key")) {
 		return info["key"];
 	}
@@ -271,14 +244,14 @@ QString TitleInfo::getKey() const {
 
 }
 
-QString TitleInfo::getName() const {
+QString TitleInfo::getName() {
 	if (info.contains("name")) {
 		return info["name"].simplified();
 	}
 	return nullptr;
 }
 
-QString TitleInfo::getRegion() const {
+QString TitleInfo::getRegion() {
 	if (info.contains("region")) {
 		return info["region"];
 	}
@@ -286,7 +259,7 @@ QString TitleInfo::getRegion() const {
 
 }
 
-QString TitleInfo::getProductCode() const {
+QString TitleInfo::getProductCode() {
 	if (info.contains("productcode")) {
 		return info["productcode"].right(4);
 	}
@@ -339,45 +312,19 @@ void TitleInfo::parseJson(const QByteArray & byteArry, const QString & filepath)
 }
 
 void TitleInfo::setTitleType() {
-	if (id.size() <= 0)
+    if (getID().size() != 16)
 		return;
-
-	QChar ch = id.data()[7];
+    QChar ch = getID().at(7);
 	if (ch == 'e' || ch == 'E') {
 		titleType = TitleType::Patch;
 	}
 	else if (ch == 'c' || ch == 'C') {
 		titleType = TitleType::Dlc;
 	}
-	else if (ch == '0') {
-		titleType = TitleType::Game;
+    else if (ch == '2') {
+        titleType = TitleType::Demo;
 	}
-}
-
-void TitleInfo::downloadJsonSuccessful(const QString & filepath, bool downloadCover) {
-	QFileInfo fileinfo(filepath);
-
-	if (fileinfo.suffix() != "json")
-		return;
-
-	QFile file(filepath);
-	if (!file.open(QIODevice::ReadOnly)) {
-		GameLibrary::self->log("TitleInfo::downloadJsonSuccessful: " + file.errorString(), true);
-		return;
-	}
-	QByteArray jsonByteArray(file.readAll());
-	this->parseJson(jsonByteArray, filepath);
-	file.close();
-
-	if (this->getKey().isEmpty() || this->getName().isEmpty() || this->getRegion().isEmpty()) {
-		if (!QFile(filepath).remove()) {
-			GameLibrary::self->log("TitleInfo::downloadJsonSuccessful: " + filepath, true);
-		}
-		attempt++;
-		this->init();
-	}
-
-	if (downloadCover && !QFile(getCoverArtPath()).exists()) {
-		DownloadManager::getSelf()->downloadSingle(getCoverArtUrl(), getCoverArtPath());
-	}
+    else if (ch == '0') {
+        titleType = TitleType::Game;
+    }
 }

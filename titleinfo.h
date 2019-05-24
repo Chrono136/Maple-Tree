@@ -9,7 +9,7 @@
 #include <QtXml>
 #include "decrypt.h"
 
-enum TitleType { Game = 0, Patch = 1, Dlc = 2 };
+enum TitleType { Game = 0, Demo = 1, Patch = 2, Dlc = 3 };
 typedef Decrypt::TitleMetaData TitleMetaData;
 
 class TitleInfo : public QObject {
@@ -26,28 +26,27 @@ public:
 	TitleInfo* download(QString version = "");
 	TitleInfo* downloadDlc();
 	TitleInfo* downloadPatch(QString version = "");
-	void decryptContent(Decrypt* decrypt = NULL);
-	QString getDirectory() const;
-	QString getFormatName() const;
-	QString getBaseDirectory() const;
-	QString getCoverArtPath() const;
-	QString getCoverArtUrl() const;
-	QString getXmlLocation() const;
-	QString getExecutable() const;
-	TitleType getTitleType() const;
-	QString getID() const;
-	QString getKey() const;
-	QString getName() const;
-	QString getRegion() const;
-	QString getProductCode() const;
+    void decryptContent(Decrypt* decrypt = nullptr);
+    QString getDirectory();
+    QString getFormatName();
+    QString getBaseDirectory();
+    QString getCoverArtPath();
+    QString getCoverArtUrl();
+    QString getXmlLocation();
+    QString getExecutable();
+    TitleType getTitleType();
+    QString getID();
+    QString getKey();
+    QString getName();
+    QString getRegion();
+    QString getProductCode();
 
 	QMap<QString, QString> info;
 
 private:
 	TitleMetaData* getTMD(const QString& version);
 	void parseJson(const QByteArray& byteArry, const QString& filepath);
-	void setTitleType();
-	void downloadJsonSuccessful(const QString& filepath, bool downloadCover = false);
+    void setTitleType();
 
 	QString id;
 	QString baseDirectory;

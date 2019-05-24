@@ -24,36 +24,21 @@ void GameLibrary::init(const QString& directory) {
         return this->init(this->baseDirectory);
     }
 
-    //load database entries
     database.clear();
-    QString titlesPath(Configuration::self->getPersistentDirectory().filePath("titles.json"));
-    QString titlekeysPath(Configuration::self->getPersistentDirectory().filePath("titlekeys.json"));
-
-    if (!QFile(titlesPath).exists()) {
-        DownloadManager::getSelf()->downloadSingle(QUrl("http://api.pixxy.in/title/all"), titlesPath);
+    QDir dir(QDir(".").absolutePath());
+    QString titlekeysPath(dir.filePath("titlekeys.json"));
+    if (!QFile(jsonFile = titlekeysPath).exists()) {
+        DownloadManager::getSelf()->downloadSingle(QUrl("http://pixxy.in/mapleseed/titlekeys.json"), titlekeysPath);
     }
-    if (!QFile(titlekeysPath).exists()) {
-        DownloadManager::getSelf()->downloadSingle(QUrl("http://api.pixxy.in/titlekey/all"), titlekeysPath);
-    }
-
-    QFile* qfile = new QFile(titlesPath);
-    if (!qfile->open(QIODevice::ReadOnly)) {
-        log("GameLibrary::setupDatabase(): " + qfile->errorString(), true);
+    QFile qfile(titlekeysPath);
+    if (!qfile.open(QIODevice::ReadOnly)) {
+        log("GameLibrary::setupDatabase(): " + qfile.errorString(), true);
         return;
     }
-    process(qfile->readAll());
-    qfile->close();
-
-    qfile = new QFile(titlekeysPath);
-    if (!qfile->open(QIODevice::ReadOnly)) {
-        log("GameLibrary::setupDatabase(): " + qfile->errorString(), true);
-        return;
-    }
-    process(qfile->readAll());
-    qfile->close();
-    delete qfile;
-
-    QtConcurrent::run([=] { this->setupLibrary(); });
+    QByteArray byteArray(qfile.readAll());
+    qfile.close();
+    QtConcurrent::run([=] { setupDatabase(byteArray); });
+    QtConcurrent::run([=] { setupLibrary(); });
 }
 
 void GameLibrary::setupLibrary(bool force)
@@ -97,14 +82,15 @@ void GameLibrary::setupLibrary(QString directory, bool force) {
     emit log("Game library updated: " + this->baseDirectory, true);
 }
 
-void GameLibrary::process(QByteArray qbyteArray) {
+void GameLibrary::setupDatabase(QByteArray qbyteArray) {
     QJsonDocument doc = QJsonDocument::fromJson(qbyteArray);
-    if (doc.isArray()) {
-        QJsonArray array = doc.array();
+    if (doc["titlekeys"].isArray()) {
+        QJsonArray array = doc["titlekeys"].toArray();
         quint32 max = static_cast<quint32>(array.size());
         quint32 value = 1;
 
-        for (const auto& json : array.toVariantList()) {
+        for (const auto& json : array.toVariantList())
+        {
             QMapIterator<QString, QVariant> i(json.toMap());
             TitleInfo* titleinfo = new TitleInfo;
             while (i.hasNext()) {
@@ -115,11 +101,16 @@ void GameLibrary::process(QByteArray qbyteArray) {
             if (!titleinfo->getID().isEmpty() && !database.contains(id)) {
                 database[id] = std::move(titleinfo);
                 LibraryEntry* entry = new LibraryEntry(database[id]);
-                emit addTitle(entry);
-                log("Added to title list: " + entry->titleInfo->getName(), false);
+                if (entry->titleInfo->getTitleType() == TitleType::Game) {
+                    emit addTitle(entry);
+                    log("Added game: " + entry->titleInfo->getFormatName(), false);
+                }else {
+                    log("Skipped, not game: " + entry->titleInfo->getFormatName(), false);
+                }
             }
             progress(value++, max);
         }
+        emit log("Database loaded: " + this->jsonFile, true);
     }
 }
 
@@ -182,39 +173,3 @@ bool GameLibrary::save(QString filepath) {
     return saveFile.write(saveDoc.toJson());
 }
 
-void GameLibrary::dump()
-{
-    QJsonObject json;
-    QJsonArray array;
-    for (const auto& entry : database){
-        auto info = entry->info;
-        if (info["key"].length() != 32 || info["name"].toUpper() == "NONE" || info["id"].at(6) != '0'){
-            continue;
-        }
-        QJsonObject object;
-        object["id"] = info.value("id").toUpper();
-        object["key"] = info.value("key").toUpper();
-        object["name"] = info.value("name");
-        object["region"] = info.value("region").toUpper();
-        QString code(info.value("productcode").toUpper());
-        if (code.isEmpty() || code.toUpper() == "NONE"){
-            QString baseId(info["id"].right(8));
-            baseId.prepend("00050000");
-            if (database.contains(baseId)){
-                if (!database[baseId]->info.value("productcode").isEmpty()){
-                    code = QString(database[baseId]->info.value("productcode"));
-                }
-            }
-        }
-        object["productcode"] = code;
-        array.append(object);
-    }
-    json["titlekeys"] = array;
-    QJsonDocument doc(json);
-    QFile file("titlekeys.json");
-    if (!file.open(QIODevice::WriteOnly)){
-        emit log("Couldn't save titlekeys.json", false);
-        return;
-    }
-    file.write(doc.toJson());
-}

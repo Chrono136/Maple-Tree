@@ -8,7 +8,6 @@
 #include <QFile>
 #include <openssl\aes.h>
 #include <openssl\sha.h>
-#pragma comment(lib, "libcryptoMT.lib")
 
 class Decrypt : public QObject {
 #pragma pack(push, 1)
@@ -56,7 +55,6 @@ private:
 	unsigned char WiiUCommenKey[16] = { 0xD7, 0xB0, 0x04, 0x02, 0x65, 0x9B, 0xA2, 0xAB, 0xD2, 0xCB, 0x0D, 0xB2, 0x7F, 0xA2, 0xB6, 0x56 };
 
 public:
-#pragma region structs
 	enum ContentType {
 		CONTENT_REQUIRED = (1 << 0),            // not sure
 		CONTENT_SHARED = (1 << 15),
@@ -149,8 +147,7 @@ public:
 		u2 u2;
 		unsigned short Flags;
 		unsigned short ContentID;
-	};
-#pragma endregion
+    };
 
 #pragma pack(pop)
 };

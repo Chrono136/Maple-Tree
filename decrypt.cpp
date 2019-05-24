@@ -54,7 +54,7 @@ void Decrypt::FileDump(QString file, void* data, quint32 len) {
 	}
 	
 	if (out.isWritable()) {
-		out.write(QByteArray((const char*)data, len));
+        out.write(QByteArray(reinterpret_cast<const char*>(data), static_cast<qint32>(len)));
 	}
 
 	out.close();
@@ -147,7 +147,7 @@ void Decrypt::ExtractFileHash(QFile * in, qulonglong PartDataOffset, qulonglong 
 			return;
 		}
 
-		Size -= out->write(decdata + soffset, WriteSize);
+        Size -= out->write(decdata + soffset, WriteSize);
 
 		Wrote += WriteSize;
 
@@ -350,7 +350,7 @@ qint32 Decrypt::doDecrypt(QString qtmd, QString qcetk, QString basedir) {
 				CNTOff <<= 5;
 			}
 
-			auto msg(QString().sprintf("Size:%1 Offset:0x%2 CID:%3 U:%4 %5", CNTSize, CNTOff, bs16(fe[i].ContentID), bs16(fe[i].Flags), Path));
+            auto msg(QString().sprintf("Size:%1 Offset:0x%2 CID:%3 U:%4 %5", CNTSize, CNTOff, bs16(fe[i].ContentID), bs16(fe[i].Flags), Path));
 			emit log(msg.arg(CNTSize).arg(CNTOff).arg(bs16(fe[i].ContentID)).arg(bs16(fe[i].Flags)).arg(Path), false);
 
 			quint32 ContFileID = bs32(tmd->Contents[bs16(fe[i].ContentID)].ID);

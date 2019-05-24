@@ -83,8 +83,8 @@ void GameLibrary::setupLibrary(QString directory, bool force) {
 				entry->directory = QDir(it.filePath() + "/../../").absolutePath();
 				entry->metaxml = it.filePath();
 				library[entry->titleInfo->getID()] = std::move(entry);
-				emit changed(entry);
-				log("Added to library: " + entry->metaxml, true);
+				emit changed(library[entry->titleInfo->getID()]);
+				log("Added to library: " + library[entry->titleInfo->getID()]->metaxml, true);
 			}
 		}
 		this->save(Configuration::self->getLibPath());

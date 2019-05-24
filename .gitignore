@@ -21,3 +21,6 @@ bin-static
 /release/MapleSeed.ilk
 /debug
 /release
+/Makefile
+/*.Debug
+/*.Release

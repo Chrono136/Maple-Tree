@@ -44,17 +44,16 @@ Name: "quicklaunchicon"; Description: "{cm:CreateQuickLaunchIcon}"; GroupDescrip
 
 [Files]
 Source: "D:\Projects\MapleSeed\release\MapleSeed.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "D:\Projects\MapleSeed\release\vc_redist.x64.exe"; DestDir: "{app}"; Flags: ignoreversion
+;Source: "D:\Projects\MapleSeed\release\vc_redist.x64.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "D:\Projects\MapleSeed\release\plugins\*"; DestDir: "{app}\plugins"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "D:\Projects\MapleSeed\release\translations\*"; DestDir: "{app}\translations"; Flags: ignoreversion
-;Source: "D:\Projects\MapleSeed\deploy\covers\*"; DestDir: "{app}\covers"; Flags: ignoreversion
-Source: "D:\Projects\MapleSeed\release\Qt5Core.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "D:\Projects\MapleSeed\release\Qt5Gui.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "D:\Projects\MapleSeed\release\Qt5Network.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "D:\Projects\MapleSeed\release\Qt5Svg.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "D:\Projects\MapleSeed\release\Qt5Widgets.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "D:\Projects\MapleSeed\release\Qt5Xml.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\openssl11\bin64\libcryptoMD.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "D:\Projects\MapleSeed\release\*.dll"; DestDir: "{app}"; Flags: ignoreversion
+;Source: "D:\Projects\MapleSeed\release\Qt5Gui.dll"; DestDir: "{app}"; Flags: ignoreversion
+;Source: "D:\Projects\MapleSeed\release\Qt5Network.dll"; DestDir: "{app}"; Flags: ignoreversion
+;Source: "D:\Projects\MapleSeed\release\Qt5Svg.dll"; DestDir: "{app}"; Flags: ignoreversion
+;Source: "D:\Projects\MapleSeed\release\Qt5Widgets.dll"; DestDir: "{app}"; Flags: ignoreversion
+;Source: "D:\Projects\MapleSeed\release\Qt5Xml.dll"; DestDir: "{app}"; Flags: ignoreversion
+;Source: "D:\Projects\MapleSeed\release\libcrypto-1_1-x64.dll"; DestDir: "{app}"; Flags: ignoreversion
 ;Source: "D:\Projects\MapleSeed\release\titlekeys.json"; DestDir: "{app}"; Flags: ignoreversion
 ;Source: "D:\Projects\MapleSeed\release\titles.json"; DestDir: "{app}"; Flags: ignoreversion
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files

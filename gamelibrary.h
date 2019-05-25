@@ -22,6 +22,7 @@ public:
     void setupLibrary(QString directory, bool force);
     static QString processLibItem(const QString &baseDir);
     void setupDatabase(QByteArray qbyteArray);
+    static QVariant processDbItem(const QVariant &item);
     bool load(QString filepath);
     bool save(QString filepath);
     void dump();
@@ -39,7 +40,8 @@ signals:
     void log(QString msg, bool verbose);
     void progress(quint32 min, quint32 max);
 
-public slots:
+private:
+    QMutex mutex;
 };
 
 #endif  // GAMELIBRARY_H

@@ -7,6 +7,10 @@ All notable changes to this project will be documented in this file.
 ### Added
 - 
 
+### Improved
+- Library loading times
+- Database loading times
+
 ### Changed
 - library sub-directories no longer searched for content
 
@@ -14,7 +18,7 @@ All notable changes to this project will be documented in this file.
 - 
 
 ### Fixed
-- 
+- At start up, all library entries return 'TitleInfo::init(): id doesn't exist in titlekeys.json'
 
 
 ## [1.0.0-529] - 2019-05-24

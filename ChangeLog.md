@@ -3,7 +3,7 @@ All notable changes to this project will be documented in this file.
 
 ## [Alpha Release]
 
-## [1.0.0-5**] - 2019-05-**
+## [1.0.0-533] - 2019-05-25
 ### Added
 - 
 

@@ -63,10 +63,10 @@ Name: "{group}\{cm:UninstallProgram,{#MyAppName}}"; Filename: "{uninstallexe}"
 Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon
 Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: quicklaunchicon
 
-[Run]
-Filename: {app}\vc_redist.x64.exe; \
-Parameters: "msiexec /q /i vc_redist.x64.msi /install /passive /norestart"; \
-StatusMsg: "Installing VC++ 2019 Redistributables..."
+;[Run]
+;Filename: {app}\vc_redist.x64.exe; \
+;Parameters: "msiexec /q /i vc_redist.x64.msi /install /passive /norestart"; \
+;StatusMsg: "Installing VC++ 2019 Redistributables..."
 
 [Run]
 Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent

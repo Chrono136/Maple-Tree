@@ -25,7 +25,6 @@ public:
     static QVariant processDbItem(const QVariant &item);
     bool load(QString filepath);
     bool save(QString filepath);
-    void dump();
 
     QString jsonFile;
     QString baseDirectory;

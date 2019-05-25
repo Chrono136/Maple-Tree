@@ -51,7 +51,7 @@ void GameLibrary::setupLibrary(bool force)
 void GameLibrary::setupLibrary(QString directory, bool force) {
     library.clear();
     if (!directory.isEmpty()) {
-        if (QDir(this->baseDirectory).exists()) {
+        if (QDir(directory).exists()) {
             this->baseDirectory = QDir(directory).absolutePath();
         }
         else {
@@ -62,7 +62,7 @@ void GameLibrary::setupLibrary(QString directory, bool force) {
     if (force) {
         QDir dir(this->baseDirectory);
         QStringList list(dir.entryList());
-        QtConcurrent::mapped(list, &GameLibrary::processLibItem);
+        QtConcurrent::blockingMapped(list, &GameLibrary::processLibItem);
         this->save(Configuration::self->getLibPath());
     }
     else {
@@ -102,32 +102,7 @@ void GameLibrary::setupDatabase(QByteArray qbyteArray) {
     QJsonDocument doc = QJsonDocument::fromJson(qbyteArray);
     if (doc["titlekeys"].isArray()) {
         QJsonArray array = doc["titlekeys"].toArray();
-        //quint32 max = static_cast<quint32>(array.size());
-        //quint32 value = 1;
-
-        //for (const auto& json : array){}
-        QtConcurrent::mapped(array.toVariantList(), &GameLibrary::processDbItem);
-        /*for (const auto& json : array.toVariantList())
-        {
-            QMapIterator<QString, QVariant> i(json.toMap());
-            TitleInfo* titleinfo = new TitleInfo;
-            while (i.hasNext()) {
-                i.next();
-                titleinfo->info[i.key().toLower()] = i.value().toString();
-            }
-            QString id(titleinfo->getID());
-            if (!titleinfo->getID().isEmpty() && !database.contains(id)) {
-                database[id] = std::move(titleinfo);
-                LibraryEntry* entry = new LibraryEntry(database[id]);
-                if (entry->titleInfo->getTitleType() == TitleType::Game) {
-                    emit addTitle(entry);
-                    log("Added game: " + entry->titleInfo->getFormatName(), false);
-                }else {
-                    log("Skipped, wrong type: " + entry->titleInfo->getFormatName(), false);
-                }
-            }
-            progress(value++, max);
-        }*/
+        QtConcurrent::blockingMapped(array.toVariantList(), &GameLibrary::processDbItem);
         emit log("Database loaded: " + this->jsonFile, true);
     }
 }
@@ -141,11 +116,10 @@ QVariant GameLibrary::processDbItem(const QVariant &item)
         i.next();
         titleinfo->info[i.key().toLower()] = i.value().toString();
     }
+    self->mutex.lock();
     QString id(titleinfo->getID());
     if (!titleinfo->getID().isEmpty() && !self->database.contains(id)) {
-        self->mutex.lock();
         self->database[id] = std::move(titleinfo);
-        self->mutex.unlock();
         LibraryEntry* entry = new LibraryEntry(self->database[id]);
         if (entry->titleInfo->getTitleType() == TitleType::Game) {
             emit self->addTitle(entry);
@@ -154,6 +128,7 @@ QVariant GameLibrary::processDbItem(const QVariant &item)
             self->log("Skipped, wrong type: " + entry->titleInfo->getFormatName(), false);
         }
     }
+    self->mutex.unlock();
     return item;
 }
 

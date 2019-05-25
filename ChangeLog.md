@@ -19,6 +19,7 @@ All notable changes to this project will be documented in this file.
 
 ### Fixed
 - At start up, all library entries return 'TitleInfo::init(): id doesn't exist in titlekeys.json'
+- race issue causing library entries to load before the database was populated
 
 
 ## [1.0.0-529] - 2019-05-24

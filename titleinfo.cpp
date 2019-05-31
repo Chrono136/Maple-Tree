@@ -52,13 +52,10 @@ QString TitleInfo::getXmlValue(const QFileInfo & metaxml, const QString & field)
 
 bool TitleInfo::ValidId(QString id)
 {
-	if (GameLibrary::self->database.contains(id.toLower())) {
+    auto& db = GameLibrary::self->database;
+    if (db.contains(id.toUpper())) {
 		return true;
-	}
-	if (id.isEmpty() || id.size() != 16) {
-		return true;
-	}
-
+    }
 	return false;
 }
 

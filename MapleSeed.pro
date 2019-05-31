@@ -44,7 +44,8 @@ SOURCES += \
     decrypt.cpp \
     configuration.cpp \
     libraryentry.cpp \
-    QtCompressor.cpp
+    QtCompressor.cpp \
+    titleitem.cpp
 
 HEADERS += \
     mapleseed.h \
@@ -55,12 +56,14 @@ HEADERS += \
     ticket.h \
     decrypt.h \
     configuration.h \
+    titleitem.h \
     versioninfo.h \
     libraryentry.h \
     QtCompressor.h
 
 FORMS += \
-        mainwindow.ui
+        mainwindow.ui \
+        titleitem.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

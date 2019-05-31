@@ -118,60 +118,79 @@ void MapleSeed::messageLog(QString msg, bool verbose) {
 
 void MapleSeed::SelectionChanged(QListWidget* listWidget) {
     auto items = listWidget->selectedItems();
-    if (items.count() <= 0)
+    if (items.isEmpty())
         return;
 
-    TitleInfoItem* tii = reinterpret_cast<TitleInfoItem*>(items[0]);
+    TitleInfoItem* tii = reinterpret_cast<TitleInfoItem*>(items.first());
     ui->label->setPixmap(QPixmap(tii->getItem()->titleInfo->getCoverArtPath()));
 }
 
 void MapleSeed::showContextMenu(QListWidget* list, const QPoint& pos) {
   QPoint globalPos = list->mapToGlobal(pos);
-  if (list->selectedItems().count() == 0) {
+  if (list->selectedItems().isEmpty()) {
     return;
   }
   auto itm = list->selectedItems().first();
   auto tii = reinterpret_cast<TitleInfoItem*>(itm);
-  LibraryEntry* entry = tii->getItem();
-  TitleInfo* item = entry->titleInfo;
-  if (!entry) {
+  TitleInfo* titleInfo = tii->getItem()->titleInfo;
+  if (!tii->getItem()) {
       return;
   }
-  QString name(QFileInfo(entry->directory).baseName());
+  QString name(QFileInfo(tii->getItem()->directory).baseName());
   if (name.isEmpty()) {
-      name = item->getName();
+      name = titleInfo->getName();
   }
 
   QMenu menu;
   menu.addAction(name, this, [] {})->setEnabled(false);
 
   menu.addSeparator();
-  if (!QFileInfo(entry->metaxml).exists()) {
-      menu.addAction("Add Entry", this, [=] { })->setEnabled(false);
+  if (!QFileInfo(tii->getItem()->metaxml).exists()) {
+      TitleItem* ti_ui = new TitleItem(this);
+      menu.addAction("Add Entry", this, [&] {
+          if (ti_ui->add(titleInfo->getID()) == QDialog::Accepted){
+              auto le = new LibraryEntry(std::move(ti_ui->getInfo()));
+              this->updateTitleList(std::move(le));
+          }
+          delete ti_ui;
+      })->setEnabled(false);
       menu.addAction("Delete Entry", this, [=] {
-          gameLibrary->database.remove(entry->titleInfo->getID());
-          if (gameLibrary->saveDatabase("titlekeys.json")){
-              delete ui->titlelistWidget->takeItem(ui->titlelistWidget->row(itm));
+          QMessageBox::StandardButton reply;
+          reply = QMessageBox::question(this, titleInfo->getFormatName(), "Delete Entry?", QMessageBox::Yes|QMessageBox::No);
+          if (reply == QMessageBox::Yes) {
+              gameLibrary->database.remove(titleInfo->getID());
+              if (gameLibrary->saveDatabase()){
+                  delete ui->titlelistWidget->takeItem(ui->titlelistWidget->row(itm));
+              }
           }
       });
-      menu.addAction("Modify Entry", this, [=] { })->setEnabled(false);
+      menu.addAction("Modify Entry", this, [&] {
+          if (ti_ui->modify(tii->getItem()->titleInfo->getID()) == QDialog::Accepted){
+              tii->setText(ti_ui->getInfo()->getFormatName());
+              tii->getItem()->titleInfo->info = ti_ui->getInfo()->info;
+              gameLibrary->database[ti_ui->getInfo()->getID()] = std::move(ti_ui->getInfo());
+              gameLibrary->saveDatabase();
+              list->editItem(tii);
+          }
+          delete ti_ui;
+      });
   }
 
   menu.addSeparator();
-  if (TitleInfo::ValidId(item->getID().replace(7, 1, '0'))) {
-      menu.addAction("Download Game", this, [=] { item->download(); });
+  if (TitleInfo::ValidId(titleInfo->getID().replace(7, 1, '0'))) {
+      menu.addAction("Download Game", this, [=] { titleInfo->download(); });
   }
-  if (TitleInfo::ValidId(item->getID().replace(7, 1, 'c'))) {
-      menu.addAction("Download DLC", this, [=] { item->downloadDlc(); });
+  if (TitleInfo::ValidId(titleInfo->getID().replace(7, 1, 'c'))) {
+      menu.addAction("Download DLC", this, [=] { titleInfo->downloadDlc(); });
   }
-  if (TitleInfo::ValidId(item->getID().replace(7, 1, 'e'))) {
-      menu.addAction("Download Patch", this, [=] { item->downloadPatch(); });
+  if (TitleInfo::ValidId(titleInfo->getID().replace(7, 1, 'e'))) {
+      menu.addAction("Download Patch", this, [=] { titleInfo->downloadPatch(); });
   }
 
   menu.addSeparator();
-  if (QFile(QDir(item->getDirectory()).filePath("tmd")).exists() && QFile(QDir(item->getDirectory()).filePath("cetk")).exists())
-      menu.addAction("Decrypt Content", this, [=] { QtConcurrent::run([=] {item->decryptContent(); }); });
-  menu.addAction("Copy ID to Clipboard", this, [=] { CopyToClipboard(item->getID()); });
+  if (QFile(QDir(titleInfo->getDirectory()).filePath("tmd")).exists() && QFile(QDir(titleInfo->getDirectory()).filePath("cetk")).exists())
+      menu.addAction("Decrypt Content", this, [=] { QtConcurrent::run([=] {titleInfo->decryptContent(); }); });
+  menu.addAction("Copy ID to Clipboard", this, [=] { CopyToClipboard(titleInfo->getID()); });
 
   menu.setEnabled(ui->menubar->isEnabled());
   menu.exec(globalPos);
@@ -271,7 +290,11 @@ void MapleSeed::filter(QString filter_string)
 
 void MapleSeed::on_actionQuit_triggered()
 {
-    QApplication::quit();
+    QMessageBox::StandardButton reply;
+    reply = QMessageBox::question(this, "Exit", "Exit Program?", QMessageBox::Yes|QMessageBox::No);
+    if (reply == QMessageBox::Yes) {
+      QApplication::quit();
+    }
 }
 
 void MapleSeed::on_actionChangeLibrary_triggered()

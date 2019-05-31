@@ -132,7 +132,7 @@ QVariant GameLibrary::processDbItem(const QVariant &item)
     return item;
 }
 
-bool GameLibrary::saveDatabase(QString filepath)
+bool GameLibrary::saveDatabase()
 {
     if (database.size() <= 0)
         return false;
@@ -150,6 +150,7 @@ bool GameLibrary::saveDatabase(QString filepath)
     }
     json["titlekeys"] = array;
 
+    QString filepath("titlekeys.json");
     QFile saveFile(filepath);
     if (!saveFile.open(QIODevice::WriteOnly)) {
         qWarning("Couldn't open save file.");

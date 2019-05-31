@@ -3,6 +3,7 @@
 
 #include <QListWidgetItem>
 #include "titleinfo.h"
+#include "libraryentry.h"
 
 class TitleInfoItem : public QListWidgetItem {
  public:
@@ -11,6 +12,7 @@ class TitleInfoItem : public QListWidgetItem {
     this->item = entry;
   }
   LibraryEntry* getItem() const { return this->item; }
+  void setItem(LibraryEntry* itm) { item = itm; }
 
  private:
 	 LibraryEntry* item;

@@ -8,6 +8,7 @@
 #include <QPixmap>
 #include <QtConcurrent>
 #include <QClipboard>
+#include "titleitem.h"
 #include "QtCompressor.h"
 #include "configuration.h"
 #include "downloadmanager.h"

@@ -23,7 +23,7 @@ public:
     static QString processLibItem(const QString &baseDir);
     void setupDatabase(QByteArray qbyteArray);
     static QVariant processDbItem(const QVariant &item);
-    bool saveDatabase(QString filepath);
+    bool saveDatabase();
     bool load(QString filepath);
     bool save(QString filepath);
 

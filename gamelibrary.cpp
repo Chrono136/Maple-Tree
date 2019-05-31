@@ -132,6 +132,34 @@ QVariant GameLibrary::processDbItem(const QVariant &item)
     return item;
 }
 
+bool GameLibrary::saveDatabase(QString filepath)
+{
+    if (database.size() <= 0)
+        return false;
+
+    QJsonObject json;
+    QJsonArray array;
+    foreach(const TitleInfo * titleInfo, database) {
+        QJsonObject jobject;
+        jobject["id"] = titleInfo->info["id"].toUpper();
+        jobject["name"] = titleInfo->info["name"];
+        jobject["key"] = titleInfo->info["key"].toUpper();
+        jobject["productcode"] = titleInfo->info["productcode"].toUpper();
+        jobject["region"] = titleInfo->info["region"].toUpper();
+        array.append(jobject);
+    }
+    json["titlekeys"] = array;
+
+    QFile saveFile(filepath);
+    if (!saveFile.open(QIODevice::WriteOnly)) {
+        qWarning("Couldn't open save file.");
+        return false;
+    }
+    this->log("Saving database: " + filepath, true);
+    QJsonDocument saveDoc(json);
+    return saveFile.write(saveDoc.toJson());
+}
+
 bool GameLibrary::load(QString filepath) {
     QFile loadFile(filepath);
     if (!loadFile.open(QIODevice::ReadOnly)) {

@@ -6,6 +6,7 @@ All notable changes to this project will be documented in this file.
 ## [1.0.0-5**] - 2019-05-30
 ### Added
 - Download content menu option (downloads content based on the provided ID)
+- Delete entry from database list
 
 ### Fixed
 - Missing context menu options

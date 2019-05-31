@@ -43,8 +43,7 @@ private:
 
 public slots:
     void messageLog(QString msg, bool verbose = false);
-	void showContextMenuLibrary(const QPoint& pos);
-	void showContextMenuTitles(const QPoint& pos);
+    void SelectionChanged(QListWidget* listWidget);
 	void showContextMenu(QListWidget*, const QPoint& pos);
 	void disableMenubar();
 	void enableMenubar();
@@ -55,10 +54,7 @@ public slots:
 	void downloadError(QString errorString);
 	void updateDownloadProgress(qint64 bytesReceived, qint64 bytesTotal, QTime qtime);
 	void updateProgress(qint64 min, qint64 max, int curfile, int maxfile);
-	void updateBaiscProgress(qint64 min, qint64 max);
-	void itemSelectionChanged();
-	void TitleSelectionChanged();
-    void itemDoubleClicked(QListWidgetItem* item);
+    void updateBaiscProgress(qint64 min, qint64 max);
     void filter(QString filter_string);
 
 private slots:
@@ -83,6 +79,20 @@ private slots:
     void on_actionDecompress_triggered();
 
     void on_actionDownload_triggered();
+
+    void on_listWidget_itemDoubleClicked(QListWidgetItem *item);
+
+    void on_listWidget_itemSelectionChanged();
+
+    void on_listWidget_customContextMenuRequested(const QPoint &pos);
+
+    void on_titlelistWidget_itemSelectionChanged();
+
+    void on_titlelistWidget_customContextMenuRequested(const QPoint &pos);
+
+    void on_searchInput_textEdited(const QString &arg1);
+
+    void on_regionBox_currentTextChanged(const QString &arg1);
 };
 
 #endif  // MAINWINDOW_H

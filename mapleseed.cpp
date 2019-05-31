@@ -49,17 +49,10 @@ void MapleSeed::defineActions() {
     connect(config->decrypt, &Decrypt::progressReport, this, &MapleSeed::updateBaiscProgress);
     connect(config->decrypt, &Decrypt::progressReport2, this, &MapleSeed::updateProgress);
 
+    connect(gameLibrary, &GameLibrary::log, this, &MapleSeed::messageLog);
     connect(gameLibrary, &GameLibrary::progress, this, &MapleSeed::updateBaiscProgress);
     connect(gameLibrary, &GameLibrary::changed, this, &MapleSeed::updateListview);
     connect(gameLibrary, &GameLibrary::addTitle, this, &MapleSeed::updateTitleList);
-    connect(gameLibrary, &GameLibrary::log, this, &MapleSeed::messageLog);
-    connect(ui->listWidget, &QListWidget::customContextMenuRequested, this, &MapleSeed::showContextMenuLibrary);
-    connect(ui->listWidget, &QListWidget::itemSelectionChanged, this, &MapleSeed::itemSelectionChanged);
-    connect(ui->listWidget, &QListWidget::itemDoubleClicked, this, &MapleSeed::itemDoubleClicked);
-    connect(ui->titlelistWidget, &QListWidget::itemSelectionChanged, this, &MapleSeed::TitleSelectionChanged);
-    connect(ui->titlelistWidget, &QListWidget::customContextMenuRequested, this, &MapleSeed::showContextMenuTitles);
-    connect(ui->searchInput, &QLineEdit::textEdited, this, &MapleSeed::filter);
-    connect(ui->regionBox, &QComboBox::currentTextChanged, this, &MapleSeed::filter);
 
     connect(downloadManager, &DownloadManager::log, this, &MapleSeed::messageLog);
     connect(downloadManager, &DownloadManager::downloadStarted, this, &MapleSeed::downloadStarted);
@@ -123,14 +116,13 @@ void MapleSeed::messageLog(QString msg, bool verbose) {
   }
 }
 
-void MapleSeed::showContextMenuLibrary(const QPoint& pos)
-{
-    showContextMenu(ui->listWidget, pos);
-}
+void MapleSeed::SelectionChanged(QListWidget* listWidget) {
+    auto items = listWidget->selectedItems();
+    if (items.count() <= 0)
+        return;
 
-void MapleSeed::showContextMenuTitles(const QPoint& pos)
-{
-    showContextMenu(ui->titlelistWidget, pos);
+    TitleInfoItem* tii = reinterpret_cast<TitleInfoItem*>(items[0]);
+    ui->label->setPixmap(QPixmap(tii->getItem()->titleInfo->getCoverArtPath()));
 }
 
 void MapleSeed::showContextMenu(QListWidget* list, const QPoint& pos) {
@@ -152,6 +144,18 @@ void MapleSeed::showContextMenu(QListWidget* list, const QPoint& pos) {
 
   QMenu menu;
   menu.addAction(name, this, [] {})->setEnabled(false);
+
+  menu.addSeparator();
+  if (!QFileInfo(entry->metaxml).exists()) {
+      menu.addAction("Add Entry", this, [=] { })->setEnabled(false);
+      menu.addAction("Delete Entry", this, [=] {
+          gameLibrary->database.remove(entry->titleInfo->getID());
+          if (gameLibrary->saveDatabase("titlekeys.json")){
+              delete ui->titlelistWidget->takeItem(ui->titlelistWidget->row(itm));
+          }
+      });
+      menu.addAction("Modify Entry", this, [=] { })->setEnabled(false);
+  }
 
   menu.addSeparator();
   if (TitleInfo::ValidId(item->getID().replace(7, 1, '0'))) {
@@ -242,38 +246,6 @@ void MapleSeed::updateBaiscProgress(qint64 min, qint64 max) {
   this->ui->progressBar->setRange(0, static_cast<int>(max));
   this->ui->progressBar->setValue(static_cast<int>(min));
   this->ui->progressBar->setFormat("%p% / %v of %m");
-}
-
-void MapleSeed::itemSelectionChanged() {
-  auto items = ui->listWidget->selectedItems();
-  if (items.count() <= 0)
-    return;
-
-  TitleInfoItem* tii = reinterpret_cast<TitleInfoItem*>(items[0]);
-  ui->label->setPixmap(QPixmap(tii->getItem()->titleInfo->getCoverArtPath()));
-}
-
-void MapleSeed::TitleSelectionChanged() {
-    auto items = ui->titlelistWidget->selectedItems();
-    if (items.count() <= 0)
-        return;
-
-    TitleInfoItem* tii = reinterpret_cast<TitleInfoItem*>(items[0]);
-    ui->label->setPixmap(QPixmap(tii->getItem()->titleInfo->getCoverArtPath()));
-}
-
-void MapleSeed::itemDoubleClicked(QListWidgetItem* itm) {
-  if (itm == nullptr || !ui->actionIntegrateCemu->isChecked())
-    return;
-
-  auto titleInfoItem = reinterpret_cast<TitleInfoItem*>(itm);
-  TitleInfo* item = titleInfoItem->getItem()->titleInfo;
-  QString file(config->getKeyString("cemupath"));
-  QString workingdir(QFileInfo(file).dir().path());
-  QString rpx(item->getExecutable());
-  process = new QProcess(this);
-  process->setWorkingDirectory(workingdir);
-  process->start(file + " -g \"" + rpx + "\"", QStringList() << " -g \"" + rpx + "\"");
 }
 
 void MapleSeed::filter(QString filter_string)
@@ -388,10 +360,7 @@ void MapleSeed::on_actionCovertArt_triggered()
     }
 
     if (!directory.exists()) {
-        QtConcurrent::run([=] {
-            QtCompressor::decompress(fileName, directory.absolutePath());
-            itemSelectionChanged();
-            });
+        QtConcurrent::run([=] { QtCompressor::decompress(fileName, directory.absolutePath()); });
     }
 }
 
@@ -431,4 +400,49 @@ void MapleSeed::on_actionDownload_triggered()
     }
     TitleInfo* titleinfo = TitleInfo::Create(value, gameLibrary->baseDirectory);
     titleinfo->download();
+}
+
+void MapleSeed::on_listWidget_itemDoubleClicked(QListWidgetItem *item)
+{
+    if (item == nullptr || !ui->actionIntegrateCemu->isChecked())
+      return;
+
+    auto titleInfoItem = reinterpret_cast<TitleInfoItem*>(item);
+    TitleInfo* titleInfo = titleInfoItem->getItem()->titleInfo;
+    QString file(config->getKeyString("cemupath"));
+    QString workingdir(QFileInfo(file).dir().path());
+    QString rpx(titleInfo->getExecutable());
+    process = new QProcess(this);
+    process->setWorkingDirectory(workingdir);
+    process->start(file + " -g \"" + rpx + "\"", QStringList() << " -g \"" + rpx + "\"");
+}
+
+void MapleSeed::on_listWidget_itemSelectionChanged()
+{
+    return SelectionChanged(ui->listWidget);
+}
+
+void MapleSeed::on_listWidget_customContextMenuRequested(const QPoint &pos)
+{
+    return showContextMenu(ui->listWidget, pos);
+}
+
+void MapleSeed::on_titlelistWidget_itemSelectionChanged()
+{
+    return SelectionChanged(ui->titlelistWidget);
+}
+
+void MapleSeed::on_titlelistWidget_customContextMenuRequested(const QPoint &pos)
+{
+    return showContextMenu(ui->titlelistWidget, pos);
+}
+
+void MapleSeed::on_searchInput_textEdited(const QString &arg1)
+{
+    return filter(arg1);
+}
+
+void MapleSeed::on_regionBox_currentTextChanged(const QString &arg1)
+{
+    return filter(arg1);
 }

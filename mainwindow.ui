@@ -274,7 +274,7 @@ border: 1px solid black;
      <addaction name="actionVerbose"/>
     </widget>
     <addaction name="menuLog"/>
-    <addaction name="actionClear_Settings"/>
+    <addaction name="actionClearSettings"/>
     <addaction name="separator"/>
     <addaction name="actionQuit"/>
    </widget>
@@ -282,7 +282,7 @@ border: 1px solid black;
     <property name="title">
      <string>Library</string>
     </property>
-    <addaction name="actionChange_Library"/>
+    <addaction name="actionChangeLibrary"/>
     <addaction name="actionRefreshLibrary"/>
     <addaction name="separator"/>
    </widget>
@@ -290,7 +290,8 @@ border: 1px solid black;
     <property name="title">
      <string>Content</string>
     </property>
-    <addaction name="actionDecrypt_Content"/>
+    <addaction name="actionDecryptContent"/>
+    <addaction name="actionDownload"/>
     <addaction name="separator"/>
     <addaction name="actionCovertArt"/>
     <addaction name="separator"/>
@@ -329,7 +330,7 @@ border: 1px solid black;
     <string>Ctrl+Q</string>
    </property>
   </action>
-  <action name="actionChange_Library">
+  <action name="actionChangeLibrary">
    <property name="text">
     <string>Change</string>
    </property>
@@ -340,7 +341,7 @@ border: 1px solid black;
     <string>Ctrl+L</string>
    </property>
   </action>
-  <action name="actionDecrypt_Content">
+  <action name="actionDecryptContent">
    <property name="checkable">
     <bool>false</bool>
    </property>
@@ -391,7 +392,7 @@ border: 1px solid black;
     <string>Refresh</string>
    </property>
   </action>
-  <action name="actionClear_Settings">
+  <action name="actionClearSettings">
    <property name="text">
     <string>Clear Settings</string>
    </property>
@@ -412,6 +413,14 @@ border: 1px solid black;
   <action name="actionDecompress">
    <property name="text">
     <string>Decompress</string>
+   </property>
+  </action>
+  <action name="actionDownload">
+   <property name="text">
+    <string>Download</string>
+   </property>
+   <property name="toolTip">
+    <string>Download content using a supplied id</string>
    </property>
   </action>
  </widget>

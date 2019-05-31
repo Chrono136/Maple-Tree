@@ -36,17 +36,13 @@ private:
 
 	void initialize();
 	void defineActions();
-	void defaultConfiguration();
-
-	void menuQuit();
-	void actionChange_Library();
-	void decryptContent();
+    void defaultConfiguration();
 	QDir* selectDirectory();
 	QFileInfo selectFile();
-	void CopyToClipboard(QString text);
+    void CopyToClipboard(QString text);
 
 public slots:
-	void messageLog(QString msg, bool verbose = false);
+    void messageLog(QString msg, bool verbose = false);
 	void showContextMenuLibrary(const QPoint& pos);
 	void showContextMenuTitles(const QPoint& pos);
 	void showContextMenu(QListWidget*, const QPoint& pos);
@@ -62,15 +58,31 @@ public slots:
 	void updateBaiscProgress(qint64 min, qint64 max);
 	void itemSelectionChanged();
 	void TitleSelectionChanged();
-	void itemDoubleClicked(QListWidgetItem* item);
-	void actionVerboseChecked(bool checked);
-	void actionIntegrateCemu(bool checked);
-	void actionRefreshLibrary();
-	void actionClear_Settings();
-	void actionCovertArt();
-	void filter(QString filter_string);
-	void actionCompress();
-	void actionDecompress();
+    void itemDoubleClicked(QListWidgetItem* item);
+    void filter(QString filter_string);
+
+private slots:
+    void on_actionQuit_triggered();
+
+    void on_actionChangeLibrary_triggered();
+
+    void on_actionDecryptContent_triggered();
+
+    void on_actionVerbose_triggered(bool checked);
+
+    void on_actionIntegrateCemu_triggered(bool checked);
+
+    void on_actionRefreshLibrary_triggered();
+
+    void on_actionClearSettings_triggered();
+
+    void on_actionCovertArt_triggered();
+
+    void on_actionCompress_triggered();
+
+    void on_actionDecompress_triggered();
+
+    void on_actionDownload_triggered();
 };
 
 #endif  // MAINWINDOW_H

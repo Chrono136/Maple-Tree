@@ -69,56 +69,11 @@ void MapleSeed::defineActions() {
     connect(downloadManager, &DownloadManager::downloadError, this, &MapleSeed::downloadError);
     connect(downloadManager, &DownloadManager::downloadError, this, &MapleSeed::enableMenubar);
     connect(downloadManager, &DownloadManager::downloadProgress, this, &MapleSeed::updateDownloadProgress);
-
-    connect(ui->actionQuit, &QAction::triggered, this, &MapleSeed::menuQuit);
-    connect(ui->actionChange_Library, &QAction::triggered, this, &MapleSeed::actionChange_Library);
-    connect(ui->actionDecrypt_Content, &QAction::triggered, this, &MapleSeed::decryptContent);
-    connect(ui->actionVerbose, &QAction::triggered, this, &MapleSeed::actionVerboseChecked);
-    connect(ui->actionIntegrateCemu, &QAction::triggered, this, &MapleSeed::actionIntegrateCemu);
-    connect(ui->actionRefreshLibrary, &QAction::triggered, this, &MapleSeed::actionRefreshLibrary);
-    connect(ui->actionClear_Settings, &QAction::triggered, this, &MapleSeed::actionClear_Settings);
-    connect(ui->actionCovertArt, &QAction::triggered, this, &MapleSeed::actionCovertArt);
-    connect(ui->actionCompress, &QAction::triggered, this, &MapleSeed::actionCompress);
-    connect(ui->actionDecompress, &QAction::triggered, this, &MapleSeed::actionDecompress);
 }
 
 void MapleSeed::defaultConfiguration() {
   ui->actionVerbose->setChecked(config->getKeyBool("VerboseLog"));
   ui->actionIntegrateCemu->setChecked(config->getKeyBool("IntegrateCemu"));
-}
-
-void MapleSeed::menuQuit() { QApplication::quit(); }
-
-void MapleSeed::actionChange_Library() {
-  QDir* dir = this->selectDirectory();
-  if (dir == nullptr)
-    return;
-  QString directory(dir->path());
-  delete dir;
-
-  ui->listWidget->clear();
-  config->setBaseDirectory(directory);
-  QtConcurrent::run([=] { gameLibrary->setupLibrary(directory, true); });
-}
-
-void MapleSeed::decryptContent() {
-  QDir* dir = this->selectDirectory();
-  if (dir == nullptr)
-    return;
-
-  if (!QFileInfo(dir->filePath("tmd")).exists()) {
-    QMessageBox::critical(this, "Missing file", +"Missing: " + dir->filePath("/tmd"));
-    return;
-  }
-  if (!QFileInfo(dir->filePath("cetk")).exists()) {
-    QMessageBox::critical(this, "Missing file", +"Missing: " + dir->filePath("/cetk"));
-    return;
-  }
-
-  auto path = dir->path();
-  this->messageLog("Decrypt: " + path);
-  QtConcurrent::run([ = ] { config->decrypt->start(path); });
-  delete dir;
 }
 
 QDir* MapleSeed::selectDirectory() {
@@ -321,60 +276,6 @@ void MapleSeed::itemDoubleClicked(QListWidgetItem* itm) {
   process->start(file + " -g \"" + rpx + "\"", QStringList() << " -g \"" + rpx + "\"");
 }
 
-void MapleSeed::actionVerboseChecked(bool checked) {
-  config->setKeyBool("VerboseLog", checked);
-}
-
-void MapleSeed::actionIntegrateCemu(bool checked) {
-  config->setKeyBool("IntegrateCemu", checked);
-  QString cemulocation(config->getKeyString("cemupath"));
-
-  if (checked && !QFile(cemulocation).exists()) {
-    QFileDialog dialog;
-    dialog.setNameFilter("cemu.exe");
-    dialog.setFileMode(QFileDialog::ExistingFile);
-    if (dialog.exec()) {
-      QStringList files(dialog.selectedFiles());
-      config->setKey("CemuPath", QFileInfo(files[0]).absoluteFilePath());
-    }
-  }
-}
-
-void MapleSeed::actionRefreshLibrary() {
-  QFile(Configuration::self->getLibPath()).remove();
-  ui->listWidget->clear();
-  QtConcurrent::run([=] { gameLibrary->setupLibrary(true); });
-}
-
-void MapleSeed::actionClear_Settings() {
-  auto reply = QMessageBox::information(this, "Warning!!!", "Do you want to delete all settings and temporary files?\nThis application will close.", QMessageBox::Yes | QMessageBox::No);
-  if (reply == QMessageBox::Yes) {
-    QDir dir(config->getPersistentDirectory());
-    delete gameLibrary;
-    gameLibrary = nullptr;
-    delete config;
-    config = nullptr;
-    dir.removeRecursively();
-    QApplication::quit();
-  }
-}
-
-void MapleSeed::actionCovertArt() {
-    QDir directory("covers");
-    QString fileName("covers.qta");
-
-    if (!QFile(fileName).exists()) {
-        downloadManager->downloadSingle(QUrl("http://pixxy.in/mapleseed/covers.qta"), fileName);
-    }
-
-    if (!directory.exists()) {
-        QtConcurrent::run([=] {
-            QtCompressor::decompress(fileName, directory.absolutePath());
-            itemSelectionChanged();
-            });
-    }
-}
-
 void MapleSeed::filter(QString filter_string)
 {
     for (int row(0); row < ui->titlelistWidget->count(); row++)
@@ -396,7 +297,105 @@ void MapleSeed::filter(QString filter_string)
         item->setHidden(false);
 }
 
-void MapleSeed::actionCompress()
+void MapleSeed::on_actionQuit_triggered()
+{
+    QApplication::quit();
+}
+
+void MapleSeed::on_actionChangeLibrary_triggered()
+{
+    QDir* dir = this->selectDirectory();
+    if (dir == nullptr)
+      return;
+    QString directory(dir->path());
+    delete dir;
+
+    ui->listWidget->clear();
+    config->setBaseDirectory(directory);
+    QtConcurrent::run([=] { gameLibrary->setupLibrary(directory, true); });
+}
+
+void MapleSeed::on_actionDecryptContent_triggered()
+{
+    QDir* dir = this->selectDirectory();
+    if (dir == nullptr)
+      return;
+
+    if (!QFileInfo(dir->filePath("tmd")).exists()) {
+      QMessageBox::critical(this, "Missing file", +"Missing: " + dir->filePath("/tmd"));
+      return;
+    }
+    if (!QFileInfo(dir->filePath("cetk")).exists()) {
+      QMessageBox::critical(this, "Missing file", +"Missing: " + dir->filePath("/cetk"));
+      return;
+    }
+
+    QString path = dir->path();
+    delete dir;
+    this->messageLog("Decrypt: " + path);
+    QtConcurrent::run([ = ] { config->decrypt->start(path); });
+}
+
+void MapleSeed::on_actionVerbose_triggered(bool checked)
+{
+    config->setKeyBool("VerboseLog", checked);
+}
+
+void MapleSeed::on_actionIntegrateCemu_triggered(bool checked)
+{
+    config->setKeyBool("IntegrateCemu", checked);
+    QString cemulocation(config->getKeyString("cemupath"));
+
+    if (checked && !QFile(cemulocation).exists()) {
+      QFileDialog dialog;
+      dialog.setNameFilter("cemu.exe");
+      dialog.setFileMode(QFileDialog::ExistingFile);
+      if (dialog.exec()) {
+        QStringList files(dialog.selectedFiles());
+        config->setKey("CemuPath", QFileInfo(files[0]).absoluteFilePath());
+      }
+    }
+}
+
+void MapleSeed::on_actionRefreshLibrary_triggered()
+{
+    QFile(Configuration::self->getLibPath()).remove();
+    ui->listWidget->clear();
+    QtConcurrent::run([=] { gameLibrary->setupLibrary(true); });
+}
+
+void MapleSeed::on_actionClearSettings_triggered()
+{
+    auto reply = QMessageBox::information(this, "Warning!!!", "Do you want to delete all settings and temporary files?\nThis application will close.", QMessageBox::Yes | QMessageBox::No);
+    if (reply == QMessageBox::Yes) {
+      QDir dir(config->getPersistentDirectory());
+      delete gameLibrary;
+      gameLibrary = nullptr;
+      delete config;
+      config = nullptr;
+      dir.removeRecursively();
+      QApplication::quit();
+    }
+}
+
+void MapleSeed::on_actionCovertArt_triggered()
+{
+    QDir directory("covers");
+    QString fileName("covers.qta");
+
+    if (!QFile(fileName).exists()) {
+        downloadManager->downloadSingle(QUrl("http://pixxy.in/mapleseed/covers.qta"), fileName);
+    }
+
+    if (!directory.exists()) {
+        QtConcurrent::run([=] {
+            QtCompressor::decompress(fileName, directory.absolutePath());
+            itemSelectionChanged();
+            });
+    }
+}
+
+void MapleSeed::on_actionCompress_triggered()
 {
     QDir* directory(this->selectDirectory());
     if (directory) {
@@ -406,7 +405,7 @@ void MapleSeed::actionCompress()
     }
 }
 
-void MapleSeed::actionDecompress()
+void MapleSeed::on_actionDecompress_triggered()
 {
     QFileInfo info(this->selectFile());
     if (info.exists()) {
@@ -414,4 +413,22 @@ void MapleSeed::actionDecompress()
         QString dir = info.absoluteDir().filePath(info.baseName());
         QtConcurrent::run([=] { QtCompressor::decompress(filename, dir); });
     }
+}
+
+void MapleSeed::on_actionDownload_triggered()
+{
+    bool ok;
+    QString value = QInputDialog::getText(this, "Download Content", "Insert title id of desired content below.", QLineEdit::Normal, nullptr, &ok);
+    if (!ok){
+        return;
+    }
+    if (value.contains('-')){
+        value.remove('-');
+    }
+    if (value.isEmpty() || value.length() != 16) {
+        QMessageBox::information(this, "Download Title Error", "Invalid title id");
+        return;
+    }
+    TitleInfo* titleinfo = TitleInfo::Create(value, gameLibrary->baseDirectory);
+    titleinfo->download();
 }

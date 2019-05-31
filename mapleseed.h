@@ -8,6 +8,8 @@
 #include <QPixmap>
 #include <QtConcurrent>
 #include <QClipboard>
+#include <QList>
+#include <QStandardItemModel>
 #include "titleitem.h"
 #include "QtCompressor.h"
 #include "configuration.h"
@@ -34,6 +36,7 @@ public:
 private:
 	Ui::MainWindow* ui;
 	QProcess* process;
+    QMutex mutex;
 
 	void initialize();
 	void defineActions();
@@ -57,6 +60,7 @@ public slots:
 	void updateProgress(qint64 min, qint64 max, int curfile, int maxfile);
     void updateBaiscProgress(qint64 min, qint64 max);
     void filter(QString filter_string);
+    static QListWidgetItem* processItemFilter(QListWidgetItem* item);
 
 private slots:
     void on_actionQuit_triggered();
@@ -94,6 +98,8 @@ private slots:
     void on_searchInput_textEdited(const QString &arg1);
 
     void on_regionBox_currentTextChanged(const QString &arg1);
+
+    void on_checkBoxEShopTitles_stateChanged(int arg1);
 };
 
 #endif  // MAINWINDOW_H

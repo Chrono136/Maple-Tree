@@ -37,6 +37,7 @@ void MapleSeed::initialize() {
   defaultConfiguration();
 
   gameLibrary->init(config->getBaseDirectory());
+
   this->messageLog("Environment setup complete");
 }
 
@@ -65,8 +66,9 @@ void MapleSeed::defineActions() {
 }
 
 void MapleSeed::defaultConfiguration() {
-  ui->actionVerbose->setChecked(config->getKeyBool("VerboseLog"));
-  ui->actionIntegrateCemu->setChecked(config->getKeyBool("IntegrateCemu"));
+    ui->actionVerbose->setChecked(config->getKeyBool("VerboseLog"));
+    ui->actionIntegrateCemu->setChecked(config->getKeyBool("IntegrateCemu"));
+    ui->checkBoxEShopTitles->setChecked(config->getKeyBool("eShopTitles"));
 }
 
 QDir* MapleSeed::selectDirectory() {
@@ -205,9 +207,12 @@ void MapleSeed::enableMenubar() {
 }
 
 void MapleSeed::updateListview(LibraryEntry* entry) {
-  TitleInfoItem* tii = new TitleInfoItem(entry);
-  tii->setText(tii->getItem()->titleInfo->getFormatName());
-  this->ui->listWidget->addItem(tii);
+    if (ui->listWidget->count() == 0){
+        on_checkBoxEShopTitles_stateChanged(config->getKeyBool("eShopTitles"));
+    }
+    TitleInfoItem* tii = new TitleInfoItem(entry);
+    tii->setText(tii->getItem()->titleInfo->getFormatName());
+    this->ui->listWidget->addItem(tii);
 }
 
 void MapleSeed::updateTitleList(LibraryEntry* entry) {
@@ -269,23 +274,39 @@ void MapleSeed::updateBaiscProgress(qint64 min, qint64 max) {
 
 void MapleSeed::filter(QString filter_string)
 {
+    messageLog("Filter: (Titles) << " + filter_string);
+    ui->titlelistWidget->setItemSelected(nullptr, true);
     for (int row(0); row < ui->titlelistWidget->count(); row++)
         ui->titlelistWidget->item(row)->setHidden(true);
 
     QString searchString;
-    QList<QListWidgetItem*> matches;
+    auto matches = QList<QListWidgetItem*>();
 
     if (filter_string == ui->regionBox->currentText()) {
-        searchString.append("*" + ui->regionBox->currentText() + "*");
+        searchString.append("*" + ui->regionBox->currentText() + "* *");
+        matches.append(ui->titlelistWidget->findItems(searchString, Qt::MatchFlag::MatchWildcard | Qt::MatchFlag::MatchCaseSensitive));
     }
     else {
-        searchString.append("*" + ui->regionBox->currentText() + "*" + filter_string);
+        searchString.append("*" + ui->regionBox->currentText() + "*" + filter_string + "*");
+        matches.append(ui->titlelistWidget->findItems(searchString, Qt::MatchFlag::MatchWildcard));
     }
-    searchString.append("*");
-    matches.append(ui->titlelistWidget->findItems(searchString, Qt::MatchFlag::MatchWildcard));
 
-    for (QListWidgetItem* item : matches)
+    QtConcurrent::blockingMapped(matches, &MapleSeed::processItemFilter);
+}
+
+QListWidgetItem* MapleSeed::processItemFilter(QListWidgetItem *item)
+{
+    MapleSeed::self->mutex.lock();
+    if (Configuration::self->getKeyBool("eShopTitles")){
         item->setHidden(false);
+    }else{
+        auto tii = reinterpret_cast<TitleInfoItem*>(item);
+        if (tii->getItem()->titleInfo->coverExists()){
+            item->setHidden(false);
+        }
+    }
+    MapleSeed::self->mutex.unlock();
+    return item;
 }
 
 void MapleSeed::on_actionQuit_triggered()
@@ -468,4 +489,10 @@ void MapleSeed::on_searchInput_textEdited(const QString &arg1)
 void MapleSeed::on_regionBox_currentTextChanged(const QString &arg1)
 {
     return filter(arg1);
+}
+
+void MapleSeed::on_checkBoxEShopTitles_stateChanged(int arg1)
+{
+    config->setKeyBool("eShopTitles", arg1);
+    QtConcurrent::run([=] { filter(ui->regionBox->currentText()); });
 }

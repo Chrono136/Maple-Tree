@@ -11,6 +11,9 @@ All notable changes to this project will be documented in this file.
 ### Fixed
 - Missing context menu options
 
+### Changed
+- Title list sorted by name
+
 #
 ## [1.0.0-533] - 2019-05-25
 ### Improved

@@ -10,9 +10,6 @@ TitleItem::TitleItem(QWidget *parent) : QDialog(parent), ui(new Ui::TitleItem)
 TitleItem::~TitleItem()
 {
     delete ui;
-    if (titleInfo){
-        delete titleInfo;
-    }
 }
 
 void TitleItem::init(QString id)

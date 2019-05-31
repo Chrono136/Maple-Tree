@@ -262,7 +262,21 @@ QString TitleInfo::getProductCode() {
 		return info["productcode"].right(4);
 	}
 	return nullptr;
+}
 
+bool TitleInfo::coverExists()
+{
+    if (b_coverExistsIsSet){
+        return b_coverExists;
+    }
+    QString code(this->getProductCode());
+    if (coversDirectory.entryList(QStringList() << "*"+code+"*.jpg").isEmpty()){
+        b_coverExists = false;
+    }else{
+        b_coverExists = true;
+    }
+    b_coverExistsIsSet = true;
+    return b_coverExists;
 }
 
 TitleMetaData* TitleInfo::getTMD(const QString & version) {

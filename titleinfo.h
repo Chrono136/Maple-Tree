@@ -40,6 +40,7 @@ public:
     QString getName();
     QString getRegion();
     QString getProductCode();
+    bool coverExists();
 
 	QMap<QString, QString> info;
 
@@ -53,6 +54,9 @@ private:
 	QFileInfo meta_xml;
 	TitleType titleType;
 	quint8 attempt = 0;
+    QDir coversDirectory = QDir("covers");
+    bool b_coverExists = false;
+    bool b_coverExistsIsSet = false;
 
 signals:
 

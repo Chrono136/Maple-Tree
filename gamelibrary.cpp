@@ -40,6 +40,7 @@ void GameLibrary::init(const QString& directory) {
     QtConcurrent::run([=] {
         setupDatabase(byteArray);
         setupLibrary();
+        emit this->loadComplete();
     });
 }
 

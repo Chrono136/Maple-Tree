@@ -47,6 +47,7 @@ private:
 
 public slots:
     void messageLog(QString msg, bool verbose = false);
+    void gameLibraryLoadComplete();
     void SelectionChanged(QListWidget* listWidget);
 	void showContextMenu(QListWidget*, const QPoint& pos);
 	void disableMenubar();

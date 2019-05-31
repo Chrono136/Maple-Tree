@@ -54,6 +54,7 @@ void MapleSeed::defineActions() {
     connect(gameLibrary, &GameLibrary::progress, this, &MapleSeed::updateBaiscProgress);
     connect(gameLibrary, &GameLibrary::changed, this, &MapleSeed::updateListview);
     connect(gameLibrary, &GameLibrary::addTitle, this, &MapleSeed::updateTitleList);
+    connect(gameLibrary, &GameLibrary::loadComplete, this, &MapleSeed::gameLibraryLoadComplete);
 
     connect(downloadManager, &DownloadManager::log, this, &MapleSeed::messageLog);
     connect(downloadManager, &DownloadManager::downloadStarted, this, &MapleSeed::downloadStarted);
@@ -116,6 +117,11 @@ void MapleSeed::messageLog(QString msg, bool verbose) {
     file.write(log.toLatin1());
     file.close();
   }
+}
+
+void MapleSeed::gameLibraryLoadComplete()
+{
+    on_checkBoxEShopTitles_stateChanged(config->getKeyBool("eShopTitles"));
 }
 
 void MapleSeed::SelectionChanged(QListWidget* listWidget) {
@@ -207,9 +213,6 @@ void MapleSeed::enableMenubar() {
 }
 
 void MapleSeed::updateListview(LibraryEntry* entry) {
-    if (ui->listWidget->count() == 0){
-        on_checkBoxEShopTitles_stateChanged(config->getKeyBool("eShopTitles"));
-    }
     TitleInfoItem* tii = new TitleInfoItem(entry);
     tii->setText(tii->getItem()->titleInfo->getFormatName());
     this->ui->listWidget->addItem(tii);

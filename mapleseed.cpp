@@ -455,13 +455,16 @@ void MapleSeed::on_listWidget_itemDoubleClicked(QListWidgetItem *item)
       return;
 
     auto titleInfoItem = reinterpret_cast<TitleInfoItem*>(item);
-    TitleInfo* titleInfo = titleInfoItem->getItem()->titleInfo;
     QString file(config->getKeyString("cemupath"));
     QString workingdir(QFileInfo(file).dir().path());
-    QString rpx(titleInfo->getExecutable());
-    process = new QProcess(this);
-    process->setWorkingDirectory(workingdir);
-    process->start(file + " -g \"" + rpx + "\"", QStringList() << " -g \"" + rpx + "\"");
+    QFileInfo rpx(titleInfoItem->getItem()->rpx);
+    if (rpx.exists()){
+        process = new QProcess(this);
+        process->setWorkingDirectory(workingdir);
+        process->setNativeArguments("-g \"" + rpx.filePath() + "\"");
+        process->setProgram(file);
+        process->start();
+    }
 }
 
 void MapleSeed::on_listWidget_itemSelectionChanged()

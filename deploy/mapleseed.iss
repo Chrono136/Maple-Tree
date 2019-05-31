@@ -4,7 +4,7 @@
 #define MyAppName "MapleSeed C++"
 #define MyAppVersion "1.0.0"
 #define MyAppPublisher "Maple Studios"
-#define MyAppURL "http://www.tsumes.com/"
+#define MyAppURL "http://tsumes.com/"
 #define MyAppExeName "MapleSeed.exe"
 
 [Setup]
@@ -24,8 +24,8 @@ AllowNoIcons=yes
 ; The [Icons] "quicklaunchicon" entry uses {userappdata} but its [Tasks] entry has a proper IsAdminInstallMode Check.
 UsedUserAreasWarning=no
 ; Uncomment the following line to run in non administrative install mode (install for current user only.)
-;PrivilegesRequired=lowest
-PrivilegesRequiredOverridesAllowed=dialog
+PrivilegesRequired=lowest
+;PrivilegesRequiredOverridesAllowed=dialog
 OutputDir=D:\Downloads
 OutputBaseFilename=mapleseed_setup
 Compression=lzma
@@ -49,12 +49,6 @@ Source: "D:\Projects\MapleSeed\bin\release\translations\*"; DestDir: "{app}\tran
 Source: "D:\Projects\MapleSeed\bin\release\*.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "D:\Projects\MapleSeed\deploy\titlekeys.json"; DestDir: "{app}"; Flags: ignoreversion
 ;Source: "D:\Projects\MapleSeed\bin\release\vc_redist.x64.exe"; DestDir: "{app}"; Flags: ignoreversion
-;Source: "D:\Projects\MapleSeed\bin\release\Qt5Gui.dll"; DestDir: "{app}"; Flags: ignoreversion
-;Source: "D:\Projects\MapleSeed\bin\release\Qt5Network.dll"; DestDir: "{app}"; Flags: ignoreversion
-;Source: "D:\Projects\MapleSeed\bin\release\Qt5Svg.dll"; DestDir: "{app}"; Flags: ignoreversion
-;Source: "D:\Projects\MapleSeed\bin\release\Qt5Widgets.dll"; DestDir: "{app}"; Flags: ignoreversion
-;Source: "D:\Projects\MapleSeed\bin\release\Qt5Xml.dll"; DestDir: "{app}"; Flags: ignoreversion
-;Source: "D:\Projects\MapleSeed\bin\release\libcrypto-1_1-x64.dll"; DestDir: "{app}"; Flags: ignoreversion
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]

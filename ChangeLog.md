@@ -3,10 +3,11 @@ All notable changes to this project will be documented in this file.
 
 ## [Alpha Release]
 
-## [1.0.0-5**] - 2019-05-31
+## [1.0.0-541] - 2019-05-31
 ### Added
 - Download content menu option (downloads content based on the provided ID)
 - Modify and Delete entry from database list
+- Filter out eShop titles
 
 ### Fixed
 - Missing context menu options

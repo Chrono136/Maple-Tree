@@ -3,6 +3,16 @@ All notable changes to this project will be documented in this file.
 
 ## [Alpha Release]
 
+## [1.0.0-5**] - 2019-06-03
+### Added
+- 
+
+### Fixed
+- Context menu dlc & patch id's were switched causing dlc to download in place of patches and vice versa
+- patch/dlc directories being incorrectly created, possibly causing failed decryption
+
+#
+
 ## [1.0.0-542] - 2019-05-31
 ### Added
 - Download content menu option (downloads content based on the provided ID)

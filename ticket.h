@@ -9,7 +9,7 @@ class Ticket : public QObject {
  public:
   explicit Ticket(QObject* parent = nullptr);
 
-  static void Create(TitleInfo* ti);
+  static void Create(const QString id, const QString key, const QString ver, const QString directory);
 
   QByteArray data;
   qulonglong len;

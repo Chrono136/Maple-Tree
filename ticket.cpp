@@ -4,20 +4,18 @@ Ticket::Ticket(QObject* parent) : QObject(parent) {
   len = 0;
 }
 
-void Ticket::Create(TitleInfo* ti) {
-  if (ti && !ti->getID().isEmpty() && !ti->getKey().isEmpty()) {
+void Ticket::Create(const QString id, const QString key, const QString ver, const QString directory) {
+  if (!id.isEmpty() && !key.isEmpty()) {
     auto ticket = new Ticket;
 
-    // ticket->data.insert(0x1E6,
-    // QByteArray::fromHex(ti->getVersions().toLatin1()));
-    ticket->data.insert(0x1BF, QByteArray::fromHex(ti->getKey().toLatin1()));
-    ticket->data.insert(0x2CC, QByteArray::fromHex(ti->getID().toLatin1()));
+    ticket->data.insert(0x1E6, QByteArray::fromHex(ver.toLatin1()));
+    ticket->data.insert(0x1BF, QByteArray::fromHex(key.toLatin1()));
+    ticket->data.insert(0x2CC, QByteArray::fromHex(id.toLatin1()));
     ticket->len = static_cast<qulonglong>(ticket->data.size());
 
-    QString cetkpath(ti->getDirectory() + "/cetk");
-    QFile file(cetkpath);
+    QFile file(directory + "/cetk");
     if (!file.open(QIODevice::WriteOnly)) {
-      QMessageBox::information(nullptr, "Ticket::Save():", file.errorString());
+      QMessageBox::information(nullptr, "Ticket::Create():", file.errorString());
       return;
     }
     file.write(ticket->data, static_cast<qint64>(ticket->len));

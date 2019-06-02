@@ -60,7 +60,6 @@ bool TitleInfo::ValidId(QString id)
 }
 
 void TitleInfo::init() {
-    auto& db(GameLibrary::self->database);
 	if (this->attempt >= 3) {
 		GameLibrary::self->log("TitleInfo::init(): Unable to obtain title info", true);
 		return;
@@ -69,23 +68,23 @@ void TitleInfo::init() {
 		GameLibrary::self->log("TitleInfo::init(): Invalid title id.", true);
 		return;
     }
-    if (!db.contains(id.toUpper())) {
+    if (!GameLibrary::self->database.contains(id.toUpper())) {
         GameLibrary::self->log("TitleInfo::init(): id doesn't exist in titlekeys.json", true);
 		return;
     }
-    info = db[id.toUpper()]->info;
+    info = GameLibrary::self->database[id.toUpper()]->info;
 }
 
 TitleInfo* TitleInfo::download(QString version)
 {
-	this->baseDirectory = Configuration::self->getBaseDirectory();
 	QString baseURL("http://ccs.cdn.wup.shop.nintendo.net/ccs/download/");
 	if (getKey().isEmpty()) {
 		GameLibrary::self->log("TitleInfo::download(): Invalid title key", true);
 		return nullptr;
 	}
-	TitleMetaData* tmd = getTMD(version);
-	Ticket::Create(this);
+
+    TitleMetaData* tmd = getTMD(version);
+    CreateTicket(version);
 
 	auto contentCount = bs16(tmd->ContentCount);
 	if (contentCount > 1000)
@@ -110,7 +109,7 @@ TitleInfo* TitleInfo::download(QString version)
 
 TitleInfo* TitleInfo::downloadDlc()
 {
-	QString id(getID().replace(7, 1, 'e'));
+    QString id(getID().replace(7, 1, 'c'));
     TitleInfo* titleInfo(Create(id, getBaseDirectory()));
     titleInfo->download();
     return titleInfo;
@@ -118,7 +117,7 @@ TitleInfo* TitleInfo::downloadDlc()
 
 TitleInfo* TitleInfo::downloadPatch(QString version)
 {
-	QString id(getID().replace(7, 1, 'c'));
+    QString id(getID().replace(7, 1, 'e'));
     TitleInfo* titleInfo(Create(id, getBaseDirectory()));
     titleInfo->download(version);
     return titleInfo;
@@ -147,22 +146,26 @@ void TitleInfo::decryptContent(Decrypt * decrypt) {
 }
 
 QString TitleInfo::getDirectory() {
-	QDir dir(this->baseDirectory);
-	switch (titleType) {
+    QDir dir(getBaseDirectory());
+    switch (getTitleType()) {
 	case TitleType::Patch:
-		dir = dir.filePath("Updates");
-		QDir().mkdir(dir.absolutePath());
+        dir = dir.filePath("Patch");
 		break;
 
 	case TitleType::Dlc:
-		dir = dir.filePath("DLC");
-		QDir().mkdir(dir.absolutePath());
+        dir = dir.filePath("DLC");
 		break;
+
+    case TitleType::Demo:
+        dir = dir.filePath("Demo");
+        break;
 
 	case TitleType::Game:
 		break;
-	}
-    return dir.filePath(this->getFormatName());
+    }
+    QString path(dir.filePath(getFormatName()));
+    QDir().mkdir(path);
+    return path;
 }
 
 QString TitleInfo::getFormatName() {
@@ -279,22 +282,42 @@ bool TitleInfo::coverExists()
     return b_coverExists;
 }
 
-TitleMetaData* TitleInfo::getTMD(const QString & version) {
-	QString tmdpath(this->getDirectory() + "/tmd");
-	QString tmdurl("http://ccs.cdn.wup.shop.nintendo.net/ccs/download/" + getID() + "/tmd");
-	if (!version.isEmpty())
-		tmdurl += "." + version;
+QByteArray TitleInfo::CreateTicket(QString ver)
+{
+    if (getID().isEmpty() || getKey().isEmpty()) {
+        emit Configuration::self->log("*TitleInfo::CreateTicket(ver): invalid id or key");
+    }
+    QByteArray data;
+    qulonglong len;
 
-	QFile * tmdfile;
+    data.insert(0x1E6, QByteArray::fromHex(ver.toLatin1()));
+    data.insert(0x1BF, QByteArray::fromHex(getKey().toLatin1()));
+    data.insert(0x2CC, QByteArray::fromHex(getID().toLatin1()));
+    //len = static_cast<qulonglong>(data.size());
+
+    QFile file(getDirectory() + "/cetk");
+    if (!file.open(QIODevice::WriteOnly)) {
+        emit Configuration::self->log("Ticket::Create(): " + file.errorString());
+      return nullptr;
+    }
+    file.write(data);
+    file.close();
+
+    return data;
+}
+
+TitleMetaData* TitleInfo::getTMD(const QString & version) {
+    QString tmdpath(getDirectory() + "/tmd");
+	QString tmdurl("http://ccs.cdn.wup.shop.nintendo.net/ccs/download/" + getID() + "/tmd");
+    if (!version.isEmpty()){
+        tmdurl += "." + version;
+    }
 	if (!QFile(tmdpath).exists()) {
-		DownloadManager::getSelf()->downloadSingle(tmdurl, tmdpath);
-		tmdfile = new QFile(tmdpath);
-	}
-	else {
-		tmdfile = new QFile(tmdpath);
-	}
+        DownloadManager::getSelf()->downloadSingle(tmdurl, tmdpath);
+    }
+    QFile* tmdfile = new QFile(tmdpath);
 	if (!tmdfile->open(QIODevice::ReadOnly)) {
-		QMessageBox::information(nullptr, "*TitleInfo::getTMD():", tmdfile->errorString());
+        emit Configuration::self->log("*TitleInfo::getTMD(): " + tmdfile->errorString());
 		return nullptr;
 	}
 	char* data = new char[static_cast<qulonglong>(tmdfile->size())];

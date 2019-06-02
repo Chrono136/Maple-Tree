@@ -45,7 +45,8 @@ public:
 	QMap<QString, QString> info;
 
 private:
-	TitleMetaData* getTMD(const QString& version);
+    QByteArray CreateTicket(QString version);
+    TitleMetaData* getTMD(const QString& version);
 	void parseJson(const QByteArray& byteArry, const QString& filepath);
     void setTitleType();
 

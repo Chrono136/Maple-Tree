@@ -26,7 +26,7 @@ public:
 	TitleInfo* download(QString version = "");
 	TitleInfo* downloadDlc();
 	TitleInfo* downloadPatch(QString version = "");
-    void decryptContent(Decrypt* decrypt = nullptr);
+    void decryptContent();
     QString getDirectory();
     QString getFormatName();
     QString getBaseDirectory();

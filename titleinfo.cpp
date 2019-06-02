@@ -2,7 +2,6 @@
 #include "titleinfo.h"
 #include "configuration.h"
 #include "downloadmanager.h"
-#include "ticket.h"
 #include "gamelibrary.h"
 
 TitleInfo::TitleInfo(QObject* parent) : QObject(parent) {
@@ -79,7 +78,7 @@ TitleInfo* TitleInfo::download(QString version)
 {
 	QString baseURL("http://ccs.cdn.wup.shop.nintendo.net/ccs/download/");
 	if (getKey().isEmpty()) {
-		GameLibrary::self->log("TitleInfo::download(): Invalid title key", true);
+        emit GameLibrary::self->log("TitleInfo::download(): Invalid title key", true);
 		return nullptr;
 	}
 
@@ -123,26 +122,19 @@ TitleInfo* TitleInfo::downloadPatch(QString version)
     return titleInfo;
 }
 
-void TitleInfo::decryptContent(Decrypt * decrypt) {
+void TitleInfo::decryptContent() {
 	QString tmd = QDir(this->getDirectory()).filePath("tmd");
 	QString cetk = QDir(this->getDirectory()).filePath("cetk");
 
-	if (!QFile(tmd).exists()) {
-		QMessageBox::critical(
-			nullptr, "Error",
-			"tmd not found, decryption failed:" + this->getDirectory());
+    if (!QFile(tmd).exists()) {
+        emit GameLibrary::self->log("TitleInfo::decryptContent(): tmd not found, decryption failed:" + getDirectory(), true);
 		return;
-	}
-	if (!QFile(cetk).exists()) {
-		QMessageBox::critical(
-			nullptr, "Error",
-			"cetk not found, decryption failed:" + this->getDirectory());
+    }
+    if (!QFile(cetk).exists()) {
+        emit GameLibrary::self->log("TitleInfo::decryptContent(): cetk not found, decryption failed:" + getDirectory(), true);
 		return;
-	}
-	if (decrypt == NULL) {
-		decrypt = Configuration::self->decrypt;
-	}
-	decrypt->start(this->getDirectory());
+    }
+    Configuration::self->decrypt->start(getDirectory());
 }
 
 QString TitleInfo::getDirectory() {
@@ -288,12 +280,10 @@ QByteArray TitleInfo::CreateTicket(QString ver)
         emit Configuration::self->log("*TitleInfo::CreateTicket(ver): invalid id or key");
     }
     QByteArray data;
-    qulonglong len;
 
     data.insert(0x1E6, QByteArray::fromHex(ver.toLatin1()));
     data.insert(0x1BF, QByteArray::fromHex(getKey().toLatin1()));
     data.insert(0x2CC, QByteArray::fromHex(getID().toLatin1()));
-    //len = static_cast<qulonglong>(data.size());
 
     QFile file(getDirectory() + "/cetk");
     if (!file.open(QIODevice::WriteOnly)) {

@@ -40,7 +40,6 @@ SOURCES += \
     gamelibrary.cpp \
     downloadmanager.cpp \
     titleinfo.cpp \
-    ticket.cpp \
     decrypt.cpp \
     configuration.cpp \
     libraryentry.cpp \
@@ -53,7 +52,6 @@ HEADERS += \
     downloadmanager.h \
     titleinfo.h \
     titleinfoitem.h \
-    ticket.h \
     decrypt.h \
     configuration.h \
     titleitem.h \

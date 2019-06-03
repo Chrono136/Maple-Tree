@@ -12,7 +12,6 @@ All notable changes to this project will be documented in this file.
 - patch/dlc directories being incorrectly created, possibly causing failed decryption
 
 #
-
 ## [1.0.0-542] - 2019-05-31
 ### Added
 - Download content menu option (downloads content based on the provided ID)

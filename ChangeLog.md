@@ -2,6 +2,13 @@
 All notable changes to this project will be documented in this file.
 
 #
+## 1.0.0-5** 
+##### Release: 2019-06-**
+##### Added
+- change log tab
+
+
+#
 ## 1.0.0-549 
 ##### Release: 2019-06-06
 ##### Added

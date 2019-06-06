@@ -14,8 +14,8 @@ QFile* DownloadManager::downloadSingle(const QUrl& url, const QString& filepath,
 		log(msg, true);
 	_startNextDownload();
 	_downloadFinished();
-	output.close();
-	return &output;
+    output.close();
+    return new QFile(filepath);
 }
 
 void DownloadManager::append(const QUrl& url, const QString& filepath) {

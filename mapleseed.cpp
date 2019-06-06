@@ -41,6 +41,14 @@ void MapleSeed::initialize()
 
   gameLibrary->init(config->getBaseDirectory());
 
+  auto file = downloadManager->downloadSingle(QUrl("https://raw.githubusercontent.com/Tsume/Maple-Tree/master/ChangeLog.md"), "ChangeLog.md");
+  if (file->open(QIODevice::ReadOnly))
+  {
+      QByteArray data(file->readAll());
+      QString str(QString::fromLatin1(data));
+      ui->changelog->setText(str);
+  }
+
   this->messageLog("Environment setup complete");
 }
 

@@ -41,6 +41,9 @@
       <height>415</height>
      </rect>
     </property>
+    <property name="contextMenuPolicy">
+     <enum>Qt::NoContextMenu</enum>
+    </property>
     <property name="currentIndex">
      <number>0</number>
     </property>
@@ -178,6 +181,24 @@
       </property>
       <property name="frameShape">
        <enum>QFrame::NoFrame</enum>
+      </property>
+      <property name="readOnly">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="tab_4">
+     <attribute name="title">
+      <string>Change Log</string>
+     </attribute>
+     <widget class="QTextEdit" name="changelog">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>10</y>
+        <width>571</width>
+        <height>371</height>
+       </rect>
       </property>
       <property name="readOnly">
        <bool>true</bool>

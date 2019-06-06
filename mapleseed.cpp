@@ -4,13 +4,15 @@
 
 MapleSeed* MapleSeed::self;
 
-MapleSeed::MapleSeed(QWidget* parent) : QMainWindow(parent), ui(new Ui::MainWindow) {
+MapleSeed::MapleSeed(QWidget* parent) : QMainWindow(parent), ui(new Ui::MainWindow)
+{
   ui->setupUi(self = this);
   this->setWindowTitle("MapleSeed++ " + QString(GEN_VERSION_STRING));
   initialize();
 }
 
-MapleSeed::~MapleSeed() {
+MapleSeed::~MapleSeed()
+{
     if (downloadManager) {
         delete downloadManager;
     }
@@ -26,7 +28,8 @@ MapleSeed::~MapleSeed() {
     delete ui;
 }
 
-void MapleSeed::initialize() {
+void MapleSeed::initialize()
+{
   this->messageLog("Setting up enviornment variables");
   QtCompressor::self = new QtCompressor;
 
@@ -41,7 +44,8 @@ void MapleSeed::initialize() {
   this->messageLog("Environment setup complete");
 }
 
-void MapleSeed::defineActions() {
+void MapleSeed::defineActions()
+{
     connect(QtCompressor::self, &QtCompressor::updateProgress, this, &MapleSeed::updateBaiscProgress);
 
     connect(config->decrypt, &Decrypt::log, this, &MapleSeed::messageLog);
@@ -66,13 +70,15 @@ void MapleSeed::defineActions() {
     connect(downloadManager, &DownloadManager::downloadProgress, this, &MapleSeed::updateDownloadProgress);
 }
 
-void MapleSeed::defaultConfiguration() {
+void MapleSeed::defaultConfiguration()
+{
     ui->actionVerbose->setChecked(config->getKeyBool("VerboseLog"));
     ui->actionIntegrateCemu->setChecked(config->getKeyBool("IntegrateCemu"));
     ui->checkBoxEShopTitles->setChecked(config->getKeyBool("eShopTitles"));
 }
 
-QDir* MapleSeed::selectDirectory() {
+QDir* MapleSeed::selectDirectory()
+{
   QFileDialog dialog;
   dialog.setFileMode(QFileDialog::DirectoryOnly);
   dialog.setOption(QFileDialog::ShowDirsOnly);
@@ -101,7 +107,8 @@ void MapleSeed::CopyToClipboard(QString text)
     this->messageLog(text + " copied to clipboard", true);
 }
 
-void MapleSeed::messageLog(QString msg, bool verbose) {
+void MapleSeed::messageLog(QString msg, bool verbose)
+{
   ui->statusbar->showMessage(msg);
   if (ui->actionVerbose->isChecked() || verbose) {
     ui->textEdit->append(msg);
@@ -124,7 +131,8 @@ void MapleSeed::gameLibraryLoadComplete()
     on_checkBoxEShopTitles_stateChanged(config->getKeyBool("eShopTitles"));
 }
 
-void MapleSeed::SelectionChanged(QListWidget* listWidget) {
+void MapleSeed::SelectionChanged(QListWidget* listWidget)
+{
     auto items = listWidget->selectedItems();
     if (items.isEmpty())
         return;
@@ -133,7 +141,8 @@ void MapleSeed::SelectionChanged(QListWidget* listWidget) {
     ui->label->setPixmap(QPixmap(tii->getItem()->titleInfo->getCoverArtPath()));
 }
 
-void MapleSeed::showContextMenu(QListWidget* list, const QPoint& pos) {
+void MapleSeed::showContextMenu(QListWidget* list, const QPoint& pos)
+{
   QPoint globalPos = list->mapToGlobal(pos);
   if (list->selectedItems().isEmpty()) {
     return;
@@ -204,42 +213,50 @@ void MapleSeed::showContextMenu(QListWidget* list, const QPoint& pos) {
   menu.exec(globalPos);
 }
 
-void MapleSeed::disableMenubar() {
+void MapleSeed::disableMenubar()
+{
     ui->menubar->setEnabled(false);
 }
 
-void MapleSeed::enableMenubar() {
+void MapleSeed::enableMenubar()
+{
     ui->menubar->setEnabled(true);
 }
 
-void MapleSeed::updateListview(LibraryEntry* entry) {
+void MapleSeed::updateListview(LibraryEntry* entry)
+{
     TitleInfoItem* tii = new TitleInfoItem(entry);
     tii->setText(tii->getItem()->titleInfo->getFormatName());
     this->ui->listWidget->addItem(tii);
 }
 
-void MapleSeed::updateTitleList(LibraryEntry* entry) {
+void MapleSeed::updateTitleList(LibraryEntry* entry)
+{
     TitleInfoItem* tii = new TitleInfoItem(entry);
     tii->setText(tii->getItem()->titleInfo->getFormatName());
     this->ui->titlelistWidget->addItem(tii);
 }
 
-void MapleSeed::downloadStarted(QString filename) {
+void MapleSeed::downloadStarted(QString filename)
+{
   this->messageLog("Downloading: " + filename);
 }
 
-void MapleSeed::downloadSuccessful(QString fileName) {
+void MapleSeed::downloadSuccessful(QString fileName)
+{
   this->ui->progressBar->setValue(0);
   this->ui->progressBar->setFormat("%p%");
   this->messageLog("Download successful: " + fileName);
 }
 
-void MapleSeed::downloadError(QString errorString) {
+void MapleSeed::downloadError(QString errorString)
+{
   this->ui->menubar->setEnabled(true);
   this->messageLog(errorString, true);
 }
 
-void MapleSeed::updateDownloadProgress(qint64 bytesReceived, qint64 bytesTotal, QTime qtime) {
+void MapleSeed::updateDownloadProgress(qint64 bytesReceived, qint64 bytesTotal, QTime qtime)
+{
   this->ui->progressBar->setRange(0, static_cast<int>(bytesTotal));
   this->ui->progressBar->setValue(static_cast<int>(bytesReceived));
 
@@ -260,7 +277,8 @@ void MapleSeed::updateDownloadProgress(qint64 bytesReceived, qint64 bytesTotal, 
       QString::fromLatin1("%1 %2").arg(speed, 3, 'f', 1).arg(unit));
 }
 
-void MapleSeed::updateProgress(qint64 min, qint64 max, int curfile, int maxfiles) {
+void MapleSeed::updateProgress(qint64 min, qint64 max, int curfile, int maxfiles)
+{
     float per = (static_cast<float>(min) / static_cast<float>(max)) * 100;
     this->ui->progressBar->setRange(0, static_cast<int>(100));
     this->ui->progressBar->setValue(static_cast<int>(per));
@@ -269,15 +287,16 @@ void MapleSeed::updateProgress(qint64 min, qint64 max, int curfile, int maxfiles
         QString::number(curfile) + " / " + QString::number(maxfiles) + " files");
 }
 
-void MapleSeed::updateBaiscProgress(qint64 min, qint64 max) {
+void MapleSeed::updateBaiscProgress(qint64 min, qint64 max)
+{
   this->ui->progressBar->setRange(0, static_cast<int>(max));
   this->ui->progressBar->setValue(static_cast<int>(min));
   this->ui->progressBar->setFormat("%p% / %v of %m");
 }
 
-void MapleSeed::filter(QString filter_string)
+void MapleSeed::filter(QString region, QString filter_string)
 {
-    messageLog("Filter: (Titles) << " + filter_string);
+    messageLog("Filter << " + filter_string);
     ui->titlelistWidget->setItemSelected(nullptr, true);
     for (int row(0); row < ui->titlelistWidget->count(); row++)
         ui->titlelistWidget->item(row)->setHidden(true);
@@ -285,12 +304,12 @@ void MapleSeed::filter(QString filter_string)
     QString searchString;
     auto matches = QList<QListWidgetItem*>();
 
-    if (filter_string == ui->regionBox->currentText()) {
-        searchString.append("*" + ui->regionBox->currentText() + "* *");
+    if (filter_string.isEmpty()) {
+        searchString.append("*" + region + "* *");
         matches.append(ui->titlelistWidget->findItems(searchString, Qt::MatchFlag::MatchWildcard | Qt::MatchFlag::MatchCaseSensitive));
     }
     else {
-        searchString.append("*" + ui->regionBox->currentText() + "*" + filter_string + "*");
+        searchString.append("*" + region + "*" + filter_string + "*");
         matches.append(ui->titlelistWidget->findItems(searchString, Qt::MatchFlag::MatchWildcard));
     }
 
@@ -489,16 +508,16 @@ void MapleSeed::on_titlelistWidget_customContextMenuRequested(const QPoint &pos)
 
 void MapleSeed::on_searchInput_textEdited(const QString &arg1)
 {
-    return filter(arg1);
+    return filter(ui->regionBox->currentText(), arg1);
 }
 
 void MapleSeed::on_regionBox_currentTextChanged(const QString &arg1)
 {
-    return filter(arg1);
+    return filter(arg1, ui->searchInput->text());
 }
 
 void MapleSeed::on_checkBoxEShopTitles_stateChanged(int arg1)
 {
     config->setKeyBool("eShopTitles", arg1);
-    QtConcurrent::run([=] { filter(ui->regionBox->currentText()); });
+    filter(ui->regionBox->currentText(), ui->searchInput->text());
 }

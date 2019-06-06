@@ -60,7 +60,7 @@ public slots:
 	void updateDownloadProgress(qint64 bytesReceived, qint64 bytesTotal, QTime qtime);
 	void updateProgress(qint64 min, qint64 max, int curfile, int maxfile);
     void updateBaiscProgress(qint64 min, qint64 max);
-    void filter(QString filter_string);
+    void filter(QString region, QString filter_string);
     static QListWidgetItem* processItemFilter(QListWidgetItem* item);
 
 private slots:

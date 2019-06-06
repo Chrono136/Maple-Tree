@@ -89,9 +89,12 @@ QDir* MapleSeed::selectDirectory()
   return nullptr;
 }
 
-QFileInfo MapleSeed::selectFile()
+QFileInfo MapleSeed::selectFile(QString defaultDir)
 {
     QFileDialog dialog;
+    if (QDir(defaultDir).exists()){
+        dialog.setDirectory(defaultDir);
+    }
     dialog.setNameFilter("*.qta");
     if (dialog.exec()) {
         QStringList entries(dialog.selectedFiles());
@@ -105,6 +108,19 @@ void MapleSeed::CopyToClipboard(QString text)
     QClipboard* clipboard = QApplication::clipboard();
     clipboard->setText(text);
     this->messageLog(text + " copied to clipboard", true);
+}
+
+void MapleSeed::executeCemu(QString rpxPath)
+{
+    QFileInfo rpx(rpxPath);
+    if (rpx.exists()){
+        QString file(config->getKeyString("cemupath"));
+        process = new QProcess(this);
+        process->setWorkingDirectory(QFileInfo(file).dir().path());
+        process->setNativeArguments("-g \"" + rpx.filePath() + "\"");
+        process->setProgram(file);
+        process->start();
+    }
 }
 
 void MapleSeed::messageLog(QString msg, bool verbose)
@@ -149,7 +165,8 @@ void MapleSeed::showContextMenu(QListWidget* list, const QPoint& pos)
   }
   auto itm = list->selectedItems().first();
   auto tii = reinterpret_cast<TitleInfoItem*>(itm);
-  TitleInfo* titleInfo = tii->getItem()->titleInfo;
+  auto entry = tii->getItem();
+  TitleInfo* titleInfo = entry->titleInfo;
   if (!tii->getItem()) {
       return;
   }
@@ -159,29 +176,36 @@ void MapleSeed::showContextMenu(QListWidget* list, const QPoint& pos)
   }
 
   QMenu menu;
-  menu.addAction(name, this, [] {})->setEnabled(false);
+  menu.addAction(+"[Play] " + name, this, [=]
+  { executeCemu(entry->rpx); })->setEnabled(true);
 
   menu.addSeparator();
-  if (!QFileInfo(tii->getItem()->metaxml).exists()) {
+  if (!QFileInfo(entry->metaxml).exists())
+  {
       TitleItem* ti_ui = new TitleItem(this);
-      menu.addAction("Add Entry", this, [&] {
+      menu.addAction("Add Entry", this, [&]
+      {
           if (ti_ui->add(titleInfo->getID()) == QDialog::Accepted){
               auto le = new LibraryEntry(std::move(ti_ui->getInfo()));
               this->updateTitleList(std::move(le));
           }
           delete ti_ui;
       })->setEnabled(false);
-      menu.addAction("Delete Entry", this, [=] {
+      menu.addAction("Delete Entry", this, [=]
+      {
           QMessageBox::StandardButton reply;
           reply = QMessageBox::question(this, titleInfo->getFormatName(), "Delete Entry?", QMessageBox::Yes|QMessageBox::No);
-          if (reply == QMessageBox::Yes) {
+          if (reply == QMessageBox::Yes)
+          {
               gameLibrary->database.remove(titleInfo->getID());
-              if (gameLibrary->saveDatabase()){
+              if (gameLibrary->saveDatabase())
+              {
                   delete ui->titlelistWidget->takeItem(ui->titlelistWidget->row(itm));
               }
           }
       });
-      menu.addAction("Modify Entry", this, [&] {
+      menu.addAction("Modify Entry", this, [&]
+      {
           if (ti_ui->modify(tii->getItem()->titleInfo->getID()) == QDialog::Accepted){
               tii->setText(ti_ui->getInfo()->getFormatName());
               tii->getItem()->titleInfo->info = ti_ui->getInfo()->info;
@@ -191,6 +215,50 @@ void MapleSeed::showContextMenu(QListWidget* list, const QPoint& pos)
           }
           delete ti_ui;
       });
+  }
+
+  menu.addSeparator();
+  if (QFileInfo(entry->rpx).exists() && config->getIntegrateCemu())
+  {
+      menu.addAction("Export Save Data", this, [&]
+      {
+          QDir dir = config->getBaseDirectory();
+          if (dir.exists())
+          {
+              entry->backupSave(dir.filePath("Backup"));
+          }
+          else
+          {
+              this->messageLog("Save data export failed, baseDirectory() not valid");
+          }
+      })->setEnabled(true);
+      menu.addAction("Import Save Data", this, [&]
+      {
+          QString dir = QDir(config->getBaseDirectory()+"/Backup/"+titleInfo->getFormatName()).absolutePath();
+          if (QDir().mkpath(dir))
+          {
+              QFileInfo fileInfo = selectFile(dir);
+              if (fileInfo.exists())
+              {
+                  entry->ImportSave(fileInfo.absoluteFilePath());
+              }
+          }
+      })->setEnabled(true);
+      menu.addAction("Purge Save Data", this, [&]
+      {
+          QMessageBox::StandardButton reply;
+          reply = QMessageBox::question(this, titleInfo->getFormatName(), "Purge Save Data?", QMessageBox::Yes|QMessageBox::No);
+          if (reply == QMessageBox::Yes)
+          {
+              QString saveDir = LibraryEntry::initSave(titleInfo->getID());
+              QDir meta = QDir(saveDir).filePath("meta");
+              QDir user = QDir(saveDir).filePath("user");
+              if (!meta.removeRecursively() || !user.removeRecursively())
+              {
+                  messageLog("Purge Save Data: failed");
+              }
+          }
+      })->setEnabled(true);
   }
 
   menu.addSeparator();
@@ -382,8 +450,7 @@ void MapleSeed::on_actionVerbose_triggered(bool checked)
 void MapleSeed::on_actionIntegrateCemu_triggered(bool checked)
 {
     config->setKeyBool("IntegrateCemu", checked);
-    QString cemulocation(config->getKeyString("cemupath"));
-
+    QString cemulocation(config->getCemuPath());
     if (checked && !QFile(cemulocation).exists()) {
       QFileDialog dialog;
       dialog.setNameFilter("cemu.exe");
@@ -392,6 +459,10 @@ void MapleSeed::on_actionIntegrateCemu_triggered(bool checked)
         QStringList files(dialog.selectedFiles());
         config->setKey("CemuPath", QFileInfo(files[0]).absoluteFilePath());
       }
+    }
+    if (checked)
+    {
+        QMessageBox::information(this, "Warning!!!!!!",  "Save Data exports WILL NOT work with any other save data tool/program. DO NOT change the default export file name.");
     }
 }
 
@@ -472,18 +543,8 @@ void MapleSeed::on_listWidget_itemDoubleClicked(QListWidgetItem *item)
 {
     if (item == nullptr || !ui->actionIntegrateCemu->isChecked())
       return;
-
     auto titleInfoItem = reinterpret_cast<TitleInfoItem*>(item);
-    QString file(config->getKeyString("cemupath"));
-    QString workingdir(QFileInfo(file).dir().path());
-    QFileInfo rpx(titleInfoItem->getItem()->rpx);
-    if (rpx.exists()){
-        process = new QProcess(this);
-        process->setWorkingDirectory(workingdir);
-        process->setNativeArguments("-g \"" + rpx.filePath() + "\"");
-        process->setProgram(file);
-        process->start();
-    }
+    executeCemu(titleInfoItem->getItem()->rpx);
 }
 
 void MapleSeed::on_listWidget_itemSelectionChanged()

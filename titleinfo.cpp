@@ -9,8 +9,16 @@ TitleInfo::TitleInfo(QObject* parent) : QObject(parent)
     titleType = TitleType::Game;
 }
 
-quint32 TitleInfo::getRpxHash(QByteArray data)
+quint32 TitleInfo::getRpxHash(QString rpxPath)
 {
+    QFile qfile(rpxPath);
+    if (!qfile.open(QIODevice::ReadOnly)) {
+        emit Configuration::self->log("TitleInfo::getRpxHash(): " + qfile.errorString());
+        return 0;
+    }
+    QByteArray data(qfile.readAll());
+    qfile.close();
+
     quint32 h = 0x3416DCBF;
     for (auto i = 0; i < data.size(); i++)
     {

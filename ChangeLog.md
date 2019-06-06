@@ -6,6 +6,7 @@ All notable changes to this project will be documented in this file.
 ## [1.0.0-5**] - 2019-06-06
 ### Added
 - persistent title search when switching region
+- export, import, and purge cemu save data
 
 ### Fixed
 - Context menu dlc & patch id's were switched causing dlc to download in place of patches and vice versa

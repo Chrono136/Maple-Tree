@@ -45,6 +45,13 @@ public:
 		return path;
 	}
 
+    bool getIntegrateCemu() {
+        return getKeyBool("IntegrateCemu");
+    }
+    QString getCemuPath(){
+        return getKeyString("CemuPath");
+    }
+
 	QString getBaseDirectory() {
 		QString baseDir(getKeyString("BaseDirectory"));
 		if (baseDir.isEmpty()) {

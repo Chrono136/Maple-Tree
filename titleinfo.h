@@ -17,7 +17,7 @@ class TitleInfo : public QObject {
 public:
 	explicit TitleInfo(QObject* parent = nullptr);
 
-    static uint getRpxHash(QByteArray data);
+    static quint32 getRpxHash(QString rpxPath);
 	static TitleInfo* Create(QString id, QString basedir);
 	static TitleInfo* Create(const QFileInfo& metaxml, QString basedir);
 	static TitleInfo* DownloadCreate(const QString& id, QString basedir);

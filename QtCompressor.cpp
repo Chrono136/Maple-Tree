@@ -16,14 +16,16 @@ QtCompressor::QtCompressor(QObject *parent) :
 bool QtCompressor::compress(QString sourceFolder, QString destinationFile)
 {
     QDir src(sourceFolder);
-    if(!src.exists())//folder not found
+    if(!src.exists())
     {
+        Configuration::log("QtCompressor::compress():folder not found: " + sourceFolder, true);
         return false;
     }
 
     file.setFileName(destinationFile);
-    if(!file.open(QIODevice::WriteOnly))//could not open file
+    if(!file.open(QIODevice::WriteOnly))
     {
+        Configuration::log("QtCompressor::compress():could not open file: " + destinationFile, true);
         return false;
     }
 
@@ -31,12 +33,12 @@ bool QtCompressor::compress(QString sourceFolder, QString destinationFile)
 	bool success;
 
 	countDown += numFiles = count(sourceFolder);
-	Configuration::log("Compressing " + sourceFolder, true);
+    Configuration::log("Compressing " + sourceFolder);
 
 	if (!(success = handleCompress(sourceFolder, ""))) {
-		Configuration::log("Compression Failed: " + sourceFolder, true);
+        Configuration::log("Compression Failed: " + sourceFolder, true);
 	}else{
-		Configuration::log("Compression Successful: " + sourceFolder, true);
+        Configuration::log("Compression Successful: " + sourceFolder);
 	}
 
     file.close();

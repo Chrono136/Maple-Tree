@@ -42,8 +42,9 @@ private:
 	void defineActions();
     void defaultConfiguration();
 	QDir* selectDirectory();
-	QFileInfo selectFile();
+    QFileInfo selectFile(QString defaultDir = "");
     void CopyToClipboard(QString text);
+    void executeCemu(QString rpxPath);
 
 public slots:
     void messageLog(QString msg, bool verbose = false);

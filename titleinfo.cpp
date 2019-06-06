@@ -4,8 +4,21 @@
 #include "downloadmanager.h"
 #include "gamelibrary.h"
 
-TitleInfo::TitleInfo(QObject* parent) : QObject(parent) {
-	titleType = TitleType::Game;
+TitleInfo::TitleInfo(QObject* parent) : QObject(parent)
+{
+    titleType = TitleType::Game;
+}
+
+quint32 TitleInfo::getRpxHash(QByteArray data)
+{
+    quint32 h = 0x3416DCBF;
+    for (auto i = 0; i < data.size(); i++)
+    {
+        quint32 c = static_cast<quint32>(data.at(i));
+        h = (h << 3) | (h >> 29);
+        h += c;
+    }
+    return h;
 }
 
 TitleInfo* TitleInfo::Create(QString id, QString basedir) {

@@ -11,6 +11,9 @@ All notable changes to this project will be documented in this file.
 - Context menu dlc & patch id's were switched causing dlc to download in place of patches and vice versa
 - patch/dlc directories being incorrectly created, possibly causing failed decryption
 
+### Removed
+- saved data option under Cemu menu
+
 #
 ## [1.0.0-542] - 2019-05-31
 ### Added

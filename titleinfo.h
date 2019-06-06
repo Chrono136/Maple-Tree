@@ -17,11 +17,12 @@ class TitleInfo : public QObject {
 public:
 	explicit TitleInfo(QObject* parent = nullptr);
 
+    static uint getRpxHash(QByteArray data);
 	static TitleInfo* Create(QString id, QString basedir);
 	static TitleInfo* Create(const QFileInfo& metaxml, QString basedir);
 	static TitleInfo* DownloadCreate(const QString& id, QString basedir);
 	static QString getXmlValue(const QFileInfo& metaxml, const QString& field);
-	static bool ValidId(QString id);
+    static bool ValidId(QString id);
 	void init();
 	TitleInfo* download(QString version = "");
 	TitleInfo* downloadDlc();

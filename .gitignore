@@ -24,3 +24,5 @@ bin-static
 /Makefile
 /*.Debug
 /*.Release
+/versioninfo.h
+/resources/mapleseed.rc

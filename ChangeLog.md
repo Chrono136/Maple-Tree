@@ -2,8 +2,8 @@
 All notable changes to this project will be documented in this file.
 
 #
-## 1.0.0-5** 
-##### Release: 2019-06-**
+## 1.0.0-554 
+##### Release: 2019-06-07
 ##### Added
 - change log tab
 - new game downloads are added to library

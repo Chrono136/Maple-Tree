@@ -43,6 +43,7 @@ public:
     QString getProductCode();
     bool coverExists();
 
+    QString baseDirectory;
 	QMap<QString, QString> info;
 
 private:
@@ -51,8 +52,7 @@ private:
 	void parseJson(const QByteArray& byteArry, const QString& filepath);
     void setTitleType();
 
-	QString id;
-	QString baseDirectory;
+    QString id;
 	QFileInfo meta_xml;
 	TitleType titleType;
 	quint8 attempt = 0;

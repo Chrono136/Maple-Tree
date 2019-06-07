@@ -113,6 +113,7 @@ QVariant GameLibrary::processDbItem(const QVariant &item)
     auto &self = GameLibrary::self;
     QMapIterator<QString, QVariant> i(item.toMap());
     TitleInfo* titleinfo = new TitleInfo;
+    titleinfo->baseDirectory = self->baseDirectory;
     while (i.hasNext()) {
         i.next();
         titleinfo->info[i.key().toLower()] = i.value().toString();

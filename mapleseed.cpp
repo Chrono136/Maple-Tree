@@ -184,50 +184,16 @@ void MapleSeed::showContextMenu(QListWidget* list, const QPoint& pos)
   }
 
   QMenu menu;
-  menu.addAction(+"[Play] " + name, this, [=]
-  { executeCemu(entry->rpx); })->setEnabled(true);
 
-  menu.addSeparator();
-  if (!QFileInfo(entry->metaxml).exists())
+  if (QFileInfo(entry->rpx).exists())
   {
-      TitleItem* ti_ui = new TitleItem(this);
-      menu.addAction("Add Entry", this, [&]
-      {
-          if (ti_ui->add(titleInfo->getID()) == QDialog::Accepted){
-              auto le = new LibraryEntry(std::move(ti_ui->getInfo()));
-              this->updateTitleList(std::move(le));
-          }
-          delete ti_ui;
-      })->setEnabled(false);
-      menu.addAction("Delete Entry", this, [=]
-      {
-          QMessageBox::StandardButton reply;
-          reply = QMessageBox::question(this, titleInfo->getFormatName(), "Delete Entry?", QMessageBox::Yes|QMessageBox::No);
-          if (reply == QMessageBox::Yes)
-          {
-              gameLibrary->database.remove(titleInfo->getID());
-              if (gameLibrary->saveDatabase())
-              {
-                  delete ui->titlelistWidget->takeItem(ui->titlelistWidget->row(itm));
-              }
-          }
-      });
-      menu.addAction("Modify Entry", this, [&]
-      {
-          if (ti_ui->modify(tii->getItem()->titleInfo->getID()) == QDialog::Accepted){
-              tii->setText(ti_ui->getInfo()->getFormatName());
-              tii->getItem()->titleInfo->info = ti_ui->getInfo()->info;
-              gameLibrary->database[ti_ui->getInfo()->getID()] = std::move(ti_ui->getInfo());
-              gameLibrary->saveDatabase();
-              list->editItem(tii);
-          }
-          delete ti_ui;
-      });
+      menu.addAction(+"[Play] " + name, this, [=]
+      { executeCemu(entry->rpx); })->setEnabled(true);
   }
 
-  menu.addSeparator();
   if (QFileInfo(entry->rpx).exists() && config->getIntegrateCemu())
   {
+      menu.addSeparator();
       menu.addAction("Export Save Data", this, [&]
       {
           QDir dir = config->getBaseDirectory();
@@ -267,6 +233,44 @@ void MapleSeed::showContextMenu(QListWidget* list, const QPoint& pos)
               }
           }
       })->setEnabled(true);
+  }
+
+  if (!QFileInfo(entry->metaxml).exists())
+  {
+      menu.addSeparator();
+      TitleItem* ti_ui = new TitleItem(this);
+      menu.addAction("Add Entry", this, [&]
+      {
+          if (ti_ui->add(titleInfo->getID()) == QDialog::Accepted){
+              auto le = new LibraryEntry(std::move(ti_ui->getInfo()));
+              this->updateTitleList(std::move(le));
+          }
+          delete ti_ui;
+      });
+      menu.addAction("Delete Entry", this, [=]
+      {
+          QMessageBox::StandardButton reply;
+          reply = QMessageBox::question(this, titleInfo->getFormatName(), "Delete Entry?", QMessageBox::Yes|QMessageBox::No);
+          if (reply == QMessageBox::Yes)
+          {
+              gameLibrary->database.remove(titleInfo->getID());
+              if (gameLibrary->saveDatabase())
+              {
+                  delete ui->titlelistWidget->takeItem(ui->titlelistWidget->row(itm));
+              }
+          }
+      });
+      menu.addAction("Modify Entry", this, [&]
+      {
+          if (ti_ui->modify(tii->getItem()->titleInfo->getID()) == QDialog::Accepted){
+              tii->setText(ti_ui->getInfo()->getFormatName());
+              tii->getItem()->titleInfo->info = ti_ui->getInfo()->info;
+              gameLibrary->database[ti_ui->getInfo()->getID()] = std::move(ti_ui->getInfo());
+              gameLibrary->saveDatabase();
+              list->editItem(tii);
+          }
+          delete ti_ui;
+      });
   }
 
   menu.addSeparator();

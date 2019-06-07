@@ -123,7 +123,11 @@ TitleInfo* TitleInfo::download(QString version)
 		}
 	}
 
-	QtConcurrent::run([=] { decryptContent(); });
+    QtConcurrent::run([=]
+    {
+        decryptContent();
+        emit GameLibrary::self->processLibItem(getDirectory());
+    });
 	return this;
 }
 

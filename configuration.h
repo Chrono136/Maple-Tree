@@ -22,8 +22,12 @@ public:
 		this->setBaseDirectory(this->getBaseDirectory());
 		Configuration::self = this;
 	}
-	~Configuration() {
-		save();
+    ~Configuration() {
+        save();
+        if (decrypt)
+        {
+            delete decrypt;
+        }
 	}
 
 	void setKeyBool(QString key, bool value) { jsonObject[key.toLower()] = value; }

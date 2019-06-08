@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT += core gui xml network concurrent
+QT += core gui xml network concurrent gamepad
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -35,6 +35,7 @@ INCLUDEPATH += C:\OpenSSL-Win64\include
 LIBS += -LC:\OpenSSL-Win64\lib -llibcrypto
 
 SOURCES += \
+    gamepad.cpp \
     main.cpp \
     mapleseed.cpp \
     gamelibrary.cpp \
@@ -47,6 +48,7 @@ SOURCES += \
     titleitem.cpp
 
 HEADERS += \
+    gamepad.h \
     mapleseed.h \
     gamelibrary.h \
     downloadmanager.h \

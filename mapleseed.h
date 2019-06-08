@@ -16,6 +16,7 @@
 #include "downloadmanager.h"
 #include "gamelibrary.h"
 #include "titleinfoitem.h"
+#include "gamepad.h"
 
 namespace Ui {
 class MainWindow;
@@ -25,13 +26,13 @@ class MapleSeed : public QMainWindow {
 	Q_OBJECT
 
 public:
-	explicit MapleSeed(QWidget* parent = nullptr);
+    explicit MapleSeed(QWidget *parent = nullptr);
 	~MapleSeed();
 
-	Configuration* config = new Configuration;
-	DownloadManager* downloadManager = new DownloadManager;
-	GameLibrary* gameLibrary = new GameLibrary;
-	static MapleSeed* self;
+    Configuration *config = new Configuration;
+    DownloadManager *downloadManager = new DownloadManager;
+    GameLibrary *gameLibrary = new GameLibrary;
+    static MapleSeed *self;
 
 private:
 	Ui::MainWindow* ui;
@@ -45,8 +46,13 @@ private:
     QFileInfo selectFile(QString defaultDir = "");
     void CopyToClipboard(QString text);
     void executeCemu(QString rpxPath);
+    bool processActive();
 
 public slots:
+    void gameUp(bool pressed);
+    void gameDown(bool pressed);
+    void gameStart(bool pressed);
+    void gameClose(bool pressed);
     void messageLog(QString msg, bool verbose = false);
     void gameLibraryLoadComplete();
     void SelectionChanged(QListWidget* listWidget);
@@ -102,6 +108,8 @@ private slots:
     void on_regionBox_currentTextChanged(const QString &arg1);
 
     void on_checkBoxEShopTitles_stateChanged(int arg1);
+
+    void on_actionGamepad_triggered(bool checked);
 };
 
 #endif  // MAINWINDOW_H

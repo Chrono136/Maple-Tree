@@ -13,16 +13,17 @@ MapleSeed::MapleSeed(QWidget* parent) : QMainWindow(parent), ui(new Ui::MainWind
 
 MapleSeed::~MapleSeed()
 {
-    if (downloadManager) {
+    Gamepad::terminate();
+    if (downloadManager)
+    {
         delete downloadManager;
     }
-    if (gameLibrary) {
+    if (gameLibrary)
+    {
         delete gameLibrary;
     }
-    if (config) {
-        if (config->decrypt) {
-            delete config->decrypt;
-        }
+    if (config)
+    {
         delete config;
     }
     delete ui;
@@ -40,15 +41,17 @@ void MapleSeed::initialize()
   defaultConfiguration();
 
   gameLibrary->init(config->getBaseDirectory());
+  on_actionGamepad_triggered(config->getKeyBool("Gamepad"));
 
-  auto file = downloadManager->downloadSingle(QUrl("https://raw.githubusercontent.com/Tsume/Maple-Tree/master/ChangeLog.md"), "ChangeLog.md");
+  auto file = new QFile("ChangeLog.md");
   if (file->open(QIODevice::ReadOnly))
   {
       QByteArray data(file->readAll());
       QString str(QString::fromLatin1(data));
       ui->changelog->setText(str);
+      file->close();
   }
-
+  delete file;
   this->messageLog("Environment setup complete");
 }
 
@@ -83,6 +86,7 @@ void MapleSeed::defaultConfiguration()
     ui->actionVerbose->setChecked(config->getKeyBool("VerboseLog"));
     ui->actionIntegrateCemu->setChecked(config->getKeyBool("IntegrateCemu"));
     ui->checkBoxEShopTitles->setChecked(config->getKeyBool("eShopTitles"));
+    ui->actionGamepad->setChecked(Gamepad::isEnabled = config->getKeyBool("Gamepad"));
 }
 
 QDir* MapleSeed::selectDirectory()
@@ -128,6 +132,67 @@ void MapleSeed::executeCemu(QString rpxPath)
         process->setNativeArguments("-g \"" + rpx.filePath() + "\"");
         process->setProgram(file);
         process->start();
+    }
+}
+
+bool MapleSeed::processActive()
+{
+    if (process)
+    {
+        if (process->state() == process->Running)
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+void MapleSeed::gameUp(bool pressed)
+{
+    if (!pressed || processActive()) return;
+
+    auto row = ui->listWidget->currentRow();
+    if (ui->listWidget->currentRow() == 0)
+    {
+        row = ui->listWidget->count()-1;
+    }
+    else {
+        row -= 1;
+    }
+    ui->listWidget->setCurrentRow(row);
+}
+
+void MapleSeed::gameDown(bool pressed)
+{
+    if (!pressed || processActive()) return;
+    auto row = ui->listWidget->currentRow();
+    if (ui->listWidget->currentRow() == ui->listWidget->count()-1)
+    {
+        row = 0;
+    }
+    else {
+        row += 1;
+    }
+    ui->listWidget->setCurrentRow(row);
+}
+
+void MapleSeed::gameStart(bool pressed)
+{
+    if (!pressed || processActive()) return;
+    auto item = ui->listWidget->selectedItems().first();
+    auto titleInfoItem = reinterpret_cast<TitleInfoItem*>(item);
+    if (titleInfoItem->getItem())
+    {
+        executeCemu(titleInfoItem->getItem()->rpx);
+    }
+}
+
+void MapleSeed::gameClose(bool pressed)
+{
+    if (!pressed || !process) return;
+    if (process->state() == process->Running)
+    {
+        process->terminate();
     }
 }
 
@@ -376,7 +441,9 @@ void MapleSeed::updateBaiscProgress(qint64 min, qint64 max)
 
 void MapleSeed::filter(QString region, QString filter_string)
 {
-    messageLog("Filter << " + filter_string);
+    if (!filter_string.isEmpty())
+        messageLog("Filter << " + filter_string);
+
     ui->titlelistWidget->setItemSelected(nullptr, true);
     for (int row(0); row < ui->titlelistWidget->count(); row++)
         ui->titlelistWidget->item(row)->setHidden(true);
@@ -593,4 +660,26 @@ void MapleSeed::on_checkBoxEShopTitles_stateChanged(int arg1)
 {
     config->setKeyBool("eShopTitles", arg1);
     filter(ui->regionBox->currentText(), ui->searchInput->text());
+}
+
+void MapleSeed::on_actionGamepad_triggered(bool checked)
+{
+    config->setKeyBool("Gamepad", Gamepad::isEnabled = checked);
+
+    if (Gamepad::instance == nullptr)
+    {
+        Gamepad::instance = new Gamepad;
+        connect(Gamepad::instance, &Gamepad::gameUp, this, &MapleSeed::gameUp);
+        connect(Gamepad::instance, &Gamepad::gameDown, this, &MapleSeed::gameDown);
+        connect(Gamepad::instance, &Gamepad::gameStart, this, &MapleSeed::gameStart);
+        connect(Gamepad::instance, &Gamepad::gameClose, this, &MapleSeed::gameClose);
+    }
+
+    if (Gamepad::isEnabled)
+    {
+        QtConcurrent::run([=]
+        {
+            Gamepad::instance->init();
+        });
+    }
 }

@@ -173,14 +173,14 @@
      <widget class="QTextEdit" name="textEdit">
       <property name="geometry">
        <rect>
-        <x>0</x>
-        <y>0</y>
-        <width>591</width>
-        <height>421</height>
+        <x>10</x>
+        <y>10</y>
+        <width>571</width>
+        <height>371</height>
        </rect>
       </property>
       <property name="frameShape">
-       <enum>QFrame::NoFrame</enum>
+       <enum>QFrame::Box</enum>
       </property>
       <property name="readOnly">
        <bool>true</bool>
@@ -341,10 +341,17 @@ border: 1px solid black;
     </property>
     <addaction name="actionIntegrateCemu"/>
    </widget>
+   <widget class="QMenu" name="menuBETA">
+    <property name="title">
+     <string>BETA</string>
+    </property>
+    <addaction name="actionGamepad"/>
+   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuGame_Library"/>
    <addaction name="menuContent"/>
    <addaction name="menuCemu"/>
+   <addaction name="menuBETA"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <action name="actionQuit">
@@ -433,6 +440,14 @@ border: 1px solid black;
    </property>
    <property name="toolTip">
     <string>Download content using a supplied id</string>
+   </property>
+  </action>
+  <action name="actionGamepad">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Gamepad</string>
    </property>
   </action>
  </widget>

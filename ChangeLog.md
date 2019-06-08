@@ -2,6 +2,15 @@
 All notable changes to this project will be documented in this file.
 
 #
+## 1.0.0-5** 
+##### Release: 2019-06-**
+##### Added
+- xinput gamepad support (dpad up & down, start button to launch a game)
+
+##### Fixed
+- 
+
+#
 ## 1.0.0-554 
 ##### Release: 2019-06-07
 ##### Added

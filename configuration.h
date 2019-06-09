@@ -1,6 +1,7 @@
 #ifndef CONFIGURATION_H
 #define CONFIGURATION_H
 
+#include <QLoggingCategory>
 #include <QCoreApplication>
 #include <QDir>
 #include <QFile>
@@ -11,6 +12,7 @@
 #include <QVariant>
 #include <QUrl>
 #include "decrypt.h"
+#include "debug.h"
 
 class Configuration {
 public:
@@ -134,11 +136,7 @@ public:
 			num /= 1024.0;
 		}
 		return QString().setNum(num, 'f', 2) + " " + unit;
-	}
-
-	static void log(QString message, bool verbose = false) {
-		emit self->decrypt->log(message, verbose);
-	}
+    }
 
 	static Configuration* self;
 

@@ -31,8 +31,7 @@ signals:
 	void decryptStarted();
 	void decryptFinished();
 	void progressReport(quint32 min, quint32 max);
-	void progressReport2(qint64 min, qint64 max, int curfile, int maxfile);
-	void log(QString msg, bool verbose);
+    void progressReport2(qint64 min, qint64 max, int curfile, int maxfile);
 
 private:
 	AES_KEY _key;

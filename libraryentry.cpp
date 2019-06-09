@@ -9,7 +9,6 @@ LibraryEntry::LibraryEntry(TitleInfo* title)
 
 LibraryEntry::LibraryEntry()
 {
-
 }
 
 QString LibraryEntry::initSave(QString id)
@@ -17,19 +16,19 @@ QString LibraryEntry::initSave(QString id)
     QString cemupath = QFileInfo(Configuration::self->getCemuPath()).absoluteDir().path();
     if (!QDir(cemupath).exists())
     {
-        Configuration::log("LibraryEntry::initSave():CemuPath not found: " + cemupath);
+        qWarning() << "Cemu path not found:" << cemupath;
         return nullptr;
     }
     QString savedir = QDir(cemupath).filePath("mlc01/usr/save/00050000");
     if (!QDir(savedir).exists())
     {
-        Configuration::log("LibraryEntry::initSave():Cemu default save path not found: " + savedir);
+        qWarning() << "Cemu default save path not found:" << savedir;
         return nullptr;
     }
     savedir.append("/" + id.toUpper().right(8));
     if (!QDir(savedir).exists())
     {
-        Configuration::log("LibraryEntry::initSave(): Save data not found: " + savedir);
+        qWarning() << "Save data not found:" << savedir;
         return nullptr;
     }
     return savedir;
@@ -49,7 +48,7 @@ void LibraryEntry::backupSave(QString saveTo)
             return;
         }
         QtCompressor::compress(savedir, saveTo);
-        Configuration::log("Backup Saved: " + saveTo);
+        qInfo() << "Backup Saved:" << saveTo;
     });
 }
 
@@ -59,19 +58,19 @@ void LibraryEntry::ImportSave(QString filePath)
     QString id = "00050000" + filename.left(8);
     if (!TitleInfo::ValidId(id))
     {
-        Configuration::log("LibraryEntry::ImportSave(): invalid filename, can not detect title id " + filename);
+        qCritical() << "invalid filename, can not detect title id" << filename;
         return;
     }
     QString savedir = initSave(id);
     if (savedir.isEmpty())
     {
-        Configuration::log("LibraryEntry::ImportSave(): saveDir is invalid or doesn't exist: " + savedir, true);
-        Configuration::log("LibraryEntry::ImportSave(): Save directories are not created by MS, this is to avoid import issues.", true);
-        Configuration::log("LibraryEntry::ImportSave(): Try creating a save file by playing the game through Cemu, then import again.", true);
+        qCritical() << "Save directory is invalid or doesn't exist:" << savedir;
+        qCritical() << "Save directories are not created by MS, this is to avoid import issues.";
+        qCritical() << "Try creating a save file by playing the game through Cemu, then import again.";
         return;
     }
     QtConcurrent::run([=] {
         QtCompressor::decompress(filePath, QDir(savedir).absolutePath());
-        Configuration::log("Backup Imported: " + QDir(savedir).absolutePath());
+        qInfo() << "Backup imported:" << QDir(savedir).absolutePath();
     });
 }

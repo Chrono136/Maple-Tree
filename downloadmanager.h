@@ -15,7 +15,6 @@ class DownloadManager : public QObject {
   static DownloadManager* getSelf();
 
  signals:
-  void log(QString msg, bool verbose);
   void downloadStarted(QString filename);
   void downloadSuccessful(QString filepath);
   void downloadFinished(qint32 downloadedCount, qint32 totalcount);

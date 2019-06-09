@@ -6,9 +6,9 @@ MapleSeed* MapleSeed::self;
 
 MapleSeed::MapleSeed(QWidget* parent) : QMainWindow(parent), ui(new Ui::MainWindow)
 {
-  ui->setupUi(self = this);
-  this->setWindowTitle("MapleSeed++ " + QString(GEN_VERSION_STRING));
-  initialize();
+    ui->setupUi(self = this);
+    this->setWindowTitle("MapleSeed++ " + QString(GEN_VERSION_STRING));
+    initialize();
 }
 
 MapleSeed::~MapleSeed()
@@ -31,47 +31,34 @@ MapleSeed::~MapleSeed()
 
 void MapleSeed::initialize()
 {
-  this->messageLog("Setting up enviornment variables");
-  QtCompressor::self = new QtCompressor;
+    qInfo() << "Setting up enviornment variables";
+    QtCompressor::self = new QtCompressor;
 
-  defineActions();
-  if (!config->load()) {
-    config->save();
-  }
-  defaultConfiguration();
+    defineActions();
+    if (!config->load()) {
+      config->save();
+    }
+    defaultConfiguration();
 
-  gameLibrary->init(config->getBaseDirectory());
-  on_actionGamepad_triggered(config->getKeyBool("Gamepad"));
-
-  auto file = new QFile("ChangeLog.md");
-  if (file->open(QIODevice::ReadOnly))
-  {
-      QByteArray data(file->readAll());
-      QString str(QString::fromLatin1(data));
-      ui->changelog->setText(str);
-      file->close();
-  }
-  delete file;
-  this->messageLog("Environment setup complete");
+    gameLibrary->init(config->getBaseDirectory());
+    on_actionGamepad_triggered(config->getKeyBool("Gamepad"));
+    qInfo() << "Environment setup complete";
 }
 
 void MapleSeed::defineActions()
 {
     connect(QtCompressor::self, &QtCompressor::updateProgress, this, &MapleSeed::updateBaiscProgress);
 
-    connect(config->decrypt, &Decrypt::log, this, &MapleSeed::messageLog);
     connect(config->decrypt, &Decrypt::decryptStarted, this, &MapleSeed::disableMenubar);
     connect(config->decrypt, &Decrypt::decryptFinished, this, &MapleSeed::enableMenubar);
     connect(config->decrypt, &Decrypt::progressReport, this, &MapleSeed::updateBaiscProgress);
     connect(config->decrypt, &Decrypt::progressReport2, this, &MapleSeed::updateProgress);
 
-    connect(gameLibrary, &GameLibrary::log, this, &MapleSeed::messageLog);
     connect(gameLibrary, &GameLibrary::progress, this, &MapleSeed::updateBaiscProgress);
     connect(gameLibrary, &GameLibrary::changed, this, &MapleSeed::updateListview);
     connect(gameLibrary, &GameLibrary::addTitle, this, &MapleSeed::updateTitleList);
     connect(gameLibrary, &GameLibrary::loadComplete, this, &MapleSeed::gameLibraryLoadComplete);
 
-    connect(downloadManager, &DownloadManager::log, this, &MapleSeed::messageLog);
     connect(downloadManager, &DownloadManager::downloadStarted, this, &MapleSeed::downloadStarted);
     connect(downloadManager, &DownloadManager::downloadStarted, this, &MapleSeed::disableMenubar);
     connect(downloadManager, &DownloadManager::downloadSuccessful, this, &MapleSeed::downloadSuccessful);
@@ -87,6 +74,7 @@ void MapleSeed::defaultConfiguration()
     ui->actionIntegrateCemu->setChecked(config->getKeyBool("IntegrateCemu"));
     ui->checkBoxEShopTitles->setChecked(config->getKeyBool("eShopTitles"));
     ui->actionGamepad->setChecked(Gamepad::isEnabled = config->getKeyBool("Gamepad"));
+    ui->actionDebug->setChecked(Debug::debugEnabled = config->getKeyBool("DebugLogging"));
 }
 
 QDir* MapleSeed::selectDirectory()
@@ -119,7 +107,7 @@ void MapleSeed::CopyToClipboard(QString text)
 {
     QClipboard* clipboard = QApplication::clipboard();
     clipboard->setText(text);
-    this->messageLog(text + " copied to clipboard", true);
+    qInfo() << text << "copied to clipboard";
 }
 
 void MapleSeed::executeCemu(QString rpxPath)
@@ -196,23 +184,28 @@ void MapleSeed::gameClose(bool pressed)
     }
 }
 
-void MapleSeed::messageLog(QString msg, bool verbose)
+void MapleSeed::messageLog(QString msg)
 {
-  ui->statusbar->showMessage(msg);
-  if (ui->actionVerbose->isChecked() || verbose) {
-    ui->textEdit->append(msg);
-  }
-
-  if (ui->actionVerbose->isChecked()) {
-    QFile file(QCoreApplication::applicationName() + ".log");
-    if (!file.open(QIODevice::Append)) {
-      qWarning("Couldn't open file.");
-      return;
+    if (config && config->getKeyBool("VerboseLog"))
+    {
+        if (mutex.tryLock(100))
+        {
+            if (ui && ui->statusbar)
+            {
+                ui->statusbar->showMessage(msg);
+            }
+            QFile file(QCoreApplication::applicationName() + ".log");
+            if (!file.open(QIODevice::Append))
+            {
+              qWarning("Couldn't open file.");
+              return;
+            }
+            QString log(QDateTime::currentDateTime().toString("[MMM dd, yyyy HH:mm:ss ap] ") + msg + "\n");
+            file.write(log.toLatin1());
+            file.close();
+            mutex.unlock();
+        }
     }
-    QString log(QDateTime::currentDateTime().toString("[MMM dd, yyyy HH:mm:ss ap] ") + msg + "\n");
-    file.write(log.toLatin1());
-    file.close();
-  }
 }
 
 void MapleSeed::gameLibraryLoadComplete()
@@ -268,7 +261,7 @@ void MapleSeed::showContextMenu(QListWidget* list, const QPoint& pos)
           }
           else
           {
-              this->messageLog("Save data export failed, baseDirectory() not valid");
+              qWarning() << "Save data export failed, base directory not valid" << config->getBaseDirectory();
           }
       })->setEnabled(true);
       menu.addAction("Import Save Data", this, [&]
@@ -294,7 +287,7 @@ void MapleSeed::showContextMenu(QListWidget* list, const QPoint& pos)
               QDir user = QDir(saveDir).filePath("user");
               if (!meta.removeRecursively() || !user.removeRecursively())
               {
-                  messageLog("Purge Save Data: failed");
+                  qWarning() << "Purge Save Data: failed";
               }
           }
       })->setEnabled(true);
@@ -384,20 +377,20 @@ void MapleSeed::updateTitleList(LibraryEntry* entry)
 
 void MapleSeed::downloadStarted(QString filename)
 {
-  this->messageLog("Downloading: " + filename);
+  qInfo() << "Downloading" << filename;
 }
 
 void MapleSeed::downloadSuccessful(QString fileName)
 {
-  this->ui->progressBar->setValue(0);
-  this->ui->progressBar->setFormat("%p%");
-  this->messageLog("Download successful: " + fileName);
+    this->ui->progressBar->setValue(0);
+    this->ui->progressBar->setFormat("%p%");
+    qInfo() << "Download successful" << fileName;
 }
 
 void MapleSeed::downloadError(QString errorString)
 {
-  this->ui->menubar->setEnabled(true);
-  this->messageLog(errorString, true);
+    this->ui->menubar->setEnabled(true);
+    qCritical() << errorString;
 }
 
 void MapleSeed::updateDownloadProgress(qint64 bytesReceived, qint64 bytesTotal, QTime qtime)
@@ -442,7 +435,7 @@ void MapleSeed::updateBaiscProgress(qint64 min, qint64 max)
 void MapleSeed::filter(QString region, QString filter_string)
 {
     if (!filter_string.isEmpty())
-        messageLog("Filter << " + filter_string);
+        qInfo() << "filter:" << filter_string;
 
     ui->titlelistWidget->setItemSelected(nullptr, true);
     for (int row(0); row < ui->titlelistWidget->count(); row++)
@@ -517,7 +510,7 @@ void MapleSeed::on_actionDecryptContent_triggered()
 
     QString path = dir->path();
     delete dir;
-    this->messageLog("Decrypt: " + path);
+    qInfo() << "Decrypting" << path;
     QtConcurrent::run([ = ] { config->decrypt->start(path); });
 }
 
@@ -664,22 +657,26 @@ void MapleSeed::on_checkBoxEShopTitles_stateChanged(int arg1)
 
 void MapleSeed::on_actionGamepad_triggered(bool checked)
 {
-    config->setKeyBool("Gamepad", Gamepad::isEnabled = checked);
+    config->setKeyBool("Gamepad", checked);
 
     if (Gamepad::instance == nullptr)
     {
         Gamepad::instance = new Gamepad;
+        QtConcurrent::run([=] { Gamepad::instance->init(); });
         connect(Gamepad::instance, &Gamepad::gameUp, this, &MapleSeed::gameUp);
         connect(Gamepad::instance, &Gamepad::gameDown, this, &MapleSeed::gameDown);
         connect(Gamepad::instance, &Gamepad::gameStart, this, &MapleSeed::gameStart);
         connect(Gamepad::instance, &Gamepad::gameClose, this, &MapleSeed::gameClose);
     }
 
-    if (Gamepad::isEnabled)
-    {
-        QtConcurrent::run([=]
-        {
-            Gamepad::instance->init();
-        });
+    if (checked){
+        Gamepad::enable();
+    }else {
+        Gamepad::disable();
     }
+}
+
+void MapleSeed::on_actionDebug_triggered(bool checked)
+{
+    config->setKeyBool("DebugLogging", Debug::debugEnabled = checked);
 }

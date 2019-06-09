@@ -53,7 +53,7 @@ public slots:
     void gameDown(bool pressed);
     void gameStart(bool pressed);
     void gameClose(bool pressed);
-    void messageLog(QString msg, bool verbose = false);
+    void messageLog(QString msg);
     void gameLibraryLoadComplete();
     void SelectionChanged(QListWidget* listWidget);
 	void showContextMenu(QListWidget*, const QPoint& pos);
@@ -110,6 +110,8 @@ private slots:
     void on_checkBoxEShopTitles_stateChanged(int arg1);
 
     void on_actionGamepad_triggered(bool checked);
+
+    void on_actionDebug_triggered(bool checked);
 };
 
 #endif  // MAINWINDOW_H

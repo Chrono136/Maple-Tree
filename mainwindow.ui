@@ -166,45 +166,6 @@
       </property>
      </widget>
     </widget>
-    <widget class="QWidget" name="tab_2">
-     <attribute name="title">
-      <string>Log</string>
-     </attribute>
-     <widget class="QTextEdit" name="textEdit">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>10</y>
-        <width>571</width>
-        <height>371</height>
-       </rect>
-      </property>
-      <property name="frameShape">
-       <enum>QFrame::Box</enum>
-      </property>
-      <property name="readOnly">
-       <bool>true</bool>
-      </property>
-     </widget>
-    </widget>
-    <widget class="QWidget" name="tab_4">
-     <attribute name="title">
-      <string>Change Log</string>
-     </attribute>
-     <widget class="QTextEdit" name="changelog">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>10</y>
-        <width>571</width>
-        <height>371</height>
-       </rect>
-      </property>
-      <property name="readOnly">
-       <bool>true</bool>
-      </property>
-     </widget>
-    </widget>
    </widget>
    <widget class="QProgressBar" name="progressBar">
     <property name="geometry">
@@ -309,6 +270,7 @@ border: 1px solid black;
       <string>Log</string>
      </property>
      <addaction name="actionVerbose"/>
+     <addaction name="actionDebug"/>
     </widget>
     <addaction name="menuLog"/>
     <addaction name="actionClearSettings"/>
@@ -448,6 +410,14 @@ border: 1px solid black;
    </property>
    <property name="text">
     <string>Gamepad</string>
+   </property>
+  </action>
+  <action name="actionDebug">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Debug</string>
    </property>
   </action>
  </widget>

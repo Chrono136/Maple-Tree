@@ -18,14 +18,14 @@ bool QtCompressor::compress(QString sourceFolder, QString destinationFile)
     QDir src(sourceFolder);
     if(!src.exists())
     {
-        Configuration::log("QtCompressor::compress():folder not found: " + sourceFolder, true);
+        qCritical() << "folder not found" << sourceFolder;
         return false;
     }
 
     file.setFileName(destinationFile);
     if(!file.open(QIODevice::WriteOnly))
     {
-        Configuration::log("QtCompressor::compress():could not open file: " + destinationFile, true);
+        qCritical() << "could not open file" << destinationFile;
         return false;
     }
 
@@ -33,12 +33,12 @@ bool QtCompressor::compress(QString sourceFolder, QString destinationFile)
 	bool success;
 
 	countDown += numFiles = count(sourceFolder);
-    Configuration::log("Compressing " + sourceFolder);
+    qInfo() << "Compressing" << sourceFolder;
 
 	if (!(success = handleCompress(sourceFolder, ""))) {
-        Configuration::log("Compression Failed: " + sourceFolder, true);
+        qCritical() << "Compression failed" << sourceFolder;
 	}else{
-        Configuration::log("Compression Successful: " + sourceFolder);
+        qDebug() << "Compression successful" << sourceFolder;
 	}
 
     file.close();
@@ -69,13 +69,14 @@ bool QtCompressor::handleCompress(QString sourceFolder, QString prefex)
 	for (int i = 0; i < filesList.length(); i++)
 	{
 		QFile file(dir.absolutePath() + "/" + filesList.at(i).fileName());
-		if (!file.open(QIODevice::ReadOnly))//couldn't open file
+        if (!file.open(QIODevice::ReadOnly))
 		{
+            qCritical() << "couldn't open file" << file;
 			return false;
 		}
 
-		QString filename(prefex + "/" + filesList.at(i).fileName());
-		Configuration::log("Compressing: " + self->file.fileName() + " << " + filename);
+        QString filename(prefex + "/" + filesList.at(i).fileName());
+        qInfo() << "Compressing" << self->file.fileName() << "<<" << filename;
 
 		dataStream << --countDown;
 		dataStream << filename;
@@ -119,7 +120,7 @@ bool QtCompressor::decompress(QString sourceFile, QString destinationFolder)
 
 		//extract file name and data in order
 		dataStream >> index >> fileName >> data;
-		Configuration::log("Decompression: " + destinationFolder + " << " + fileName);
+        qInfo() << "Decompression:" + destinationFolder << "<<" << fileName;
 
 		if (max == 0) max = index;
 

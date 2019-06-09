@@ -18,8 +18,8 @@ void GameLibrary::init(const QString& directory) {
         this->baseDirectory = QDir(directory).absolutePath();
     }
     else {
-        log("GameLibrary::init(QString path): invalid directory: " + this->baseDirectory, true);
-        log("Falling back to current directory: " + QDir(".").absolutePath(), true);
+        qWarning() << "invalid directory:" << this->baseDirectory;
+        qWarning() << "Falling back to current directory:" << QDir(".").absolutePath();
         Configuration::self->setBaseDirectory(this->baseDirectory = QDir(".").absolutePath());
         return this->init(this->baseDirectory);
     }
@@ -32,7 +32,7 @@ void GameLibrary::init(const QString& directory) {
     }
     QFile qfile(titlekeysPath);
     if (!qfile.open(QIODevice::ReadOnly)) {
-        log("GameLibrary::setupDatabase(): " + qfile.errorString(), true);
+        qCritical() << qfile.errorString();
         return;
     }
     QByteArray byteArray(qfile.readAll());
@@ -56,7 +56,7 @@ void GameLibrary::setupLibrary(QString directory, bool force) {
             this->baseDirectory = QDir(directory).absolutePath();
         }
         else {
-            log("GameLibrary::init(QString path): invalid directory: " + this->baseDirectory, true);
+            qDebug() << "invalid directory" << baseDirectory;
             return;
         }
     }
@@ -69,7 +69,7 @@ void GameLibrary::setupLibrary(QString directory, bool force) {
     else {
         this->load(Configuration::self->getLibPath());
     }
-    emit log("Library loaded: " + this->baseDirectory, true);
+    qInfo() << "Library loaded:" << this->baseDirectory;
 }
 
 QString GameLibrary::processLibItem(const QString &d)
@@ -90,9 +90,9 @@ QString GameLibrary::processLibItem(const QString &d)
             if (entry->titleInfo->getTitleType() == TitleType::Game) {
                 self->library[entry->titleInfo->getID()] = std::move(entry);
                 emit self->changed(self->library[entry->titleInfo->getID()]);
-                self->log("Added to library: " + self->library[entry->titleInfo->getID()]->metaxml, false);
+                qDebug() << "Added to library:" << self->library[entry->titleInfo->getID()]->metaxml;
             }else {
-                self->log("Skipped, wrong type: " + self->library[entry->titleInfo->getID()]->metaxml, false);
+                qDebug() << "Skipped, wrong type:" << self->library[entry->titleInfo->getID()]->metaxml;
             }
         }
     }
@@ -104,7 +104,7 @@ void GameLibrary::setupDatabase(QByteArray qbyteArray) {
     if (doc["titlekeys"].isArray()) {
         QJsonArray array = doc["titlekeys"].toArray();
         QtConcurrent::blockingMapped(array.toVariantList(), &GameLibrary::processDbItem);
-        emit log("Database loaded: " + this->jsonFile, true);
+        qInfo() << "Database loaded:" << this->jsonFile;
     }
 }
 
@@ -125,9 +125,9 @@ QVariant GameLibrary::processDbItem(const QVariant &item)
         LibraryEntry* entry = new LibraryEntry(self->database[id]);
         if (entry->titleInfo->getTitleType() == TitleType::Game) {
             emit self->addTitle(entry);
-            self->log("Added game: " + entry->titleInfo->getFormatName(), false);
+            qDebug() << "Added game:" << entry->titleInfo->getFormatName();
         }else {
-            self->log("Skipped, wrong type: " + entry->titleInfo->getFormatName(), false);
+            qDebug() << "Skipped, wrong type:" << entry->titleInfo->getFormatName();
         }
     }
     self->mutex.unlock();
@@ -155,12 +155,13 @@ bool GameLibrary::saveDatabase()
     QString filepath("titlekeys.json");
     QFile saveFile(filepath);
     if (!saveFile.open(QIODevice::WriteOnly)) {
-        qWarning("Couldn't open save file.");
+        qWarning() << "Couldn't open save file:" << filepath;
         return false;
     }
-    this->log("Saving database: " + filepath, true);
+    qInfo() << "Saving database: " << filepath;
     QJsonDocument saveDoc(json);
     return saveFile.write(saveDoc.toJson());
+    qInfo() << "Database saved:" << filepath;
 }
 
 bool GameLibrary::load(QString filepath) {
@@ -175,7 +176,7 @@ bool GameLibrary::load(QString filepath) {
     auto json = loadDoc.object();
 
     if (json.contains("Library") && json["Library"].isArray()) {
-        this->log("Loading library: " + filepath, true);
+        qInfo() << "Loading library:" << filepath;
         QJsonArray array = json["Library"].toArray();
         library.clear();
         for (int index = 0; index < array.size(); ++index) {
@@ -214,10 +215,10 @@ bool GameLibrary::save(QString filepath) {
 
     QFile saveFile(filepath);
     if (!saveFile.open(QIODevice::WriteOnly)) {
-        qWarning("Couldn't open save file.");
+        qWarning() << "Couldn't open save file:" << filepath;
         return false;
     }
-    this->log("Saving library: " + filepath, true);
+    qInfo() << "Saving library:" << filepath;
     QJsonDocument saveDoc(json);
     return saveFile.write(saveDoc.toJson());
 }

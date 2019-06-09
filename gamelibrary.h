@@ -37,7 +37,6 @@ public:
 signals:
     void changed(LibraryEntry*);
     void addTitle(LibraryEntry*);
-    void log(QString msg, bool verbose);
     void progress(quint32 min, quint32 max);
     void loadComplete();
 

@@ -35,6 +35,7 @@ INCLUDEPATH += C:\OpenSSL-Win64\include
 LIBS += -LC:\OpenSSL-Win64\lib -llibcrypto
 
 SOURCES += \
+    debug.cpp \
     gamepad.cpp \
     main.cpp \
     mapleseed.cpp \
@@ -48,6 +49,7 @@ SOURCES += \
     titleitem.cpp
 
 HEADERS += \
+    debug.h \
     gamepad.h \
     mapleseed.h \
     gamelibrary.h \

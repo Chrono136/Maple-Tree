@@ -13,7 +13,7 @@ quint32 TitleInfo::getRpxHash(QString rpxPath)
 {
     QFile qfile(rpxPath);
     if (!qfile.open(QIODevice::ReadOnly)) {
-        emit Configuration::self->log("TitleInfo::getRpxHash(): " + qfile.errorString());
+        qWarning() << qfile.errorString();
         return 0;
     }
     QByteArray data(qfile.readAll());
@@ -80,16 +80,16 @@ bool TitleInfo::ValidId(QString id)
 }
 
 void TitleInfo::init() {
-	if (this->attempt >= 3) {
-		GameLibrary::self->log("TitleInfo::init(): Unable to obtain title info", true);
+    if (this->attempt >= 3) {
+        qWarning() << "Unable to obtain title info" << id;
 		return;
 	}
-	if (id.isEmpty() || id.size() != 16) {
-		GameLibrary::self->log("TitleInfo::init(): Invalid title id.", true);
+    if (id.isEmpty() || id.size() != 16) {
+        qWarning() << "Invalid title id" << id;
 		return;
     }
     if (!GameLibrary::self->database.contains(id.toUpper())) {
-        GameLibrary::self->log("TitleInfo::init(): id doesn't exist in titlekeys.json", true);
+        qWarning() << "id doesn't exist in titlekeys.json" << id;
 		return;
     }
     info = GameLibrary::self->database[id.toUpper()]->info;
@@ -98,8 +98,8 @@ void TitleInfo::init() {
 TitleInfo* TitleInfo::download(QString version)
 {
 	QString baseURL("http://ccs.cdn.wup.shop.nintendo.net/ccs/download/");
-	if (getKey().isEmpty()) {
-        emit GameLibrary::self->log("TitleInfo::download(): Invalid title key", true);
+    if (getKey().isEmpty() || getKey().length() != 32) {
+        qWarning() << "Invalid title key" << getKey();
 		return nullptr;
 	}
 
@@ -152,11 +152,11 @@ void TitleInfo::decryptContent() {
 	QString cetk = QDir(this->getDirectory()).filePath("cetk");
 
     if (!QFile(tmd).exists()) {
-        emit GameLibrary::self->log("TitleInfo::decryptContent(): tmd not found, decryption failed:" + getDirectory(), true);
+        qCritical() << "tmd not found, decryption failed" << getDirectory();
 		return;
     }
     if (!QFile(cetk).exists()) {
-        emit GameLibrary::self->log("TitleInfo::decryptContent(): cetk not found, decryption failed:" + getDirectory(), true);
+        qCritical() << "cetk not found, decryption failed" << getDirectory();
 		return;
     }
     Configuration::self->decrypt->start(getDirectory());
@@ -222,8 +222,7 @@ QString TitleInfo::getCoverArtPath() {
 
 QString TitleInfo::getCoverArtUrl() {
 	QString code(this->getProductCode());
-	return QString("http://pixxy.in/cover/?code=") + code + QString("&region=") +
-		this->getRegion();
+    return QString("http://pixxy.in/cover/?code=") + code + QString("&region=") + getRegion();
 }
 
 QString TitleInfo::getXmlLocation() {
@@ -301,8 +300,9 @@ bool TitleInfo::coverExists()
 
 QByteArray TitleInfo::CreateTicket(QString ver)
 {
-    if (getID().isEmpty() || getKey().isEmpty()) {
-        emit Configuration::self->log("*TitleInfo::CreateTicket(ver): invalid id or key");
+    if (getID().isEmpty() || getKey().isEmpty())
+    {
+        qWarning() << "invalid id or key" << getID() << getKey();
     }
     QByteArray data;
 
@@ -311,9 +311,10 @@ QByteArray TitleInfo::CreateTicket(QString ver)
     data.insert(0x2CC, QByteArray::fromHex(getID().toLatin1()));
 
     QFile file(getDirectory() + "/cetk");
-    if (!file.open(QIODevice::WriteOnly)) {
-        emit Configuration::self->log("Ticket::Create(): " + file.errorString());
-      return nullptr;
+    if (!file.open(QIODevice::WriteOnly))
+    {
+        qCritical() << file.errorString();
+        return nullptr;
     }
     file.write(data);
     file.close();
@@ -331,8 +332,8 @@ TitleMetaData* TitleInfo::getTMD(const QString & version) {
         DownloadManager::getSelf()->downloadSingle(tmdurl, tmdpath);
     }
     QFile* tmdfile = new QFile(tmdpath);
-	if (!tmdfile->open(QIODevice::ReadOnly)) {
-        emit Configuration::self->log("*TitleInfo::getTMD(): " + tmdfile->errorString());
+    if (!tmdfile->open(QIODevice::ReadOnly)) {
+        qCritical() << tmdfile->errorString();
 		return nullptr;
 	}
 	char* data = new char[static_cast<qulonglong>(tmdfile->size())];

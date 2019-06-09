@@ -11,7 +11,7 @@ QFile* DownloadManager::downloadSingle(const QUrl& url, const QString& filepath,
 	++totalCount;
 	block = true;
 	if (!msg.isEmpty())
-		log(msg, true);
+        qInfo() << msg;
 	_startNextDownload();
 	_downloadFinished();
     output.close();
@@ -75,8 +75,8 @@ void DownloadManager::_downloadFinished() {
 	try {
 		output.close();
 
-		if (currentDownload->error()) {
-			log("_downloadFinished(): " + currentDownload->errorString(), true);
+        if (currentDownload->error()) {
+            qCritical() << currentDownload->errorString();
 		}
 		else {
 			if (isHttpRedirect()) {
@@ -93,10 +93,10 @@ void DownloadManager::_downloadFinished() {
 		_startNextDownload();
 	}
 	catch (std::errc) {
-		log("_downloadFinished(): " + currentDownload->errorString(), true);
-		log("_downloadFinished(): " + output.errorString(), true);
-		log("_downloadFinished():" + output.fileName(), true);
-		log("_downloadFinished():" + currentDownload->url().url(), true);
+        qCritical() << currentDownload->errorString();
+        qCritical() << output.errorString();
+        qCritical() << output.fileName();
+        qCritical() << currentDownload->url().url();
 		output.remove();
 	}
 	emit downloadProgress(0, 100, downloadTime);
@@ -108,8 +108,8 @@ void DownloadManager::_downloadReadyRead() {
 			output.write(currentDownload->readAll());
 		}
 	}
-	catch (std::errc) {
-		log("_downloadReadyRead(): " + output.errorString(), true);
+    catch (std::errc) {
+        qCritical() << output.errorString();
 	}
 }
 

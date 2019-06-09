@@ -1,4 +1,5 @@
 #include "decrypt.h"
+#include "configuration.h"
 
 Decrypt* Decrypt::self;
 
@@ -10,7 +11,7 @@ void Decrypt::start(QString basedir) {
 	auto tmd = QString(basedir + "\\tmd");
 	auto cetk = QString(basedir + "\\cetk");
 	this->doDecrypt(tmd, cetk, basedir);
-	emit log("Decrypt Complete " + basedir, true);
+    qInfo() << "Decrypt Complete" << basedir;
 }
 
 quint32 Decrypt::bs24(quint32 i) {
@@ -39,17 +40,17 @@ char* Decrypt::_ReadFile(QString file, quint32 * len) {
 
 void Decrypt::FileDump(QString file, void* data, quint32 len) {
 	if (data == nullptr) {
-		emit log("FileDump() zero ptr", true);
+        qWarning() << "invalid dump data";
 		return;
 	}
 	if (len == 0) {
-		emit log("FileDump() zero sz", true);
+        qWarning() << "invalid dump size";
 		return;
 	}
 
 	QFile out(file);
 	if (!out.open(QIODevice::WriteOnly)) {
-		emit log("FileDump() error:" + out.errorString(), true);
+        qCritical() << out.errorString();
 		return;
 	}
 	
@@ -106,7 +107,7 @@ void Decrypt::ExtractFileHash(QFile * in, qulonglong PartDataOffset, qulonglong 
 
 	QFile* out = new QFile(FileName);
 	if (!out->open(QIODevice::WriteOnly)) {
-		emit log("FileDump() error:" + out->errorString(), true);
+        qCritical() << out->errorString();
 		exit(0);
 	}
 
@@ -142,8 +143,8 @@ void Decrypt::ExtractFileHash(QFile * in, qulonglong PartDataOffset, qulonglong 
 			H0Fail++;
 			hexdump(hash, SHA_DIGEST_LENGTH);
 			hexdump(Hashes, 0x100);
-			hexdump(decdata, 0x100);
-			emit log("Failed to verify H0 hash: " + out->fileName(), true);
+            hexdump(decdata, 0x100);
+            qCritical() << "failed to verify H0 hash:" << out->fileName();
 			return;
 		}
 
@@ -181,7 +182,7 @@ void Decrypt::ExtractFile(QFile * in, qulonglong PartDataOffset, qulonglong File
 
 	QFile* out = new QFile(FileName);
 	if (!out->open(QIODevice::WriteOnly)) {
-		emit log("FileDump() error:" + out->errorString(), true);
+        qCritical() << out->errorString();
 		exit(0);
 	}
 	quint8 IV[16];
@@ -215,32 +216,33 @@ void Decrypt::ExtractFile(QFile * in, qulonglong PartDataOffset, qulonglong File
 	delete out;
 }
 
-qint32 Decrypt::doDecrypt(QString qtmd, QString qcetk, QString basedir) {
-	emit log("Original CDecrypt v2.0b written by crediar", true);
+qint32 Decrypt::doDecrypt(QString qtmd, QString qcetk, QString basedir)
+{
+    qInfo() << "Original CDecrypt v2.0b written by crediar";
 
 	quint32 TMDLen;
 	char* TMD = _ReadFile(qtmd, &TMDLen);
 	if (TMD == nullptr) {
-		emit log(QString("Failed to open tmd"), false);
+        qCritical() << "failed to open tmd" << qtmd;
 		return EXIT_FAILURE;
 	}
 
 	quint32 TIKLen;
 	char* TIK = _ReadFile(qcetk, &TIKLen);
 	if (TIK == nullptr) {
-		emit log(QString("Failed to open cetk"), false);
+        qCritical() << "failed to open cetk" << qcetk;
 		return EXIT_FAILURE;
 	}
 
 	TitleMetaData* tmd = reinterpret_cast<TitleMetaData*>(TMD);
 
 	if (tmd->Version != 1) {
-		emit log(QString("Unsupported TMD Version:%1").arg(tmd->Version), false);
+        qCritical() << QString("Unsupported TMD Version:%1").arg(tmd->Version);
 		return EXIT_FAILURE;
 	}
 
-	emit log(QString("Title version:%1").arg(bs16(tmd->TitleVersion)), false);
-	emit log(QString("Content Count:%1").arg(bs16(tmd->ContentCount)), false);
+    qInfo() << QString("Title version:%1").arg(bs16(tmd->TitleVersion));
+    qInfo() << QString("Content Count:%1").arg(bs16(tmd->ContentCount));
 
 	if (strcmp(TMD + 0x140, "Root-CA00000003-CP0000000b") == 0) {
 		AES_set_decrypt_key(reinterpret_cast<const quint8*>(WiiUCommenKey), sizeof(WiiUCommenKey) * 8, &_key);
@@ -272,13 +274,13 @@ qint32 Decrypt::doDecrypt(QString qtmd, QString qcetk, QString basedir) {
 		_str = basedir + QString().sprintf("/%08x", bs32(tmd->Contents[0].ID));
 		CNT = _ReadFile(_str, &CNTLen);
 		if (CNT == static_cast<char*>(nullptr)) {
-			emit log(QString("Failed to open content:%1").arg(bs32(tmd->Contents[0].ID)), false);
+            qInfo() << QString("Failed to open content:%1").arg(bs32(tmd->Contents[0].ID));
 			return EXIT_FAILURE;
 		}
 	}
 
 	if (bs64(tmd->Contents[0].Size) != static_cast<qulonglong>(CNTLen)) {
-		emit log(QString("Size of content:%1 is wrong: %2:%3").arg(bs32(tmd->Contents[0].ID)).arg(CNTLen).arg(bs64(tmd->Contents[0].Size)), false);
+        qInfo() << QString("Size of content:%1 is wrong: %2:%3").arg(bs32(tmd->Contents[0].ID)).arg(CNTLen).arg(bs64(tmd->Contents[0].Size));
 		return EXIT_FAILURE;
 	}
 
@@ -292,7 +294,7 @@ qint32 Decrypt::doDecrypt(QString qtmd, QString qcetk, QString basedir) {
 
 	FST* _fst = reinterpret_cast<FST*>(CNT);
 
-	emit log(QString("FSTInfo Entries:%1").arg(bs32(_fst->EntryCount)), false);
+    qInfo() << QString("FSTInfo Entries:%1").arg(bs32(_fst->EntryCount));
 	if (bs32(_fst->EntryCount) > 90000) {
 		return EXIT_FAILURE;
 	}
@@ -302,7 +304,7 @@ qint32 Decrypt::doDecrypt(QString qtmd, QString qcetk, QString basedir) {
 	quint32 Entries = bs32(*reinterpret_cast<quint32*>(CNT + 0x20 + bs32(_fst->EntryCount) * 0x20 + 8));
 	quint32 NameOff = 0x20 + bs32(_fst->EntryCount) * 0x20 + Entries * 0x10;
 
-	emit log(QString("FST entries:%1").arg(Entries), false);
+    qInfo() << QString("FST entries:%1").arg(Entries);
 
 	char* Path = new char[1024];
 	QDir dir(basedir);
@@ -324,7 +326,7 @@ qint32 Decrypt::doDecrypt(QString qtmd, QString qcetk, QString basedir) {
 			Entry[level] = static_cast<qint32>(i);
 			LEntry[level++] = static_cast<qint32>(bs32(fe[i].u2.s3.NextOffset));
 			if (level > 15) { // something is wrong!
-				emit log(QString("level error:%1").arg(level), false);
+                qCritical() << QString("level error:%1").arg(level);
 				break;
 			}
 		}
@@ -351,7 +353,7 @@ qint32 Decrypt::doDecrypt(QString qtmd, QString qcetk, QString basedir) {
 			}
 
             auto msg(QString().sprintf("Size:%1 Offset:0x%2 CID:%3 U:%4 %5", CNTSize, CNTOff, bs16(fe[i].ContentID), bs16(fe[i].Flags), Path));
-			emit log(msg.arg(CNTSize).arg(CNTOff).arg(bs16(fe[i].ContentID)).arg(bs16(fe[i].Flags)).arg(Path), false);
+            qInfo() << msg.arg(CNTSize).arg(CNTOff).arg(bs16(fe[i].ContentID)).arg(bs16(fe[i].Flags)).arg(Path);
 
 			quint32 ContFileID = bs32(tmd->Contents[bs16(fe[i].ContentID)].ID);
 
@@ -360,7 +362,7 @@ qint32 Decrypt::doDecrypt(QString qtmd, QString qcetk, QString basedir) {
 				QString filepath = basedir + QString().sprintf("/%08x", ContFileID);
 				QFile* in = new QFile(filepath);
 				if (!in->open(QIODevice::ReadOnly)) {
-					emit log(QString("Could not open:\"%1\"").arg(filepath), false);
+                    qWarning() << QString("Could not open:\"%1\"").arg(filepath);
 					continue;
 				}
 				QString output(dir.filePath(Path));

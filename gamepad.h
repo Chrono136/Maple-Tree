@@ -17,6 +17,8 @@ public:
     void init();
 
     static void pressed(int deviceId, QGamepadManager::GamepadButton button, double value);
+    static void enable();
+    static void disable();
     static void terminate();
 
     static Gamepad *instance;

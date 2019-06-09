@@ -9,6 +9,7 @@ All notable changes to this project will be documented in this file.
 
 ##### Changed
 - logging info is written to file with more detail
+- qt installer framework
 
 ##### Removed
 - change log tab

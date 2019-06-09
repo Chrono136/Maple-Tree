@@ -35,8 +35,8 @@ public:
     static MapleSeed *self;
 
 private:
-	Ui::MainWindow* ui;
-	QProcess* process;
+    Ui::MainWindow* ui;
+    QProcess* process = new QProcess;
     QMutex mutex;
 
 	void initialize();

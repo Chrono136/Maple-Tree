@@ -26,6 +26,7 @@ MapleSeed::~MapleSeed()
     {
         delete config;
     }
+    delete process;
     delete ui;
 }
 
@@ -115,7 +116,6 @@ void MapleSeed::executeCemu(QString rpxPath)
     QFileInfo rpx(rpxPath);
     if (rpx.exists()){
         QString file(config->getKeyString("cemupath"));
-        process = new QProcess(this);
         process->setWorkingDirectory(QFileInfo(file).dir().path());
         process->setNativeArguments("-g \"" + rpx.filePath() + "\"");
         process->setProgram(file);
@@ -125,19 +125,17 @@ void MapleSeed::executeCemu(QString rpxPath)
 
 bool MapleSeed::processActive()
 {
-    if (process)
+    if (process->state() == process->NotRunning)
     {
-        if (process->state() == process->Running)
-        {
-            return true;
-        }
+        return false;
     }
-    return false;
+    return true;
 }
 
 void MapleSeed::gameUp(bool pressed)
 {
     if (!pressed || processActive()) return;
+    qDebug() << "row up";
 
     auto row = ui->listWidget->currentRow();
     if (ui->listWidget->currentRow() == 0)
@@ -153,6 +151,8 @@ void MapleSeed::gameUp(bool pressed)
 void MapleSeed::gameDown(bool pressed)
 {
     if (!pressed || processActive()) return;
+    qDebug() << "row down";
+
     auto row = ui->listWidget->currentRow();
     if (ui->listWidget->currentRow() == ui->listWidget->count()-1)
     {
@@ -167,6 +167,8 @@ void MapleSeed::gameDown(bool pressed)
 void MapleSeed::gameStart(bool pressed)
 {
     if (!pressed || processActive()) return;
+    qDebug() << "game start";
+
     auto item = ui->listWidget->selectedItems().first();
     auto titleInfoItem = reinterpret_cast<TitleInfoItem*>(item);
     if (titleInfoItem->getItem())
@@ -177,11 +179,9 @@ void MapleSeed::gameStart(bool pressed)
 
 void MapleSeed::gameClose(bool pressed)
 {
-    if (!pressed || !process) return;
-    if (process->state() == process->Running)
-    {
-        process->terminate();
-    }
+    if (!pressed || !processActive()) return;
+
+    process->terminate();
 }
 
 void MapleSeed::messageLog(QString msg)
@@ -458,16 +458,18 @@ void MapleSeed::filter(QString region, QString filter_string)
 
 QListWidgetItem* MapleSeed::processItemFilter(QListWidgetItem *item)
 {
-    MapleSeed::self->mutex.lock();
-    if (Configuration::self->getKeyBool("eShopTitles")){
-        item->setHidden(false);
-    }else{
-        auto tii = reinterpret_cast<TitleInfoItem*>(item);
-        if (tii->getItem()->titleInfo->coverExists()){
+    if (self->mutex.tryLock(100))
+    {
+        if (Configuration::self->getKeyBool("eShopTitles")){
             item->setHidden(false);
+        }else{
+            auto tii = reinterpret_cast<TitleInfoItem*>(item);
+            if (tii->getItem()->titleInfo->coverExists()){
+                item->setHidden(false);
+            }
         }
+        self->mutex.unlock();
     }
-    MapleSeed::self->mutex.unlock();
     return item;
 }
 

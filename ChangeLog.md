@@ -7,6 +7,13 @@ All notable changes to this project will be documented in this file.
 ##### Added
 - xinput gamepad support (dpad up & down, start button to launch a game)
 
+##### Changed
+- logging info is written to file with more detail
+
+##### Removed
+- change log tab
+- log tab
+
 ##### Fixed
 - 
 

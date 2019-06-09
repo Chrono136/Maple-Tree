@@ -43,11 +43,11 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 Name: "quicklaunchicon"; Description: "{cm:CreateQuickLaunchIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked; OnlyBelowVersion: 6.1; Check: not IsAdminInstallMode
 
 [Files]
-Source: "D:\Projects\MapleSeed\bin\release\MapleSeed.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "D:\Projects\MapleSeed\bin\release\*.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "D:\Projects\MapleSeed\bin\release\plugins\*"; DestDir: "{app}\plugins"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "D:\Projects\MapleSeed\bin\release\translations\*"; DestDir: "{app}\translations"; Flags: ignoreversion
 Source: "D:\Projects\MapleSeed\bin\release\*.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "D:\Projects\MapleSeed\deploy\titlekeys.json"; DestDir: "{app}"; Flags: ignoreversion
+Source: "D:\Projects\MapleSeed\bin\release\titlekeys.json"; DestDir: "{app}"; Flags: ignoreversion
 ;Source: "D:\Projects\MapleSeed\bin\release\vc_redist.x64.exe"; DestDir: "{app}"; Flags: ignoreversion
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 

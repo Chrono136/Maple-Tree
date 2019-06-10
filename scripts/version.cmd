@@ -1,8 +1,9 @@
 @ECHO OFF
 SETLOCAL
 
-SET resourceFile=resources/mapleseed.rc
-SET versionFile=versioninfo.h
+SET MS=D:\Projects\MapleSeed\
+SET resourceFile=%MS%resources\mapleseed.rc
+SET versionFile=%MS%versioninfo.h
 
 FOR /F "tokens=*" %%A IN ('"git describe --tags --abbrev=0"') DO (SET fileVersion=%%A)
 FOR /F "tokens=*" %%A IN ('"git rev-parse --short HEAD"') DO (SET commitVersion=%%A)

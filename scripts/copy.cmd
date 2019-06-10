@@ -1,1 +1,0 @@
-copy D:\Projects\MapleSeed\bin\release\MapleSeed.exe  D:\Projects\installer\packages\com.mapleseed.core\data\MapleSeed.exe

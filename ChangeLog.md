@@ -2,7 +2,7 @@
 All notable changes to this project will be documented in this file.
 
 #
-## 1.0.0-563 
+## 1.0.0-563
 ##### Release: 2019-06-10
 ##### Added
 - xinput gamepad support (dpad up & down, start button to launch a game)
@@ -21,7 +21,7 @@ All notable changes to this project will be documented in this file.
 - 
 
 #
-## 1.0.0-554 
+## 1.0.0-554
 ##### Release: 2019-06-07
 ##### Added
 - change log tab
@@ -31,7 +31,7 @@ All notable changes to this project will be documented in this file.
 - Downloads going to the wrong directory
 
 #
-## 1.0.0-549 
+## 1.0.0-549
 ##### Release: 2019-06-06
 ##### Added
 - persistent title search when switching region

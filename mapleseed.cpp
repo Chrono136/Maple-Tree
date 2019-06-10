@@ -6,9 +6,9 @@ MapleSeed* MapleSeed::self;
 
 MapleSeed::MapleSeed(QWidget* parent) : QMainWindow(parent), ui(new Ui::MainWindow)
 {
-    QtConcurrent::run([=] { checkUpdate(); });
     ui->setupUi(self = this);
     setWindowTitle("MapleSeed++ " + QString(GEN_VERSION_STRING));
+    QtConcurrent::run([=] { checkUpdate(); });
     initialize();
 }
 

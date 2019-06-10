@@ -2,7 +2,13 @@
 All notable changes to this project will be documented in this file.
 
 #
-## 1.0.0-563
+## 1.0.0-5**
+##### Release: 2019-06-**
+##### Fixed
+- Integrate Cemu doesn't prompt if canceled
+
+#
+## 1.0.0-565
 ##### Release: 2019-06-10
 ##### Added
 - xinput gamepad support (dpad up & down, start button to launch a game)

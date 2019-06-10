@@ -6,8 +6,9 @@ MapleSeed* MapleSeed::self;
 
 MapleSeed::MapleSeed(QWidget* parent) : QMainWindow(parent), ui(new Ui::MainWindow)
 {
+    QtConcurrent::run([=] { checkUpdate(); });
     ui->setupUi(self = this);
-    this->setWindowTitle("MapleSeed++ " + QString(GEN_VERSION_STRING));
+    setWindowTitle("MapleSeed++ " + QString(GEN_VERSION_STRING));
     initialize();
 }
 
@@ -28,6 +29,42 @@ MapleSeed::~MapleSeed()
     }
     delete process;
     delete ui;
+}
+
+//https://stackoverflow.com/questions/34318934/qt-installer-framework-auto-update
+void MapleSeed::checkUpdate()
+{
+    QProcess process;
+    process.start("maintenancetool --checkupdates");
+
+    // Wait until the update tool is finished
+    process.waitForFinished();
+
+    if(process.error() != QProcess::UnknownError)
+    {
+        qDebug() << "Error checking for updates";
+        return;
+    }
+
+    // Read the output
+    QByteArray data = process.readAllStandardOutput();
+
+    // No output means no updates available
+    // Note that the exit code will also be 1, but we don't use that
+    // Also note that we should parse the output instead of just checking if it is empty if we want specific update info
+    if(data.isEmpty())
+    {
+        qDebug() << "No updates available";
+        return;
+    }
+
+    // Call the maintenance tool binary
+    // Note: we start it detached because this application need to close for the update
+    QStringList args("--updater");
+    QProcess::startDetached("maintenancetool", args);
+
+    // Close the application
+    qApp->closeAllWindows();
 }
 
 void MapleSeed::initialize()
@@ -71,11 +108,10 @@ void MapleSeed::defineActions()
 
 void MapleSeed::defaultConfiguration()
 {
-    ui->actionVerbose->setChecked(config->getKeyBool("VerboseLog"));
     ui->actionIntegrateCemu->setChecked(config->getKeyBool("IntegrateCemu"));
     ui->checkBoxEShopTitles->setChecked(config->getKeyBool("eShopTitles"));
     ui->actionGamepad->setChecked(Gamepad::isEnabled = config->getKeyBool("Gamepad"));
-    ui->actionDebug->setChecked(Debug::debugEnabled = config->getKeyBool("DebugLogging"));
+    ui->actionDebug->setChecked(Debug::isEnabled = config->getKeyBool("DebugLogging"));
 }
 
 QDir* MapleSeed::selectDirectory()
@@ -186,25 +222,26 @@ void MapleSeed::gameClose(bool pressed)
 
 void MapleSeed::messageLog(QString msg)
 {
-    if (config && config->getKeyBool("VerboseLog"))
+    if (mutex.tryLock(100))
     {
-        if (mutex.tryLock(100))
+        if (ui && ui->statusbar)
         {
-            if (ui && ui->statusbar)
-            {
-                ui->statusbar->showMessage(msg);
-            }
-            QFile file(QCoreApplication::applicationName() + ".log");
-            if (!file.open(QIODevice::Append))
-            {
-              qWarning("Couldn't open file.");
-              return;
-            }
-            QString log(QDateTime::currentDateTime().toString("[MMM dd, yyyy HH:mm:ss ap] ") + msg + "\n");
-            file.write(log.toLatin1());
-            file.close();
-            mutex.unlock();
+            ui->statusbar->showMessage(msg);
         }
+        mutex.unlock();
+    }
+
+    if (Debug::isEnabled)
+    {
+        QFile file(QCoreApplication::applicationName() + ".log");
+        if (!file.open(QIODevice::Append))
+        {
+          qWarning("Couldn't open file.");
+          return;
+        }
+        QString log(QDateTime::currentDateTime().toString("[MMM dd, yyyy HH:mm:ss ap] ") + msg + "\n");
+        file.write(log.toLatin1());
+        file.close();
     }
 }
 
@@ -516,11 +553,6 @@ void MapleSeed::on_actionDecryptContent_triggered()
     QtConcurrent::run([ = ] { config->decrypt->start(path); });
 }
 
-void MapleSeed::on_actionVerbose_triggered(bool checked)
-{
-    config->setKeyBool("VerboseLog", checked);
-}
-
 void MapleSeed::on_actionIntegrateCemu_triggered(bool checked)
 {
     config->setKeyBool("IntegrateCemu", checked);
@@ -553,10 +585,9 @@ void MapleSeed::on_actionClearSettings_triggered()
     if (reply == QMessageBox::Yes) {
       QDir dir(config->getPersistentDirectory());
       delete gameLibrary;
-      gameLibrary = nullptr;
       delete config;
-      config = nullptr;
-      dir.removeRecursively();
+      QFile(dir.filePath("settings.json")).remove();
+      QFile(dir.filePath("library.json")).remove();
       QApplication::quit();
     }
 }
@@ -680,5 +711,11 @@ void MapleSeed::on_actionGamepad_triggered(bool checked)
 
 void MapleSeed::on_actionDebug_triggered(bool checked)
 {
-    config->setKeyBool("DebugLogging", Debug::debugEnabled = checked);
+    config->setKeyBool("DebugLogging", Debug::isEnabled = checked);
+}
+
+void MapleSeed::on_actionOpen_Log_triggered()
+{
+    QString logFile(QDir(QCoreApplication::applicationName() + ".log").absolutePath());
+    QDesktopServices::openUrl(QUrl(QCoreApplication::applicationName() + ".log"));
 }

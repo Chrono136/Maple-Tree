@@ -269,8 +269,8 @@ border: 1px solid black;
      <property name="title">
       <string>Log</string>
      </property>
-     <addaction name="actionVerbose"/>
      <addaction name="actionDebug"/>
+     <addaction name="actionOpen_Log"/>
     </widget>
     <addaction name="menuLog"/>
     <addaction name="actionClearSettings"/>
@@ -346,17 +346,6 @@ border: 1px solid black;
     <string>Decrypt</string>
    </property>
   </action>
-  <action name="actionVerbose">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="enabled">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Verbose</string>
-   </property>
-  </action>
   <action name="actionIntegrateCemu">
    <property name="checkable">
     <bool>true</bool>
@@ -418,6 +407,11 @@ border: 1px solid black;
    </property>
    <property name="text">
     <string>Debug</string>
+   </property>
+  </action>
+  <action name="actionOpen_Log">
+   <property name="text">
+    <string>Open Log</string>
    </property>
   </action>
  </widget>

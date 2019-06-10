@@ -90,7 +90,7 @@ QString GameLibrary::processLibItem(const QString &d)
             if (entry->titleInfo->getTitleType() == TitleType::Game) {
                 self->library[entry->titleInfo->getID()] = std::move(entry);
                 emit self->changed(self->library[entry->titleInfo->getID()]);
-                qDebug() << "Added to library:" << self->library[entry->titleInfo->getID()]->metaxml;
+                //qDebug() << "Added to library:" << self->library[entry->titleInfo->getID()]->metaxml;
             }else {
                 qDebug() << "Skipped, wrong type:" << self->library[entry->titleInfo->getID()]->metaxml;
             }
@@ -125,9 +125,9 @@ QVariant GameLibrary::processDbItem(const QVariant &item)
         LibraryEntry* entry = new LibraryEntry(self->database[id]);
         if (entry->titleInfo->getTitleType() == TitleType::Game) {
             emit self->addTitle(entry);
-            qDebug() << "Added game:" << entry->titleInfo->getFormatName();
+            //qDebug() << "Added game:" << entry->titleInfo->getFormatName();
         }else {
-            qDebug() << "Skipped, wrong type:" << entry->titleInfo->getFormatName();
+            //qDebug() << "Skipped, wrong type:" << entry->titleInfo->getFormatName();
         }
     }
     self->mutex.unlock();

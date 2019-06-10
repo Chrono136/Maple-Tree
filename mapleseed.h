@@ -39,6 +39,7 @@ private:
     QProcess* process = new QProcess;
     QMutex mutex;
 
+    void checkUpdate();
 	void initialize();
 	void defineActions();
     void defaultConfiguration();
@@ -77,8 +78,6 @@ private slots:
 
     void on_actionDecryptContent_triggered();
 
-    void on_actionVerbose_triggered(bool checked);
-
     void on_actionIntegrateCemu_triggered(bool checked);
 
     void on_actionRefreshLibrary_triggered();
@@ -112,6 +111,8 @@ private slots:
     void on_actionGamepad_triggered(bool checked);
 
     void on_actionDebug_triggered(bool checked);
+
+    void on_actionOpen_Log_triggered();
 };
 
 #endif  // MAINWINDOW_H

@@ -3,9 +3,10 @@ All notable changes to this project will be documented in this file.
 
 #
 ## 1.0.0-561 
-##### Release: 2019-06-09
+##### Release: 2019-06-11
 ##### Added
 - xinput gamepad support (dpad up & down, start button to launch a game)
+- debug log option
 
 ##### Changed
 - logging info is written to file with more detail
@@ -14,6 +15,7 @@ All notable changes to this project will be documented in this file.
 ##### Removed
 - change log tab
 - log tab
+- verbose log option
 
 ##### Fixed
 - 

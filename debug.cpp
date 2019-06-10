@@ -1,7 +1,7 @@
 #include "debug.h"
 #include "mapleseed.h"
 
-bool Debug::debugEnabled = false;
+bool Debug::isEnabled = false;
 
 Debug::Debug(QObject *parent) : QObject(parent)
 {
@@ -11,11 +11,11 @@ void Debug::categoryFilter(QLoggingCategory *category)
 {
     if (strcmp(category->categoryName(), "default") == 0)
     {
-        category->setEnabled(QtDebugMsg, debugEnabled);
+        category->setEnabled(QtDebugMsg, isEnabled);
     }
     else if (strcmp(category->categoryName(), "qt.gamepad") == 0)
     {
-        category->setEnabled(QtDebugMsg, debugEnabled);
+        category->setEnabled(QtDebugMsg, isEnabled);
     }
     else
     {
@@ -47,10 +47,14 @@ void Debug::messageOutput(QtMsgType type, const QMessageLogContext &context, con
         qtype = "Fatal";
         break;
     }
+#ifdef QT_DEBUG
     MapleSeed::self->messageLog(QString("%1: %2 (%3:%4, %5)")
                                 .arg(qtype)
                                 .arg(localMsg.constData())
                                 .arg(file)
                                 .arg(context.line)
                                 .arg(function));
+#else
+    MapleSeed::self->messageLog(QString("%1: %2").arg(qtype).arg(localMsg.constData()));
+#endif
 }

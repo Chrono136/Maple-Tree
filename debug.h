@@ -15,7 +15,7 @@ public:
 
     static void messageOutput(QtMsgType type, const QMessageLogContext &context, const QString &msg);
 
-    static bool debugEnabled;
+    static bool isEnabled;
 
 signals:
 

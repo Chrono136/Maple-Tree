@@ -113,6 +113,8 @@ private slots:
     void on_actionDebug_triggered(bool checked);
 
     void on_actionOpen_Log_triggered();
+
+    void on_actionFullscreen_triggered(bool checked);
 };
 
 #endif  // MAINWINDOW_H

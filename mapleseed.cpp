@@ -105,6 +105,7 @@ void MapleSeed::defineActions()
 
 void MapleSeed::defaultConfiguration()
 {
+    ui->actionFullscreen->setChecked(config->getKeyBool("Fullscreen"));
     ui->actionIntegrateCemu->setChecked(config->getKeyBool("IntegrateCemu"));
     ui->checkBoxEShopTitles->setChecked(config->getKeyBool("eShopTitles"));
     ui->actionGamepad->setChecked(Gamepad::isEnabled = config->getKeyBool("Gamepad"));
@@ -150,10 +151,16 @@ void MapleSeed::CopyToClipboard(QString text)
 void MapleSeed::executeCemu(QString rpxPath)
 {
     QFileInfo rpx(rpxPath);
-    if (rpx.exists()){
+    if (rpx.exists())
+    {
+        QString args("-g \"" + rpx.filePath() + "\"");
+        if (config->getKeyBool("Fullscreen"))
+        {
+            args.append(" -f");
+        }
         QString file(config->getKeyString("cemupath"));
         process->setWorkingDirectory(QFileInfo(file).dir().path());
-        process->setNativeArguments("-g \"" + rpx.filePath() + "\"");
+        process->setNativeArguments(args);
         process->setProgram(file);
         process->start();
     }
@@ -726,4 +733,9 @@ void MapleSeed::on_actionOpen_Log_triggered()
 {
     QString logFile(QDir(QCoreApplication::applicationName() + ".log").absolutePath());
     QDesktopServices::openUrl(QUrl(QCoreApplication::applicationName() + ".log"));
+}
+
+void MapleSeed::on_actionFullscreen_triggered(bool checked)
+{
+    config->setKeyBool("Fullscreen", checked);
 }

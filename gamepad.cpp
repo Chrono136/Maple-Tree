@@ -26,14 +26,45 @@ void Gamepad::init()
         connect(m_gamepad, &QGamepad::buttonUpChanged, this, [=](bool pressed) { emit gameUp(pressed && isEnabled); });
         connect(m_gamepad, &QGamepad::buttonDownChanged, this, [=](bool pressed) { emit gameDown(pressed && isEnabled); });
         connect(m_gamepad, &QGamepad::buttonStartChanged, this, [=](bool pressed) { emit gameStart(pressed && isEnabled); });
-        //connect(m_gamepad, &QGamepad::buttonGuideChanged, this, [=](bool pressed) { emit gameClose(pressed && isEnabled); });
+
     });
-    connect(manager, &QGamepadManager::gamepadButtonPressEvent, this, Gamepad::pressed);
+    connect(manager, &QGamepadManager::gamepadButtonPressEvent, this, Gamepad::button);
+    connect(manager, &QGamepadManager::gamepadButtonReleaseEvent, this,
+            [=](int deviceId, QGamepadManager::GamepadButton button) { Gamepad::button(deviceId, button); });
 }
 
-void Gamepad::pressed(int deviceId, QGamepadManager::GamepadButton button, double value)
+void Gamepad::closeGame()
 {
-    qInfo() << "Gamepad(" << deviceId << ") button:" << button << "=" << value;
+    if (l1 && l2 && r1 && r2 && select)
+    {
+        emit instance->gameClose(true);
+    }
+}
+
+void Gamepad::button(int deviceId, QGamepadManager::GamepadButton button, double value)
+{
+    qDebug() << "Gamepad(" << deviceId << ") button:" << button << "=" << value;
+    if (button == QGamepadManager::GamepadButton::ButtonL1)
+    {
+        instance->l1 = static_cast<bool>(value);
+    }
+    if (button == QGamepadManager::GamepadButton::ButtonL2)
+    {
+        instance->l2 = static_cast<bool>(value);
+    }
+    if (button == QGamepadManager::GamepadButton::ButtonR1)
+    {
+        instance->r1 = static_cast<bool>(value);
+    }
+    if (button == QGamepadManager::GamepadButton::ButtonR2)
+    {
+        instance->r2 = static_cast<bool>(value);
+    }
+    if (button == QGamepadManager::GamepadButton::ButtonSelect)
+    {
+        instance->select = static_cast<bool>(value);
+    }
+    instance->closeGame();
 }
 
 void Gamepad::enable()

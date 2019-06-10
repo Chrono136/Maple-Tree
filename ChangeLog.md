@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 #
 ## 1.0.0-5**
 ##### Release: 2019-06-**
+##### Added
+- Close cemu button combo (L1 + L2 + R1 + R2 + Select)
+- Fullscreen cemu option
+
 ##### Fixed
 - Integrate Cemu doesn't prompt if canceled
 

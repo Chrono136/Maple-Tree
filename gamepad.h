@@ -15,8 +15,9 @@ public:
     ~Gamepad();
 
     void init();
+    void closeGame();
 
-    static void pressed(int deviceId, QGamepadManager::GamepadButton button, double value);
+    static void button(int deviceId, QGamepadManager::GamepadButton button, double value = 0);
     static void enable();
     static void disable();
     static void terminate();
@@ -35,6 +36,11 @@ public slots:
 private:
     QGamepad *m_gamepad;
     QGamepadManager* manager;
+    bool l1 = false;
+    bool l2 = false;
+    bool r1 = false;
+    bool r2 = false;
+    bool select = false;
 };
 
 #endif // GAMEPAD_H

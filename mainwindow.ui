@@ -302,6 +302,8 @@ border: 1px solid black;
      <string>Cemu</string>
     </property>
     <addaction name="actionIntegrateCemu"/>
+    <addaction name="separator"/>
+    <addaction name="actionFullscreen"/>
    </widget>
    <widget class="QMenu" name="menuBETA">
     <property name="title">
@@ -412,6 +414,17 @@ border: 1px solid black;
   <action name="actionOpen_Log">
    <property name="text">
     <string>Open Log</string>
+   </property>
+  </action>
+  <action name="actionFullscreen">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Fullscreen</string>
    </property>
   </action>
  </widget>

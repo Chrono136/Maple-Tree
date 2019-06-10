@@ -8,7 +8,6 @@ MapleSeed::MapleSeed(QWidget* parent) : QMainWindow(parent), ui(new Ui::MainWind
 {
     ui->setupUi(self = this);
     setWindowTitle("MapleSeed++ " + QString(GEN_VERSION_STRING));
-    QtConcurrent::run([=] { checkUpdate(); });
     initialize();
 }
 
@@ -34,9 +33,10 @@ MapleSeed::~MapleSeed()
 //https://stackoverflow.com/questions/34318934/qt-installer-framework-auto-update
 void MapleSeed::checkUpdate()
 {
+    qInfo() << "Checking for update";
+
     QProcess process;
     process.start("maintenancetool --checkupdates");
-
     process.waitForFinished();
 
     if(process.error() != QProcess::UnknownError)
@@ -57,8 +57,7 @@ void MapleSeed::checkUpdate()
 
     if (QMessageBox::information(this, "Update Available!!", "Would you like to update?", QMessageBox::Yes | QMessageBox::No) == QMessageBox::Yes)
     {
-        QStringList args("--updater");
-        QProcess::startDetached("maintenancetool", args);
+        QProcess::startDetached("maintenancetool", QStringList() << "--updater");
         qApp->closeAllWindows();
     }
 }
@@ -76,7 +75,9 @@ void MapleSeed::initialize()
 
     gameLibrary->init(config->getBaseDirectory());
     on_actionGamepad_triggered(config->getKeyBool("Gamepad"));
+
     qInfo() << "Environment setup complete";
+    checkUpdate();
 }
 
 void MapleSeed::defineActions()
@@ -115,7 +116,8 @@ QDir* MapleSeed::selectDirectory()
   QFileDialog dialog;
   dialog.setFileMode(QFileDialog::DirectoryOnly);
   dialog.setOption(QFileDialog::ShowDirsOnly);
-  if (dialog.exec()) {
+  if (dialog.exec())
+  {
     QStringList entries(dialog.selectedFiles());
     return new QDir(entries.first());
   }
@@ -125,11 +127,13 @@ QDir* MapleSeed::selectDirectory()
 QFileInfo MapleSeed::selectFile(QString defaultDir)
 {
     QFileDialog dialog;
-    if (QDir(defaultDir).exists()){
+    if (QDir(defaultDir).exists())
+    {
         dialog.setDirectory(defaultDir);
     }
     dialog.setNameFilter("*.qta");
-    if (dialog.exec()) {
+    if (dialog.exec())
+    {
         QStringList entries(dialog.selectedFiles());
         return entries.first();
     }
@@ -516,7 +520,7 @@ void MapleSeed::on_actionQuit_triggered()
 
 void MapleSeed::on_actionChangeLibrary_triggered()
 {
-    QDir* dir = this->selectDirectory();
+    QDir* dir = selectDirectory();
     if (dir == nullptr)
       return;
     QString directory(dir->path());
@@ -552,18 +556,26 @@ void MapleSeed::on_actionIntegrateCemu_triggered(bool checked)
 {
     config->setKeyBool("IntegrateCemu", checked);
     QString cemulocation(config->getCemuPath());
-    if (checked && !QFile(cemulocation).exists()) {
+    if (checked && !QFile(cemulocation).exists())
+    {
       QFileDialog dialog;
       dialog.setNameFilter("cemu.exe");
       dialog.setFileMode(QFileDialog::ExistingFile);
-      if (dialog.exec()) {
+      if (dialog.exec())
+      {
         QStringList files(dialog.selectedFiles());
-        config->setKey("CemuPath", QFileInfo(files[0]).absoluteFilePath());
+        config->setKey("CemuPath", QFileInfo(files.first()).absoluteFilePath());
+      }
+      else
+      {
+          ui->actionIntegrateCemu->setChecked(false);
+          return;
       }
     }
     if (checked)
     {
-        QMessageBox::information(this, "Warning!!!!!!",  "Save Data exports WILL NOT work with any other save data tool/program. DO NOT change the default export file name.");
+        auto str("Save Data exports WILL NOT work with any other save data tool/program. DO NOT change the default export file name.");
+        QMessageBox::information(this, "Warning!!!!!!",  str);
     }
 }
 

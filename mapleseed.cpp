@@ -37,7 +37,6 @@ void MapleSeed::checkUpdate()
     QProcess process;
     process.start("maintenancetool --checkupdates");
 
-    // Wait until the update tool is finished
     process.waitForFinished();
 
     if(process.error() != QProcess::UnknownError)
@@ -46,25 +45,22 @@ void MapleSeed::checkUpdate()
         return;
     }
 
-    // Read the output
     QByteArray data = process.readAllStandardOutput();
 
-    // No output means no updates available
-    // Note that the exit code will also be 1, but we don't use that
-    // Also note that we should parse the output instead of just checking if it is empty if we want specific update info
     if(data.isEmpty())
     {
         qDebug() << "No updates available";
         return;
     }
 
-    // Call the maintenance tool binary
-    // Note: we start it detached because this application need to close for the update
-    QStringList args("--updater");
-    QProcess::startDetached("maintenancetool", args);
+    qDebug() << data.constData();
 
-    // Close the application
-    qApp->closeAllWindows();
+    if (QMessageBox::information(this, "Update Available!!", "Would you like to update?", QMessageBox::Yes | QMessageBox::No) == QMessageBox::Yes)
+    {
+        QStringList args("--updater");
+        QProcess::startDetached("maintenancetool", args);
+        qApp->closeAllWindows();
+    }
 }
 
 void MapleSeed::initialize()
@@ -512,10 +508,9 @@ QListWidgetItem* MapleSeed::processItemFilter(QListWidgetItem *item)
 
 void MapleSeed::on_actionQuit_triggered()
 {
-    QMessageBox::StandardButton reply;
-    reply = QMessageBox::question(this, "Exit", "Exit Program?", QMessageBox::Yes|QMessageBox::No);
-    if (reply == QMessageBox::Yes) {
-      QApplication::quit();
+    if (QMessageBox::question(this, "Exit", "Exit Program?", QMessageBox::Yes|QMessageBox::No) == QMessageBox::Yes)
+    {
+      qApp->closeAllWindows();
     }
 }
 
@@ -582,7 +577,8 @@ void MapleSeed::on_actionRefreshLibrary_triggered()
 void MapleSeed::on_actionClearSettings_triggered()
 {
     auto reply = QMessageBox::information(this, "Warning!!!", "Do you want to delete all settings and temporary files?\nThis application will close.", QMessageBox::Yes | QMessageBox::No);
-    if (reply == QMessageBox::Yes) {
+    if (reply == QMessageBox::Yes)
+    {
       QDir dir(config->getPersistentDirectory());
       delete gameLibrary;
       delete config;

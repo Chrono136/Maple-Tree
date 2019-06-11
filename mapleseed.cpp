@@ -180,15 +180,30 @@ void MapleSeed::gameUp(bool pressed)
     if (!pressed || processActive()) return;
     qDebug() << "row up";
 
-    auto row = ui->listWidget->currentRow();
-    if (ui->listWidget->currentRow() == 0)
+    QListWidget *listWidget;
+    if (ui->tabWidget->currentIndex() == 0) {
+        listWidget = ui->listWidget;
+    }
+    else if (ui->tabWidget->currentIndex() == 1) {
+        listWidget = ui->titlelistWidget;
+    }
+    else {
+        return;
+    }
+
+    auto row = listWidget->currentRow();
+    if (listWidget->currentRow() == 0)
     {
-        row = ui->listWidget->count()-1;
+        row = listWidget->count()-1;
     }
     else {
         row -= 1;
+        auto item(listWidget->item(row));
+        while (item->isHidden()){
+            item = listWidget->item(row -= 1);
+        }
     }
-    ui->listWidget->setCurrentRow(row);
+    listWidget->setCurrentRow(row);
 }
 
 void MapleSeed::gameDown(bool pressed)
@@ -196,15 +211,30 @@ void MapleSeed::gameDown(bool pressed)
     if (!pressed || processActive()) return;
     qDebug() << "row down";
 
-    auto row = ui->listWidget->currentRow();
-    if (ui->listWidget->currentRow() == ui->listWidget->count()-1)
+    QListWidget *listWidget;
+    if (ui->tabWidget->currentIndex() == 0) {
+        listWidget = ui->listWidget;
+    }
+    else if (ui->tabWidget->currentIndex() == 1) {
+        listWidget = ui->titlelistWidget;
+    }
+    else {
+        return;
+    }
+
+    auto row = listWidget->currentRow();
+    if (listWidget->currentRow() == listWidget->count()-1)
     {
         row = 0;
     }
     else {
         row += 1;
+        auto item(listWidget->item(row));
+        while (item->isHidden()){
+            item = listWidget->item(row += 1);
+        }
     }
-    ui->listWidget->setCurrentRow(row);
+    listWidget->setCurrentRow(row);
 }
 
 void MapleSeed::gameStart(bool pressed)
@@ -225,6 +255,24 @@ void MapleSeed::gameClose(bool pressed)
     if (!pressed || !processActive()) return;
 
     process->terminate();
+}
+
+void MapleSeed::prevTab(bool pressed)
+{
+    if (!pressed || processActive()) return;
+    qDebug() << "prev tab";
+
+    int index = ui->tabWidget->currentIndex();
+    ui->tabWidget->setCurrentIndex(index-1);
+}
+
+void MapleSeed::nextTab(bool pressed)
+{
+    if (!pressed || processActive()) return;
+    qDebug() << "next tab";
+
+    int index = ui->tabWidget->currentIndex();
+    ui->tabWidget->setCurrentIndex(index+1);
 }
 
 void MapleSeed::messageLog(QString msg)
@@ -289,8 +337,12 @@ void MapleSeed::showContextMenu(QListWidget* list, const QPoint& pos)
 
   if (QFileInfo(entry->rpx).exists())
   {
-      menu.addAction(+"[Play] " + name, this, [=]
+      menu.addAction("[Play] " + name, this, [=]
       { executeCemu(entry->rpx); })->setEnabled(true);
+  }
+  else
+  {
+      menu.addAction(name, this, [=]{})->setEnabled(false);
   }
 
   if (QFileInfo(entry->rpx).exists() && config->getIntegrateCemu())
@@ -421,7 +473,10 @@ void MapleSeed::updateTitleList(LibraryEntry* entry)
 
 void MapleSeed::downloadStarted(QString filename)
 {
-  qInfo() << "Downloading" << filename;
+    maxRange = 0;
+    received = 0;
+    filename.isEmpty();
+    //qInfo() << "Downloading" << filename;
 }
 
 void MapleSeed::downloadSuccessful(QString fileName)
@@ -439,24 +494,27 @@ void MapleSeed::downloadError(QString errorString)
 
 void MapleSeed::updateDownloadProgress(qint64 bytesReceived, qint64 bytesTotal, QTime qtime)
 {
-  this->ui->progressBar->setRange(0, static_cast<int>(bytesTotal));
-  this->ui->progressBar->setValue(static_cast<int>(bytesReceived));
+    maxRange = static_cast<int>(bytesTotal);
+    received = static_cast<int>(bytesReceived);
 
-  double speed = bytesReceived * 1000.0 / qtime.elapsed();
-  QString unit;
-  if (speed < 1024) {
-    unit = "bytes/sec";
-  } else if (speed < 1024 * 1024) {
-    speed /= 1024;
-    unit = "kB/s";
-  } else {
-    speed /= 1024 * 1024;
-    unit = "MB/s";
-  }
+    this->ui->progressBar->setRange(0, maxRange);
+    this->ui->progressBar->setValue(received);
 
-  this->ui->progressBar->setFormat("%p% " +
-      config->size_human(bytesReceived) + " / " + config->size_human(bytesTotal) + " | " +
-      QString::fromLatin1("%1 %2").arg(speed, 3, 'f', 1).arg(unit));
+    double speed = bytesReceived * 1000.0 / qtime.elapsed();
+    QString unit;
+    if (speed < 1024) {
+      unit = "bytes/sec";
+    } else if (speed < 1024 * 1024) {
+      speed /= 1024;
+      unit = "kB/s";
+    } else {
+      speed /= 1024 * 1024;
+      unit = "MB/s";
+    }
+
+    this->ui->progressBar->setFormat("%p% " +
+        config->size_human(bytesReceived) + " / " + config->size_human(bytesTotal) + " | " +
+        QString::fromLatin1("%1 %2").arg(speed, 3, 'f', 1).arg(unit));
 }
 
 void MapleSeed::updateProgress(qint64 min, qint64 max, int curfile, int maxfiles)
@@ -715,6 +773,8 @@ void MapleSeed::on_actionGamepad_triggered(bool checked)
         connect(Gamepad::instance, &Gamepad::gameDown, this, &MapleSeed::gameDown);
         connect(Gamepad::instance, &Gamepad::gameStart, this, &MapleSeed::gameStart);
         connect(Gamepad::instance, &Gamepad::gameClose, this, &MapleSeed::gameClose);
+        connect(Gamepad::instance, &Gamepad::prevTab, this, &MapleSeed::prevTab);
+        connect(Gamepad::instance, &Gamepad::nextTab, this, &MapleSeed::nextTab);
     }
 
     if (checked){

@@ -6,10 +6,17 @@ All notable changes to this project will be documented in this file.
 ##### Release: 2019-06-**
 ##### Added
 - Close cemu button combo (L1 + L2 + R1 + R2 + Select)
+- Switch tabs using L1 and R1
 - Fullscreen cemu option
 
 ##### Fixed
 - Integrate Cemu doesn't prompt if canceled
+- missing directory when attempting to download patch/dlc
+- context menu creating empty directories for no reason
+
+##### Changed
+- Gamepad start button changed to ButtonA
+- TitleInfo::getDirectory() returns existing directory if present
 
 #
 ## 1.0.0-565

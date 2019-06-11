@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QtConcurrent>
 #include <QtGamepad>
+#include <QGamepadManager>
 
 class QGamepad;
 
@@ -17,7 +18,8 @@ public:
     void init();
     void closeGame();
 
-    static void button(int deviceId, QGamepadManager::GamepadButton button, double value = 0);
+    static void button(int deviceId, QGamepadManager::GamepadButton button, double value);
+    static void release(int deviceId, QGamepadManager::GamepadButton button);
     static void enable();
     static void disable();
     static void terminate();
@@ -30,11 +32,14 @@ signals:
     void gameClose(bool pressed);
     void gameUp(bool pressed);
     void gameDown(bool pressed);
+    void nextTab(bool pressed);
+    void prevTab(bool pressed);
 
 public slots:
 
 private:
     QGamepad *m_gamepad;
+    QMap<int, QGamepad*> m_gamepads;
     QGamepadManager* manager;
     bool l1 = false;
     bool l2 = false;

@@ -38,6 +38,8 @@ private:
     Ui::MainWindow* ui;
     QProcess* process = new QProcess;
     QMutex mutex;
+    int maxRange;
+    int received;
 
     void checkUpdate();
 	void initialize();
@@ -54,6 +56,8 @@ public slots:
     void gameDown(bool pressed);
     void gameStart(bool pressed);
     void gameClose(bool pressed);
+    void prevTab(bool pressed);
+    void nextTab(bool pressed);
     void messageLog(QString msg);
     void gameLibraryLoadComplete();
     void SelectionChanged(QListWidget* listWidget);

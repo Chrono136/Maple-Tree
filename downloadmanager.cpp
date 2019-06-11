@@ -115,8 +115,7 @@ void DownloadManager::_downloadReadyRead() {
 
 bool DownloadManager::isHttpRedirect() const {
 	int statusCode =
-		currentDownload->attribute(QNetworkRequest::HttpStatusCodeAttribute)
-		.toInt();
+        currentDownload->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
 	return statusCode == 301 || statusCode == 302 || statusCode == 303 ||
 		statusCode == 305 || statusCode == 307 || statusCode == 308;
 }

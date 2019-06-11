@@ -166,6 +166,44 @@
       </property>
      </widget>
     </widget>
+    <widget class="QWidget" name="tab_2">
+     <attribute name="title">
+      <string>Help</string>
+     </attribute>
+     <widget class="QListWidget" name="listWidget_2">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>10</y>
+        <width>281</width>
+        <height>101</height>
+       </rect>
+      </property>
+      <item>
+       <property name="text">
+        <string>Up -&gt; DPad-Up</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Down -&gt; DPad-Down</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Start Game -&gt; Button A</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Close Game -&gt; L1+L2+R1+R2+Select</string>
+       </property>
+      </item>
+     </widget>
+    </widget>
    </widget>
    <widget class="QProgressBar" name="progressBar">
     <property name="geometry">

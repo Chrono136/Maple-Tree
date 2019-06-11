@@ -28,6 +28,7 @@ public:
 	TitleInfo* downloadDlc();
 	TitleInfo* downloadPatch(QString version = "");
     void decryptContent();
+    qulonglong getSize();
     QString getDirectory();
     QString getFormatName();
     QString getBaseDirectory();
@@ -56,6 +57,7 @@ private:
 	QFileInfo meta_xml;
 	TitleType titleType;
 	quint8 attempt = 0;
+    qulonglong contentSize;
     QDir coversDirectory = QDir("covers");
     bool b_coverExists = false;
     bool b_coverExistsIsSet = false;

@@ -39,12 +39,11 @@ TitleInfo* TitleInfo::Create(QString id, QString basedir) {
 
 TitleInfo* TitleInfo::Create(const QFileInfo& metaxml, QString basedir) {
 	TitleInfo* titleInfo = Create(getXmlValue(metaxml, "title_id"), std::move(basedir));
-	titleInfo->meta_xml = metaxml.filePath();
+    titleInfo->meta_xml = metaxml;
 	return titleInfo;
 }
 
 TitleInfo* TitleInfo::DownloadCreate(const QString& id, QString basedir) {
-	QString baseURL("http://ccs.cdn.wup.shop.nintendo.net/ccs/download/");
 	TitleInfo* ti = Create(id, std::move(basedir));
 	ti->download();
 	return ti;
@@ -61,10 +60,10 @@ QString TitleInfo::getXmlValue(const QFileInfo & metaxml, const QString & field)
 		QDomNodeList rates = doc.elementsByTagName("menu");
 		for (int i = 0; i < rates.size(); i++) {
 			QDomNode n = rates.item(i);
-			QDomElement title_id = n.firstChildElement(field);
-			if (title_id.isNull())
+            QDomElement element = n.firstChildElement(field);
+            if (element.isNull())
 				continue;
-			value = title_id.text();
+            value = element.text();
 		}
 	}
 	return value;
@@ -103,30 +102,46 @@ TitleInfo* TitleInfo::download(QString version)
 		return nullptr;
 	}
 
-    TitleMetaData* tmd = getTMD(version);
+    QString directory(getDirectory());
+    if (!QDir(directory).exists())
+    {
+        QDir().mkpath(directory);
+    }
+
+    auto tmd = getTMD(version);
     CreateTicket(version);
 
 	auto contentCount = bs16(tmd->ContentCount);
 	if (contentCount > 1000)
-		return nullptr;
+        return nullptr;
 
-	for (int i = 0; i < contentCount; i++) {
+    qulonglong totalSize = 0;
+    for (int i = 0; i < contentCount; i++)
+    {
+        totalSize += Decrypt::bs64(tmd->Contents[i].Size);
+    }
+
+    contentSize = totalSize;
+    for (int i = 0; i < contentCount; i++)
+    {
 		QString contentID = QString().sprintf("%08x", bs32(tmd->Contents[i].ID));
-		QString contentPath = QDir(getDirectory()).filePath(contentID);
+        QString contentPath = QDir(directory).filePath(contentID);
 		QString downloadURL = baseURL + getID() + QString("/") + contentID;
 		qulonglong size = Decrypt::bs64(tmd->Contents[i].Size);
-		if (!QFile(contentPath).exists() || QFileInfo(contentPath).size() != static_cast<qint64>(size)) {
-			QString sz(Configuration::self->size_human(size));
-			QString msg = QString("Downloading Content (%1) %2 of %3 (%4)").arg(contentID).arg(i + 1).arg(contentCount).arg(sz);
+        if (!QFile(contentPath).exists() || QFileInfo(contentPath).size() != static_cast<qint64>(size))
+        {
+            QString sz(Configuration::self->size_human(totalSize));
+            QString msg = QString("Download Status: %1 of %2 (%3)").arg(i + 1).arg(contentCount).arg(sz);
 			QFile* file = DownloadManager::getSelf()->downloadSingle(downloadURL, contentPath, msg);
-			file->close();
+            file->close();
 		}
+        totalSize -= size;
 	}
 
     QtConcurrent::run([=]
     {
         decryptContent();
-        emit GameLibrary::self->processLibItem(getDirectory());
+        emit GameLibrary::self->processLibItem(directory);
     });
 	return this;
 }
@@ -147,24 +162,38 @@ TitleInfo* TitleInfo::downloadPatch(QString version)
     return titleInfo;
 }
 
-void TitleInfo::decryptContent() {
-	QString tmd = QDir(this->getDirectory()).filePath("tmd");
-	QString cetk = QDir(this->getDirectory()).filePath("cetk");
+void TitleInfo::decryptContent()
+{
+    QString directory(getDirectory());
+    QString tmd = QDir(directory).filePath("tmd");
+    QString cetk = QDir(directory).filePath("cetk");
 
     if (!QFile(tmd).exists()) {
-        qCritical() << "tmd not found, decryption failed" << getDirectory();
+        qCritical() << "tmd not found, decryption failed" << directory;
 		return;
     }
     if (!QFile(cetk).exists()) {
-        qCritical() << "cetk not found, decryption failed" << getDirectory();
+        qCritical() << "cetk not found, decryption failed" << directory;
 		return;
     }
-    Configuration::self->decrypt->start(getDirectory());
+    Configuration::self->decrypt->start(directory);
 }
 
-QString TitleInfo::getDirectory() {
+qulonglong TitleInfo::getSize()
+{
+    return contentSize;
+}
+
+QString TitleInfo::getDirectory()
+{
+    if (meta_xml.exists())
+    {
+        return QDir(meta_xml.dir().filePath("..")).absolutePath();
+    }
+
     QDir dir(getBaseDirectory());
-    switch (getTitleType()) {
+    switch (getTitleType())
+    {
 	case TitleType::Patch:
         dir = dir.filePath("Patch");
 		break;
@@ -180,9 +209,7 @@ QString TitleInfo::getDirectory() {
 	case TitleType::Game:
 		break;
     }
-    QString path(dir.filePath(getFormatName()));
-    QDir().mkdir(path);
-    return path;
+    return QDir(dir.filePath(getFormatName())).absolutePath();
 }
 
 QString TitleInfo::getFormatName() {
@@ -230,12 +257,12 @@ QString TitleInfo::getXmlLocation() {
 }
 
 QString TitleInfo::getExecutable() {
-	QString root = QDir(QDir(this->getXmlLocation()).filePath("../../code")).absolutePath();
+    QString root = meta_xml.dir().filePath("../code");
 	QDirIterator it(root, QStringList() << "*.rpx", QDir::NoFilter);
-	while (it.hasNext()) {
-		it.next();
-		QString filepath(it.filePath());
-		return filepath;
+    while (it.hasNext())
+    {
+        it.next();
+        return QFileInfo(it.filePath()).absoluteFilePath();
 	}
 	return nullptr;
 }
@@ -322,7 +349,8 @@ QByteArray TitleInfo::CreateTicket(QString ver)
     return data;
 }
 
-TitleMetaData* TitleInfo::getTMD(const QString & version) {
+TitleMetaData* TitleInfo::getTMD(const QString & version)
+{
     QString tmdpath(getDirectory() + "/tmd");
 	QString tmdurl("http://ccs.cdn.wup.shop.nintendo.net/ccs/download/" + getID() + "/tmd");
     if (!version.isEmpty()){

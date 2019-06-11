@@ -179,7 +179,7 @@
         <x>10</x>
         <y>10</y>
         <width>281</width>
-        <height>101</height>
+        <height>141</height>
        </rect>
       </property>
       <item>
@@ -190,6 +190,16 @@
       <item>
        <property name="text">
         <string>Down -&gt; DPad-Down</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Prev Tab -&gt; L1</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Next Tab -&gt; R1</string>
        </property>
       </item>
       <item>

@@ -2,8 +2,8 @@
 All notable changes to this project will be documented in this file.
 
 #
-## 1.0.0-5**
-##### Release: 2019-06-**
+## 1.0.0-570
+##### Release: 2019-06-11
 ##### Added
 - Close cemu button combo (L1 + L2 + R1 + R2 + Select)
 - Switch tabs using L1 and R1

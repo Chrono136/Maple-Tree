@@ -209,7 +209,9 @@ QString TitleInfo::getDirectory()
 	case TitleType::Game:
 		break;
     }
-    return QDir(dir.filePath(getFormatName())).absolutePath();
+    QString name(getFormatName());
+    name.remove(QRegExp("[\\/:*?""<>|]"));
+    return QDir(dir.filePath(name)).absolutePath();
 }
 
 QString TitleInfo::getFormatName() {

@@ -57,7 +57,7 @@ void MapleSeed::checkUpdate()
 
     if (QMessageBox::information(this, "Update Available!!", "Would you like to update?", QMessageBox::Yes | QMessageBox::No) == QMessageBox::Yes)
     {
-        QProcess::startDetached("maintenancetool", QStringList() << "--updater");
+        QtConcurrent::run([=] { QProcess::startDetached("maintenancetool", QStringList() << "--updater"); });
         qApp->closeAllWindows();
     }
 }

@@ -539,7 +539,6 @@ void MapleSeed::filter(QString region, QString filter_string)
     if (!filter_string.isEmpty())
         qInfo() << "filter:" << filter_string;
 
-    ui->titlelistWidget->setItemSelected(nullptr, true);
     for (int row(0); row < ui->titlelistWidget->count(); row++)
         ui->titlelistWidget->item(row)->setHidden(true);
 

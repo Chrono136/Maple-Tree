@@ -9,7 +9,7 @@ FOR /F "tokens=*" %%A IN ('"git describe --tags --abbrev=0"') DO (SET fileVersio
 FOR /F "tokens=*" %%A IN ('"git rev-parse --short HEAD"') DO (SET commitVersion=%%A)
 FOR /F "tokens=*" %%A IN ('"git rev-list --all --count"') DO (SET commitCount=%%A)
 
-SET versionString=%fileVersion%.%commitCount%
+SET versionString=1.0%fileVersion%.%commitCount%
 
 ECHO //generated resource header > "%versionFile%"
 ECHO #define GEN_LATEST_VERSION_STRING "%fileVersion%\0" >> "%versionFile%"

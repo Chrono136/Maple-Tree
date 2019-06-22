@@ -199,7 +199,7 @@ void MapleSeed::gameUp(bool pressed)
     else {
         row -= 1;
         auto item(listWidget->item(row));
-        while (item->isHidden()){
+        while (item && item->isHidden()){
             item = listWidget->item(row -= 1);
         }
     }
@@ -230,7 +230,7 @@ void MapleSeed::gameDown(bool pressed)
     else {
         row += 1;
         auto item(listWidget->item(row));
-        while (item->isHidden()){
+        while (item && item->isHidden()){
             item = listWidget->item(row += 1);
         }
     }

@@ -10,7 +10,7 @@ environment:
 
 init:
   - if not %platform%==mingw call "C:\Qt\5.12\msvc2017_64\bin\qtenv2.bat"
-  - if not %platform%==mingw call "C:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools\VC\Auxiliary\Build\vcvarsall.bat" %platform%
+  - if not %platform%==mingw call "C:\Program Files (x86)\Microsoft Visual Studio 15.0\VC\vcvarsall.bat" %platform%
   - if not %platform%==mingw (set makefiles="NMake Makefiles") else (set makefiles="MinGW Makefiles")
   - cd "C:\projects\maple-tree"
       

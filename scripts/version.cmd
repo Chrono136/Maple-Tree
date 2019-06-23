@@ -9,8 +9,8 @@ SET versionFile=%MS%versioninfo.h
 ::FOR /F "tokens=*" %%A IN ('"git rev-parse --short HEAD"') DO (SET commitVersion=%%A)
 ::FOR /F "tokens=*" %%A IN ('"git rev-list --all --count"') DO (SET commitCount=%%A)
 
-SET versionString=1.0%fileVersion%.%commitCount%
-::SET versionString=1.0
+::SET versionString=1.0%fileVersion%.%commitCount%
+SET versionString=1.1.0
 
 ECHO //generated resource header > "%versionFile%"
 ECHO #define GEN_LATEST_VERSION_STRING "%fileVersion%\0" >> "%versionFile%"
@@ -22,8 +22,8 @@ ECHO //generated resource header > "%resourceFile%"
 ECHO #include ^<windows.h^> >> "%resourceFile%"
 ECHO IDI_ICON1 ICON "sprout.ico" >> "%resourceFile%"
 ECHO VS_VERSION_INFO VERSIONINFO >> "%resourceFile%"
-ECHO FILEVERSION 1, 0, 0, 0 >> "%resourceFile%"
-ECHO PRODUCTVERSION 1, 0, 0, 0 >> "%resourceFile%"
+ECHO FILEVERSION 1, 1, 0, 0 >> "%resourceFile%"
+ECHO PRODUCTVERSION 1, 1, 0, 0 >> "%resourceFile%"
 ECHO FILEFLAGSMASK 0x3fL >> "%resourceFile%"
 ECHO #ifdef _DEBUG >> "%resourceFile%"
 ECHO FILEFLAGS 0x1L >> "%resourceFile%"

@@ -98,14 +98,6 @@ void MapleSeed::defineActions()
     //connect(downloadQueue, &DownloadQueue::ObjectFinished, this, &MapleSeed::DownloadQueueRemove);
     connect(downloadQueue, &DownloadQueue::QueueFinished, this, &MapleSeed::DownloadQueueFinished);
     connect(downloadQueue, &DownloadQueue::QueueProgress, this, &MapleSeed::updateDownloadProgress);
-
-    //connect(downloadManager, &DownloadManager::downloadStarted, this, &MapleSeed::downloadStarted);
-    //connect(downloadManager, &DownloadManager::downloadStarted, this, &MapleSeed::disableMenubar);
-    //connect(downloadManager, &DownloadManager::downloadSuccessful, this, &MapleSeed::downloadSuccessful);
-    //connect(downloadManager, &DownloadManager::downloadSuccessful, this, &MapleSeed::enableMenubar);
-    connect(downloadManager, &DownloadManager::downloadError, this, &MapleSeed::downloadError);
-    //connect(downloadManager, &DownloadManager::downloadError, this, &MapleSeed::enableMenubar);
-    //connect(downloadManager, &DownloadManager::downloadProgress, this, &MapleSeed::updateDownloadProgress);
 }
 
 void MapleSeed::defaultConfiguration()
@@ -518,34 +510,12 @@ void MapleSeed::updateTitleList(LibraryEntry* entry)
     this->ui->titlelistWidget->addItem(tii);
 }
 
-void MapleSeed::downloadStarted(QString filename)
-{
-    maxRange = 0;
-    received = 0;
-    filename.isEmpty();
-    //qInfo() << "Downloading" << filename;
-}
-
-void MapleSeed::downloadSuccessful(QString fileName)
-{
-    this->ui->progressBar->setValue(0);
-    this->ui->progressBar->setFormat("%p%");
-    qInfo() << "Download successful" << fileName;
-}
-
-void MapleSeed::downloadError(QString errorString)
-{
-    this->ui->menubar->setEnabled(true);
-    qCritical() << errorString;
-}
-
 void MapleSeed::updateDownloadProgress(qint64 bytesReceived, qint64 bytesTotal, QTime qtime)
 {
-    maxRange = static_cast<int>(bytesTotal);
-    received = static_cast<int>(bytesReceived);
+    float percent = (static_cast<float>(bytesReceived) / static_cast<float>(bytesTotal)) * 100;
 
-    this->ui->progressBar->setRange(0, maxRange);
-    this->ui->progressBar->setValue(received);
+    this->ui->progressBar->setRange(0, 100);
+    this->ui->progressBar->setValue(static_cast<int>(percent));
 
     double speed = bytesReceived * 1000.0 / qtime.elapsed();
     QString unit;

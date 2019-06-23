@@ -14,10 +14,12 @@ class QueueInfo : public QObject
 public:
     explicit QueueInfo(QObject *parent = nullptr) : QObject(parent)
     {
+        totalSize = 0;
         bytesReceived = 0;
         pgbar = new QProgressBar();
         pgbar->setStyleSheet("QProgressBar {\nborder: 1px solid black;\ntext-align: center;\npadding: 1px;\nwidth: 15px;\n}\n\nQProgressBar::chunk {\nbackground-color: #cd9bff;\nborder: 1px solid black;\n}");
         pgbar->setAlignment(Qt::AlignmentFlag::AlignHCenter | Qt::AlignmentFlag::AlignVCenter);
+        pgbar->setRange(0, 100);
     }
 
     QString name;
@@ -28,10 +30,10 @@ public:
     QProgressBar *pgbar;
 
 public slots:
-    void updateProgress()
+    void updateProgress(qint64 received)
     {
-        pgbar->setRange(0, static_cast<int>(totalSize));
-        pgbar->setValue(static_cast<int>(bytesReceived));
+        float percent = (static_cast<float>(received) / static_cast<float>(totalSize)) * 100;
+        pgbar->setValue(static_cast<int>(percent));
     }
 };
 

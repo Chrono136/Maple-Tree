@@ -25,12 +25,9 @@ bool DownloadQueue::exists(QueueInfo *info)
 
 void DownloadQueue::bytesReceived(qint64 bytes)
 {
-    if (!bytes){
-        return;
-    }
-    currentItem->bytesReceived += bytes;
-    currentItem->updateProgress();
-    emit self->QueueProgress(currentItem->bytesReceived, currentItem->totalSize, self->downloadTime);
+    auto itm = currentItem;
+    itm->updateProgress(itm->bytesReceived += bytes);
+    emit self->QueueProgress(itm->bytesReceived, itm->totalSize, self->downloadTime);
 }
 
 void DownloadQueue::startQueue()

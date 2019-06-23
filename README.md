@@ -1,4 +1,5 @@
 # MapleSeed
+[![Build status](https://ci.appveyor.com/api/projects/status/rdcc6m9tafnsqb1n/branch/master?svg=true)](https://ci.appveyor.com/project/Tsume/maple-tree/branch/master)
 
 #### Requirements
 - Windows 7 and above

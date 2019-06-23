@@ -9,8 +9,8 @@ SET versionFile=%MS%versioninfo.h
 ::FOR /F "tokens=*" %%A IN ('"git rev-parse --short HEAD"') DO (SET commitVersion=%%A)
 ::FOR /F "tokens=*" %%A IN ('"git rev-list --all --count"') DO (SET commitCount=%%A)
 
-::SET versionString=1.0.0%fileVersion%.%commitCount%
-SET versionString=1.0.0
+SET versionString=1.0%fileVersion%.%commitCount%
+::SET versionString=1.0
 
 ECHO //generated resource header > "%versionFile%"
 ECHO #define GEN_LATEST_VERSION_STRING "%fileVersion%\0" >> "%versionFile%"

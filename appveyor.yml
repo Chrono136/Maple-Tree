@@ -2,21 +2,19 @@ image: Visual Studio 2017
 configuration: Release
 platform: x64
 
-init:
-- cmd: >-
-    call C:\Qt\5.12\msvc2017_64\bin\qtenv2.bat
-    call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvarsall.bat" %platform%
-    cd "C:\projects\maple-tree"
-
 environment:
   matrix:
   - platform: amd64
     qt: msvc2017_64
 
+init:
+- cmd: >-
+    call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvarsall.bat" %platform%
+
 install:
 - cmd: >-
     SET QTDIR=C:\Qt\5.12\msvc2017_64
-    SET PATH=%QTDIR%;%QTDIR%\bin;C:\Qt\Tools\mingw530_32\bin;%PATH%;
+    SET PATH=%QTDIR%\bin;C:\Qt\Tools\mingw530_32\bin;%PATH%;
 
 build_script:
 - cmd: >-

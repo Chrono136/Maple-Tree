@@ -15,7 +15,6 @@ install:
 build_script:
   - call scripts\version.cmd
   - qmake MapleSeed.pro -spec win32-msvc
-  - qmake_all
   - C:\Qt\Tools\QtCreator\bin\jom.exe -f Makefile.Release
 
 artifacts:

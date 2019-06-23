@@ -1,7 +1,7 @@
 @ECHO OFF
 SETLOCAL
 
-SET MS=D:\Projects\MapleSeed\
+SET MS=.\
 SET resourceFile=%MS%resources\mapleseed.rc
 SET versionFile=%MS%versioninfo.h
 

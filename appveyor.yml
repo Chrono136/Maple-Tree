@@ -15,7 +15,7 @@ install:
   - set PATH=%PATH%;C:\Qt\Tools\msvc2017
 
 build_script:
-  - call scripts\version.bat
+  - call scripts\version.cmd
   - qmake MapleSeed.pro
   - msvc2017
 

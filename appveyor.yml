@@ -7,19 +7,17 @@ environment:
   matrix:
     - platform: amd64
       qt: msvc2017_64
-    - platform: mingw
-      qt: mingw530_32
 
 init:
   - if not %platform%==mingw set PATH=C:\Qt\5.12\%qt%\bin;%PATH%
     
 install:
-  - set PATH=%PATH%;C:\Qt\Tools\mingw530_32
+  - set PATH=%PATH%;C:\Qt\Tools\msvc2017
 
 build_script:
-  - call version.bat
+  - call scripts\version.bat
   - qmake MapleSeed.pro
-  - mingw32-make
+  - msvc2017
 
 artifacts:
   - path: bin\*

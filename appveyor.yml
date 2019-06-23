@@ -28,5 +28,5 @@ build_script:
     C:\Qt\Tools\QtCreator\bin\jom.exe -f Makefile.Release
 
 artifacts:
-  - path: bin\*
+  - path: bin\release\MapleSeed.exe
     name: mapleseed

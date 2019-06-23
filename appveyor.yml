@@ -1,0 +1,28 @@
+image: Visual Studio 2017
+configuration: Release
+platform: x64
+
+init:
+- ps: >-
+    C:\Qt\5.12\msvc2017_64\bin\qtenv2.bat
+    cd "C:\projects\maple-tree"
+
+environment:
+  matrix:
+  - platform: amd64
+    qt: msvc2017_64
+
+install:
+- ps: >-
+    set QTDIR=C:\Qt\5.12\msvc2017_64
+    set PATH=%QTDIR%;%QTDIR%\include;%QTDIR%\bin;C:\Qt\Tools\mingw530_32\bin;%PATH%;
+
+build_script:
+- ps: >-
+    call scripts\version.cmd
+    qmake MapleSeed.pro -spec win32-msvc
+    C:\Qt\Tools\QtCreator\bin\jom.exe -f Makefile.Release
+
+artifacts:
+  - path: bin\*
+    name: mapleseed

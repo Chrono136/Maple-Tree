@@ -1,28 +1,29 @@
 @ECHO OFF
 SETLOCAL
 
-SET MS=D:\Projects\MapleSeed\
+SET MS=.\
 SET resourceFile=%MS%resources\mapleseed.rc
 SET versionFile=%MS%versioninfo.h
 
-FOR /F "tokens=*" %%A IN ('"git describe --tags --abbrev=0"') DO (SET fileVersion=%%A)
-FOR /F "tokens=*" %%A IN ('"git rev-parse --short HEAD"') DO (SET commitVersion=%%A)
-FOR /F "tokens=*" %%A IN ('"git rev-list --all --count"') DO (SET commitCount=%%A)
+::FOR /F "tokens=*" %%A IN ('"git describe --tags --abbrev=0"') DO (SET fileVersion=%%A)
+::FOR /F "tokens=*" %%A IN ('"git rev-parse --short HEAD"') DO (SET commitVersion=%%A)
+::FOR /F "tokens=*" %%A IN ('"git rev-list --all --count"') DO (SET commitCount=%%A)
 
-SET versionString=1.0%fileVersion%.%commitCount%
+::SET versionString=1.0.0%fileVersion%.%commitCount%
+SET versionString=1.0.0
 
 ECHO //generated resource header > "%versionFile%"
 ECHO #define GEN_LATEST_VERSION_STRING "%fileVersion%\0" >> "%versionFile%"
-ECHO #define GEN_COMMIT_STRING "%commitVersion%\0" >> "%versionFile%"
-ECHO #define GEN_COMMIT_COUNT_STRING "%commitCount%\0" >> "%versionFile%"
+::ECHO #define GEN_COMMIT_STRING "%commitVersion%\0" >> "%versionFile%"
+::ECHO #define GEN_COMMIT_COUNT_STRING "%commitCount%\0" >> "%versionFile%"
 ECHO #define GEN_VERSION_STRING "%versionString%\0" >> "%versionFile%"
 
 ECHO //generated resource header > "%resourceFile%"
 ECHO #include ^<windows.h^> >> "%resourceFile%"
 ECHO IDI_ICON1 ICON "sprout.ico" >> "%resourceFile%"
 ECHO VS_VERSION_INFO VERSIONINFO >> "%resourceFile%"
-ECHO FILEVERSION 1, 0, 0, %commitCount% >> "%resourceFile%"
-ECHO PRODUCTVERSION 1, 0, 0, %commitCount% >> "%resourceFile%"
+ECHO FILEVERSION 1, 0, 0, 0 >> "%resourceFile%"
+ECHO PRODUCTVERSION 1, 0, 0, 0 >> "%resourceFile%"
 ECHO FILEFLAGSMASK 0x3fL >> "%resourceFile%"
 ECHO #ifdef _DEBUG >> "%resourceFile%"
 ECHO FILEFLAGS 0x1L >> "%resourceFile%"

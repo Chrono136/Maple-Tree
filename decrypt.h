@@ -21,8 +21,8 @@ class Decrypt : public QObject {
 public:
 	explicit Decrypt(QObject * parent = nullptr);
 
-	void start(QString basedir);
-    static void exec(QString baseDir) { return self->start(baseDir); }
+    void start(QString basedir);
+    static void run(QString baseDir) { return self->start(baseDir); }
 	static quint32 bs24(quint32 i);
 	static qulonglong bs64(qulonglong i);
 

@@ -7,7 +7,11 @@
 
 class TitleInfoItem : public QListWidgetItem {
  public:
-  TitleInfoItem(LibraryEntry* entry) {
+  TitleInfoItem(LibraryEntry* entry)
+  {
+      if (!entry){
+          return;
+      }
     this->setText(entry->titleInfo->getFormatName());
     this->item = entry;
   }

@@ -70,10 +70,7 @@ public slots:
 	void disableMenubar();
 	void enableMenubar();
 	void updateListview(LibraryEntry* tb);
-	void updateTitleList(LibraryEntry* entry);
-	void downloadStarted(QString filename);
-	void downloadSuccessful(QString fileName);
-	void downloadError(QString errorString);
+    void updateTitleList(LibraryEntry* entry);
 	void updateDownloadProgress(qint64 bytesReceived, qint64 bytesTotal, QTime qtime);
 	void updateProgress(qint64 min, qint64 max, int curfile, int maxfile);
     void updateBaiscProgress(qint64 min, qint64 max);

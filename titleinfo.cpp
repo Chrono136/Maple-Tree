@@ -132,11 +132,14 @@ TitleInfo* TitleInfo::download(QString version)
 		QString contentID = QString().sprintf("%08x", bs32(tmd->Contents[i].ID));
         QString contentPath = QDir(directory).filePath(contentID);
 		QString downloadURL = baseURL + getID() + QString("/") + contentID;
-		qulonglong size = Decrypt::bs64(tmd->Contents[i].Size);
+        qulonglong size = Decrypt::bs64(tmd->Contents[i].Size);
         if (!QFile(contentPath).exists() || QFileInfo(contentPath).size() != static_cast<qint64>(size))
         {
-            info->totalSize += static_cast<qint64>(size);
+            info->totalSize += size;
             info->urls.push_back({contentPath,downloadURL});
+        }
+        else {
+            //info->bytesReceived += size;
         }
 	}
 

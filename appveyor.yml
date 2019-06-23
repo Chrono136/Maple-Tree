@@ -16,7 +16,7 @@ init:
       
 install:
   - set QTDIR=C:\Qt\5.12\msvc2017_64
-  - set PATH=%QTDIR%\bin;C:\Qt\Tools\mingw530_32\bin;%PATH%;
+  - set PATH=%QTDIR%;%QTDIR%\bin;C:\Qt\Tools\mingw530_32\bin;%PATH%;
 
 build_script:
   - call scripts\version.cmd

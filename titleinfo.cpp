@@ -2,6 +2,7 @@
 #include "titleinfo.h"
 #include "configuration.h"
 #include "downloadmanager.h"
+#include "downloadqueue.h"
 #include "gamelibrary.h"
 
 TitleInfo::TitleInfo(QObject* parent) : QObject(parent)
@@ -121,6 +122,10 @@ TitleInfo* TitleInfo::download(QString version)
         totalSize += Decrypt::bs64(tmd->Contents[i].Size);
     }
 
+    auto info = new QueueInfo;
+    info->name = getFormatName();
+    info->directory = directory;
+    info->totalSize = 0;
     contentSize = totalSize;
     for (int i = 0; i < contentCount; i++)
     {
@@ -130,19 +135,15 @@ TitleInfo* TitleInfo::download(QString version)
 		qulonglong size = Decrypt::bs64(tmd->Contents[i].Size);
         if (!QFile(contentPath).exists() || QFileInfo(contentPath).size() != static_cast<qint64>(size))
         {
-            QString sz(Configuration::self->size_human(totalSize));
-            QString msg = QString("Download Status: %1 of %2 (%3)").arg(i + 1).arg(contentCount).arg(sz);
-			QFile* file = DownloadManager::getSelf()->downloadSingle(downloadURL, contentPath, msg);
-            file->close();
-		}
-        totalSize -= size;
+            info->totalSize += static_cast<qint64>(size);
+            info->urls.push_back({contentPath,downloadURL});
+        }
 	}
 
-    QtConcurrent::run([=]
+    if (!info->urls.isEmpty() && !DownloadQueue::exists(info))
     {
-        decryptContent();
-        emit GameLibrary::self->processLibItem(directory);
-    });
+        DownloadQueue::add(info);
+    }
 	return this;
 }
 
@@ -353,16 +354,20 @@ QByteArray TitleInfo::CreateTicket(QString ver)
 
 TitleMetaData* TitleInfo::getTMD(const QString & version)
 {
+    DownloadManager manager;
     QString tmdpath(getDirectory() + "/tmd");
 	QString tmdurl("http://ccs.cdn.wup.shop.nintendo.net/ccs/download/" + getID() + "/tmd");
     if (!version.isEmpty()){
         tmdurl += "." + version;
     }
-	if (!QFile(tmdpath).exists()) {
-        DownloadManager::getSelf()->downloadSingle(tmdurl, tmdpath);
+
+    QByteArray buffer;
+    if (!QFile(tmdpath).exists()) {
+        manager.downloadSingle(tmdurl, tmdpath);
     }
+
     QFile* tmdfile = new QFile(tmdpath);
-    if (!tmdfile->open(QIODevice::ReadOnly)) {
+    if (!tmdfile->open(QIODevice::ReadWrite)) {
         qCritical() << tmdfile->errorString();
 		return nullptr;
 	}

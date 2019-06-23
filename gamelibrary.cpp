@@ -13,7 +13,8 @@ GameLibrary::~GameLibrary() {
     this->save(Configuration::self->getLibPath());
 }
 
-void GameLibrary::init(const QString& directory) {
+void GameLibrary::init(const QString& directory)
+{
     if (QDir(directory).exists()) {
         this->baseDirectory = QDir(directory).absolutePath();
     }
@@ -27,8 +28,10 @@ void GameLibrary::init(const QString& directory) {
     database.clear();
     QDir dir(QDir(".").absolutePath());
     QString titlekeysPath(dir.filePath("titlekeys.json"));
-    if (!QFile(jsonFile = titlekeysPath).exists()) {
-        DownloadManager::getSelf()->downloadSingle(QUrl("http://pixxy.in/mapleseed/titlekeys.json"), titlekeysPath);
+    if (!QFile(jsonFile = titlekeysPath).exists())
+    {
+        DownloadManager manager;
+        manager.downloadSingle(QUrl("http://pixxy.in/mapleseed/titlekeys.json"), titlekeysPath);
     }
     QFile qfile(titlekeysPath);
     if (!qfile.open(QIODevice::ReadOnly)) {

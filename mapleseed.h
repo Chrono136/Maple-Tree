@@ -17,6 +17,7 @@
 #include "gamelibrary.h"
 #include "titleinfoitem.h"
 #include "gamepad.h"
+#include "downloadqueue.h"
 
 namespace Ui {
 class MainWindow;
@@ -31,6 +32,7 @@ public:
 
     Configuration *config = new Configuration;
     DownloadManager *downloadManager = new DownloadManager;
+    DownloadQueue *downloadQueue = new DownloadQueue;
     GameLibrary *gameLibrary = new GameLibrary;
     static MapleSeed *self;
 
@@ -52,6 +54,9 @@ private:
     bool processActive();
 
 public slots:
+    void DownloadQueueAdd(QueueInfo *info);
+    void DownloadQueueRemove(QueueInfo *info);
+    void DownloadQueueFinished(QList<QueueInfo*> history);
     void gameUp(bool pressed);
     void gameDown(bool pressed);
     void gameStart(bool pressed);

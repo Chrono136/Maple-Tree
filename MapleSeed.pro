@@ -36,6 +36,7 @@ LIBS += -LC:\OpenSSL-Win64\lib -llibcrypto
 
 SOURCES += \
     debug.cpp \
+    downloadqueue.cpp \
     gamepad.cpp \
     main.cpp \
     mapleseed.cpp \
@@ -50,6 +51,7 @@ SOURCES += \
 
 HEADERS += \
     debug.h \
+    downloadqueue.h \
     gamepad.h \
     mapleseed.h \
     gamelibrary.h \

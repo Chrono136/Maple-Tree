@@ -94,13 +94,18 @@ void MapleSeed::defineActions()
     connect(gameLibrary, &GameLibrary::addTitle, this, &MapleSeed::updateTitleList);
     connect(gameLibrary, &GameLibrary::loadComplete, this, &MapleSeed::gameLibraryLoadComplete);
 
-    connect(downloadManager, &DownloadManager::downloadStarted, this, &MapleSeed::downloadStarted);
-    connect(downloadManager, &DownloadManager::downloadStarted, this, &MapleSeed::disableMenubar);
-    connect(downloadManager, &DownloadManager::downloadSuccessful, this, &MapleSeed::downloadSuccessful);
-    connect(downloadManager, &DownloadManager::downloadSuccessful, this, &MapleSeed::enableMenubar);
+    connect(downloadQueue, &DownloadQueue::ObjectAdded, this, &MapleSeed::DownloadQueueAdd);
+    //connect(downloadQueue, &DownloadQueue::ObjectFinished, this, &MapleSeed::DownloadQueueRemove);
+    connect(downloadQueue, &DownloadQueue::QueueFinished, this, &MapleSeed::DownloadQueueFinished);
+    connect(downloadQueue, &DownloadQueue::QueueProgress, this, &MapleSeed::updateDownloadProgress);
+
+    //connect(downloadManager, &DownloadManager::downloadStarted, this, &MapleSeed::downloadStarted);
+    //connect(downloadManager, &DownloadManager::downloadStarted, this, &MapleSeed::disableMenubar);
+    //connect(downloadManager, &DownloadManager::downloadSuccessful, this, &MapleSeed::downloadSuccessful);
+    //connect(downloadManager, &DownloadManager::downloadSuccessful, this, &MapleSeed::enableMenubar);
     connect(downloadManager, &DownloadManager::downloadError, this, &MapleSeed::downloadError);
-    connect(downloadManager, &DownloadManager::downloadError, this, &MapleSeed::enableMenubar);
-    connect(downloadManager, &DownloadManager::downloadProgress, this, &MapleSeed::updateDownloadProgress);
+    //connect(downloadManager, &DownloadManager::downloadError, this, &MapleSeed::enableMenubar);
+    //connect(downloadManager, &DownloadManager::downloadProgress, this, &MapleSeed::updateDownloadProgress);
 }
 
 void MapleSeed::defaultConfiguration()
@@ -173,6 +178,46 @@ bool MapleSeed::processActive()
         return false;
     }
     return true;
+}
+
+void MapleSeed::DownloadQueueAdd(QueueInfo *info)
+{
+    int row = ui->downloadQueue_tableWidget->rowCount();
+    ui->downloadQueue_tableWidget->insertRow(row);
+    ui->downloadQueue_tableWidget->horizontalHeader()->setStretchLastSection(true);
+    ui->downloadQueue_tableWidget->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
+    ui->downloadQueue_tableWidget->setItem(row, 0, new QTableWidgetItem(info->name));
+    ui->downloadQueue_tableWidget->setItem(row, 1, new QTableWidgetItem(config->size_human(info->totalSize)));
+    ui->downloadQueue_tableWidget->setCellWidget(row, 2, info->pgbar);
+}
+
+void MapleSeed::DownloadQueueRemove(QueueInfo *info)
+{
+    auto item = ui->downloadQueue_tableWidget->findItems(info->name, Qt::MatchExactly);
+    if (item.isEmpty()) {
+        return;
+    }
+
+    auto watcher = new QFutureWatcher<void>;
+    connect(watcher, &QFutureWatcher<void>::finished, this, [=]
+    {
+        int row = ui->downloadQueue_tableWidget->row(item.first());
+        ui->downloadQueue_tableWidget->removeRow(row);
+        delete watcher;
+    });
+
+    QFuture<void> future = QtConcurrent::run(&Decrypt::run, info->directory);
+    watcher->setFuture(future);
+    ui->downloadQueue_tableWidget->horizontalHeader()->setStretchLastSection(true);
+    ui->downloadQueue_tableWidget->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
+}
+
+void MapleSeed::DownloadQueueFinished(QList<QueueInfo*> history)
+{
+    for(auto info : history)
+    {
+        DownloadQueueRemove(info);
+    }
 }
 
 void MapleSeed::gameUp(bool pressed)
@@ -460,8 +505,10 @@ void MapleSeed::enableMenubar()
 void MapleSeed::updateListview(LibraryEntry* entry)
 {
     TitleInfoItem* tii = new TitleInfoItem(entry);
-    tii->setText(tii->getItem()->titleInfo->getFormatName());
-    this->ui->listWidget->addItem(tii);
+    QString name(tii->getItem()->titleInfo->getFormatName());
+    if (ui->listWidget->findItems(name, Qt::MatchExactly).isEmpty()){
+        ui->listWidget->addItem(tii);
+    }
 }
 
 void MapleSeed::updateTitleList(LibraryEntry* entry)

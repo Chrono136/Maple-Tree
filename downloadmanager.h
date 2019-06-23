@@ -11,8 +11,7 @@ class DownloadManager : public QObject {
   explicit DownloadManager(QObject* parent = nullptr);
 
   QFile* downloadSingle(const QUrl& url, const QString& filepath, QString msg = "");
-  void append(const QUrl& url, const QString& filepath);
-  static DownloadManager* getSelf();
+  QByteArray downloadBytes(const QUrl& url);
 
  signals:
   void downloadStarted(QString filename);
@@ -20,27 +19,23 @@ class DownloadManager : public QObject {
   void downloadFinished(qint32 downloadedCount, qint32 totalcount);
   void downloadProgress(qint64 bytesReceived, qint64 bytesTotal, QTime qtime);
   void downloadError(QString errorString);
+  void bytesReceived(qint64 bytes);
 
  private slots:
-  void _startNextDownload();
-  void _downloadProgress(qint64 bytesReceived, qint64 bytesTotal);
-  void _downloadFinished();
-  void _downloadReadyRead();
+  void startDownload(const QUrl& url, const QString& filepath);
+  void progress(qint64 bytesReceived, qint64 bytesTotal);
+  void finished();
+  void readyRead();
 
  private:
-  bool isHttpRedirect() const;
-  void reportRedirect();
-
-  static DownloadManager* self;
   QNetworkAccessManager manager;
-  QQueue<QPair<QString, QUrl>> downloadQueue;
   QNetworkReply* currentDownload = nullptr;
+  bool WriteToFile = true;
+  QBuffer buffer;
   QFile output;
-  QTime downloadTime;
 
-  int downloadedCount = 0;
-  int totalCount = 0;
-  bool block = false;
+public:
+  QTime downloadTime;
 };
 
 #endif  // DOWNLOADMANAGER_H

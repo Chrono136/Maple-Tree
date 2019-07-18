@@ -336,7 +336,7 @@ qint32 Decrypt::doDecrypt(QString qtmd, QString qcetk, QString basedir)
 			for (qint32 j = 0; j < level; ++j) {
 				if (j) {
 					Path[strlen(Path)] = '\\';
-				}
+                }
 				memcpy(Path + strlen(Path), CNT + NameOff + bs24(fe[Entry[j]].u1.s1.NameOffset), strlen(CNT + NameOff + bs24(fe[Entry[j]].u1.s1.NameOffset)));
 				QDir().mkdir(dir.filePath(Path));
 			}
